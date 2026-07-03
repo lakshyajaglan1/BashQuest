@@ -1,0 +1,273 @@
+---
+import { modules, lessons } from '../lib/lessons';
+---
+<div class="mesh-gradient min-h-[calc(100vh-64px)] w-full py-12 px-4 md:px-8 select-none">
+  <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+    
+    <!-- User Profile & Stats (Left Column) -->
+    <div class="lg:col-span-1 space-y-6">
+      <div class="card-marketing border border-hairline bg-canvas p-6 flex flex-col justify-between h-auto">
+        <div>
+          <div class="flex items-center gap-4 mb-6">
+            <div class="w-14 h-14 rounded-full bg-primary text-on-primary flex items-center justify-center font-mono text-2xl font-bold border-2 border-hairline">
+              L
+            </div>
+            <div>
+              <h2 id="profile-title" class="text-lg font-bold text-ink tracking-tight">Linux Novice.</h2>
+              <p id="profile-level" class="text-xs text-mute font-mono">Level 1 User</p>
+            </div>
+          </div>
+
+          <!-- XP Bar -->
+          <div class="space-y-2 mb-6">
+            <div class="flex justify-between text-xs font-mono">
+              <span class="text-mute">XP Progress</span>
+              <span id="profile-xp-ratio" class="text-ink font-bold">0 / 300</span>
+            </div>
+            <div class="w-full h-2 bg-canvas-soft-2 rounded-full overflow-hidden border border-hairline">
+              <div id="profile-xp-progress" class="h-full bg-success transition-all duration-500" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- Stats Grid -->
+          <div class="grid grid-cols-2 gap-4 py-4 border-t border-b border-hairline mb-6 font-mono text-xs">
+            <div>
+              <span class="text-mute block">Completed</span>
+              <span id="profile-completed-count" class="text-base font-bold text-ink">0 / 10</span>
+            </div>
+            <div>
+              <span class="text-mute block">Unlocked Badges</span>
+              <span id="profile-badge-count" class="text-base font-bold text-ink">0</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <button 
+            id="btn-reset-progress" 
+            class="w-full h-9 px-4 rounded-sm border border-red-200 text-error bg-red-50 text-xs font-semibold hover:bg-error-soft hover:text-error-deep hover:border-red-300 transition-all cursor-pointer"
+          >
+            Reset Progress
+          </button>
+        </div>
+      </div>
+
+      <!-- Badges Card -->
+      <div class="card-marketing p-6">
+        <h3 class="text-sm font-bold text-ink tracking-tight mb-4 uppercase font-mono text-mute">Earned Badges</h3>
+        <div id="dashboard-badges-rack" class="grid grid-cols-3 gap-3">
+          <!-- Dynamically filled with badges -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Curriculum Skill Tree (Right Column) -->
+    <div class="lg:col-span-2 space-y-8">
+      <div class="mb-4">
+        <h1 class="display-lg text-ink font-bold tracking-tight">Interactive Learning Path.</h1>
+        <p class="body-md text-body mt-2">Follow the path of command quests. Click any unlocked challenge node to open your interactive Linux shell workspace.</p>
+      </div>
+
+      {modules.map((mod) => {
+        const moduleLessons = lessons.filter(l => l.moduleId === mod.id);
+        return (
+          <div class="space-y-4">
+            <h2 class="text-xs font-mono font-bold tracking-widest text-mute uppercase px-1 border-l-2 border-primary">{mod.title}</h2>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {moduleLessons.map((lesson, idx) => (
+                <div 
+                  data-lesson-id={lesson.id}
+                  class="lesson-node-card cursor-pointer border border-hairline rounded-md p-5 bg-canvas flex flex-col justify-between hover:shadow-md transition-all duration-200 relative group opacity-60 pointer-events-none"
+                >
+                  <div class="flex justify-between items-start mb-2">
+                    <span class="font-mono text-xs font-bold text-mute bg-canvas-soft-2 px-2 py-0.5 rounded border border-hairline">
+                      Quest {lesson.id}
+                    </span>
+                    <span class="node-status-badge text-[10px] font-mono font-bold text-mute bg-canvas-soft border border-hairline px-2 py-0.5 rounded">
+                      Locked
+                    </span>
+                  </div>
+
+                  <div>
+                    <h3 class="font-sans text-base font-bold text-ink group-hover:text-link transition-colors">
+                      {lesson.title}
+                    </h3>
+                    <p class="text-xs text-body line-clamp-2 mt-1">
+                      {lesson.description}
+                    </p>
+                  </div>
+
+                  <div class="flex justify-between items-center mt-4 pt-3 border-t border-hairline/50">
+                    <span class="text-[11px] font-mono text-mute">
+                      +{lesson.xp} XP
+                    </span>
+                    
+                    <span class="text-xs font-sans font-medium text-mute group-hover:translate-x-0.5 transition-transform flex items-center gap-1">
+                      Start <span class="font-mono">→</span>
+                    </span>
+                  </div>
+
+                  <!-- Visual Locked Overlay -->
+                  <div class="absolute inset-0 bg-canvas/30 backdrop-blur-[0.5px] rounded-md pointer-events-none block node-lock-overlay"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+
+  </div>
+</div>
+
+<script>
+  import { lessons } from '../lib/lessons';
+
+  // Level Names Mapping
+  const levelNames = [
+    'Linux Novice',
+    'Filesystem Novice',
+    'File Wrangler',
+    'Shell Apprentice',
+    'Console Squire',
+    'Bash Knight',
+    'Permissions Paladin',
+    'Kernel Wizard',
+    'Sysadmin',
+    'Root Superuser'
+  ];
+
+  // Refresh Stats
+  function updateDashboardUI() {
+    if (!window.appState) return;
+
+    const state = window.appState;
+    const completed = state.completedLessons || [];
+    
+    // XP math: Level up every 300 XP
+    const xpPerLevel = 300;
+    const level = Math.floor(state.xp / xpPerLevel) + 1;
+    const levelName = levelNames[Math.min(level - 1, levelNames.length - 1)];
+    const xpInLevel = state.xp % xpPerLevel;
+
+    // Profile Card UI
+    const profileTitle = document.getElementById('profile-title');
+    const profileLevel = document.getElementById('profile-level');
+    const profileXpRatio = document.getElementById('profile-xp-ratio');
+    const profileXpProgress = document.getElementById('profile-xp-progress');
+    const profileCompletedCount = document.getElementById('profile-completed-count');
+    const profileBadgeCount = document.getElementById('profile-badge-count');
+
+    if (profileTitle) profileTitle.textContent = levelName + '.';
+    if (profileLevel) profileLevel.textContent = `Level ${level} User`;
+    if (profileXpRatio) profileXpRatio.textContent = `${xpInLevel} / ${xpPerLevel}`;
+    if (profileXpProgress) {
+      const percentage = (xpInLevel / xpPerLevel) * 100;
+      profileXpProgress.style.width = `${percentage}%`;
+    }
+    if (profileCompletedCount) {
+      profileCompletedCount.textContent = `${completed.length} / ${lessons.length}`;
+    }
+
+    // Unlocked Badges Rack
+    const badgesRack = document.getElementById('dashboard-badges-rack');
+    if (badgesRack) {
+      // Find badges from completed lessons
+      const earnedBadges = [];
+      lessons.forEach(l => {
+        if (completed.includes(l.id) && l.badge) {
+          earnedBadges.push({ badge: l.badge, title: l.title });
+        }
+      });
+
+      if (profileBadgeCount) profileBadgeCount.textContent = earnedBadges.length.toString();
+
+      if (earnedBadges.length === 0) {
+        badgesRack.innerHTML = `
+          <div class="col-span-3 text-center py-4 border border-dashed border-hairline rounded text-mute text-[10px] font-mono">
+            No badges unlocked yet.<br>Complete quests!
+          </div>
+        `;
+      } else {
+        badgesRack.innerHTML = earnedBadges.map(item => `
+          <div class="flex flex-col items-center justify-center p-2.5 border border-hairline bg-canvas-soft rounded text-center relative group/badge animate-in fade-in duration-300">
+            <div class="w-9 h-9 rounded-full bg-violet-soft text-violet-deep flex items-center justify-center font-bold text-xs mb-1 border border-violet-soft">
+              🏆
+            </div>
+            <span class="text-[10px] font-bold text-ink truncate w-full">${item.badge}</span>
+            <!-- Tooltip -->
+            <div class="absolute bottom-full mb-1 scale-0 group-hover/badge:scale-100 bg-primary text-on-primary text-[9px] font-mono py-1 px-2 rounded whitespace-nowrap z-10 transition-transform origin-bottom">
+              Quest ${item.title}
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    // Refresh Nodes list
+    const nodes = document.querySelectorAll('.lesson-node-card');
+    nodes.forEach(node => {
+      const lessonId = parseInt(node.getAttribute('data-lesson-id'));
+      const lesson = lessons.find(l => l.id === lessonId);
+      
+      const isCompleted = completed.includes(lessonId);
+      
+      // A lesson is unlocked if it is the first lesson, OR the previous lesson is completed
+      const isUnlocked = lessonId === 1 || completed.includes(lessonId - 1);
+      
+      const statusBadge = node.querySelector('.node-status-badge');
+      const lockOverlay = node.querySelector('.node-lock-overlay');
+      const startText = node.querySelector('.text-mute.group-hover\\:translate-x-0\\.5');
+
+      node.classList.remove('opacity-60', 'pointer-events-none', 'border-success', 'border-violet');
+      lockOverlay?.classList.add('hidden');
+
+      if (isCompleted) {
+        node.classList.add('border-success/60', 'bg-emerald-50/5');
+        if (statusBadge) {
+          statusBadge.textContent = 'Passed';
+          statusBadge.className = 'node-status-badge text-[10px] font-mono font-bold text-success bg-emerald-100/50 border border-emerald-200 px-2 py-0.5 rounded';
+        }
+      } else if (isUnlocked) {
+        node.classList.add('border-violet/40', 'shadow-xs', 'animate-pulse-slow');
+        node.style.animationDuration = '3s';
+        if (statusBadge) {
+          statusBadge.textContent = 'Active';
+          statusBadge.className = 'node-status-badge text-[10px] font-mono font-bold text-violet-deep bg-violet-soft border border-violet-soft px-2.5 py-0.5 rounded';
+        }
+      } else {
+        node.classList.add('opacity-60', 'pointer-events-none');
+        lockOverlay?.classList.remove('hidden');
+        if (statusBadge) {
+          statusBadge.textContent = 'Locked';
+          statusBadge.className = 'node-status-badge text-[10px] font-mono font-bold text-mute bg-canvas-soft border border-hairline px-2 py-0.5 rounded';
+        }
+      }
+
+      // Hook click event
+      if (isUnlocked) {
+        node.classList.remove('pointer-events-none');
+        // Unbind and rebind click
+        const clone = node.cloneNode(true);
+        node.parentNode.replaceChild(clone, node);
+
+        clone.addEventListener('click', () => {
+          window.dispatchEvent(new CustomEvent('app:select-lesson', { detail: { lessonId } }));
+          window.dispatchEvent(new CustomEvent('app:trigger-view-change', { detail: { view: 'sandbox' } }));
+        });
+      }
+    });
+  }
+
+  // Bind Reset button
+  document.getElementById('btn-reset-progress')?.addEventListener('click', () => {
+    if (confirm('Are you sure you want to reset all progress? This will wipe your completed quests, XP level, and filesystem state.')) {
+      window.dispatchEvent(new CustomEvent('app:reset-state'));
+    }
+  });
+
+  // Listen for updates
+  window.addEventListener('app:state-updated', updateDashboardUI);
+  window.addEventListener('app:filesystem-update', updateDashboardUI);
+</script>

@@ -1,0 +1,101 @@
+---
+---
+<div class="card-marketing bg-canvas p-6 flex flex-col h-full border border-hairline select-none">
+  <div class="flex items-center justify-between pb-3 border-b border-hairline mb-4">
+    <div class="flex items-center gap-2">
+      <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+      </svg>
+      <h3 class="text-sm font-bold text-ink tracking-tight font-sans uppercase">File Explorer</h3>
+    </div>
+    <span class="text-[10px] font-mono font-bold text-success bg-link-bg-soft border border-blue-200 px-2 py-0.5 rounded-sm">
+      Live Sync
+    </span>
+  </div>
+
+  <!-- Scrollable visualizer -->
+  <div class="flex-1 overflow-auto bg-canvas-soft border border-hairline rounded-sm p-4 min-h-[160px]">
+    <div id="file-tree-root" class="font-mono text-xs text-body leading-relaxed">
+      <!-- Injected dynamically -->
+    </div>
+  </div>
+  
+  <div class="text-[10px] font-mono text-mute mt-3 flex justify-between items-center px-1">
+    <span>User: learner</span>
+    <span id="explorer-current-path">/home/learner</span>
+  </div>
+</div>
+
+<script>
+  const treeRoot = document.getElementById('file-tree-root');
+  const pathLabel = document.getElementById('explorer-current-path');
+
+  function renderTree() {
+    if (!window.appState || !window.appState.fs) {
+      if (treeRoot) treeRoot.innerHTML = '<span class="text-mute font-mono">Initializing Filesystem...</span>';
+      return;
+    }
+
+    const fs = window.appState.fs;
+    const session = window.appState.session;
+
+    if (pathLabel && session) {
+      pathLabel.textContent = session.currentPath;
+    }
+
+    if (treeRoot) {
+      treeRoot.innerHTML = buildTreeHtml(fs.tree);
+    }
+  }
+
+  function buildTreeHtml(node, prefix = '') {
+    let html = '';
+    
+    if (node.name === '/') {
+      html += `<div class="flex items-center gap-1.5 py-0.5 text-primary font-bold"><span class="text-sm">💻</span> / <span class="text-[9px] font-mono font-normal text-mute">root</span></div>`;
+    }
+
+    if (node.type === 'dir' && node.children) {
+      const children = [...node.children].sort((a, b) => a.name.localeCompare(b.name));
+      
+      children.forEach((child, idx) => {
+        const isLast = idx === children.length - 1;
+        const connector = isLast ? '└── ' : '├── ';
+        const childPrefix = isLast ? '    ' : '│   ';
+
+        const icon = child.type === 'dir' ? '📁' : '📄';
+        const colorClass = child.type === 'dir' ? 'text-primary font-medium' : 'text-body hover:text-ink';
+        
+        // Highlight active directory
+        let activeBgClass = '';
+        if (window.appState && window.appState.session) {
+          const childAbsPath = window.appState.fs.resolvePathStr(prefix ? '' : '/', (prefix ? prefix.replace(/[│├─└\s]/g, '') : '') + '/' + child.name);
+          if (window.appState.session.currentPath === childAbsPath) {
+            activeBgClass = 'bg-link-bg-soft/40 px-1 rounded-xs border border-blue-100/50';
+          }
+        }
+
+        html += `
+          <div class="flex items-center py-0.5 group/node hover:bg-canvas-soft-2/50 rounded px-0.5">
+            <span class="text-mute/40 select-none font-light whitespace-pre">${prefix}${connector}</span>
+            <span class="mr-1 text-[11px] select-none">${icon}</span>
+            <span class="${colorClass} ${activeBgClass} truncate text-[11px]" title="${child.name}">${child.name}</span>
+            <span class="text-[9px] font-mono text-mute/50 ml-2 opacity-0 group-hover/node:opacity-100 transition-opacity select-none">
+              (${child.permissions} ${child.owner})
+            </span>
+          </div>
+        `;
+
+        if (child.type === 'dir') {
+          html += buildTreeHtml(child, prefix + childPrefix);
+        }
+      });
+    }
+
+    return html;
+  }
+
+  // Listen for terminal executions or path changes
+  window.addEventListener('app:filesystem-update', renderTree);
+  window.addEventListener('app:state-updated', renderTree);
+</script>

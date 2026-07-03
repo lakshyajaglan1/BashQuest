@@ -1,11 +1,263 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import Navigation from '../components/Navigation.astro';
+import Dashboard from '../components/Dashboard.astro';
+import FileSystemVisualizer from '../components/FileSystemVisualizer.astro';
+import Terminal from '../components/Terminal.astro';
+import LessonPanel from '../components/LessonPanel.astro';
 ---
 
 <Layout>
-	<Welcome />
+  <!-- Global Application Shell -->
+  <div class="flex flex-col min-h-screen">
+    <!-- Navbar -->
+    <Navigation />
+
+    <!-- Views Container -->
+    <main class="flex-1 w-full relative">
+      <!-- VIEW 1: Dashboard -->
+      <section id="view-dashboard" class="block">
+        <Dashboard />
+      </section>
+
+      <!-- VIEW 2: Interactive Sandbox Workspace -->
+      <section id="view-sandbox" class="hidden">
+        <div class="max-w-7xl mx-auto py-8 px-4 md:px-8 grid grid-cols-1 lg:grid-cols-12 gap-8 h-auto lg:h-[calc(100vh-120px)] lg:min-h-[580px]">
+          <!-- Left Column: Lesson Instructions Panel (5 cols) -->
+          <div class="lg:col-span-5 h-full">
+            <LessonPanel />
+          </div>
+
+          <!-- Right Column: Visual Explorer & Terminal (7 cols) -->
+          <div class="lg:col-span-7 flex flex-col gap-6 h-full">
+            <!-- Filesystem Visual Explorer -->
+            <div class="flex-1 min-h-[180px]">
+              <FileSystemVisualizer />
+            </div>
+
+            <!-- Terminal Simulator Box -->
+            <div class="h-auto">
+              <Terminal />
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Bottom Footer (Stark Vercel style) -->
+    <footer class="border-t border-hairline bg-canvas py-8 px-4 select-none">
+      <div class="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono text-mute">
+        <span>© 2026 BashQuest. Learn commands, gain power.</span>
+        <div class="flex gap-4">
+          <a href="#" class="hover:text-ink transition-colors">Documentation</a>
+          <span>•</span>
+          <a href="#" class="hover:text-ink transition-colors">Keyboard Shortcuts</a>
+          <span>•</span>
+          <a href="https://github.com/withastro/astro" target="_blank" class="hover:text-ink transition-colors">Astro v7</a>
+        </div>
+      </div>
+    </footer>
+  </div>
 </Layout>
+
+<script>
+  import { FileSystem, ShellSession } from '../lib/linuxEngine';
+  import { lessons } from '../lib/lessons';
+
+  // Global Client-Side State Manager
+  class AppStateManager {
+    constructor() {
+      this.state = {
+        xp: 0,
+        completedLessons: [],
+        activeView: 'dashboard',
+        activeLessonId: 1,
+        streak: 1,
+        lastCompletedDate: null
+      };
+
+      this.init();
+    }
+
+    init() {
+      // 1. Load progress from localStorage if it exists
+      this.loadFromStorage();
+
+      // 2. Setup initial filesystem instance
+      this.resetFilesystem();
+
+      // 3. Bind global event listeners
+      this.bindEvents();
+
+      // 4. Trigger initial rendering
+      this.broadcastState();
+      this.applyViewVisibility();
+    }
+
+    resetFilesystem() {
+      // Create a fresh FS matching the active lesson's environment
+      const fs = new FileSystem();
+      
+      // Perform customizations based on lesson needs
+      // E.g., Lesson 9 needs a downloads folder to delete, which the default tree has!
+      // Lesson 8 renames status.txt which we create in Lesson 6. Let's populate status.txt for Lesson 8/9 if the user completed Lesson 6 previously
+      const completed = this.state.completedLessons;
+      if (completed.includes(6) && !completed.includes(8)) {
+        // Pre-create status.txt
+        fs.createNode('/home/learner', 'status.txt', 'file', {
+          content: 'System Online\nAll Checks Green\n'
+        });
+      }
+
+      const session = new ShellSession(fs);
+
+      window.appState = {
+        ...window.appState,
+        fs: fs,
+        session: session,
+        terminalCommands: [], // commands entered in this lesson session
+        xp: this.state.xp,
+        completedLessons: this.state.completedLessons,
+        activeLessonId: this.state.activeLessonId,
+        streak: this.state.streak,
+        lastCompletedDate: this.state.lastCompletedDate
+      };
+    }
+
+    bindEvents() {
+      // Listen for view changes from Navbar
+      window.addEventListener('app:view-change', (e: any) => {
+        this.state.activeView = e.detail.view;
+        this.applyViewVisibility();
+        this.saveToStorage();
+        this.broadcastState();
+      });
+
+      // Listen for lesson selection
+      window.addEventListener('app:select-lesson', (e: any) => {
+        this.state.activeLessonId = e.detail.lessonId;
+        
+        // Reset filesystem sandbox to avoid state pollution between quests
+        this.resetFilesystem();
+        
+        this.saveToStorage();
+        this.broadcastState();
+      });
+
+      // Listen for quest completions
+      window.addEventListener('app:complete-lesson', (e: any) => {
+        const { lessonId, xp } = e.detail;
+        
+        if (!this.state.completedLessons.includes(lessonId)) {
+          this.state.completedLessons.push(lessonId);
+          this.state.xp += xp;
+
+          // Update Streak
+          this.updateStreak();
+        }
+
+        this.saveToStorage();
+        this.broadcastState();
+      });
+
+      // Listen for state reset request
+      window.addEventListener('app:reset-state', () => {
+        localStorage.removeItem('bashquest_state');
+        this.state = {
+          xp: 0,
+          completedLessons: [],
+          activeView: 'dashboard',
+          activeLessonId: 1,
+          streak: 1,
+          lastCompletedDate: null
+        };
+        this.resetFilesystem();
+        this.applyViewVisibility();
+        
+        // Return navbar tabs active state
+        window.dispatchEvent(new CustomEvent('app:trigger-view-change', { detail: { view: 'dashboard' } }));
+        
+        this.saveToStorage();
+        this.broadcastState();
+      });
+    }
+
+    updateStreak() {
+      const today = new Date().toDateString();
+      const lastDate = this.state.lastCompletedDate;
+      
+      if (!lastDate) {
+        this.state.streak = 1;
+      } else {
+        const diffTime = Math.abs(new Date(today).getTime() - new Date(lastDate).getTime());
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        if (diffDays === 1) {
+          // Finished lesson consecutive day, increment!
+          this.state.streak += 1;
+        } else if (diffDays > 1) {
+          // Streak broken
+          this.state.streak = 1;
+        }
+      }
+      this.state.lastCompletedDate = today;
+    }
+
+    applyViewVisibility() {
+      const viewDash = document.getElementById('view-dashboard');
+      const viewSand = document.getElementById('view-sandbox');
+
+      if (this.state.activeView === 'dashboard') {
+        viewDash?.classList.remove('hidden');
+        viewDash?.classList.add('block');
+        viewSand?.classList.remove('block', 'grid');
+        viewSand?.classList.add('hidden');
+      } else {
+        viewSand?.classList.remove('hidden');
+        viewSand?.classList.add('block');
+        viewDash?.classList.remove('block');
+        viewDash?.classList.add('hidden');
+        
+        // Autofocus terminal prompt when entering workspace
+        setTimeout(() => {
+          document.getElementById('terminal-input')?.focus();
+        }, 100);
+      }
+    }
+
+    broadcastState() {
+      // Expose to globally accessible state objects
+      if (window.appState) {
+        window.appState.xp = this.state.xp;
+        window.appState.completedLessons = this.state.completedLessons;
+        window.appState.activeLessonId = this.state.activeLessonId;
+        window.appState.streak = this.state.streak;
+      }
+
+      window.dispatchEvent(new CustomEvent('app:state-updated', {
+        detail: this.state
+      }));
+    }
+
+    saveToStorage() {
+      localStorage.setItem('bashquest_state', JSON.stringify(this.state));
+    }
+
+    loadFromStorage() {
+      const saved = localStorage.getItem('bashquest_state');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          this.state = { ...this.state, ...parsed };
+        } catch (e) {
+          console.error("Failed to parse storage, using defaults", e);
+        }
+      }
+    }
+  }
+
+  // Initialize State Manager on DOM load
+  document.addEventListener('DOMContentLoaded', () => {
+    new AppStateManager();
+  });
+</script>

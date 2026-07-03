@@ -1,0 +1,161 @@
+---
+---
+<header class="sticky top-0 z-50 flex items-center justify-between h-[64px] border-b border-hairline bg-canvas px-4 md:px-8 select-none">
+  <!-- Brand Logo -->
+  <div class="flex items-center gap-3">
+    <div class="flex items-center justify-center w-8 h-8 rounded-sm bg-primary text-on-primary font-mono text-lg font-bold">
+      $
+    </div>
+    <span class="font-sans text-lg font-semibold tracking-tight text-ink">BashQuest<span class="text-link">.</span></span>
+  </div>
+
+  <!-- Central Tab Toggles -->
+  <nav class="flex items-center gap-2">
+    <button 
+      id="btn-nav-dashboard" 
+      class="h-9 px-4 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer bg-primary text-on-primary shadow-sm"
+    >
+      Dashboard
+    </button>
+    <button 
+      id="btn-nav-sandbox" 
+      class="h-9 px-4 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer text-body hover:text-ink hover:bg-canvas-soft-2"
+    >
+      Workspace
+    </button>
+  </nav>
+
+  <!-- Profile & Stats Cluster -->
+  <div class="flex items-center gap-4">
+    <!-- Streak -->
+    <div class="hidden sm:flex items-center gap-1.5 text-sm font-medium text-warning-deep bg-warning-soft px-2.5 py-1 rounded-sm border border-orange-200">
+      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+      </svg>
+      <span id="nav-streak-count">1</span> Day Streak
+    </div>
+
+    <!-- XP Stats -->
+    <div class="flex items-center gap-2 text-sm font-mono bg-canvas-soft-2 px-3 py-1 rounded-sm border border-hairline text-ink">
+      <span class="text-mute font-sans">XP:</span>
+      <span id="nav-xp-count" class="font-bold text-success">0</span>
+    </div>
+
+    <!-- Ask AI Helper button -->
+    <button 
+      id="btn-ask-ai" 
+      class="flex items-center gap-1.5 h-8 px-3 rounded-sm border border-hairline bg-canvas text-ink text-xs font-semibold hover:bg-canvas-soft-2 transition-all cursor-pointer"
+    >
+      <svg class="w-3.5 h-3.5 text-violet" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21l8.904-4.896L21 9l-4.896-8.904L9.813 15.904z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 10H4a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-5"/>
+      </svg>
+      Ask AI
+    </button>
+  </div>
+</header>
+
+<!-- Popover / Dialog modal for "Ask AI" helper -->
+<div id="modal-ai-helper" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs hidden">
+  <div class="w-full max-w-md bg-canvas rounded-lg border border-hairline shadow-2xl p-6 relative animate-in fade-in zoom-in-95 duration-200">
+    <button id="btn-close-ai" class="absolute top-4 right-4 text-mute hover:text-ink cursor-pointer">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+    
+    <div class="flex items-center gap-3 mb-4">
+      <div class="flex items-center justify-center w-10 h-10 rounded-full bg-violet-soft text-violet-deep">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+        </svg>
+      </div>
+      <div>
+        <h3 class="text-base font-semibold text-ink">BashQuest AI Assistant</h3>
+        <p class="text-xs text-mute font-mono">Helper v1.0.0 • Connected</p>
+      </div>
+    </div>
+    
+    <div id="ai-hint-content" class="text-sm text-body leading-relaxed mb-6 space-y-3">
+      <!-- Dynamically filled -->
+      <p>Hello! I am your Linux mentor. Select a challenge to get customized hints and tips for your task.</p>
+    </div>
+    
+    <div class="flex justify-end">
+      <button id="btn-ai-got-it" class="h-9 px-4 bg-primary text-on-primary rounded-sm font-medium text-sm hover:opacity-90 transition-all cursor-pointer">
+        Got it, thanks!
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // DOM Elements
+  const btnDashboard = document.getElementById('btn-nav-dashboard');
+  const btnSandbox = document.getElementById('btn-nav-sandbox');
+  const btnAskAI = document.getElementById('btn-ask-ai');
+  const btnCloseAI = document.getElementById('btn-close-ai');
+  const btnAIGotIt = document.getElementById('btn-ai-got-it');
+  const modalAI = document.getElementById('modal-ai-helper');
+  const aiHintContent = document.getElementById('ai-hint-content');
+  
+  const xpCount = document.getElementById('nav-xp-count');
+  const streakCount = document.getElementById('nav-streak-count');
+
+  // Toggle View Handler
+  function setView(view) {
+    if (view === 'dashboard') {
+      btnDashboard?.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
+      btnDashboard?.classList.remove('text-body', 'hover:text-ink', 'hover:bg-canvas-soft-2');
+      btnSandbox?.classList.add('text-body', 'hover:text-ink', 'hover:bg-canvas-soft-2');
+      btnSandbox?.classList.remove('bg-primary', 'text-on-primary', 'shadow-sm');
+    } else {
+      btnSandbox?.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
+      btnSandbox?.classList.remove('text-body', 'hover:text-ink', 'hover:bg-canvas-soft-2');
+      btnDashboard?.classList.add('text-body', 'hover:text-ink', 'hover:bg-canvas-soft-2');
+      btnDashboard?.classList.remove('bg-primary', 'text-on-primary', 'shadow-sm');
+    }
+    
+    window.dispatchEvent(new CustomEvent('app:view-change', { detail: { view } }));
+  }
+
+  btnDashboard?.addEventListener('click', () => setView('dashboard'));
+  btnSandbox?.addEventListener('click', () => setView('sandbox'));
+
+  // AI Modal Handlers
+  btnAskAI?.addEventListener('click', () => {
+    // Fetch AI hints from window state
+    if (window.appState && window.appState.activeLesson) {
+      const lesson = window.appState.activeLesson;
+      aiHintContent.innerHTML = `
+        <p class="font-medium text-ink">Stuck on "${lesson.title}"?</p>
+        <p>Here's a hint to guide you:</p>
+        <div class="p-3 bg-canvas-soft-2 border border-hairline rounded-sm font-mono text-xs text-ink">
+          ${lesson.instructions}
+        </div>
+        <p class="text-xs text-mute mt-2">💡 Tip: Make sure you are in the correct directory. You can type <code class="px-1.5 py-0.5 bg-canvas-soft-2 border border-hairline rounded text-violet-deep font-mono text-xs">pwd</code> to verify your location.</p>
+      `;
+    } else {
+      aiHintContent.innerHTML = `
+        <p>I can help you build commands and complete challenges! Please open the Workspace and choose a lesson first.</p>
+      `;
+    }
+    modalAI?.classList.remove('hidden');
+  });
+
+  const closeAI = () => modalAI?.classList.add('hidden');
+  btnCloseAI?.addEventListener('click', closeAI);
+  btnAIGotIt?.addEventListener('click', closeAI);
+
+  // Listen for Global State Updates
+  window.addEventListener('app:state-updated', (e) => {
+    const state = e.detail;
+    if (xpCount) xpCount.textContent = state.xp;
+    if (streakCount) streakCount.textContent = state.streak;
+  });
+
+  // Switch view internally
+  window.addEventListener('app:trigger-view-change', (e) => {
+    setView(e.detail.view);
+  });
+</script>

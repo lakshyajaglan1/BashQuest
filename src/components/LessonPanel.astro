@@ -1,0 +1,252 @@
+---
+---
+<div class="card-marketing bg-canvas p-6 flex flex-col h-full border border-hairline overflow-y-auto select-none">
+  
+  <!-- Lesson Header -->
+  <div class="pb-4 border-b border-hairline mb-5">
+    <div class="flex items-center justify-between mb-2">
+      <span id="lesson-eyebrow" class="font-mono text-xs font-bold text-violet-deep bg-violet-soft border border-violet-soft px-2.5 py-0.5 rounded-sm">
+        QUEST 1
+      </span>
+      <span class="text-xs font-mono text-mute font-bold" id="lesson-xp-reward">
+        +100 XP
+      </span>
+    </div>
+    <h2 id="lesson-title" class="display-sm text-ink font-bold tracking-tight">Who Am I and Where Am I?.</h2>
+  </div>
+
+  <!-- Lesson Description & Markdown Scroll -->
+  <div class="flex-1 space-y-5 overflow-y-auto text-sm leading-relaxed pr-1 mb-5">
+    <div id="lesson-desc" class="text-body space-y-3">
+      <!-- Injected dynamically -->
+    </div>
+
+    <!-- Commands Table Reference -->
+    <div class="space-y-2 pt-2">
+      <h4 class="text-xs font-mono font-bold uppercase text-mute tracking-wider">Command Reference</h4>
+      <div id="lesson-commands" class="border border-hairline rounded-sm divide-y divide-hairline bg-canvas-soft font-mono text-xs">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+
+    <!-- Objectives List -->
+    <div class="space-y-3 pt-3 border-t border-hairline/60">
+      <h4 class="text-xs font-mono font-bold uppercase text-mute tracking-wider">Verification Checklist</h4>
+      <div id="lesson-objectives" class="space-y-2">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Action CTAs -->
+  <div class="pt-4 border-t border-hairline/80 space-y-3">
+    <!-- Success Banner -->
+    <div id="success-banner" class="hidden p-3.5 bg-emerald-50 border border-emerald-200 rounded-sm flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
+      <div class="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-base shrink-0">
+        ✓
+      </div>
+      <div>
+        <h4 class="text-sm font-bold text-emerald-800">Quest Completed!</h4>
+        <p id="success-badge-award" class="text-xs text-emerald-600 font-mono">Unlocked badge: Explorer</p>
+      </div>
+    </div>
+
+    <div class="flex gap-3">
+      <button 
+        id="btn-verify-lesson" 
+        class="flex-1 h-12 bg-primary text-on-primary rounded-sm font-medium text-sm hover:opacity-90 transition-all cursor-pointer flex items-center justify-center gap-2"
+      >
+        <span>Verify Challenge</span>
+      </button>
+      
+      <button 
+        id="btn-next-lesson" 
+        class="hidden flex-1 h-12 bg-emerald-600 hover:bg-emerald-500 text-white rounded-sm font-medium text-sm transition-all cursor-pointer flex items-center justify-center gap-2 animate-pulse-slow"
+      >
+        <span>Next Quest</span>
+        <span class="font-mono">→</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { lessons } from '../lib/lessons';
+
+  let activeLesson = null;
+  let validationResult = { success: false, checks: [] };
+
+  const lessonEyebrow = document.getElementById('lesson-eyebrow');
+  const lessonTitle = document.getElementById('lesson-title');
+  const lessonXpReward = document.getElementById('lesson-xp-reward');
+  const lessonDesc = document.getElementById('lesson-desc');
+  const lessonCommands = document.getElementById('lesson-commands');
+  const lessonObjectives = document.getElementById('lesson-objectives');
+  
+  const successBanner = document.getElementById('success-banner');
+  const successBadge = document.getElementById('success-badge-award');
+  const btnVerify = document.getElementById('btn-verify-lesson');
+  const btnNext = document.getElementById('btn-next-lesson');
+
+  // Load lesson
+  function loadActiveLesson() {
+    if (!window.appState) return;
+    
+    const lessonId = window.appState.activeLessonId;
+    const lesson = lessons.find(l => l.id === lessonId);
+    if (!lesson) return;
+
+    activeLesson = lesson;
+    window.appState.activeLesson = lesson; // expose details to Nav Ask AI
+
+    // Reset verification states
+    validationResult = { success: false, checks: lesson.objectives.map(o => ({ id: o.id, passed: false })) };
+
+    // Draw fields
+    if (lessonEyebrow) lessonEyebrow.textContent = `QUEST ${lesson.id}`;
+    if (lessonTitle) lessonTitle.textContent = lesson.title + '.';
+    if (lessonXpReward) lessonXpReward.textContent = `+${lesson.xp} XP`;
+    if (lessonDesc) {
+      // Split formatting and wrap bold tags and code blocks
+      let formattedText = lesson.description
+        .replace(/\n/g, '<br>')
+        .replace(/`([^`]+)`/g, '<code class="px-1.5 py-0.5 bg-canvas-soft-2 border border-hairline rounded font-mono text-xs text-primary">$1</code>');
+      
+      formattedText += `
+        <div class="mt-4 p-3 bg-link-bg-soft/20 border border-link/20 rounded text-xs text-link-deep font-sans">
+          <strong>Objective:</strong> ${lesson.instructions}
+        </div>
+      `;
+      lessonDesc.innerHTML = formattedText;
+    }
+
+    // Commands List
+    if (lessonCommands) {
+      if (!lesson.commandHelp || lesson.commandHelp.length === 0) {
+        lessonCommands.innerHTML = '<div class="p-3 text-mute italic">No commands for this lesson.</div>';
+      } else {
+        lessonCommands.innerHTML = lesson.commandHelp.map(item => `
+          <div class="p-3 flex items-start gap-4">
+            <span class="font-bold text-primary shrink-0">${item.cmd}</span>
+            <span class="text-body text-[11px]">${item.desc}</span>
+          </div>
+        `).join('');
+      }
+    }
+
+    // Objectives UI
+    renderObjectives();
+
+    // Reset button states
+    btnVerify?.classList.remove('hidden');
+    if (btnVerify) btnVerify.innerHTML = '<span>Verify Challenge</span>';
+    btnNext?.classList.add('hidden');
+    successBanner?.classList.add('hidden');
+
+    // If already completed previously, show success state immediately but allow re-testing
+    if (window.appState.completedLessons.includes(lessonId)) {
+      showCompletionUI();
+    }
+  }
+
+  function renderObjectives() {
+    if (!activeLesson || !lessonObjectives) return;
+
+    lessonObjectives.innerHTML = activeLesson.objectives.map(obj => {
+      const checkState = validationResult.checks.find(c => c.id === obj.id);
+      const passed = checkState ? checkState.passed : false;
+      
+      const checkIcon = passed 
+        ? `<div class="w-5 h-5 rounded-full bg-success/15 border border-success text-success flex items-center justify-center font-bold text-xs shrink-0">✓</div>`
+        : `<div class="w-5 h-5 rounded-full border border-hairline-strong flex items-center justify-center shrink-0"></div>`;
+      
+      const textColorClass = passed ? 'text-success font-medium' : 'text-body';
+
+      return `
+        <div class="flex items-center gap-3 p-2 bg-canvas-soft border border-hairline rounded-sm">
+          ${checkIcon}
+          <span class="${textColorClass} text-xs font-mono">${obj.text}</span>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function showCompletionUI() {
+    successBanner?.classList.remove('hidden');
+    if (successBadge && activeLesson) {
+      successBadge.textContent = activeLesson.badge ? `Unlocked badge: ${activeLesson.badge}` : 'Earned Bonus XP!';
+    }
+    btnVerify?.classList.add('hidden');
+    
+    // Check if there is a next lesson
+    const nextLesson = lessons.find(l => l.id === activeLesson.id + 1);
+    if (nextLesson) {
+      btnNext?.classList.remove('hidden');
+    }
+  }
+
+  // Verification process
+  btnVerify?.addEventListener('click', () => {
+    if (!activeLesson || !window.appState) return;
+
+    if (btnVerify) btnVerify.innerHTML = `
+      <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <span>Testing Filesystem...</span>
+    `;
+
+    // Simulate 600ms validation check delay for realistic premium visual feel
+    setTimeout(() => {
+      const fs = window.appState.fs;
+      const session = window.appState.session;
+      const history = window.appState.terminalCommands || [];
+
+      // Run check hook
+      const checkRes = activeLesson.verify(fs, session, history);
+      validationResult = checkRes;
+
+      renderObjectives();
+
+      if (checkRes.success) {
+        // Complete Lesson!
+        window.dispatchEvent(new CustomEvent('app:complete-lesson', { detail: { lessonId: activeLesson.id, xp: activeLesson.xp } }));
+        showCompletionUI();
+      } else {
+        // Failed
+        if (btnVerify) btnVerify.innerHTML = '<span>Verify Challenge</span>';
+        alert('Some objectives are still pending. Please review the instructions and check your terminal commands.');
+      }
+    }, 600);
+  });
+
+  // Next Lesson button
+  btnNext?.addEventListener('click', () => {
+    if (!activeLesson) return;
+    const nextId = activeLesson.id + 1;
+    window.dispatchEvent(new CustomEvent('app:select-lesson', { detail: { lessonId: nextId } }));
+  });
+
+  // Listeners
+  window.addEventListener('app:select-lesson', (e) => {
+    // Save current commands for state loading
+    loadActiveLesson();
+  });
+
+  window.addEventListener('app:state-updated', () => {
+    // Sync state
+    if (activeLesson && window.appState && window.appState.completedLessons.includes(activeLesson.id)) {
+      showCompletionUI();
+    }
+  });
+
+  // Check commands as user types to dynamically tick off simple objectives if they pass
+  window.addEventListener('app:terminal-command', (e) => {
+    // Append command to state
+    if (window.appState) {
+      if (!window.appState.terminalCommands) window.appState.terminalCommands = [];
+      window.appState.terminalCommands.push((e as CustomEvent).detail.command);
+    }
+  });
+</script>

@@ -1,23 +1,40 @@
+---
+import '../styles/global.css';
+
+interface Props {
+	title?: string;
+	description?: string;
+}
+
+const { 
+	title = "BashQuest - Interactive Linux Commands & Filesystem Challenges",
+	description = "Learn Linux commands inside a beautiful web terminal with automated validation tests and real-time visual directory tree representation. Inspired by boot.dev and designed for modern developers."
+} = Astro.props;
+---
+
 <!doctype html>
-<html lang="en">
+<html lang="en" class="h-full bg-canvas-soft text-ink select-none scroll-smooth">
 	<head>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		
+		<!-- SEO Optimization -->
+		<title>{title}</title>
+		<meta name="description" content={description} />
+		<meta name="author" content="BashQuest Team" />
+		<meta name="keywords" content="Linux, Command Line, Terminal Simulator, Bash, Learner Tool, Interactive Lessons, boot.dev, Learn Linux, Developer Tools" />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:type" content="website" />
+		
+		<!-- Font preloads for better speed -->
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 	</head>
-	<body>
+	<body class="h-full font-sans antialiased text-body">
 		<slot />
 	</body>
 </html>
-
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>
