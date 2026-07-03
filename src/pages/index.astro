@@ -306,6 +306,21 @@ import LessonPanel from '../components/LessonPanel.astro';
         this.broadcastState();
       });
 
+      // Listen for quest restore request
+      window.addEventListener('app:restore-lesson', () => {
+        // Reset filesystem tree to default starting state
+        this.state.fsTree = null;
+        
+        // Re-initialize a fresh filesystem with active quest seeds
+        this.resetFilesystem();
+        
+        this.saveToStorage();
+        this.broadcastState();
+        
+        // Dispatch app:select-lesson to let the terminal and visual explorer know to reset
+        window.dispatchEvent(new CustomEvent('app:select-lesson', { detail: { lessonId: this.state.activeLessonId } }));
+      });
+
       // Listen for quest completions
       window.addEventListener('app:complete-lesson', (e: any) => {
         const { lessonId, xp } = e.detail;

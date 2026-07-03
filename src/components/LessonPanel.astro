@@ -53,6 +53,17 @@
 
     <div class="flex gap-3">
       <button 
+        id="btn-restore-lesson" 
+        class="h-12 px-4 rounded-sm border border-hairline bg-canvas text-ink text-sm font-medium hover:bg-canvas-soft-2 transition-all cursor-pointer flex items-center justify-center gap-2"
+        title="Restore quest to default starting state"
+      >
+        <svg class="w-4 h-4 text-mute" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18"/>
+        </svg>
+        <span>Restore</span>
+      </button>
+
+      <button 
         id="btn-verify-lesson" 
         class="flex-1 h-12 bg-primary text-on-primary rounded-sm font-medium text-sm hover:opacity-90 transition-all cursor-pointer flex items-center justify-center gap-2"
       >
@@ -87,6 +98,7 @@
   const successBadge = document.getElementById('success-badge-award');
   const btnVerify = document.getElementById('btn-verify-lesson');
   const btnNext = document.getElementById('btn-next-lesson');
+  const btnRestore = document.getElementById('btn-restore-lesson');
 
   // Load lesson
   function loadActiveLesson(forcedLessonId = null) {
@@ -226,6 +238,14 @@
     if (!activeLesson) return;
     const nextId = activeLesson.id + 1;
     window.dispatchEvent(new CustomEvent('app:select-lesson', { detail: { lessonId: nextId } }));
+  });
+
+  // Restore Lesson button
+  btnRestore?.addEventListener('click', () => {
+    if (!activeLesson || !window.appState) return;
+    if (confirm('Are you sure you want to reset the filesystem and start this quest over? This will wipe your progress for this quest.')) {
+      window.dispatchEvent(new CustomEvent('app:restore-lesson'));
+    }
   });
 
   // Listeners
