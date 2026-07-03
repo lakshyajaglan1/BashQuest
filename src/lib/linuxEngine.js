@@ -349,6 +349,57 @@ export class ShellSession {
         ]);
   }
 
+  // Expand wildcard patterns (* and ?) against the virtual filesystem
+  expandWildcard(pattern) {
+    const lastSlash = pattern.lastIndexOf('/');
+    let searchDir, filePattern;
+    if (lastSlash !== -1) {
+      searchDir = pattern.substring(0, lastSlash) || '/';
+      filePattern = pattern.substring(lastSlash + 1);
+    } else {
+      searchDir = '.';
+      filePattern = pattern;
+    }
+
+    const node = this.fs.getNodeByPath(this.currentPath, searchDir);
+    if (!node || node.type !== 'dir') {
+      return [pattern]; // no match, return as-is
+    }
+
+    // Convert glob pattern to regex: escape regex-special chars, then replace glob wildcards
+    let regexStr = '';
+    for (let i = 0; i < filePattern.length; i++) {
+      const ch = filePattern[i];
+      if (ch === '*') {
+        regexStr += '.*';
+      } else if (ch === '?') {
+        regexStr += '.';
+      } else if ('.+^${}()|[]\\'.includes(ch)) {
+        regexStr += '\\' + ch;
+      } else {
+        regexStr += ch;
+      }
+    }
+    const regex = new RegExp('^' + regexStr + '$');
+
+    const children = node.children || [];
+    const sortedChildren = [...children].sort((a, b) => a.name.localeCompare(b.name));
+
+    const matches = [];
+    for (const child of sortedChildren) {
+      // Wildcards don't match hidden files unless the pattern starts with '.'
+      if (child.name.startsWith('.') && !filePattern.startsWith('.')) {
+        continue;
+      }
+      if (regex.test(child.name)) {
+        const prefix = lastSlash !== -1 ? pattern.substring(0, lastSlash + 1) : '';
+        matches.push(prefix + child.name);
+      }
+    }
+
+    return matches.length > 0 ? matches : [pattern];
+  }
+
   execute(commandLine) {
     const trimmed = commandLine.trim();
     if (!trimmed) {
@@ -414,11 +465,13 @@ export class ShellSession {
         }
       }
 
-      // Parse command arguments, respecting quotes
+      // Parse command arguments, respecting quotes and tracking quote status
       const args = [];
+      const argsQuoted = [];
       let currentArg = '';
       let argInQuotes = false;
       let argQuoteChar = '';
+      let wasQuoted = false;
 
       for (let i = 0; i < cmdToRun.length; i++) {
         const char = cmdToRun[i];
@@ -428,11 +481,14 @@ export class ShellSession {
           } else if (!argInQuotes) {
             argInQuotes = true;
             argQuoteChar = char;
+            wasQuoted = true;
           }
         } else if (char === ' ' && !argInQuotes) {
           if (currentArg !== '') {
             args.push(currentArg);
+            argsQuoted.push(wasQuoted);
             currentArg = '';
+            wasQuoted = false;
           }
         } else {
           // handle escaped quotes
@@ -444,6 +500,7 @@ export class ShellSession {
       }
       if (currentArg !== '') {
         args.push(currentArg);
+        argsQuoted.push(wasQuoted);
       }
 
       if (args.length === 0) {
@@ -451,9 +508,19 @@ export class ShellSession {
         break;
       }
 
+      // Perform wildcard (glob) expansion on unquoted arguments containing * or ?
+      const expandedArgs = [];
+      for (let i = 0; i < args.length; i++) {
+        if (!argsQuoted[i] && (args[i].includes('*') || args[i].includes('?'))) {
+          expandedArgs.push(...this.expandWildcard(args[i]));
+        } else {
+          expandedArgs.push(args[i]);
+        }
+      }
+
       let isSudo = false;
-      let command = args[0];
-      let cmdArgs = args.slice(1);
+      let command = expandedArgs[0];
+      let cmdArgs = expandedArgs.slice(1);
 
       if (command === 'sudo') {
         isSudo = true;

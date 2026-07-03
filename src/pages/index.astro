@@ -104,17 +104,56 @@ import LessonPanel from '../components/LessonPanel.astro';
       const fs = new FileSystem(this.state.fsTree);
       
       // Perform customizations based on lesson needs
-      // E.g., Lesson 12 needs a downloads folder to delete, which the default tree has!
-      // Lesson 8 renames status.txt which we create in Lesson 6. In our remapped curriculum:
-      // Lesson 8 is 'Writing & Overwriting Files', and Lesson 10 is 'Copying & Moving Files'.
-      // If Lesson 8 is completed but not Lesson 10, pre-populate status.txt.
+      // Ensure quest-required seeded files exist in the persisted filesystem
       const completed = this.state.completedLessons;
+
+      // Quest 8/10: status.txt needed for Writing & Copying quests
       if (completed.includes(8) && !completed.includes(10)) {
-        // Pre-create status.txt if it doesn't exist
         const statusNode = fs.getNodeByPath('/home/learner', 'status.txt');
         if (!statusNode) {
           fs.createNode('/home/learner', 'status.txt', 'file', {
             content: 'System Online\nAll Checks Green\n'
+          });
+        }
+      }
+
+      // Quest 11: Ensure log_1.txt, log_2.txt, log_3.txt exist for wildcard operations
+      if (!completed.includes(11)) {
+        const logFiles = [
+          { name: 'log_1.txt', content: 'Log entry 1: System initiated.\n' },
+          { name: 'log_2.txt', content: 'Log entry 2: System update started.\n' },
+          { name: 'log_3.txt', content: 'Log entry 3: Database sync complete.\n' }
+        ];
+        for (const logFile of logFiles) {
+          if (!fs.getNodeByPath('/home/learner', logFile.name)) {
+            fs.createNode('/home/learner', logFile.name, 'file', {
+              content: logFile.content
+            });
+          }
+        }
+      }
+
+      // Quest 12: Ensure downloads directory exists for removal quest
+      if (!completed.includes(12)) {
+        if (!fs.getNodeByPath('/home/learner', 'downloads')) {
+          fs.createNode('/home/learner', 'downloads', 'dir');
+        }
+      }
+
+      // Quest 14: Ensure names.txt exists for sort/uniq quest
+      if (!completed.includes(14)) {
+        if (!fs.getNodeByPath('/home/learner', 'names.txt')) {
+          fs.createNode('/home/learner', 'names.txt', 'file', {
+            content: 'Alice\nBob\nAlice\nCharlie\nBob\nDavid\nCharlie\n'
+          });
+        }
+      }
+
+      // Quest 15: Ensure logs.txt exists for grep quest
+      if (!completed.includes(15)) {
+        if (!fs.getNodeByPath('/home/learner', 'logs.txt')) {
+          fs.createNode('/home/learner', 'logs.txt', 'file', {
+            content: '[INFO] Service started.\n[WARNING] High memory usage.\n[ERROR] Database connection failed.\n[INFO] User logged in.\n[ERROR] Failed to start database service.\n'
           });
         }
       }
