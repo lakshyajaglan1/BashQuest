@@ -21,22 +21,22 @@ import LessonPanel from '../components/LessonPanel.astro';
       </section>
 
       <!-- VIEW 2: Interactive Sandbox Workspace -->
-      <section id="view-sandbox" class="hidden">
-        <div class="max-w-7xl mx-auto py-8 px-4 md:px-8 grid grid-cols-1 lg:grid-cols-12 gap-8 h-auto lg:h-[calc(100vh-120px)] lg:min-h-[580px]">
+      <section id="view-sandbox" class="hidden lg:h-[calc(100vh-64px)] lg:overflow-hidden">
+        <div class="w-full py-4 lg:py-6 px-4 md:px-8 grid grid-cols-1 lg:grid-cols-12 gap-6 h-auto lg:h-full min-h-0">
           <!-- Left Column: Lesson Instructions Panel (5 cols) -->
-          <div class="lg:col-span-5 h-full">
+          <div class="lg:col-span-5 h-auto lg:h-full min-h-0">
             <LessonPanel />
           </div>
 
           <!-- Right Column: Visual Explorer & Terminal (7 cols) -->
-          <div class="lg:col-span-7 flex flex-col gap-6 h-full">
+          <div class="lg:col-span-7 flex flex-col gap-6 h-auto lg:h-full min-h-0">
             <!-- Filesystem Visual Explorer -->
-            <div class="flex-1 min-h-[180px]">
+            <div class="flex-1 min-h-[180px] lg:min-h-0">
               <FileSystemVisualizer />
             </div>
 
             <!-- Terminal Simulator Box -->
-            <div class="h-auto">
+            <div class="flex-1 min-h-0">
               <Terminal />
             </div>
           </div>
@@ -391,17 +391,20 @@ import LessonPanel from '../components/LessonPanel.astro';
     applyViewVisibility() {
       const viewDash = document.getElementById('view-dashboard');
       const viewSand = document.getElementById('view-sandbox');
+      const footer = document.querySelector('footer');
 
       if (this.state.activeView === 'dashboard') {
         viewDash?.classList.remove('hidden');
         viewDash?.classList.add('block');
         viewSand?.classList.remove('block', 'grid');
         viewSand?.classList.add('hidden');
+        footer?.classList.remove('hidden');
       } else {
         viewSand?.classList.remove('hidden');
         viewSand?.classList.add('block');
         viewDash?.classList.remove('block');
         viewDash?.classList.add('hidden');
+        footer?.classList.add('hidden');
         
         // Autofocus terminal prompt when entering workspace
         setTimeout(() => {

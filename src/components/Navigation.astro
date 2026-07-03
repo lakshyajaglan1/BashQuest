@@ -146,6 +146,11 @@
 
   // Toggle View Handler
   function setView(view) {
+    updateNavHighlights(view);
+    window.dispatchEvent(new CustomEvent('app:view-change', { detail: { view } }));
+  }
+
+  function updateNavHighlights(view) {
     if (view === 'dashboard') {
       btnDashboard?.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
       btnDashboard?.classList.remove('text-body', 'hover:text-ink', 'hover:bg-canvas-soft-2');
@@ -157,8 +162,6 @@
       btnDashboard?.classList.add('text-body', 'hover:text-ink', 'hover:bg-canvas-soft-2');
       btnDashboard?.classList.remove('bg-primary', 'text-on-primary', 'shadow-sm');
     }
-    
-    window.dispatchEvent(new CustomEvent('app:view-change', { detail: { view } }));
   }
 
   btnDashboard?.addEventListener('click', () => setView('dashboard'));
@@ -190,14 +193,17 @@
   btnAIGotIt?.addEventListener('click', closeAI);
 
   // Listen for Global State Updates
-  window.addEventListener('app:state-updated', (e) => {
+  window.addEventListener('app:state-updated', (e: any) => {
     const state = e.detail;
     if (xpCount) xpCount.textContent = state.xp;
     if (streakCount) streakCount.textContent = state.streak;
+    if (state.activeView) {
+      updateNavHighlights(state.activeView);
+    }
   });
 
   // Switch view internally
-  window.addEventListener('app:trigger-view-change', (e) => {
+  window.addEventListener('app:trigger-view-change', (e: any) => {
     setView(e.detail.view);
   });
 </script>
