@@ -51,6 +51,46 @@ export class FileSystem {
                       group: 'learner'
                     }
                   ]
+                },
+                {
+                  name: 'names.txt',
+                  type: 'file',
+                  content: 'Alice\nBob\nAlice\nCharlie\nBob\nDavid\nCharlie\n',
+                  permissions: '644',
+                  owner: 'learner',
+                  group: 'learner'
+                },
+                {
+                  name: 'logs.txt',
+                  type: 'file',
+                  content: '[INFO] Service started.\n[WARNING] High memory usage.\n[ERROR] Database connection failed.\n[INFO] User logged in.\n[ERROR] Failed to start database service.\n',
+                  permissions: '644',
+                  owner: 'learner',
+                  group: 'learner'
+                },
+                {
+                  name: 'log_1.txt',
+                  type: 'file',
+                  content: 'Log entry 1: System initiated.\n',
+                  permissions: '644',
+                  owner: 'learner',
+                  group: 'learner'
+                },
+                {
+                  name: 'log_2.txt',
+                  type: 'file',
+                  content: 'Log entry 2: System update started.\n',
+                  permissions: '644',
+                  owner: 'learner',
+                  group: 'learner'
+                },
+                {
+                  name: 'log_3.txt',
+                  type: 'file',
+                  content: 'Log entry 3: Database sync complete.\n',
+                  permissions: '644',
+                  owner: 'learner',
+                  group: 'learner'
                 }
               ]
             }
@@ -96,6 +136,14 @@ export class FileSystem {
               permissions: '644',
               owner: 'root',
               group: 'root'
+            },
+            {
+              name: 'shadow',
+              type: 'file',
+              content: 'root:$6$8zLx92xp$H9s2:18200:0:99999:7:::\nlearner:$6$1bYtM2op$P4w1:18200:0:99999:7:::\n',
+              permissions: '000',
+              owner: 'root',
+              group: 'shadow'
             }
           ]
         },
@@ -289,10 +337,16 @@ export class FileSystem {
 
 // Shell Command Interpreter Engine
 export class ShellSession {
-  constructor(fileSystem, currentPath = '/home/learner') {
+  constructor(fileSystem, currentPath = '/home/learner', installedPackages = null) {
     this.fs = fileSystem;
     this.currentPath = currentPath;
     this.history = [];
+    this.installedPackages = installedPackages 
+      ? new Set(installedPackages)
+      : new Set([
+          'pwd', 'whoami', 'clear', 'help', 'cd', 'ls', 'mkdir', 'touch', 'cat', 'echo', 
+          'rm', 'cp', 'mv', 'chmod', 'grep', 'wc', 'uniq', 'sort', 'man', 'apt'
+        ]);
   }
 
   execute(commandLine) {
@@ -303,140 +357,448 @@ export class ShellSession {
 
     this.history.push(trimmed);
 
-    // Support basic redirection: cmd > file, cmd >> file
-    let redirectType = null; // 'write' or 'append'
-    let redirectFile = null;
-    let cmdToRun = trimmed;
-
-    // Check for redirection (matches >> or >)
-    if (trimmed.includes('>>')) {
-      const parts = trimmed.split('>>');
-      cmdToRun = parts[0].trim();
-      redirectFile = parts[1].trim();
-      redirectType = 'append';
-    } else if (trimmed.includes('>')) {
-      const parts = trimmed.split('>');
-      cmdToRun = parts[0].trim();
-      redirectFile = parts[1].trim();
-      redirectType = 'write';
-    }
-
-    // Parse command arguments, respecting quotes
-    const args = [];
-    let currentArg = '';
+    // Support pipeline split
+    const pipelineSegments = [];
+    let currentSegment = '';
     let inQuotes = false;
     let quoteChar = '';
 
-    for (let i = 0; i < cmdToRun.length; i++) {
-      const char = cmdToRun[i];
-      if ((char === '"' || char === "'") && (i === 0 || cmdToRun[i - 1] !== '\\')) {
+    for (let i = 0; i < trimmed.length; i++) {
+      const char = trimmed[i];
+      if ((char === '"' || char === "'") && (i === 0 || trimmed[i - 1] !== '\\')) {
         if (inQuotes && char === quoteChar) {
           inQuotes = false;
         } else if (!inQuotes) {
           inQuotes = true;
           quoteChar = char;
         }
-      } else if (char === ' ' && !inQuotes) {
-        if (currentArg !== '') {
-          args.push(currentArg);
-          currentArg = '';
-        }
+        currentSegment += char;
+      } else if (char === '|' && !inQuotes) {
+        pipelineSegments.push(currentSegment.trim());
+        currentSegment = '';
       } else {
-        // handle escaped quotes
-        if (char === '\\' && i + 1 < cmdToRun.length && (cmdToRun[i + 1] === '"' || cmdToRun[i + 1] === "'")) {
-          continue;
-        }
-        currentArg += char;
+        currentSegment += char;
       }
     }
-    if (currentArg !== '') {
-      args.push(currentArg);
+    if (currentSegment.trim()) {
+      pipelineSegments.push(currentSegment.trim());
     }
 
-    if (args.length === 0) {
+    if (pipelineSegments.length === 0) {
       return { stdout: '', stderr: '', currentPath: this.currentPath };
     }
 
-    const command = args[0];
-    const cmdArgs = args.slice(1);
+    let stdin = '';
+    let lastResult = { stdout: '', stderr: '', currentPath: this.currentPath };
 
-    let result = { stdout: '', stderr: '', currentPath: this.currentPath, clear: false };
+    for (let s = 0; s < pipelineSegments.length; s++) {
+      const segment = pipelineSegments[s];
+      const isPiped = s < pipelineSegments.length - 1;
 
-    switch (command) {
-      case 'pwd':
-        result.stdout = this.currentPath;
-        break;
+      // Support basic redirection on the last command in the pipeline
+      let redirectType = null; // 'write' or 'append'
+      let redirectFile = null;
+      let cmdToRun = segment;
 
-      case 'whoami':
-        result.stdout = 'learner';
-        break;
-
-      case 'clear':
-        result.clear = true;
-        break;
-
-      case 'help':
-        result.stdout = 'Available commands: cd, ls, pwd, mkdir, touch, cat, echo, rm, cp, mv, chmod, grep, whoami, clear, help\nRedirections > (overwrite) and >> (append) are supported.';
-        break;
-
-      case 'cd':
-        result = this.runCd(cmdArgs);
-        break;
-
-      case 'ls':
-        result = this.runLs(cmdArgs);
-        break;
-
-      case 'mkdir':
-        result = this.runMkdir(cmdArgs);
-        break;
-
-      case 'touch':
-        result = this.runTouch(cmdArgs);
-        break;
-
-      case 'cat':
-        result = this.runCat(cmdArgs);
-        break;
-
-      case 'echo':
-        result = this.runEcho(cmdArgs);
-        break;
-
-      case 'rm':
-        result = this.runRm(cmdArgs);
-        break;
-
-      case 'cp':
-        result = this.runCp(cmdArgs);
-        break;
-
-      case 'mv':
-        result = this.runMv(cmdArgs);
-        break;
-
-      case 'chmod':
-        result = this.runChmod(cmdArgs);
-        break;
-
-      case 'grep':
-        result = this.runGrep(cmdArgs);
-        break;
-
-      default:
-        result.stderr = `bash: ${command}: command not found`;
-    }
-
-    // Process redirection if there was no command error and we want to redirect stdout
-    if (redirectFile && !result.stderr) {
-      const fileResult = this.handleRedirection(redirectFile, result.stdout, redirectType);
-      if (!fileResult.success) {
-        result.stderr = `bash: ${redirectFile}: ${fileResult.error}`;
+      if (s === pipelineSegments.length - 1) {
+        if (segment.includes('>>')) {
+          const parts = segment.split('>>');
+          cmdToRun = parts[0].trim();
+          redirectFile = parts[1].trim();
+          redirectType = 'append';
+        } else if (segment.includes('>')) {
+          const parts = segment.split('>');
+          cmdToRun = parts[0].trim();
+          redirectFile = parts[1].trim();
+          redirectType = 'write';
+        }
       }
-      result.stdout = ''; // Redirection consumes stdout
+
+      // Parse command arguments, respecting quotes
+      const args = [];
+      let currentArg = '';
+      let argInQuotes = false;
+      let argQuoteChar = '';
+
+      for (let i = 0; i < cmdToRun.length; i++) {
+        const char = cmdToRun[i];
+        if ((char === '"' || char === "'") && (i === 0 || cmdToRun[i - 1] !== '\\')) {
+          if (argInQuotes && char === argQuoteChar) {
+            argInQuotes = false;
+          } else if (!argInQuotes) {
+            argInQuotes = true;
+            argQuoteChar = char;
+          }
+        } else if (char === ' ' && !argInQuotes) {
+          if (currentArg !== '') {
+            args.push(currentArg);
+            currentArg = '';
+          }
+        } else {
+          // handle escaped quotes
+          if (char === '\\' && i + 1 < cmdToRun.length && (cmdToRun[i + 1] === '"' || cmdToRun[i + 1] === "'")) {
+            continue;
+          }
+          currentArg += char;
+        }
+      }
+      if (currentArg !== '') {
+        args.push(currentArg);
+      }
+
+      if (args.length === 0) {
+        lastResult = { stdout: '', stderr: '', currentPath: this.currentPath };
+        break;
+      }
+
+      let isSudo = false;
+      let command = args[0];
+      let cmdArgs = args.slice(1);
+
+      if (command === 'sudo') {
+        isSudo = true;
+        if (cmdArgs.length === 0) {
+          lastResult = { stdout: '', stderr: 'usage: sudo command [args]', currentPath: this.currentPath };
+          break;
+        }
+        command = cmdArgs[0];
+        cmdArgs = cmdArgs.slice(1);
+      }
+
+      if (!this.installedPackages.has(command)) {
+        lastResult = { stdout: '', stderr: `bash: ${command}: command not found`, currentPath: this.currentPath };
+        break;
+      }
+
+      let result = { stdout: '', stderr: '', currentPath: this.currentPath, clear: false };
+
+      switch (command) {
+        case 'pwd':
+          result.stdout = this.currentPath;
+          break;
+
+        case 'whoami':
+          result.stdout = isSudo ? 'root' : 'learner';
+          break;
+
+        case 'clear':
+          result.clear = true;
+          break;
+
+        case 'help':
+          result.stdout = 'Available commands: cd, ls, pwd, mkdir, touch, cat, echo, rm, cp, mv, chmod, grep, wc, uniq, sort, man, tree, sudo, apt, whoami, clear, help\nRedirections > (overwrite) and >> (append), and pipes | are supported.';
+          break;
+
+        case 'cd':
+          result = this.runCd(cmdArgs);
+          break;
+
+        case 'ls':
+          result = this.runLs(cmdArgs, isPiped);
+          break;
+
+        case 'mkdir':
+          result = this.runMkdir(cmdArgs);
+          break;
+
+        case 'touch':
+          result = this.runTouch(cmdArgs);
+          break;
+
+        case 'cat':
+          result = this.runCat(cmdArgs, stdin, isSudo);
+          break;
+
+        case 'echo':
+          result = this.runEcho(cmdArgs);
+          break;
+
+        case 'rm':
+          result = this.runRm(cmdArgs);
+          break;
+
+        case 'cp':
+          result = this.runCp(cmdArgs);
+          break;
+
+        case 'mv':
+          result = this.runMv(cmdArgs);
+          break;
+
+        case 'chmod':
+          result = this.runChmod(cmdArgs);
+          break;
+
+        case 'grep':
+          result = this.runGrep(cmdArgs, stdin, isSudo);
+          break;
+
+        case 'wc':
+          result = this.runWc(cmdArgs, stdin, isSudo);
+          break;
+
+        case 'uniq':
+          result = this.runUniq(cmdArgs, stdin, isSudo);
+          break;
+
+        case 'sort':
+          result = this.runSort(cmdArgs, stdin, isSudo);
+          break;
+
+        case 'man':
+          result = this.runMan(cmdArgs);
+          break;
+
+        case 'tree':
+          result = this.runTree(cmdArgs);
+          break;
+
+        case 'apt':
+          result = this.runApt(cmdArgs, isSudo);
+          break;
+
+        default:
+          result.stderr = `bash: ${command}: command not found`;
+      }
+
+      if (result.stderr) {
+        lastResult = result;
+        break;
+      }
+
+      // Process redirection if on the last command in the pipeline
+      if (s === pipelineSegments.length - 1 && redirectFile) {
+        const fileResult = this.handleRedirection(redirectFile, result.stdout, redirectType);
+        if (!fileResult.success) {
+          result.stderr = `bash: ${redirectFile}: ${fileResult.error}`;
+        }
+        result.stdout = ''; // Redirection consumes stdout
+      }
+
+      stdin = result.stdout;
+      lastResult = result;
     }
 
-    return result;
+    return lastResult;
+  }
+
+  runWc(args, stdin, isSudo) {
+    let showLines = false;
+    const files = [];
+
+    for (const arg of args) {
+      if (arg.startsWith('-')) {
+        if (arg.includes('l')) showLines = true;
+      } else {
+        files.push(arg);
+      }
+    }
+
+    let content = '';
+    if (files.length === 0) {
+      content = stdin || '';
+    } else {
+      const contents = [];
+      for (const file of files) {
+        const node = this.fs.getNodeByPath(this.currentPath, file);
+        if (!node) {
+          return { stdout: '', stderr: `wc: ${file}: No such file or directory`, currentPath: this.currentPath };
+        }
+        if (node.type === 'dir') {
+          return { stdout: '', stderr: `wc: ${file}: Is a directory`, currentPath: this.currentPath };
+        }
+        if (node.permissions === '000' && !isSudo) {
+          return { stdout: '', stderr: `wc: ${file}: Permission denied`, currentPath: this.currentPath };
+        }
+        contents.push(node.content);
+      }
+      content = contents.join('\n');
+    }
+
+    let count = 0;
+    for (let i = 0; i < content.length; i++) {
+      if (content[i] === '\n') count++;
+    }
+    // If the content does not end with newline and is not empty, count it as a line
+    if (content.length > 0 && !content.endsWith('\n')) {
+      count++;
+    }
+
+    return {
+      stdout: showLines ? String(count) : `      ${count}      ${content.split(/\s+/).filter(Boolean).length}     ${content.length}`,
+      stderr: '',
+      currentPath: this.currentPath
+    };
+  }
+
+  runUniq(args, stdin, isSudo) {
+    const files = args.filter(arg => !arg.startsWith('-'));
+    let content = '';
+
+    if (files.length === 0) {
+      content = stdin || '';
+    } else {
+      const node = this.fs.getNodeByPath(this.currentPath, files[0]);
+      if (!node) {
+        return { stdout: '', stderr: `uniq: ${files[0]}: No such file or directory`, currentPath: this.currentPath };
+      }
+      if (node.type === 'dir') {
+        return { stdout: '', stderr: `uniq: ${files[0]}: Is a directory`, currentPath: this.currentPath };
+      }
+      if (node.permissions === '000' && !isSudo) {
+        return { stdout: '', stderr: `uniq: ${files[0]}: Permission denied`, currentPath: this.currentPath };
+      }
+      content = node.content;
+    }
+
+    const lines = content.split('\n');
+    if (lines.length > 0 && lines[lines.length - 1] === '') {
+      lines.pop();
+    }
+
+    const resultLines = [];
+    let lastLine = null;
+    for (const line of lines) {
+      if (line !== lastLine) {
+        resultLines.push(line);
+        lastLine = line;
+      }
+    }
+
+    return {
+      stdout: resultLines.join('\n'),
+      stderr: '',
+      currentPath: this.currentPath
+    };
+  }
+
+  runSort(args, stdin, isSudo) {
+    const files = args.filter(arg => !arg.startsWith('-'));
+    let content = '';
+
+    if (files.length === 0) {
+      content = stdin || '';
+    } else {
+      const node = this.fs.getNodeByPath(this.currentPath, files[0]);
+      if (!node) {
+        return { stdout: '', stderr: `sort: ${files[0]}: No such file or directory`, currentPath: this.currentPath };
+      }
+      if (node.type === 'dir') {
+        return { stdout: '', stderr: `sort: ${files[0]}: Is a directory`, currentPath: this.currentPath };
+      }
+      if (node.permissions === '000' && !isSudo) {
+        return { stdout: '', stderr: `sort: ${files[0]}: Permission denied`, currentPath: this.currentPath };
+      }
+      content = node.content;
+    }
+
+    const lines = content.split('\n');
+    if (lines.length > 0 && lines[lines.length - 1] === '') {
+      lines.pop();
+    }
+
+    lines.sort();
+
+    return {
+      stdout: lines.join('\n'),
+      stderr: '',
+      currentPath: this.currentPath
+    };
+  }
+
+  runMan(args) {
+    if (args.length === 0) {
+      return { stdout: '', stderr: 'What manual page do you want?', currentPath: this.currentPath };
+    }
+    const cmd = args[0];
+    const manuals = {
+      ls: 'LS(1) - List directory contents\n\nSYNOPSIS\n       ls [OPTION]... [FILE]...\n\nDESCRIPTION\n       List information about the FILEs (the current directory by default).\n\n       -a, --all\n              do not ignore entries starting with .\n       -l     use a long listing format',
+      uniq: 'UNIQ(1) - Report or omit repeated lines\n\nSYNOPSIS\n       uniq [OPTION]... [INPUT [OUTPUT]]\n\nDESCRIPTION\n       Filter adjacent matching lines from INPUT (or standard input), writing to OUTPUT (or standard output).',
+      sort: 'SORT(1) - Sort lines of text files\n\nSYNOPSIS\n       sort [OPTION]... [FILE]...\n\nDESCRIPTION\n       Write sorted concatenation of all FILE(s) to standard output.',
+      wc: 'WC(1) - Print newline, word, and byte counts for each file\n\nSYNOPSIS\n       wc [OPTION]... [FILE]...\n\nDESCRIPTION\n       Print newline, word, and byte counts for each FILE, and a total line if more than one FILE is specified.\n\n       -l, --lines\n              print the newline counts',
+      grep: 'GREP(1) - Print lines matching a pattern\n\nSYNOPSIS\n       grep [PATTERN] [FILE]...\n\nDESCRIPTION\n       Search for PATTERN in each FILE or standard input.',
+      tree: 'TREE(1) - List contents of directories in a tree-like format\n\nSYNOPSIS\n       tree [OPTION]... [DIRECTORY...]\n\nDESCRIPTION\n       Tree is a recursive directory listing program that produces a depth indented listing of files.',
+      man: 'MAN(1) - Interface to the system reference manuals\n\nSYNOPSIS\n       man [COMMAND]\n\nDESCRIPTION\n       man formats and displays the on-line manual pages.'
+    };
+    if (manuals[cmd]) {
+      return { stdout: manuals[cmd], stderr: '', currentPath: this.currentPath };
+    }
+    return { stdout: '', stderr: `No manual entry for ${cmd}`, currentPath: this.currentPath };
+  }
+
+  runTree(args) {
+    let showAll = false;
+    const paths = [];
+
+    for (const arg of args) {
+      if (arg.startsWith('-')) {
+        if (arg.includes('a')) showAll = true;
+      } else {
+        paths.push(arg);
+      }
+    }
+
+    const target = paths[0] || '.';
+    const node = this.fs.getNodeByPath(this.currentPath, target);
+    if (!node) {
+      return { stdout: '', stderr: `${target} [error opening dir]`, currentPath: this.currentPath };
+    }
+    if (node.type !== 'dir') {
+      return { stdout: '', stderr: `[error opening dir]`, currentPath: this.currentPath };
+    }
+
+    const lines = [];
+    lines.push(node.name === '/' ? '/' : node.name);
+
+    const buildTree = (dirNode, prefix = '') => {
+      let children = [...dirNode.children];
+      if (!showAll) {
+        children = children.filter(c => !c.name.startsWith('.'));
+      }
+      children.sort((a, b) => a.name.localeCompare(b.name));
+
+      children.forEach((child, index) => {
+        const isLast = index === children.length - 1;
+        const connector = isLast ? '└── ' : '├── ';
+        lines.push(`${prefix}${connector}${child.name}`);
+        if (child.type === 'dir' && child.children) {
+          const newPrefix = prefix + (isLast ? '    ' : '│   ');
+          buildTree(child, newPrefix);
+        }
+      });
+    };
+
+    buildTree(node);
+    return {
+      stdout: lines.join('\n'),
+      stderr: '',
+      currentPath: this.currentPath
+    };
+  }
+
+  runApt(args, isSudo) {
+    if (!isSudo) {
+      return { stdout: '', stderr: 'E: Could not open lock file /var/lib/dpkg/lock-frontend - open (13: Permission denied)\nE: Unable to acquire the dpkg frontend lock (/var/lib/dpkg/lock-frontend), are you root?', currentPath: this.currentPath };
+    }
+    if (args[0] === 'install') {
+      const pkg = args[1];
+      if (!pkg) {
+        return { stdout: '', stderr: 'apt install: missing package name', currentPath: this.currentPath };
+      }
+      if (pkg === 'tree') {
+        this.installedPackages.add('tree');
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('app:package-installed', { detail: { package: 'tree' } }));
+        }
+        return {
+          stdout: `Reading package lists... Done\nBuilding dependency tree... Done\nReading state information... Done\nThe following NEW packages will be installed:\n  tree\n0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.\nNeed to get 43.0 kB of archives.\nAfter this operation, 115 kB of additional disk space will be used.\nGet:1 http://archive.ubuntu.com/ubuntu noble/main amd64 tree amd64 2.1.1-2 [43.0 kB]\nFetched 43.0 kB in 0s (150 kB/s)\nSelecting previously unselected package tree.\n(Reading database ... 12845 files and directories currently installed.)\nPreparing to unpack .../tree_2.1.1-2_amd64.deb ...\nUnpacking tree (2.1.1-2) ...\nSetting up tree (2.1.1-2) ...\nProcessing triggers for man-db (2.12.0-1) ...`,
+          stderr: '',
+          currentPath: this.currentPath
+        };
+      }
+      return { stdout: '', stderr: `E: Unable to locate package ${pkg}`, currentPath: this.currentPath };
+    }
+    return { stdout: '', stderr: 'apt: usage: apt install [package]', currentPath: this.currentPath };
   }
 
   // Redirection logic
@@ -482,7 +844,7 @@ export class ShellSession {
   }
 
   // LS: List directory
-  runLs(args) {
+  runLs(args, isPiped = false) {
     let showDetails = false;
     let showAll = false;
     const paths = [];
@@ -530,7 +892,7 @@ export class ShellSession {
       return { stdout: rows.join('\n'), stderr: '', currentPath: this.currentPath };
     } else {
       const names = items.map(item => item.name);
-      return { stdout: names.join('  '), stderr: '', currentPath: this.currentPath };
+      return { stdout: names.join(isPiped ? '\n' : '  '), stderr: '', currentPath: this.currentPath };
     }
   }
 
@@ -611,9 +973,9 @@ export class ShellSession {
   }
 
   // CAT: Concatenate/read file contents
-  runCat(args) {
+  runCat(args, stdin, isSudo) {
     if (args.length === 0) {
-      return { stdout: '', stderr: '', currentPath: this.currentPath }; // Standard cat waits for stdin, we just return empty
+      return { stdout: stdin || '', stderr: '', currentPath: this.currentPath };
     }
 
     const outputs = [];
@@ -625,6 +987,8 @@ export class ShellSession {
         errors.push(`cat: ${target}: No such file or directory`);
       } else if (node.type === 'dir') {
         errors.push(`cat: ${target}: Is a directory`);
+      } else if (node.permissions === '000' && !isSudo) {
+        errors.push(`cat: ${target}: Permission denied`);
       } else {
         outputs.push(node.content);
       }
@@ -858,23 +1222,35 @@ export class ShellSession {
   }
 
   // GREP: Search text
-  runGrep(args) {
-    if (args.length < 2) {
+  runGrep(args, stdin, isSudo) {
+    if (args.length < 1) {
       return { stdout: '', stderr: 'grep: usage: grep [pattern] [file]', currentPath: this.currentPath };
     }
 
     const pattern = args[0];
     const target = args[1];
+    let content = '';
 
-    const node = this.fs.getNodeByPath(this.currentPath, target);
-    if (!node) {
-      return { stdout: '', stderr: `grep: ${target}: No such file or directory`, currentPath: this.currentPath };
-    }
-    if (node.type === 'dir') {
-      return { stdout: '', stderr: `grep: ${target}: Is a directory`, currentPath: this.currentPath };
+    if (!target) {
+      content = stdin || '';
+    } else {
+      const node = this.fs.getNodeByPath(this.currentPath, target);
+      if (!node) {
+        return { stdout: '', stderr: `grep: ${target}: No such file or directory`, currentPath: this.currentPath };
+      }
+      if (node.type === 'dir') {
+        return { stdout: '', stderr: `grep: ${target}: Is a directory`, currentPath: this.currentPath };
+      }
+      if (node.permissions === '000' && !isSudo) {
+        return { stdout: '', stderr: `grep: ${target}: Permission denied`, currentPath: this.currentPath };
+      }
+      content = node.content;
     }
 
-    const lines = node.content.split('\n');
+    const lines = content.split('\n');
+    if (lines.length > 0 && lines[lines.length - 1] === '') {
+      lines.pop();
+    }
     const matched = lines.filter(line => line.includes(pattern));
 
     return {

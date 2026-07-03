@@ -3,7 +3,9 @@
 export const modules = [
   { id: 'basics', title: '1. Filesystem Basics' },
   { id: 'manipulation', title: '2. File Manipulation' },
-  { id: 'advanced', title: '3. Redirection & Security' }
+  { id: 'plumbing', title: '3. Pipes & Filtering' },
+  { id: 'advanced', title: '4. Redirection & Security' },
+  { id: 'system', title: '5. Superuser & Packages' }
 ];
 
 export const lessons = [
@@ -98,6 +100,38 @@ export const lessons = [
   },
   {
     id: 4,
+    moduleId: 'basics',
+    title: 'Nested Directories & Options',
+    xp: 160,
+    badge: 'Architect',
+    description: 'When creating nested folders (folders inside folders), the `mkdir` command fails by default if parent directories do not exist. We can override this behavior by using options (or switches).\n\nThe option `-p` (or `--parents`) creates parent directories as needed. For example, `mkdir -p workspace/src/utils` creates `workspace`, `workspace/src`, and `workspace/src/utils` all at once.',
+    instructions: 'Create a nested folder path `workspace/src/utils` in your home directory `/home/learner` using the parents switch `-p` (i.e. `mkdir -p workspace/src/utils`).',
+    commandHelp: [
+      { cmd: 'mkdir -p path', desc: 'Create nested directories and parent directories' }
+    ],
+    objectives: [
+      { id: 'nested_dir_exists', text: 'Create nested directory workspace/src/utils' },
+      { id: 'used_p_switch', text: 'Use the -p or --parents switch in mkdir' }
+    ],
+    verify: (fs, session, history) => {
+      const node = fs.getNodeByPath('/home/learner/workspace/src', 'utils');
+      const nestedDirExists = node && node.type === 'dir';
+      const usedPSwitch = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts[0] === 'mkdir' && (parts.includes('-p') || parts.includes('--parents') || parts.some(p => p.startsWith('-') && p.includes('p')));
+      });
+
+      return {
+        success: nestedDirExists && usedPSwitch,
+        checks: [
+          { id: 'nested_dir_exists', passed: !!nestedDirExists },
+          { id: 'used_p_switch', passed: usedPSwitch }
+        ]
+      };
+    }
+  },
+  {
+    id: 5,
     moduleId: 'manipulation',
     title: 'Creating Empty Files',
     xp: 150,
@@ -124,7 +158,7 @@ export const lessons = [
     }
   },
   {
-    id: 5,
+    id: 6,
     moduleId: 'manipulation',
     title: 'Reading File Contents',
     xp: 150,
@@ -153,9 +187,40 @@ export const lessons = [
     }
   },
   {
-    id: 6,
+    id: 7,
     moduleId: 'manipulation',
-    title: 'Writing & Overwriting files',
+    title: 'Handling Spaces in File Names',
+    xp: 170,
+    badge: 'Quoter',
+    description: 'Linux uses spaces to separate commands and arguments. If you create a file or directory with a space in the name (e.g. `mkdir my folder`), Linux interprets it as two separate arguments, creating "my" and "folder".\n\nTo handle spaces in names, we must escape them by enclosing the name in double quotes `"my folder"`, single quotes `\'my folder\'`, or using a backslash escape `my\\ folder`.',
+    instructions: 'Create a directory named `"my code"` (with space) in your home directory, and inside it create an empty file named `"my task"` (also with space).',
+    commandHelp: [
+      { cmd: 'mkdir "my code"', desc: 'Create a folder with a space in the name' },
+      { cmd: 'touch "my code/my task"', desc: 'Create a file with a space in the name' }
+    ],
+    objectives: [
+      { id: 'dir_with_space_exists', text: 'Create directory "my code"' },
+      { id: 'file_with_space_exists', text: 'Create file "my task" inside "my code"' }
+    ],
+    verify: (fs, session, history) => {
+      const dirNode = fs.getNodeByPath('/home/learner', 'my code');
+      const dirExists = dirNode && dirNode.type === 'dir';
+      const fileNode = fs.getNodeByPath('/home/learner/my code', 'my task');
+      const fileExists = fileNode && fileNode.type === 'file';
+
+      return {
+        success: dirExists && fileExists,
+        checks: [
+          { id: 'dir_with_space_exists', passed: !!dirExists },
+          { id: 'file_with_space_exists', passed: !!fileExists }
+        ]
+      };
+    }
+  },
+  {
+    id: 8,
+    moduleId: 'manipulation',
+    title: 'Writing & Overwriting Files',
     xp: 200,
     badge: 'Writer',
     description: 'To write text to files, we can combine `echo` with **output redirection**.\n\n- `echo "Hello"` prints Hello on screen.\n- The `>` symbol redirects standard output into a file, **overwriting** its existing content.\n\nE.g. `echo "Hi" > greeting.txt` writes "Hi" to `greeting.txt`, creating it if it doesn\'t exist.',
@@ -182,7 +247,7 @@ export const lessons = [
     }
   },
   {
-    id: 7,
+    id: 9,
     moduleId: 'manipulation',
     title: 'Appending to Files',
     xp: 200,
@@ -216,7 +281,7 @@ export const lessons = [
     }
   },
   {
-    id: 8,
+    id: 10,
     moduleId: 'manipulation',
     title: 'Copying & Moving Files',
     xp: 200,
@@ -247,7 +312,39 @@ export const lessons = [
     }
   },
   {
-    id: 9,
+    id: 11,
+    moduleId: 'manipulation',
+    title: 'Wildcards & Multi-File Operations',
+    xp: 220,
+    badge: 'Wildcard',
+    description: 'Linux supports **wildcards** to perform actions on multiple files at once:\n\n- `*` matches zero or more characters. E.g. `cat log_*.txt` displays all files starting with log_ and ending with .txt.\n- `?` matches exactly one character. E.g. `cat log_?.txt` displays log_1.txt, but not log_12.txt.\n\nLet\'s combine wildcards with redirection to consolidate logs.',
+    instructions: 'Concatenate the contents of all files starting with `log_` in your home directory into a single file named `combined.log` using redirection (i.e. `cat log_* > combined.log`).',
+    commandHelp: [
+      { cmd: 'cat log_* > combined.log', desc: 'Combine all matching files into combined.log' }
+    ],
+    objectives: [
+      { id: 'combined_exists', text: 'Create "combined.log" in home directory' },
+      { id: 'content_combined', text: 'Verify it has logs from log_1, log_2, and log_3' }
+    ],
+    verify: (fs, session, history) => {
+      const node = fs.getNodeByPath('/home/learner', 'combined.log');
+      const exists = node && node.type === 'file';
+      const correctContent = exists && 
+        node.content.includes('Log entry 1') && 
+        node.content.includes('Log entry 2') && 
+        node.content.includes('Log entry 3');
+
+      return {
+        success: exists && correctContent,
+        checks: [
+          { id: 'combined_exists', passed: !!exists },
+          { id: 'content_combined', passed: !!correctContent }
+        ]
+      };
+    }
+  },
+  {
+    id: 12,
     moduleId: 'manipulation',
     title: 'Removing Files & Folders',
     xp: 200,
@@ -273,7 +370,102 @@ export const lessons = [
     }
   },
   {
-    id: 10,
+    id: 13,
+    moduleId: 'plumbing',
+    title: 'Introduction to Pipes & wc',
+    xp: 230,
+    badge: 'Plumber',
+    description: 'One of the most powerful features of Linux is command piping. A **pipe** (`|`) redirects the output (**stdout**) of one command directly into the input (**stdin**) of another.\n\nFor example, `ls | wc -l` takes the file list produced by `ls` and feeds it to `wc -l` (word count - lines), which counts the number of files without needing a temporary file.',
+    instructions: 'Count the files and directories in `/home/learner` using a pipe (`ls | wc -l`), and redirect this line count into a new file named `file_count.txt` (using `ls | wc -l > file_count.txt`).',
+    commandHelp: [
+      { cmd: 'ls | wc -l', desc: 'Count files and folders in current directory' },
+      { cmd: 'ls | wc -l > file_count.txt', desc: 'Write files count to file_count.txt' }
+    ],
+    objectives: [
+      { id: 'file_count_exists', text: 'Create file "file_count.txt" in home directory' },
+      { id: 'count_is_correct', text: 'Verify file contains the correct numeric file count' }
+    ],
+    verify: (fs, session, history) => {
+      const node = fs.getNodeByPath('/home/learner', 'file_count.txt');
+      const exists = node && node.type === 'file';
+      let correct = false;
+      if (exists) {
+        const val = node.content.trim();
+        correct = /^\d+$/.test(val) && parseInt(val) > 0;
+      }
+
+      return {
+        success: exists && correct,
+        checks: [
+          { id: 'file_count_exists', passed: !!exists },
+          { id: 'count_is_correct', passed: correct }
+        ]
+      };
+    }
+  },
+  {
+    id: 14,
+    moduleId: 'plumbing',
+    title: 'Sorting and Finding Uniques',
+    xp: 240,
+    badge: 'Organizer',
+    description: 'The `sort` command rearranges lines of text alphabetically. The `uniq` command filters out duplicate lines, but **only if they are adjacent**.\n\nTo find true unique lines in an unsorted list, you must sort the file first, and then pipe it into uniq! E.g. `sort raw.txt | uniq`.',
+    instructions: 'The file `names.txt` in your home folder contains duplicate names. Use a pipeline of `sort` and `uniq` to output only unique sorted names, and write the output into `unique_names.txt` (i.e. `sort names.txt | uniq > unique_names.txt`).',
+    commandHelp: [
+      { cmd: 'sort names.txt', desc: 'Sort lines of names.txt alphabetically' },
+      { cmd: 'sort names.txt | uniq > unique_names.txt', desc: 'Sort and filter duplicates into a file' }
+    ],
+    objectives: [
+      { id: 'unique_names_exists', text: 'Create file "unique_names.txt"' },
+      { id: 'sorted_and_unique', text: 'Verify content has unique sorted names' }
+    ],
+    verify: (fs, session, history) => {
+      const node = fs.getNodeByPath('/home/learner', 'unique_names.txt');
+      const exists = node && node.type === 'file';
+      const correct = exists && node.content.trim() === 'Alice\nBob\nCharlie\nDavid';
+
+      return {
+        success: exists && correct,
+        checks: [
+          { id: 'unique_names_exists', passed: !!exists },
+          { id: 'sorted_and_unique', passed: !!correct }
+        ]
+      };
+    }
+  },
+  {
+    id: 15,
+    moduleId: 'plumbing',
+    title: 'Filtering with grep',
+    xp: 240,
+    badge: 'Filterer',
+    description: 'The `grep` command searches files (or piped text) for lines containing a specific keyword or pattern.\n\nFor example, `grep "ERROR" logs.txt` outputs only lines in logs.txt that contain the word "ERROR". Or we can pipe output: `cat logs.txt | grep "ERROR"`.',
+    instructions: 'Search the file `logs.txt` for all lines containing `[ERROR]` and save them into a new file named `errors.log` (i.e. `grep "[ERROR]" logs.txt > errors.log`).',
+    commandHelp: [
+      { cmd: 'grep "[ERROR]" logs.txt', desc: 'Search logs.txt for lines containing [ERROR]' },
+      { cmd: 'grep "[ERROR]" logs.txt > errors.log', desc: 'Save matching errors into errors.log' }
+    ],
+    objectives: [
+      { id: 'errors_log_exists', text: 'Create file "errors.log" in home directory' },
+      { id: 'only_errors', text: 'Verify errors.log contains only [ERROR] entries' }
+    ],
+    verify: (fs, session, history) => {
+      const node = fs.getNodeByPath('/home/learner', 'errors.log');
+      const exists = node && node.type === 'file';
+      const lines = exists ? node.content.split('\n').filter(Boolean) : [];
+      const onlyErrors = exists && lines.length > 0 && lines.every(line => line.includes('[ERROR]'));
+
+      return {
+        success: exists && onlyErrors,
+        checks: [
+          { id: 'errors_log_exists', passed: !!exists },
+          { id: 'only_errors', passed: onlyErrors }
+        ]
+      };
+    }
+  },
+  {
+    id: 16,
     moduleId: 'advanced',
     title: 'Changing File Permissions',
     xp: 250,
@@ -298,6 +490,99 @@ export const lessons = [
         checks: [
           { id: 'script_exists', passed: !!scriptExists },
           { id: 'is_executable', passed: !!isExecutable }
+        ]
+      };
+    }
+  },
+  {
+    id: 17,
+    moduleId: 'advanced',
+    title: 'Hidden Files & Configurations',
+    xp: 220,
+    badge: 'Ghost',
+    description: 'In Linux, any file or directory whose name begins with a dot (`.`) is treated as **hidden**.\n\nThese are typically used for user-specific configurations (like `.bashrc` or `.config`). Standard directory listings (`ls`) do not display them. You must pass the `-a` (show all) switch to see them: `ls -a`.',
+    instructions: 'Rename the file `unique_names.txt` in your home folder to a hidden file named `.config_names` (using `mv unique_names.txt .config_names`). Check its presence using `ls -a`.',
+    commandHelp: [
+      { cmd: 'ls -a', desc: 'List all files, including hidden files' },
+      { cmd: 'mv file .file', desc: 'Hide a file by prefixing its name with a dot' }
+    ],
+    objectives: [
+      { id: 'hidden_file_exists', text: 'Create hidden file ".config_names" in home' },
+      { id: 'old_file_removed', text: 'Verify original unique_names.txt is removed' }
+    ],
+    verify: (fs, session, history) => {
+      const node = fs.getNodeByPath('/home/learner', '.config_names');
+      const oldNode = fs.getNodeByPath('/home/learner', 'unique_names.txt');
+      const exists = node && node.type === 'file';
+      const oldRemoved = !oldNode;
+
+      return {
+        success: exists && oldRemoved,
+        checks: [
+          { id: 'hidden_file_exists', passed: !!exists },
+          { id: 'old_file_removed', passed: oldRemoved }
+        ]
+      };
+    }
+  },
+  {
+    id: 18,
+    moduleId: 'system',
+    title: 'Superuser Privileges (sudo)',
+    xp: 260,
+    badge: 'Guardian',
+    description: 'Linux systems have an administrator account traditionally named `root`, which has unrestricted access. To protect the system, users run normal sessions and use `sudo` ("switch user and do") to execute individual commands as the administrator.\n\nIf you try to read restricted files (like the password hashes file `/etc/shadow`) with normal user permissions, you will receive `Permission denied`. Prefixing the command with `sudo` bypasses this protection.',
+    instructions: 'Try running `cat /etc/shadow` and observe the permission error. Then run it using administrator privileges: `sudo cat /etc/shadow`.',
+    commandHelp: [
+      { cmd: 'sudo command', desc: 'Run a command with administrator/superuser privileges' },
+      { cmd: 'cat /etc/shadow', desc: 'Read password hashes database (restricted)' }
+    ],
+    objectives: [
+      { id: 'ran_sudo_cat', text: 'Run "sudo cat /etc/shadow" successfully' }
+    ],
+    verify: (fs, session, history) => {
+      const ranSudoCat = history.some(cmd => {
+        const cleaned = cmd.trim().replace(/\s+/g, ' ');
+        return cleaned === 'sudo cat /etc/shadow' || 
+               (cleaned === 'sudo cat shadow' && session.currentPath === '/etc');
+      });
+
+      return {
+        success: ranSudoCat,
+        checks: [
+          { id: 'ran_sudo_cat', passed: ranSudoCat }
+        ]
+      };
+    }
+  },
+  {
+    id: 19,
+    moduleId: 'system',
+    title: 'Package Management (apt)',
+    xp: 280,
+    badge: 'Guru',
+    description: 'Linux distributions use package managers to download, install, update, and remove applications from secure repositories.\n\nOn Ubuntu/Debian-based systems, `apt` (Advanced Packaging Tool) is used. Since installing software modifies system files, it requires superuser privileges: `sudo apt install <package_name>`.',
+    instructions: 'Install the directory visualization tool `tree` by running `sudo apt install tree`. After installation completes, run the `tree` command to view your files.',
+    commandHelp: [
+      { cmd: 'sudo apt install tree', desc: 'Install the tree package' },
+      { cmd: 'tree', desc: 'Run tree to visualize directories' }
+    ],
+    objectives: [
+      { id: 'installed_tree', text: 'Install package "tree" using apt install' },
+      { id: 'ran_tree', text: 'Run the "tree" command to visualize directories' }
+    ],
+    verify: (fs, session, history) => {
+      const installedTree = session.installedPackages.has('tree');
+      const ranTree = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts[0] === 'tree';
+      });
+
+      return {
+        success: installedTree && ranTree,
+        checks: [
+          { id: 'installed_tree', passed: installedTree },
+          { id: 'ran_tree', passed: ranTree }
         ]
       };
     }

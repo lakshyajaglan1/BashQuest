@@ -74,7 +74,11 @@ import LessonPanel from '../components/LessonPanel.astro';
         activeLessonId: 1,
         streak: 1,
         lastCompletedDate: null,
-        fsTree: null
+        fsTree: null,
+        installedPackages: [
+          'pwd', 'whoami', 'clear', 'help', 'cd', 'ls', 'mkdir', 'touch', 'cat', 'echo', 
+          'rm', 'cp', 'mv', 'chmod', 'grep', 'wc', 'uniq', 'sort', 'man', 'apt'
+        ]
       };
 
       this.init();
@@ -100,10 +104,12 @@ import LessonPanel from '../components/LessonPanel.astro';
       const fs = new FileSystem(this.state.fsTree);
       
       // Perform customizations based on lesson needs
-      // E.g., Lesson 9 needs a downloads folder to delete, which the default tree has!
-      // Lesson 8 renames status.txt which we create in Lesson 6. Let's populate status.txt for Lesson 8/9 if the user completed Lesson 6 previously
+      // E.g., Lesson 12 needs a downloads folder to delete, which the default tree has!
+      // Lesson 8 renames status.txt which we create in Lesson 6. In our remapped curriculum:
+      // Lesson 8 is 'Writing & Overwriting Files', and Lesson 10 is 'Copying & Moving Files'.
+      // If Lesson 8 is completed but not Lesson 10, pre-populate status.txt.
       const completed = this.state.completedLessons;
-      if (completed.includes(6) && !completed.includes(8)) {
+      if (completed.includes(8) && !completed.includes(10)) {
         // Pre-create status.txt if it doesn't exist
         const statusNode = fs.getNodeByPath('/home/learner', 'status.txt');
         if (!statusNode) {
@@ -116,7 +122,7 @@ import LessonPanel from '../components/LessonPanel.astro';
       // Keep state.fsTree in sync with the tree
       this.state.fsTree = fs.tree;
 
-      const session = new ShellSession(fs);
+      const session = new ShellSession(fs, '/home/learner', this.state.installedPackages);
 
       window.appState = {
         ...window.appState,
@@ -177,7 +183,11 @@ import LessonPanel from '../components/LessonPanel.astro';
           activeLessonId: 1,
           streak: 1,
           lastCompletedDate: null,
-          fsTree: null
+          fsTree: null,
+          installedPackages: [
+            'pwd', 'whoami', 'clear', 'help', 'cd', 'ls', 'mkdir', 'touch', 'cat', 'echo', 
+            'rm', 'cp', 'mv', 'chmod', 'grep', 'wc', 'uniq', 'sort', 'man', 'apt'
+          ]
         };
         this.resetFilesystem();
         this.applyViewVisibility();
@@ -193,6 +203,14 @@ import LessonPanel from '../components/LessonPanel.astro';
       window.addEventListener('app:filesystem-update', () => {
         if (window.appState && window.appState.fs) {
           this.state.fsTree = window.appState.fs.tree;
+          this.saveToStorage();
+        }
+      });
+
+      // Listen for package installation
+      window.addEventListener('app:package-installed', (e: any) => {
+        if (!this.state.installedPackages.includes(e.detail.package)) {
+          this.state.installedPackages.push(e.detail.package);
           this.saveToStorage();
         }
       });
