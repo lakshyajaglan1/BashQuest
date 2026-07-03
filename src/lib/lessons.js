@@ -82,17 +82,23 @@ export const lessons = [
     ],
     objectives: [
       { id: 'in_home', text: 'Be in your home folder (/home/learner)' },
+      { id: 'used_mkdir', text: 'Use the "mkdir" command' },
       { id: 'dir_exists', text: 'Create a directory named "projects"' }
     ],
     verify: (fs, session, history) => {
       const inHome = session.currentPath === '/home/learner';
+      const usedMkdir = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts[0] === 'mkdir';
+      });
       const node = fs.getNodeByPath('/home/learner', 'projects');
       const dirExists = node && node.type === 'dir';
 
       return {
-        success: inHome && dirExists,
+        success: inHome && usedMkdir && dirExists,
         checks: [
           { id: 'in_home', passed: inHome },
+          { id: 'used_mkdir', passed: usedMkdir },
           { id: 'dir_exists', passed: dirExists }
         ]
       };
@@ -143,15 +149,21 @@ export const lessons = [
       { cmd: 'touch task.txt', desc: 'Create file task.txt' }
     ],
     objectives: [
+      { id: 'used_touch', text: 'Use the "touch" command' },
       { id: 'file_exists', text: 'Create file "task.txt" inside "projects"' }
     ],
     verify: (fs, session, history) => {
+      const usedTouch = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts[0] === 'touch';
+      });
       const node = fs.getNodeByPath('/home/learner/projects', 'task.txt');
       const fileExists = node && node.type === 'file';
 
       return {
-        success: fileExists,
+        success: usedTouch && fileExists,
         checks: [
+          { id: 'used_touch', passed: usedTouch },
           { id: 'file_exists', passed: fileExists }
         ]
       };
@@ -229,17 +241,22 @@ export const lessons = [
       { cmd: 'echo "System Online" > status.txt', desc: 'Create status.txt with text' }
     ],
     objectives: [
+      { id: 'used_echo_redirect', text: 'Use echo with > redirection' },
       { id: 'file_created', text: 'Create "status.txt" in home directory' },
       { id: 'content_correct', text: 'File content is exactly "System Online"' }
     ],
     verify: (fs, session, history) => {
+      const usedEchoRedirect = history.some(cmd => {
+        return cmd.includes('echo') && cmd.includes('>');
+      });
       const node = fs.getNodeByPath('/home/learner', 'status.txt');
       const fileCreated = node && node.type === 'file';
       const contentCorrect = fileCreated && node.content.trim() === 'System Online';
 
       return {
-        success: fileCreated && contentCorrect,
+        success: usedEchoRedirect && fileCreated && contentCorrect,
         checks: [
+          { id: 'used_echo_redirect', passed: usedEchoRedirect },
           { id: 'file_created', passed: fileCreated },
           { id: 'content_correct', passed: contentCorrect }
         ]
@@ -292,10 +309,15 @@ export const lessons = [
       { cmd: 'mv status.txt system.log', desc: 'Rename status.txt to system.log' }
     ],
     objectives: [
+      { id: 'used_mv', text: 'Use the "mv" command to rename' },
       { id: 'old_removed', text: 'Original status.txt is deleted/renamed' },
       { id: 'new_created', text: 'New file system.log exists with correct contents' }
     ],
     verify: (fs, session, history) => {
+      const usedMv = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts[0] === 'mv';
+      });
       const oldNode = fs.getNodeByPath('/home/learner', 'status.txt');
       const newNode = fs.getNodeByPath('/home/learner', 'system.log');
       
@@ -303,8 +325,9 @@ export const lessons = [
       const newCreated = newNode && newNode.type === 'file' && newNode.content.includes('System Online');
 
       return {
-        success: oldRemoved && newCreated,
+        success: usedMv && oldRemoved && newCreated,
         checks: [
+          { id: 'used_mv', passed: usedMv },
           { id: 'old_removed', passed: oldRemoved },
           { id: 'new_created', passed: !!newCreated }
         ]
@@ -355,15 +378,21 @@ export const lessons = [
       { cmd: 'rm -r downloads', desc: 'Delete folder recursively' }
     ],
     objectives: [
+      { id: 'used_rm', text: 'Use the "rm" command with -r flag' },
       { id: 'downloads_removed', text: 'Directory /home/learner/downloads is deleted' }
     ],
     verify: (fs, session, history) => {
+      const usedRm = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts[0] === 'rm' && (parts.includes('-r') || parts.includes('-rf') || parts.includes('-fr') || parts.some(p => p.startsWith('-') && p.includes('r')));
+      });
       const node = fs.getNodeByPath('/home/learner', 'downloads');
       const downloadsRemoved = !node;
 
       return {
-        success: downloadsRemoved,
+        success: usedRm && downloadsRemoved,
         checks: [
+          { id: 'used_rm', passed: usedRm },
           { id: 'downloads_removed', passed: downloadsRemoved }
         ]
       };
@@ -470,25 +499,29 @@ export const lessons = [
     title: 'Changing File Permissions',
     xp: 250,
     badge: 'Sysadmin',
-    description: 'Linux secures files through permissions. Every file has owner, group, and other permissions, often set using numbers (octal representation):\n\n- `7` = read + write + execute (`rwx`)\n- `6` = read + write (`rw-`)\n- `5` = read + execute (`r-x`)\n- `4` = read (`r--`)\n\nWe set permissions with `chmod <octal> <file>`. For example, `chmod 755 script.sh` makes a script executable by the owner and readable by others.',
-    instructions: 'Create a new script file named `run.sh` in `/home/learner` (`touch run.sh`), and set its permissions to `755` so that it is executable.',
+    description: 'Linux secures files through permissions. Every file has owner, group, and other permissions, often set using numbers (octal representation):\n\n- `7` = read + write + execute (`rwx`)\n- `6` = read + write (`rw-`)\n- `5` = read + execute (`r-x`)\n- `4` = read (`r--`)\n\nWe set permissions with `chmod <octal> <file>`. For example, `chmod 755 script.sh` makes a script executable by the owner and readable by others.\n\nA file named `deploy.sh` already exists in your home folder, but currently has restrictive permissions (`644` — read/write for owner only). You need to make it executable.',
+    instructions: 'The file `deploy.sh` already exists in `/home/learner` with default permissions (644). Use `chmod 755 deploy.sh` to make it executable by the owner and readable/executable by others.',
     commandHelp: [
-      { cmd: 'touch run.sh', desc: 'Create script file' },
-      { cmd: 'chmod 755 run.sh', desc: 'Set executable permissions' }
+      { cmd: 'chmod 755 deploy.sh', desc: 'Set executable permissions' },
+      { cmd: 'ls -l deploy.sh', desc: 'Check current file permissions' }
     ],
     objectives: [
-      { id: 'script_exists', text: 'Create script "run.sh" in home folder' },
-      { id: 'is_executable', text: 'Set permissions of run.sh to 755' }
+      { id: 'used_chmod', text: 'Run the "chmod" command on deploy.sh' },
+      { id: 'is_executable', text: 'Set permissions of deploy.sh to 755' }
     ],
     verify: (fs, session, history) => {
-      const node = fs.getNodeByPath('/home/learner', 'run.sh');
+      const usedChmod = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts[0] === 'chmod';
+      });
+      const node = fs.getNodeByPath('/home/learner', 'deploy.sh');
       const scriptExists = node && node.type === 'file';
       const isExecutable = scriptExists && node.permissions === '755';
 
       return {
-        success: scriptExists && isExecutable,
+        success: usedChmod && isExecutable,
         checks: [
-          { id: 'script_exists', passed: !!scriptExists },
+          { id: 'used_chmod', passed: usedChmod },
           { id: 'is_executable', passed: !!isExecutable }
         ]
       };
@@ -507,18 +540,24 @@ export const lessons = [
       { cmd: 'mv file .file', desc: 'Hide a file by prefixing its name with a dot' }
     ],
     objectives: [
+      { id: 'used_mv', text: 'Use "mv" to rename the file' },
       { id: 'hidden_file_exists', text: 'Create hidden file ".config_names" in home' },
       { id: 'old_file_removed', text: 'Verify original unique_names.txt is removed' }
     ],
     verify: (fs, session, history) => {
+      const usedMv = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts[0] === 'mv';
+      });
       const node = fs.getNodeByPath('/home/learner', '.config_names');
       const oldNode = fs.getNodeByPath('/home/learner', 'unique_names.txt');
       const exists = node && node.type === 'file';
       const oldRemoved = !oldNode;
 
       return {
-        success: exists && oldRemoved,
+        success: usedMv && exists && oldRemoved,
         checks: [
+          { id: 'used_mv', passed: usedMv },
           { id: 'hidden_file_exists', passed: !!exists },
           { id: 'old_file_removed', passed: oldRemoved }
         ]

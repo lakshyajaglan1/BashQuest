@@ -158,6 +158,16 @@ import LessonPanel from '../components/LessonPanel.astro';
         }
       }
 
+      // Quest 16: Ensure deploy.sh exists for chmod quest (with default 644 permissions)
+      if (!completed.includes(16)) {
+        if (!fs.getNodeByPath('/home/learner', 'deploy.sh')) {
+          fs.createNode('/home/learner', 'deploy.sh', 'file', {
+            content: '#!/bin/bash\necho "Deploying application..."\necho "Done!"\n',
+            permissions: '644'
+          });
+        }
+      }
+
       // Keep state.fsTree in sync with the tree
       this.state.fsTree = fs.tree;
 
