@@ -256,4 +256,11 @@
     updatePrompt();
     clearTerminal();
   });
+
+  // Listen for custom prints to terminal (e.g. from Nano editor saving)
+  window.addEventListener('app:print-terminal', (e: any) => {
+    if (e.detail && e.detail.text) {
+      writeRow(`<div class="text-white">${e.detail.text}</div>`);
+    }
+  });
 </script>

@@ -5,7 +5,13 @@ export const modules = [
   { id: 'manipulation', title: '2. File Manipulation' },
   { id: 'plumbing', title: '3. Pipes & Filtering' },
   { id: 'advanced', title: '4. Redirection & Security' },
-  { id: 'system', title: '5. Superuser & Packages' }
+  { id: 'system', title: '5. Superuser & Packages' },
+  { id: 'resources', title: '6. Disk & System Resources' },
+  { id: 'processes', title: '7. Process Management' },
+  { id: 'networking', title: '8. Network Troubleshooting' },
+  { id: 'searching', title: '9. Finding Files & Search' },
+  { id: 'services', title: '10. Services & Systemd' },
+  { id: 'editing', title: '11. Terminal Text Editing' }
 ];
 
 export const lessons = [
@@ -673,6 +679,423 @@ export const lessons = [
         checks: [
           { id: 'installed_tree', passed: installedTree },
           { id: 'ran_tree', passed: ranTree }
+        ]
+      };
+    }
+  },
+  {
+    id: 20,
+    moduleId: 'resources',
+    title: 'Checking Disk Space (df)',
+    xp: 150,
+    badge: 'Spacer',
+    description: 'When running out of storage on your laptop, the first tool you should reach for is `df` (disk free). It displays the amount of disk space available on filesystems.\n\nRunning `df -h` (human-readable) shows storage in gigabytes (G) and megabytes (M) instead of block counts, making it much easier to see which partition (like `/` or `/home`) is full.',
+    instructions: 'Run `df -h` to check the disk space usage on your system\'s partitions in human-readable format.',
+    commandHelp: [
+      { cmd: 'df -h', desc: 'Show free disk space on filesystems in human-readable format' }
+    ],
+    objectives: [
+      { id: 'ran_df_h', text: 'Run the "df -h" command' }
+    ],
+    verify: (fs, session, history) => {
+      const ranDfH = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts[0] === 'df' && (parts.includes('-h') || parts.includes('--human-readable'));
+      });
+      return {
+        success: ranDfH,
+        checks: [
+          { id: 'ran_df_h', passed: ranDfH }
+        ]
+      };
+    }
+  },
+  {
+    id: 21,
+    moduleId: 'resources',
+    title: 'Finding Directory Sizes (du)',
+    xp: 150,
+    badge: 'Weigher',
+    description: 'While `df` tells you which disk is full, `du` (disk usage) tells you which directories and files are taking up that space.\n\n- `du <directory>` lists sizes of all subdirectories.\n- `du -sh <directory>` (summary, human-readable) outputs a single size total for that directory.\n- `du -sh *` inside a directory lists the sizes of each file and folder in the current directory.',
+    instructions: 'Determine the size of the home directory by running the summary, human-readable command: `du -sh /home/learner`.',
+    commandHelp: [
+      { cmd: 'du -sh /home/learner', desc: 'Display total size of the learner home directory' }
+    ],
+    objectives: [
+      { id: 'ran_du', text: 'Run "du" with options -s and -h' }
+    ],
+    verify: (fs, session, history) => {
+      const ranDu = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        const isDu = parts[0] === 'du';
+        const hasS = parts.some(p => p.startsWith('-') && !p.startsWith('--') && p.includes('s')) || parts.includes('--summary');
+        const hasH = parts.some(p => p.startsWith('-') && !p.startsWith('--') && p.includes('h')) || parts.includes('--human-readable');
+        return isDu && hasS && hasH;
+      });
+      return {
+        success: ranDu,
+        checks: [
+          { id: 'ran_du', passed: ranDu }
+        ]
+      };
+    }
+  },
+  {
+    id: 22,
+    moduleId: 'resources',
+    title: 'Checking Memory Usage (free)',
+    xp: 150,
+    badge: 'RAM-Watcher',
+    description: 'If your laptop is running sluggishly, you might be running out of random access memory (RAM). The `free` command displays the total amount of free and used physical memory and swap space in the system.\n\n- `free -m` displays memory in megabytes.\n- `free -h` displays memory in human-readable sizes (GB/MB).',
+    instructions: 'Display system memory usage in human-readable format using `free -h`.',
+    commandHelp: [
+      { cmd: 'free -h', desc: 'Display RAM usage in human-readable format' }
+    ],
+    objectives: [
+      { id: 'ran_free', text: 'Run "free" with the -h or -m option' }
+    ],
+    verify: (fs, session, history) => {
+      const ranFree = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts[0] === 'free' && (parts.includes('-h') || parts.includes('-m') || parts.includes('--human') || parts.includes('--mega'));
+      });
+      return {
+        success: ranFree,
+        checks: [
+          { id: 'ran_free', passed: ranFree }
+        ]
+      };
+    }
+  },
+  {
+    id: 23,
+    moduleId: 'resources',
+    title: 'System Uptime & Kernel Details',
+    xp: 160,
+    badge: 'Inspector',
+    description: 'To check how long your computer has been running since boot, you can use the `uptime` command. It also lists the number of users and the load average (over 1, 5, and 15 minutes).\n\nAdditionally, to see system specifications and the Linux kernel version, you can run `uname -a` (unix name).',
+    instructions: 'Run `uptime` to check system run statistics, and then run `uname -a` to print the system kernel version and platform details.',
+    commandHelp: [
+      { cmd: 'uptime', desc: 'Show how long the system has been running' },
+      { cmd: 'uname -a', desc: 'Print all system and kernel information' }
+    ],
+    objectives: [
+      { id: 'ran_uptime', text: 'Run the "uptime" command' },
+      { id: 'ran_uname', text: 'Run the "uname -a" command' }
+    ],
+    verify: (fs, session, history) => {
+      const ranUptime = history.some(cmd => cmd.trim() === 'uptime');
+      const ranUname = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts[0] === 'uname' && (parts.includes('-a') || parts.includes('--all'));
+      });
+      return {
+        success: ranUptime && ranUname,
+        checks: [
+          { id: 'ran_uptime', passed: ranUptime },
+          { id: 'ran_uname', passed: ranUname }
+        ]
+      };
+    }
+  },
+  {
+    id: 24,
+    moduleId: 'processes',
+    title: 'Listing Running Processes (ps)',
+    xp: 180,
+    badge: 'Tracker',
+    description: 'In Linux, every running program is called a **process**. Each process has a unique process ID (PID).\n\nThe `ps` command is used to list running processes.\n\n- `ps` alone shows processes in your current terminal session.\n- `ps aux` lists ALL running processes on the system, regardless of who owns them or what terminal they run on. (The `a` stands for all users, `u` for user-oriented format, and `x` for processes not attached to a terminal).',
+    instructions: 'View all running processes on the laptop by executing `ps aux`. Take note of the columns: USER, PID, %CPU, %MEM, and COMMAND.',
+    commandHelp: [
+      { cmd: 'ps aux', desc: 'List all running processes on the system' }
+    ],
+    objectives: [
+      { id: 'ran_ps_aux', text: 'Run the "ps aux" command' }
+    ],
+    verify: (fs, session, history) => {
+      const ranPs = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts[0] === 'ps' && (parts.includes('aux') || parts.includes('-ef'));
+      });
+      return {
+        success: ranPs,
+        checks: [
+          { id: 'ran_ps_aux', passed: ranPs }
+        ]
+      };
+    }
+  },
+  {
+    id: 25,
+    moduleId: 'processes',
+    title: 'Interactive Process Monitor (top)',
+    xp: 180,
+    badge: 'Monitor',
+    description: 'While `ps` gives a single static snapshot, the `top` command (and its modern, colorful alternative `htop`) provides a real-time, dynamic view of a running system.\n\nIt updates every few seconds to show you which processes are consuming the most CPU, memory, and system load at this exact moment.',
+    instructions: 'Launch the real-time process monitor by running the `top` command.',
+    commandHelp: [
+      { cmd: 'top', desc: 'Launch interactive process monitor' }
+    ],
+    objectives: [
+      { id: 'ran_top', text: 'Run the "top" command' }
+    ],
+    verify: (fs, session, history) => {
+      const ranTop = history.some(cmd => cmd.trim() === 'top' || cmd.trim() === 'htop');
+      return {
+        success: ranTop,
+        checks: [
+          { id: 'ran_top', passed: ranTop }
+        ]
+      };
+    }
+  },
+  {
+    id: 26,
+    moduleId: 'processes',
+    title: 'Stopping Rogue Processes (kill)',
+    xp: 200,
+    badge: 'Terminator',
+    description: 'If an application freezes, slows down your laptop, or goes rogue, you can force it to stop using the `kill` command followed by the process ID (PID).\n\nE.g. `kill 1234` sends a signal asking the process with PID 1234 to shut down safely. If it refuses, `kill -9 1234` forces it to terminate immediately.\n\nThere is currently a runaway background script named `rogue_process` running on this system, consuming 99% CPU. Its Process ID is `9999`. Let\'s stop it!',
+    instructions: 'Terminate the rogue process with PID `9999` using the `kill` command (i.e. `kill 9999`).',
+    commandHelp: [
+      { cmd: 'kill 9999', desc: 'Terminate process with PID 9999' }
+    ],
+    objectives: [
+      { id: 'process_killed', text: 'Stop the rogue process with PID 9999' }
+    ],
+    verify: (fs, session, history) => {
+      const processKilled = !session.rogueProcessAlive;
+      return {
+        success: processKilled,
+        checks: [
+          { id: 'process_killed', passed: processKilled }
+        ]
+      };
+    }
+  },
+  {
+    id: 27,
+    moduleId: 'processes',
+    title: 'Running Jobs in the Background',
+    xp: 220,
+    badge: 'Juggler',
+    description: 'If a command takes a long time to complete (like a backup or download), you don\'t want it blocking your terminal. You can run it in the background by appending an ampersand `&` to the end of the command.\n\n- `sleep 100 &` runs sleep in the background.\n- The `jobs` command lists all your current background tasks.\n- The `fg` command (foreground) pulls a background job back to the active screen (e.g. `fg`).',
+    instructions: 'Start a sleep command for 100 seconds in the background (`sleep 100 &`), then run the `jobs` command to list active jobs. Finally, bring it to the foreground using `fg`.',
+    commandHelp: [
+      { cmd: 'sleep 100 &', desc: 'Run sleep in the background' },
+      { cmd: 'jobs', desc: 'List background jobs' },
+      { cmd: 'fg', desc: 'Bring background job to foreground' }
+    ],
+    objectives: [
+      { id: 'ran_bg_job', text: 'Run a sleep command in the background (&)' },
+      { id: 'ran_jobs', text: 'Run the "jobs" command' },
+      { id: 'ran_fg', text: 'Bring the job back to foreground with "fg"' }
+    ],
+    verify: (fs, session, history) => {
+      const ranBgJob = history.some(cmd => /sleep\s+\d+\s+&/.test(cmd));
+      const ranJobs = history.some(cmd => cmd.trim() === 'jobs');
+      const ranFg = history.some(cmd => cmd.trim() === 'fg' || cmd.trim().startsWith('fg %'));
+      return {
+        success: ranBgJob && ranJobs && ranFg,
+        checks: [
+          { id: 'ran_bg_job', passed: ranBgJob },
+          { id: 'ran_jobs', passed: ranJobs },
+          { id: 'ran_fg', passed: ranFg }
+        ]
+      };
+    }
+  },
+  {
+    id: 28,
+    moduleId: 'networking',
+    title: 'Testing Connectivity (ping)',
+    xp: 180,
+    badge: 'Pinger',
+    description: 'When your internet goes down or a site won\'t load, `ping` is the go-to tool. It sends small packets of data (ICMP Echo Requests) to an IP address or domain name and measures how long it takes to get a response.\n\nBy default, `ping` runs forever on Linux. Use option `-c <count>` to specify the number of packets to send (e.g. `ping -c 3 google.com`).',
+    instructions: 'Test your connection to `google.com` by sending exactly 3 pings: `ping -c 3 google.com`.',
+    commandHelp: [
+      { cmd: 'ping -c 3 google.com', desc: 'Send 3 echo packets to google.com' }
+    ],
+    objectives: [
+      { id: 'ran_ping_c3', text: 'Ping google.com exactly 3 times using -c flag' }
+    ],
+    verify: (fs, session, history) => {
+      const ranPing = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts[0] === 'ping' && (parts.includes('-c') && parts[parts.indexOf('-c') + 1] === '3');
+      });
+      return {
+        success: ranPing,
+        checks: [
+          { id: 'ran_ping_c3', passed: ranPing }
+        ]
+      };
+    }
+  },
+  {
+    id: 29,
+    moduleId: 'networking',
+    title: 'Network Interfaces & Local IP',
+    xp: 180,
+    badge: 'Netadmin',
+    description: 'To find your laptop\'s IP address on the local network (Wi-Fi or Ethernet), you can check your network interfaces using the `ip` utility.\n\nRunning `ip addr` (or `ip a`) lists all network interfaces (like `lo` for loopback, `eth0` or `wlan0` for wireless) along with their assigned IP addresses.',
+    instructions: 'Check your network interfaces and IP addresses by running `ip addr`.',
+    commandHelp: [
+      { cmd: 'ip addr', desc: 'Show network interface details and IP addresses' }
+    ],
+    objectives: [
+      { id: 'ran_ip_addr', text: 'Run the "ip addr" or "ip a" command' }
+    ],
+    verify: (fs, session, history) => {
+      const ranIp = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts[0] === 'ip' && (parts.includes('addr') || parts.includes('a') || parts.includes('address'));
+      });
+      return {
+        success: ranIp,
+        checks: [
+          { id: 'ran_ip_addr', passed: ranIp }
+        ]
+      };
+    }
+  },
+  {
+    id: 30,
+    moduleId: 'networking',
+    title: 'Downloading Web Files (curl)',
+    xp: 200,
+    badge: 'Downloader',
+    description: 'In the terminal, we can download files from servers using `curl` (Client URL). It can fetch webpages, download source codes, or test API endpoints.\n\n- `curl <url>` prints the URL\'s content directly on the screen.\n- Redirecting the output (`curl <url> > file.sh`) or using `-o <file>` saves the downloaded content to a file.',
+    instructions: 'Download the script from `http://api.bashquest.com/update.sh` and save it locally as a file named `update.sh` (e.g. `curl http://api.bashquest.com/update.sh > update.sh`).',
+    commandHelp: [
+      { cmd: 'curl http://api.bashquest.com/update.sh > update.sh', desc: 'Download webpage content and save it to update.sh' }
+    ],
+    objectives: [
+      { id: 'used_curl', text: 'Use the "curl" command' },
+      { id: 'download_saved', text: 'Save downloaded script as "update.sh" in home folder' }
+    ],
+    verify: (fs, session, history) => {
+      const usedCurl = history.some(cmd => cmd.includes('curl'));
+      const fileNode = fs.getNodeByPath('/home/learner', 'update.sh');
+      const downloadSaved = fileNode && fileNode.type === 'file' && fileNode.content.includes('echo "Updating BashQuest"');
+      return {
+        success: usedCurl && downloadSaved,
+        checks: [
+          { id: 'used_curl', passed: usedCurl },
+          { id: 'download_saved', passed: !!downloadSaved }
+        ]
+      };
+    }
+  },
+  {
+    id: 31,
+    moduleId: 'searching',
+    title: 'Finding Files by Name (find)',
+    xp: 220,
+    badge: 'Scout',
+    description: 'Laptops store thousands of files. The `find` command is an incredibly powerful search engine that queries the directory tree for files matching specific criteria (like name, type, size, or modification date).\n\nFormat: `find <starting_directory> -name "<pattern>"`\n\nE.g. `find . -name "*.txt"` searches the current directory recursively for all files ending in `.txt`.',
+    instructions: 'Search the current directory recursively for all files with a `.log` extension by running the command `find . -name "*.log"`.',
+    commandHelp: [
+      { cmd: 'find . -name "*.log"', desc: 'Find all files ending in .log in current folder and subfolders' }
+    ],
+    objectives: [
+      { id: 'ran_find', text: 'Run the "find" command with -name option' }
+    ],
+    verify: (fs, session, history) => {
+      const ranFind = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts[0] === 'find' && parts.includes('-name');
+      });
+      return {
+        success: ranFind,
+        checks: [
+          { id: 'ran_find', passed: ranFind }
+        ]
+      };
+    }
+  },
+  {
+    id: 32,
+    moduleId: 'searching',
+    title: 'Checking Command History',
+    xp: 180,
+    badge: 'Historian',
+    description: 'Don\'t waste time typing long commands again. Linux maintains a log of recently run commands, which you can view using the `history` command.\n\n- Type `history` to view your numbered history list.\n- Type `!number` to quickly re-run a specific command from that list (e.g. `!5` runs command #5).',
+    instructions: 'Display the list of your past commands by running the command `history`.',
+    commandHelp: [
+      { cmd: 'history', desc: 'Display a list of recently executed commands' }
+    ],
+    objectives: [
+      { id: 'ran_history', text: 'Run the "history" command' }
+    ],
+    verify: (fs, session, history) => {
+      const ranHistory = history.some(cmd => cmd.trim() === 'history');
+      return {
+        success: ranHistory,
+        checks: [
+          { id: 'ran_history', passed: ranHistory }
+        ]
+      };
+    }
+  },
+  {
+    id: 33,
+    moduleId: 'services',
+    title: 'Controlling Services (systemctl)',
+    xp: 240,
+    badge: 'Service-Master',
+    description: 'Modern Linux systems use `systemd` to manage background services (like database servers, web servers, or bluetooth daemons). We control these services using the `systemctl` command.\n\n- `systemctl status <service>` checks if a service is running.\n- `sudo systemctl start <service>` starts it.\n- `sudo systemctl stop <service>` stops it.\n\nSince managing services changes system states, starting and stopping them requires `sudo` privileges.',
+    instructions: 'A web server daemon `apache2` is currently installed but stopped. Use `sudo systemctl start apache2` to start the service, and verify its state with `systemctl status apache2`.',
+    commandHelp: [
+      { cmd: 'systemctl status apache2', desc: 'Check status of apache2 web service' },
+      { cmd: 'sudo systemctl start apache2', desc: 'Start the apache2 web service' }
+    ],
+    objectives: [
+      { id: 'started_service', text: 'Start the "apache2" web service' },
+      { id: 'checked_status', text: 'Check the status of "apache2"' }
+    ],
+    verify: (fs, session, history) => {
+      const startedService = session.services.apache2 === 'active';
+      const checkedStatus = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts[0] === 'systemctl' && parts[1] === 'status' && parts[2] === 'apache2';
+      });
+      return {
+        success: startedService && checkedStatus,
+        checks: [
+          { id: 'started_service', passed: startedService },
+          { id: 'checked_status', passed: checkedStatus }
+        ]
+      };
+    }
+  },
+  {
+    id: 34,
+    moduleId: 'editing',
+    title: 'Editing Config Files (nano)',
+    xp: 250,
+    badge: 'Editor',
+    description: 'To edit system configurations on your laptop, you need a terminal text editor. `nano` is the easiest and most common command-line text editor.\n\nWhen you run `nano <filename>`, it opens the file in a text-editing workspace directly inside your terminal.\n\n- To exit the editor, press `Ctrl+X`.\n- To save (write out) changes, press `Ctrl+O`.',
+    instructions: 'Open the config file `server.conf` in your home folder using `nano server.conf`. Edit its contents so that it contains the line `port=8080`, then save and exit nano.',
+    commandHelp: [
+      { cmd: 'nano server.conf', desc: 'Open server.conf in the Nano text editor' }
+    ],
+    objectives: [
+      { id: 'opened_nano', text: 'Open the file "server.conf" in Nano' },
+      { id: 'port_configured', text: 'Add configuration line "port=8080" and save' }
+    ],
+    verify: (fs, session, history) => {
+      const openedNano = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts[0] === 'nano' && parts[1] === 'server.conf';
+      });
+      const node = fs.getNodeByPath('/home/learner', 'server.conf');
+      const portConfigured = node && node.type === 'file' && node.content.includes('port=8080');
+      return {
+        success: openedNano && portConfigured,
+        checks: [
+          { id: 'opened_nano', passed: openedNano },
+          { id: 'port_configured', passed: !!portConfigured }
         ]
       };
     }

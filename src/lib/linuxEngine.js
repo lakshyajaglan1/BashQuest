@@ -341,12 +341,22 @@ export class ShellSession {
     this.fs = fileSystem;
     this.currentPath = currentPath;
     this.history = [];
-    this.installedPackages = installedPackages 
-      ? new Set(installedPackages)
-      : new Set([
-          'pwd', 'whoami', 'clear', 'help', 'cd', 'ls', 'mkdir', 'touch', 'cat', 'echo', 
-          'rm', 'cp', 'mv', 'chmod', 'grep', 'wc', 'uniq', 'sort', 'man', 'apt'
-        ]);
+    this.rogueProcessAlive = true;
+    this.services = { apache2: 'inactive' };
+    this.bgJobs = [];
+    
+    const defaultPkgs = [
+      'pwd', 'whoami', 'clear', 'help', 'cd', 'ls', 'mkdir', 'touch', 'cat', 'echo', 
+      'rm', 'cp', 'mv', 'chmod', 'grep', 'wc', 'uniq', 'sort', 'man', 'apt',
+      'df', 'du', 'free', 'uptime', 'uname', 'ps', 'top', 'htop', 'kill', 'sleep',
+      'jobs', 'fg', 'ping', 'ip', 'curl', 'find', 'history', 'systemctl', 'nano'
+    ];
+    this.installedPackages = new Set(defaultPkgs);
+    if (installedPackages) {
+      for (const pkg of installedPackages) {
+        this.installedPackages.add(pkg);
+      }
+    }
   }
 
   // Expand wildcard patterns (* and ?) against the virtual filesystem
@@ -553,7 +563,7 @@ export class ShellSession {
           break;
 
         case 'help':
-          result.stdout = 'Available commands: cd, ls, pwd, mkdir, touch, cat, echo, rm, cp, mv, chmod, grep, wc, uniq, sort, man, tree, sudo, apt, whoami, clear, help\nRedirections > (overwrite) and >> (append), and pipes | are supported.';
+          result.stdout = 'Available commands: cd, ls, pwd, mkdir, touch, cat, echo, rm, cp, mv, chmod, grep, wc, uniq, sort, man, tree, sudo, apt, whoami, clear, help, df, du, free, uptime, uname, ps, top, htop, kill, sleep, jobs, fg, ping, ip, curl, find, history, systemctl, nano\nRedirections > (overwrite) and >> (append), and pipes | are supported.';
           break;
 
         case 'cd':
@@ -624,6 +634,219 @@ export class ShellSession {
           result = this.runApt(cmdArgs, isSudo);
           break;
 
+        case 'df':
+          result.stdout = `Filesystem      Size  Used Avail Use% Mounted on\nudev            3.9G     0  3.9G   0% /dev\ntmpfs           797M  1.6M  795M   1% /run\n/dev/sda2       117G   32G   80G  29% /\ntmpfs           3.9G   24M  3.9G   1% /dev/shm\ntmpfs           5.0M  4.0K  5.0M   1% /run/lock\n/dev/sda1       511M  6.1M  505M   2% /boot/efi\ntmpfs           797M   80K  797M   1% /run/user/1000`;
+          break;
+
+        case 'du':
+          result = this.runDu(cmdArgs);
+          break;
+
+        case 'free':
+          {
+            let useMega = false;
+            for (const arg of cmdArgs) {
+              if (arg === '-m') useMega = true;
+            }
+            if (useMega) {
+              result.stdout = `               total        used        free      shared  buff/cache   available\nMem:            7962        3412        2104         248        2446        4018\nSwap:           2048         512        1536`;
+            } else {
+              result.stdout = `               total        used        free      shared  buff/cache   available\nMem:            7.8Gi       3.3Gi       2.1Gi       248Mi       2.4Gi       3.9Gi\nSwap:           2.0Gi       512Mi       1.5Gi`;
+            }
+          }
+          break;
+
+        case 'uptime':
+          result.stdout = ` 16:10:04 up 4:12,  1 user,  load average: 0.15, 0.08, 0.03`;
+          break;
+
+        case 'uname':
+          {
+            const showAll = cmdArgs.includes('-a') || cmdArgs.includes('--all');
+            result.stdout = showAll 
+              ? `Linux bashquest 6.8.0-35-generic #35-Ubuntu SMP PREEMPT_DYNAMIC Mon May 20 15:51:52 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux`
+              : `Linux`;
+          }
+          break;
+
+        case 'ps':
+          {
+            const showAux = cmdArgs.includes('aux') || cmdArgs.includes('-ef');
+            if (showAux) {
+              let rows = [
+                `USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND`,
+                `root           1  0.0  0.1 168432  9412 ?        Ss   12:00   0:02 /sbin/init`,
+                `root          42  0.0  0.0  48212  4102 ?        S    12:00   0:00 /lib/systemd/systemd-journald`,
+                `learner     1245  0.0  0.2  22412  8510 pts/0    Ss   12:05   0:00 -bash`
+              ];
+              if (this.rogueProcessAlive) {
+                rows.push(`learner     9999 99.1  1.4  41812 12844 pts/0    R    12:10   5:42 /bin/bash /home/learner/rogue_process.sh`);
+              }
+              rows.push(`learner    10245  0.0  0.1  18432  4122 pts/0    R+   16:10   0:00 ps aux`);
+              result.stdout = rows.join('\n');
+            } else {
+              let rows = [
+                `  PID TTY          TIME CMD`,
+                ` 1245 pts/0    00:00:00 bash`
+              ];
+              if (this.rogueProcessAlive) {
+                rows.push(` 9999 pts/0    00:05:42 rogue_process.sh`);
+              }
+              rows.push(`10245 pts/0    00:00:00 ps`);
+              result.stdout = rows.join('\n');
+            }
+          }
+          break;
+
+        case 'top':
+        case 'htop':
+          {
+            let rows = [
+              `top - 16:10:04 up 4:12,  1 user,  load average: 0.15, 0.08, 0.03`,
+              `Tasks:  48 total,   2 running,  46 sleeping,   0 stopped,   0 zombie`,
+              `%Cpu(s): 24.8 us,  4.2 sy,  0.0 ni, 71.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st`,
+              `MiB Mem :   7962.4 total,   2104.1 free,   3412.3 used,   2446.0 buff/cache`,
+              `MiB Swap:   2048.0 total,   1536.0 free,    512.0 used.   4018.4 avail Mem `,
+              ``,
+              `  PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND`
+            ];
+            if (this.rogueProcessAlive) {
+              rows.push(` 9999 learner   20   0   41812  12844   4102 R  99.1   0.2   5:42.12 rogue_process.sh`);
+            }
+            rows.push(` 1245 learner   20   0   22412   8510   3812 S   0.0   0.1   0:00.12 bash`);
+            rows.push(`    1 root      20   0  168432   9412   5120 S   0.0   0.1   0:02.10 init`);
+            result.stdout = rows.join('\n');
+          }
+          break;
+
+        case 'kill':
+          {
+            if (cmdArgs.length === 0) {
+              result.stderr = `kill: usage: kill [-s sigspec | -n signum | -sigspec] pid | jobspec ... or kill -l`;
+            } else {
+              const has9 = cmdArgs.includes('-9');
+              const pidArg = has9 ? cmdArgs[cmdArgs.indexOf('-9') + 1] : cmdArgs[0];
+              if (pidArg === '9999') {
+                this.rogueProcessAlive = false;
+                result.stdout = `Process 9999 terminated successfully.`;
+              } else if (pidArg === '%1' && this.bgJobs.length > 0) {
+                this.bgJobs = [];
+                result.stdout = `Job [1] terminated.`;
+              } else if (/^\d+$/.test(pidArg)) {
+                result.stderr = `kill: (${pidArg}) - No such process`;
+              } else {
+                result.stderr = `kill: ${pidArg}: invalid process id`;
+              }
+            }
+          }
+          break;
+
+        case 'sleep':
+          {
+            const duration = cmdArgs[0] || '1';
+            const isBackground = cmdArgs.includes('&') || duration.endsWith('&');
+            const cleanDur = duration.replace('&', '');
+            
+            if (isBackground) {
+              const jobNum = this.bgJobs.length + 1;
+              this.bgJobs.push({ id: jobNum, cmd: `sleep ${cleanDur}`, status: 'Running' });
+              result.stdout = `[${jobNum}] 10452\n(Type 'jobs' to check background tasks)`;
+            } else {
+              result.stdout = `slept for ${cleanDur} seconds`;
+            }
+          }
+          break;
+
+        case 'jobs':
+          {
+            if (this.bgJobs.length === 0) {
+              result.stdout = '';
+            } else {
+              result.stdout = this.bgJobs.map(j => `[${j.id}]+  ${j.status}                 ${j.cmd} &`).join('\n');
+            }
+          }
+          break;
+
+        case 'fg':
+          {
+            if (this.bgJobs.length === 0) {
+              result.stderr = `bash: fg: current: no such job`;
+            } else {
+              const job = this.bgJobs.pop();
+              result.stdout = `${job.cmd}\n[Job ${job.id} brought to foreground and completed]`;
+            }
+          }
+          break;
+
+        case 'ping':
+          {
+            const host = cmdArgs.filter(a => !a.startsWith('-')).pop();
+            if (!host) {
+              result.stderr = `ping: missing host operand`;
+            } else {
+              result.stdout = `PING ${host} (142.250.190.46) 56(84) bytes of data.\n64 bytes from ${host} (142.250.190.46): icmp_seq=1 ttl=116 time=14.2 ms\n64 bytes from ${host} (142.250.190.46): icmp_seq=2 ttl=116 time=12.8 ms\n64 bytes from ${host} (142.250.190.46): icmp_seq=3 ttl=116 time=15.1 ms\n\n--- ${host} ping statistics ---\n3 packets transmitted, 3 received, 0% packet loss, time 2002ms\nrtt min/avg/max/mdev = 12.821/14.052/15.110/0.951 ms`;
+            }
+          }
+          break;
+
+        case 'ip':
+          {
+            const sub = cmdArgs[0];
+            if (sub === 'a' || sub === 'addr' || sub === 'address') {
+              result.stdout = `1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000\n    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00\n    inet 127.0.0.1/8 scope host lo\n       valid_lft forever preferred_lft forever\n2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000\n    link/ether 52:54:00:12:34:56 brd ff:ff:ff:ff:ff:ff\n    inet 192.168.1.15/24 brd 192.168.1.255 scope global dynamic eth0\n       valid_lft 86320sec preferred_lft 86320sec\n3: wlan0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default qlen 1000\n    link/ether 00:c0:ca:98:76:54 brd ff:ff:ff:ff:ff:ff`;
+            } else {
+              result.stderr = `ip: usage: ip [OPTIONS] OBJECT { COMMAND | help }\nOBJECT := { link | addr | route }`;
+            }
+          }
+          break;
+
+        case 'curl':
+          {
+            const url = cmdArgs.filter(a => !a.startsWith('-')).pop();
+            if (!url) {
+              result.stderr = `curl: no URL specified!`;
+            } else if (url === 'http://api.bashquest.com/update.sh' || url === 'api.bashquest.com/update.sh') {
+              result.stdout = `#!/bin/bash\necho "Updating BashQuest"\necho "All packages current!"`;
+            } else {
+              result.stdout = `<html><body>Welcome to ${url}</body></html>`;
+            }
+          }
+          break;
+
+        case 'find':
+          result = this.runFind(cmdArgs);
+          break;
+
+        case 'history':
+          result.stdout = this.history.map((cmd, idx) => `  ${idx + 1}  ${cmd}`).join('\n');
+          break;
+
+        case 'systemctl':
+          result = this.runSystemctl(cmdArgs, isSudo);
+          break;
+
+        case 'nano':
+          {
+            const targetFile = cmdArgs[0];
+            if (!targetFile) {
+              result.stderr = `nano: missing file operand`;
+            } else {
+              const node = this.fs.getNodeByPath(this.currentPath, targetFile);
+              const content = (node && node.type === 'file') ? node.content : '';
+              if (typeof window !== 'undefined') {
+                window.dispatchEvent(new CustomEvent('app:open-nano', {
+                  detail: {
+                    filename: targetFile,
+                    currentPath: this.currentPath,
+                    content: content
+                  }
+                }));
+              }
+              result.stdout = `[ GNU nano 7.2 opened in editor workspace overlay ]`;
+            }
+          }
+          break;
+
         default:
           result.stderr = `bash: ${command}: command not found`;
       }
@@ -647,6 +870,150 @@ export class ShellSession {
     }
 
     return lastResult;
+  }
+
+  runDu(args) {
+    let summarize = false;
+    let humanReadable = false;
+    const targets = [];
+    for (const arg of args) {
+      if (arg.startsWith('-')) {
+        if (arg.includes('s')) summarize = true;
+        if (arg.includes('h')) humanReadable = true;
+      } else {
+        targets.push(arg);
+      }
+    }
+    const target = targets[0] || '.';
+    const node = this.fs.getNodeByPath(this.currentPath, target);
+    if (!node) {
+      return { stdout: '', stderr: `du: cannot access '${target}': No such file or directory`, currentPath: this.currentPath };
+    }
+    const getSizes = (n, currentRelPath) => {
+      let size = 0;
+      const list = [];
+      if (n.type === 'file') {
+        size = n.content ? n.content.length : 0;
+      } else if (n.type === 'dir' && n.children) {
+        size = 4096;
+        for (const child of n.children) {
+          const res = getSizes(child, currentRelPath === '/' ? `/${child.name}` : `${currentRelPath}/${child.name}`);
+          size += res.size;
+          list.push(...res.list);
+        }
+      }
+      list.push({ path: currentRelPath, size });
+      return { size, list };
+    };
+    const absPath = this.fs.resolvePathStr(this.currentPath, target);
+    const { list } = getSizes(node, absPath);
+    const formatSize = (s) => {
+      if (!humanReadable) return String(Math.ceil(s / 1024));
+      if (s < 1024) return `${s}B`;
+      if (s < 1024 * 1024) return `${Math.round(s / 102.4) / 10}K`;
+      return `${Math.round(s / (1024 * 102.4)) / 10}M`;
+    };
+    if (summarize) {
+      const total = list.find(item => item.path === absPath);
+      return { stdout: `${formatSize(total.size)}\t${target}`, stderr: '', currentPath: this.currentPath };
+    } else {
+      list.sort((a, b) => a.path.localeCompare(b.path));
+      const out = list.map(item => `${formatSize(item.size)}\t${item.path === '/' ? '/' : '.' + item.path.substring(this.currentPath === '/' ? 0 : this.currentPath.length)}`);
+      return { stdout: out.join('\n'), stderr: '', currentPath: this.currentPath };
+    }
+  }
+
+  runFind(args) {
+    let startPath = '.';
+    let namePattern = '*';
+    const pathIdx = args.findIndex(a => !a.startsWith('-') && args[args.indexOf(a) - 1] !== '-name');
+    if (pathIdx !== -1) {
+      startPath = args[pathIdx];
+    }
+    const nameIdx = args.indexOf('-name');
+    if (nameIdx !== -1 && args[nameIdx + 1]) {
+      namePattern = args[nameIdx + 1].replace(/['"]/g, '');
+    }
+    const startNode = this.fs.getNodeByPath(this.currentPath, startPath);
+    if (!startNode) {
+      return { stdout: '', stderr: `find: '${startPath}': No such file or directory`, currentPath: this.currentPath };
+    }
+    let regexStr = '';
+    for (let i = 0; i < namePattern.length; i++) {
+      const ch = namePattern[i];
+      if (ch === '*') regexStr += '.*';
+      else if (ch === '?') regexStr += '.';
+      else if ('.+^${}()|[]\\'.includes(ch)) regexStr += '\\' + ch;
+      else regexStr += ch;
+    }
+    const regex = new RegExp('^' + regexStr + '$');
+    const results = [];
+    const traverse = (node, currentRelPath) => {
+      if (regex.test(node.name) && node.name !== '/') {
+        results.push(currentRelPath);
+      }
+      if (node.type === 'dir' && node.children) {
+        for (const child of node.children) {
+          traverse(child, currentRelPath === '/' ? `/${child.name}` : `${currentRelPath}/${child.name}`);
+        }
+      }
+    };
+    const absPath = this.fs.resolvePathStr(this.currentPath, startPath);
+    traverse(startNode, absPath);
+    results.sort();
+    const relativeResults = results.map(r => {
+      if (startPath === '.') {
+        return '.' + r.substring(this.currentPath === '/' ? 0 : this.currentPath.length);
+      }
+      return r;
+    });
+    return {
+      stdout: relativeResults.join('\n'),
+      stderr: '',
+      currentPath: this.currentPath
+    };
+  }
+
+  runSystemctl(args, isSudo) {
+    if (args.length < 2) {
+      return { stdout: '', stderr: `systemctl: missing command or service name`, currentPath: this.currentPath };
+    }
+    const action = args[0];
+    const service = args[1];
+    if (service !== 'apache2') {
+      return { stdout: '', stderr: `Failed to ${action} ${service}.service: Unit ${service}.service not found.`, currentPath: this.currentPath };
+    }
+    if (action === 'status') {
+      const state = this.services.apache2 || 'inactive';
+      let lines = [
+        `● apache2.service - LSB: Apache2 web server`,
+        `     Loaded: loaded (/etc/init.d/apache2; generated)`,
+        `     Active: ${state === 'active' ? 'active (running)' : 'inactive (dead)'} since Fri 2026-07-03 12:00:00 UTC; 4h ago`,
+        `       Docs: man:systemd-sysv-generator(8)`,
+        `    Process: 1025 ExecStart=/etc/init.d/apache2 start (code=exited, status=0/SUCCESS)`
+      ];
+      if (state === 'active') {
+        lines.push(`   Main PID: 1042 (apache2)`);
+        lines.push(`      Tasks: 55 (limit: 9345)`);
+        lines.push(`     Memory: 24.5M`);
+        lines.push(`        CPU: 1.25s`);
+      }
+      return { stdout: lines.join('\n'), stderr: '', currentPath: this.currentPath };
+    }
+    if (!isSudo) {
+      return { stdout: '', stderr: `Access denied. systemctl control operations require sudo privileges.`, currentPath: this.currentPath };
+    }
+    if (action === 'start') {
+      this.services.apache2 = 'active';
+      return { stdout: `Synchronizing state of apache2.service with SysV service script...\nExecuting: /lib/systemd/systemd-sysv-install enable apache2\nStarting apache2.service... Done!`, stderr: '', currentPath: this.currentPath };
+    } else if (action === 'stop') {
+      this.services.apache2 = 'inactive';
+      return { stdout: `Stopping apache2.service... Done!`, stderr: '', currentPath: this.currentPath };
+    } else if (action === 'restart') {
+      this.services.apache2 = 'active';
+      return { stdout: `Restarting apache2.service... Done!`, stderr: '', currentPath: this.currentPath };
+    }
+    return { stdout: '', stderr: `systemctl: unknown command '${action}'`, currentPath: this.currentPath };
   }
 
   runWc(args, stdin, isSudo) {
