@@ -33,7 +33,7 @@
       <input 
         id="terminal-input"
         type="text" 
-        class="absolute inset-0 bg-transparent border-none outline-none text-on-primary font-mono caret-white focus:ring-0 focus:outline-none p-0 m-0 z-10 w-full"
+        class="w-full bg-transparent border-none outline-none text-on-primary font-mono caret-white focus:ring-0 focus:outline-none p-0 m-0 z-10"
         autofocus
         autocomplete="off"
         autocorrect="off"
@@ -41,7 +41,7 @@
         spellcheck="false"
       />
       <!-- Ghost text for autocomplete preview -->
-      <span id="terminal-ghost" class="text-mute opacity-50 pointer-events-none select-none font-mono"></span>
+      <span id="terminal-ghost" class="absolute left-0 top-0 text-mute opacity-50 pointer-events-none select-none font-mono"></span>
     </div>
   </div>
 </div>
@@ -236,9 +236,24 @@
     }
   });
 
+  // Clear terminal screen history
+  function clearTerminal() {
+    if (!termHistory) return;
+    termHistory.innerHTML = `
+      <div class="text-[#888] font-mono leading-relaxed">
+        Welcome to BashQuest Terminal v1.0.0<br>
+        Type <span class="text-success font-semibold">help</span> to list available commands. Redirection (&gt;, &gt;&gt;) is supported.<br>
+        Type your command and press Enter. Tab key autocompletes file paths.
+      </div>
+    `;
+    historyIdx = -1;
+    tempCommand = '';
+  }
+
   // Listen for lesson-load event to update terminal paths
   window.addEventListener('app:state-updated', updatePrompt);
   window.addEventListener('app:select-lesson', () => {
     updatePrompt();
+    clearTerminal();
   });
 </script>
