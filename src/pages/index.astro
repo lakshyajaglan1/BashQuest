@@ -168,6 +168,18 @@ import LessonPanel from '../components/LessonPanel.astro';
         }
       }
 
+      // Quest 18: Ensure /etc/shadow exists for sudo quest
+      if (!completed.includes(18)) {
+        if (!fs.getNodeByPath('/etc', 'shadow')) {
+          fs.createNode('/etc', 'shadow', 'file', {
+            content: 'root:$6$8zLx92xp$H9s2:18200:0:99999:7:::\nlearner:$6$1bYtM2op$P4w1:18200:0:99999:7:::\n',
+            permissions: '000',
+            owner: 'root',
+            group: 'shadow'
+          });
+        }
+      }
+
       // Keep state.fsTree in sync with the tree
       this.state.fsTree = fs.tree;
 
