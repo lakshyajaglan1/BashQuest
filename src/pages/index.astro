@@ -73,7 +73,8 @@ import LessonPanel from '../components/LessonPanel.astro';
         activeView: 'dashboard',
         activeLessonId: 1,
         streak: 1,
-        lastCompletedDate: null
+        lastCompletedDate: null,
+        fsTree: null
       };
 
       this.init();
@@ -95,19 +96,25 @@ import LessonPanel from '../components/LessonPanel.astro';
     }
 
     resetFilesystem() {
-      // Create a fresh FS matching the active lesson's environment
-      const fs = new FileSystem();
+      // Create a fresh FS matching the active lesson's environment, or restore from existing tree
+      const fs = new FileSystem(this.state.fsTree);
       
       // Perform customizations based on lesson needs
       // E.g., Lesson 9 needs a downloads folder to delete, which the default tree has!
       // Lesson 8 renames status.txt which we create in Lesson 6. Let's populate status.txt for Lesson 8/9 if the user completed Lesson 6 previously
       const completed = this.state.completedLessons;
       if (completed.includes(6) && !completed.includes(8)) {
-        // Pre-create status.txt
-        fs.createNode('/home/learner', 'status.txt', 'file', {
-          content: 'System Online\nAll Checks Green\n'
-        });
+        // Pre-create status.txt if it doesn't exist
+        const statusNode = fs.getNodeByPath('/home/learner', 'status.txt');
+        if (!statusNode) {
+          fs.createNode('/home/learner', 'status.txt', 'file', {
+            content: 'System Online\nAll Checks Green\n'
+          });
+        }
       }
+
+      // Keep state.fsTree in sync with the tree
+      this.state.fsTree = fs.tree;
 
       const session = new ShellSession(fs);
 
@@ -137,7 +144,7 @@ import LessonPanel from '../components/LessonPanel.astro';
       window.addEventListener('app:select-lesson', (e: any) => {
         this.state.activeLessonId = e.detail.lessonId;
         
-        // Reset filesystem sandbox to avoid state pollution between quests
+        // Reset filesystem sandbox to restore state or load current state
         this.resetFilesystem();
         
         this.saveToStorage();
@@ -169,7 +176,8 @@ import LessonPanel from '../components/LessonPanel.astro';
           activeView: 'dashboard',
           activeLessonId: 1,
           streak: 1,
-          lastCompletedDate: null
+          lastCompletedDate: null,
+          fsTree: null
         };
         this.resetFilesystem();
         this.applyViewVisibility();
@@ -179,6 +187,14 @@ import LessonPanel from '../components/LessonPanel.astro';
         
         this.saveToStorage();
         this.broadcastState();
+      });
+
+      // Listen for filesystem updates from the terminal
+      window.addEventListener('app:filesystem-update', () => {
+        if (window.appState && window.appState.fs) {
+          this.state.fsTree = window.appState.fs.tree;
+          this.saveToStorage();
+        }
       });
     }
 
