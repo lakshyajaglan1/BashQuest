@@ -89,10 +89,10 @@
   const btnNext = document.getElementById('btn-next-lesson');
 
   // Load lesson
-  function loadActiveLesson() {
+  function loadActiveLesson(forcedLessonId = null) {
     if (!window.appState) return;
     
-    const lessonId = window.appState.activeLessonId;
+    const lessonId = forcedLessonId || window.appState.activeLessonId;
     const lesson = lessons.find(l => l.id === lessonId);
     if (!lesson) return;
 
@@ -231,12 +231,16 @@
   // Listeners
   window.addEventListener('app:select-lesson', (e) => {
     // Save current commands for state loading
-    loadActiveLesson();
+    const detail = (e as CustomEvent).detail;
+    const lessonId = detail ? detail.lessonId : null;
+    loadActiveLesson(lessonId);
   });
 
   window.addEventListener('app:state-updated', () => {
     // Sync state
-    if (activeLesson && window.appState && window.appState.completedLessons.includes(activeLesson.id)) {
+    if (!activeLesson && window.appState) {
+      loadActiveLesson();
+    } else if (activeLesson && window.appState && window.appState.completedLessons.includes(activeLesson.id)) {
       showCompletionUI();
     }
   });
