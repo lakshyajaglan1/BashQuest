@@ -275,13 +275,22 @@ export const lessons = [
       { cmd: 'echo "All Checks Green" >> status.txt', desc: 'Append text to status.txt' }
     ],
     objectives: [
+      { id: 'used_append', text: 'Use echo with >> append redirection' },
       { id: 'has_first_line', text: 'First line is still "System Online"' },
-      { id: 'has_second_line', text: 'Second line has "All Checks Green"' }
+      { id: 'has_second_line', text: 'Second line has "All Checks Green"' },
+      { id: 'used_cat', text: 'Verify the result using the "cat" command' }
     ],
     verify: (fs, session, history) => {
+      const usedAppend = history.some(cmd => {
+        return cmd.includes('echo') && cmd.includes('>>');
+      });
+      const usedCat = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts[0] === 'cat';
+      });
       const node = fs.getNodeByPath('/home/learner', 'status.txt');
       if (!node || node.type !== 'file') {
-        return { success: false, checks: [{ id: 'has_first_line', passed: false }, { id: 'has_second_line', passed: false }] };
+        return { success: false, checks: [{ id: 'used_append', passed: usedAppend }, { id: 'has_first_line', passed: false }, { id: 'has_second_line', passed: false }, { id: 'used_cat', passed: usedCat }] };
       }
       
       const lines = node.content.trim().split('\n');
@@ -289,10 +298,12 @@ export const lessons = [
       const hasSecondLine = lines[1] && lines[1].trim() === 'All Checks Green';
 
       return {
-        success: hasFirstLine && hasSecondLine,
+        success: usedAppend && hasFirstLine && hasSecondLine && usedCat,
         checks: [
+          { id: 'used_append', passed: usedAppend },
           { id: 'has_first_line', passed: hasFirstLine },
-          { id: 'has_second_line', passed: hasSecondLine }
+          { id: 'has_second_line', passed: hasSecondLine },
+          { id: 'used_cat', passed: usedCat }
         ]
       };
     }
@@ -346,10 +357,14 @@ export const lessons = [
       { cmd: 'cat log_* > combined.log', desc: 'Combine all matching files into combined.log' }
     ],
     objectives: [
+      { id: 'used_wildcard', text: 'Use cat with wildcard pattern (log_*)' },
       { id: 'combined_exists', text: 'Create "combined.log" in home directory' },
       { id: 'content_combined', text: 'Verify it has logs from log_1, log_2, and log_3' }
     ],
     verify: (fs, session, history) => {
+      const usedWildcard = history.some(cmd => {
+        return cmd.includes('cat') && cmd.includes('*');
+      });
       const node = fs.getNodeByPath('/home/learner', 'combined.log');
       const exists = node && node.type === 'file';
       const correctContent = exists && 
@@ -358,8 +373,9 @@ export const lessons = [
         node.content.includes('Log entry 3');
 
       return {
-        success: exists && correctContent,
+        success: usedWildcard && exists && correctContent,
         checks: [
+          { id: 'used_wildcard', passed: usedWildcard },
           { id: 'combined_exists', passed: !!exists },
           { id: 'content_combined', passed: !!correctContent }
         ]
@@ -411,10 +427,14 @@ export const lessons = [
       { cmd: 'ls | wc -l > file_count.txt', desc: 'Write files count to file_count.txt' }
     ],
     objectives: [
+      { id: 'used_pipe', text: 'Use pipe (|) to connect ls with wc' },
       { id: 'file_count_exists', text: 'Create file "file_count.txt" in home directory' },
       { id: 'count_is_correct', text: 'Verify file contains the correct numeric file count' }
     ],
     verify: (fs, session, history) => {
+      const usedPipe = history.some(cmd => {
+        return cmd.includes('|') && cmd.includes('wc');
+      });
       const node = fs.getNodeByPath('/home/learner', 'file_count.txt');
       const exists = node && node.type === 'file';
       let correct = false;
@@ -424,8 +444,9 @@ export const lessons = [
       }
 
       return {
-        success: exists && correct,
+        success: usedPipe && exists && correct,
         checks: [
+          { id: 'used_pipe', passed: usedPipe },
           { id: 'file_count_exists', passed: !!exists },
           { id: 'count_is_correct', passed: correct }
         ]
@@ -445,17 +466,28 @@ export const lessons = [
       { cmd: 'sort names.txt | uniq > unique_names.txt', desc: 'Sort and filter duplicates into a file' }
     ],
     objectives: [
+      { id: 'used_sort', text: 'Use the "sort" command on names.txt' },
+      { id: 'used_uniq', text: 'Pipe sorted output into "uniq" command' },
       { id: 'unique_names_exists', text: 'Create file "unique_names.txt"' },
       { id: 'sorted_and_unique', text: 'Verify content has unique sorted names' }
     ],
     verify: (fs, session, history) => {
+      const usedSort = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts[0] === 'sort';
+      });
+      const usedUniq = history.some(cmd => {
+        return cmd.includes('|') && cmd.includes('uniq');
+      });
       const node = fs.getNodeByPath('/home/learner', 'unique_names.txt');
       const exists = node && node.type === 'file';
       const correct = exists && node.content.trim() === 'Alice\nBob\nCharlie\nDavid';
 
       return {
-        success: exists && correct,
+        success: usedSort && usedUniq && exists && correct,
         checks: [
+          { id: 'used_sort', passed: usedSort },
+          { id: 'used_uniq', passed: usedUniq },
           { id: 'unique_names_exists', passed: !!exists },
           { id: 'sorted_and_unique', passed: !!correct }
         ]
@@ -475,18 +507,24 @@ export const lessons = [
       { cmd: 'grep "[ERROR]" logs.txt > errors.log', desc: 'Save matching errors into errors.log' }
     ],
     objectives: [
+      { id: 'used_grep', text: 'Use the "grep" command to search logs.txt' },
       { id: 'errors_log_exists', text: 'Create file "errors.log" in home directory' },
       { id: 'only_errors', text: 'Verify errors.log contains only [ERROR] entries' }
     ],
     verify: (fs, session, history) => {
+      const usedGrep = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts[0] === 'grep';
+      });
       const node = fs.getNodeByPath('/home/learner', 'errors.log');
       const exists = node && node.type === 'file';
       const lines = exists ? node.content.split('\n').filter(Boolean) : [];
       const onlyErrors = exists && lines.length > 0 && lines.every(line => line.includes('[ERROR]'));
 
       return {
-        success: exists && onlyErrors,
+        success: usedGrep && exists && onlyErrors,
         checks: [
+          { id: 'used_grep', passed: usedGrep },
           { id: 'errors_log_exists', passed: !!exists },
           { id: 'only_errors', passed: onlyErrors }
         ]
@@ -542,12 +580,17 @@ export const lessons = [
     objectives: [
       { id: 'used_mv', text: 'Use "mv" to rename the file' },
       { id: 'hidden_file_exists', text: 'Create hidden file ".config_names" in home' },
-      { id: 'old_file_removed', text: 'Verify original unique_names.txt is removed' }
+      { id: 'old_file_removed', text: 'Verify original unique_names.txt is removed' },
+      { id: 'used_ls_a', text: 'Use "ls -a" to verify hidden file is present' }
     ],
     verify: (fs, session, history) => {
       const usedMv = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts[0] === 'mv';
+      });
+      const usedLsA = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts[0] === 'ls' && (parts.includes('-a') || parts.includes('-la') || parts.includes('-al') || parts.some(p => p.startsWith('-') && p.includes('a')));
       });
       const node = fs.getNodeByPath('/home/learner', '.config_names');
       const oldNode = fs.getNodeByPath('/home/learner', 'unique_names.txt');
@@ -555,11 +598,12 @@ export const lessons = [
       const oldRemoved = !oldNode;
 
       return {
-        success: usedMv && exists && oldRemoved,
+        success: usedMv && exists && oldRemoved && usedLsA,
         checks: [
           { id: 'used_mv', passed: usedMv },
           { id: 'hidden_file_exists', passed: !!exists },
-          { id: 'old_file_removed', passed: oldRemoved }
+          { id: 'old_file_removed', passed: oldRemoved },
+          { id: 'used_ls_a', passed: usedLsA }
         ]
       };
     }
@@ -577,9 +621,15 @@ export const lessons = [
       { cmd: 'cat /etc/shadow', desc: 'Read password hashes database (restricted)' }
     ],
     objectives: [
+      { id: 'tried_without_sudo', text: 'Try "cat /etc/shadow" and observe permission error' },
       { id: 'ran_sudo_cat', text: 'Run "sudo cat /etc/shadow" successfully' }
     ],
     verify: (fs, session, history) => {
+      const triedWithoutSudo = history.some(cmd => {
+        const cleaned = cmd.trim().replace(/\s+/g, ' ');
+        return cleaned === 'cat /etc/shadow' || 
+               (cleaned === 'cat shadow' && session.currentPath === '/etc');
+      });
       const ranSudoCat = history.some(cmd => {
         const cleaned = cmd.trim().replace(/\s+/g, ' ');
         return cleaned === 'sudo cat /etc/shadow' || 
@@ -587,8 +637,9 @@ export const lessons = [
       });
 
       return {
-        success: ranSudoCat,
+        success: triedWithoutSudo && ranSudoCat,
         checks: [
+          { id: 'tried_without_sudo', passed: triedWithoutSudo },
           { id: 'ran_sudo_cat', passed: ranSudoCat }
         ]
       };
