@@ -140,6 +140,7 @@ import LessonPanel from '../components/LessonPanel.astro';
         streak: 1,
         lastCompletedDate: null,
         fsTree: null,
+        lessonStartTrees: {},
         installedPackages: [
           'pwd', 'whoami', 'clear', 'help', 'cd', 'ls', 'mkdir', 'touch', 'cat', 'echo', 
           'rm', 'cp', 'mv', 'chmod', 'grep', 'wc', 'uniq', 'sort', 'man', 'apt',
@@ -281,6 +282,15 @@ import LessonPanel from '../components/LessonPanel.astro';
       // Keep state.fsTree in sync with the tree
       this.state.fsTree = fs.tree;
 
+      // Cache starting tree for this quest if it hasn't been saved yet
+      if (!this.state.lessonStartTrees) {
+        this.state.lessonStartTrees = {};
+      }
+      const activeId = this.state.activeLessonId;
+      if (!this.state.lessonStartTrees[activeId]) {
+        this.state.lessonStartTrees[activeId] = JSON.parse(JSON.stringify(fs.tree));
+      }
+
       const session = new ShellSession(fs, '/home/learner', this.state.installedPackages);
 
       window.appState = {
@@ -318,17 +328,32 @@ import LessonPanel from '../components/LessonPanel.astro';
 
       // Listen for quest restore request
       window.addEventListener('app:restore-lesson', () => {
-        // Reset filesystem tree to default starting state
-        this.state.fsTree = null;
+        const activeId = this.state.activeLessonId;
         
-        // Re-initialize a fresh filesystem with active quest seeds
+        // Restore filesystem tree of the current quest to its cached starting state
+        if (this.state.lessonStartTrees && this.state.lessonStartTrees[activeId]) {
+          this.state.fsTree = JSON.parse(JSON.stringify(this.state.lessonStartTrees[activeId]));
+        } else {
+          this.state.fsTree = null;
+        }
+
+        // Reset completion status and deduct XP for this quest if it was completed
+        if (this.state.completedLessons.includes(activeId)) {
+          this.state.completedLessons = this.state.completedLessons.filter((id: number) => id !== activeId);
+          const lesson = lessons.find(l => l.id === activeId);
+          if (lesson) {
+            this.state.xp = Math.max(0, this.state.xp - lesson.xp);
+          }
+        }
+        
+        // Re-initialize a fresh filesystem using the restored tree
         this.resetFilesystem();
         
         this.saveToStorage();
         this.broadcastState();
         
         // Dispatch app:select-lesson to let the terminal and visual explorer know to reset
-        window.dispatchEvent(new CustomEvent('app:select-lesson', { detail: { lessonId: this.state.activeLessonId } }));
+        window.dispatchEvent(new CustomEvent('app:select-lesson', { detail: { lessonId: activeId } }));
       });
 
       // Listen for quest completions
@@ -358,6 +383,7 @@ import LessonPanel from '../components/LessonPanel.astro';
           streak: 1,
           lastCompletedDate: null,
           fsTree: null,
+          lessonStartTrees: {},
           installedPackages: [
             'pwd', 'whoami', 'clear', 'help', 'cd', 'ls', 'mkdir', 'touch', 'cat', 'echo', 
             'rm', 'cp', 'mv', 'chmod', 'grep', 'wc', 'uniq', 'sort', 'man', 'apt',
