@@ -350,7 +350,7 @@ export class ShellSession {
       'rm', 'cp', 'mv', 'chmod', 'grep', 'wc', 'uniq', 'sort', 'man', 'apt',
       'df', 'du', 'free', 'uptime', 'uname', 'ps', 'top', 'htop', 'kill', 'sleep',
       'jobs', 'fg', 'ping', 'ip', 'curl', 'find', 'history', 'systemctl', 'nano',
-      'bash', 'sed', 'awk', 'cut', 'tr', 'ln', 'tar', 'chown', 'export', 'env'
+      'bash', 'sed', 'awk', 'cut', 'tr', 'ln', 'tar', 'chown', 'export', 'env', 'xargs'
     ];
     this.installedPackages = new Set(defaultPkgs);
     if (installedPackages) {
@@ -610,7 +610,7 @@ export class ShellSession {
           break;
 
         case 'help':
-          result.stdout = 'Available commands: cd, ls, pwd, mkdir, touch, cat, echo, rm, cp, mv, chmod, grep, wc, uniq, sort, man, tree, sudo, apt, whoami, clear, help, df, du, free, uptime, uname, ps, top, htop, kill, sleep, jobs, fg, ping, ip, curl, find, history, systemctl, nano\nRedirections > (overwrite) and >> (append), and pipes | are supported.';
+          result.stdout = 'Available commands: cd, ls, pwd, mkdir, touch, cat, echo, rm, cp, mv, chmod, grep, wc, uniq, sort, man, tree, sudo, apt, whoami, clear, help, df, du, free, uptime, uname, ps, top, htop, kill, sleep, jobs, fg, ping, ip, curl, find, history, systemctl, nano, bash, sed, awk, cut, tr, ln, tar, chown, export, env, xargs\nRedirections > (overwrite) and >> (append), and pipes | are supported.';
           break;
 
         case 'cd':
@@ -872,6 +872,10 @@ export class ShellSession {
           result = this.runSystemctl(cmdArgs, isSudo);
           break;
 
+        case 'xargs':
+          result = this.runXargs(cmdArgs, stdin, isSudo);
+          break;
+
         case 'nano':
           {
             const targetFile = cmdArgs[0];
@@ -1061,6 +1065,26 @@ export class ShellSession {
     };
   }
 
+  runXargs(args, stdin, isSudo) {
+    if (args.length === 0) {
+      args = ['echo'];
+    }
+    const stdinArgs = (stdin || '').split(/\s+/).filter(Boolean);
+    const combinedArgs = [...args, ...stdinArgs];
+    const quotedArgs = combinedArgs.map(arg => {
+      if (arg.includes(' ') || arg.includes('"') || arg.includes("'") || arg.includes('*') || arg.includes('?')) {
+        return JSON.stringify(arg);
+      }
+      return arg;
+    });
+    const commandLine = (isSudo ? 'sudo ' : '') + quotedArgs.join(' ');
+    const result = this.execute(commandLine);
+    if (this.history.length > 0) {
+      this.history.pop();
+    }
+    return result;
+  }
+
   runSystemctl(args, isSudo) {
     if (args.length < 2) {
       return { stdout: '', stderr: `systemctl: missing command or service name`, currentPath: this.currentPath };
@@ -1242,7 +1266,8 @@ export class ShellSession {
       wc: 'WC(1) - Print newline, word, and byte counts for each file\n\nSYNOPSIS\n       wc [OPTION]... [FILE]...\n\nDESCRIPTION\n       Print newline, word, and byte counts for each FILE, and a total line if more than one FILE is specified.\n\n       -l, --lines\n              print the newline counts',
       grep: 'GREP(1) - Print lines matching a pattern\n\nSYNOPSIS\n       grep [PATTERN] [FILE]...\n\nDESCRIPTION\n       Search for PATTERN in each FILE or standard input.',
       tree: 'TREE(1) - List contents of directories in a tree-like format\n\nSYNOPSIS\n       tree [OPTION]... [DIRECTORY...]\n\nDESCRIPTION\n       Tree is a recursive directory listing program that produces a depth indented listing of files.',
-      man: 'MAN(1) - Interface to the system reference manuals\n\nSYNOPSIS\n       man [COMMAND]\n\nDESCRIPTION\n       man formats and displays the on-line manual pages.'
+      man: 'MAN(1) - Interface to the system reference manuals\n\nSYNOPSIS\n       man [COMMAND]\n\nDESCRIPTION\n       man formats and displays the on-line manual pages.',
+      xargs: 'XARGS(1) - Build and execute command lines from standard input\n\nSYNOPSIS\n       xargs [COMMAND [INITIAL-ARGS...]]\n\nDESCRIPTION\n       xargs reads items from the standard input, delimited by blanks or newlines, and executes the COMMAND one or more times with any INITIAL-ARGS followed by the items read from standard input.'
     };
     if (manuals[cmd]) {
       return { stdout: manuals[cmd], stderr: '', currentPath: this.currentPath };
