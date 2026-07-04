@@ -1487,5 +1487,136 @@ export const lessons = [
         ]
       };
     }
+  },
+  {
+    id: 46,
+    moduleId: 'searching',
+    title: 'Consulting Manual Pages',
+    xp: 200,
+    badge: 'Scholar',
+    description: 'Linux commands have extensive documentation called manual pages (or "man pages"). You can access them using the `man` command followed by the command name.\n\nE.g. `man ls` opens the manual page for `ls`. Inside a real man page, you navigate with the arrow keys and press `q` to quit.',
+    instructions: 'Open the manual page for the `grep` command to check its options: `man grep`.',
+    commandHelp: [
+      { cmd: 'man grep', desc: 'Display manual page for grep' }
+    ],
+    objectives: [
+      { id: 'ran_man_grep', text: 'Run the "man grep" command' }
+    ],
+    verify: (fs, session, history) => {
+      const ranManGrep = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts[0] === 'man' && parts[1] === 'grep';
+      });
+      return {
+        success: ranManGrep,
+        checks: [
+          { id: 'ran_man_grep', passed: ranManGrep }
+        ]
+      };
+    }
+  },
+  {
+    id: 47,
+    moduleId: 'advanced',
+    title: 'Changing File Ownership',
+    xp: 250,
+    badge: 'Owner',
+    description: 'In Linux, every file and folder belongs to a specific owner and group. We change them using the `chown` (change owner) command.\n\nSince modifying ownership affects system security, this command requires administrator privileges: `sudo chown <owner>:<group> <file>`.',
+    instructions: 'Change the owner of `/home/learner/reports.csv` to `root` using superuser privileges: `sudo chown root reports.csv`.',
+    commandHelp: [
+      { cmd: 'sudo chown root reports.csv', desc: 'Change owner of reports.csv to root' }
+    ],
+    objectives: [
+      { id: 'used_chown', text: 'Run the "chown" command with sudo' },
+      { id: 'owner_changed', text: 'Set owner of reports.csv to root' }
+    ],
+    verify: (fs, session, history) => {
+      const usedChown = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('chown');
+      });
+      const node = fs.getNodeByPath('/home/learner', 'reports.csv');
+      const ownerChanged = node && node.owner === 'root';
+      
+      return {
+        success: usedChown && ownerChanged,
+        checks: [
+          { id: 'used_chown', passed: usedChown },
+          { id: 'owner_changed', passed: !!ownerChanged }
+        ]
+      };
+    }
+  },
+  {
+    id: 48,
+    moduleId: 'env_admin',
+    title: 'Inspecting the Environment',
+    xp: 200,
+    badge: 'Env-Watcher',
+    description: 'The `env` command prints a list of all currently active environment variables in your shell session. This is useful for checking system configurations, paths, or active user details.',
+    instructions: 'List all environment variables in your active shell by running the `env` command.',
+    commandHelp: [
+      { cmd: 'env', desc: 'List active environment variables' }
+    ],
+    objectives: [
+      { id: 'ran_env', text: 'Run the "env" command' }
+    ],
+    verify: (fs, session, history) => {
+      const ranEnv = history.some(cmd => cmd.trim() === 'env');
+      return {
+        success: ranEnv,
+        checks: [
+          { id: 'ran_env', passed: ranEnv }
+        ]
+      };
+    }
+  },
+  {
+    id: 49,
+    moduleId: 'basics',
+    title: 'Clearing the Screen',
+    xp: 100,
+    badge: 'Neat-Freak',
+    description: 'When your terminal screen gets cluttered with command outputs, you can clean it up using the `clear` command. This scrolls the screen down to present a clean prompt at the top.',
+    instructions: 'Clear the terminal output screen by running the `clear` command.',
+    commandHelp: [
+      { cmd: 'clear', desc: 'Clear the terminal screen' }
+    ],
+    objectives: [
+      { id: 'ran_clear', text: 'Run the "clear" command' }
+    ],
+    verify: (fs, session, history) => {
+      const ranClear = history.some(cmd => cmd.trim() === 'clear');
+      return {
+        success: ranClear,
+        checks: [
+          { id: 'ran_clear', passed: ranClear }
+        ]
+      };
+    }
+  },
+  {
+    id: 50,
+    moduleId: 'basics',
+    title: 'Finding Shell Help',
+    xp: 100,
+    badge: 'Helpful',
+    description: 'If you are ever unsure which commands are supported in this emulator, you can use the `help` command. It lists all available utilities along with support details for redirection and pipes.',
+    instructions: 'List all available shell commands in this terminal simulator by running the `help` command.',
+    commandHelp: [
+      { cmd: 'help', desc: 'List available commands' }
+    ],
+    objectives: [
+      { id: 'ran_help', text: 'Run the "help" command' }
+    ],
+    verify: (fs, session, history) => {
+      const ranHelp = history.some(cmd => cmd.trim() === 'help');
+      return {
+        success: ranHelp,
+        checks: [
+          { id: 'ran_help', passed: ranHelp }
+        ]
+      };
+    }
   }
 ];
