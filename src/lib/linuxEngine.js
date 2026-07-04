@@ -349,7 +349,8 @@ export class ShellSession {
       'pwd', 'whoami', 'clear', 'help', 'cd', 'ls', 'mkdir', 'touch', 'cat', 'echo', 
       'rm', 'cp', 'mv', 'chmod', 'grep', 'wc', 'uniq', 'sort', 'man', 'apt',
       'df', 'du', 'free', 'uptime', 'uname', 'ps', 'top', 'htop', 'kill', 'sleep',
-      'jobs', 'fg', 'ping', 'ip', 'curl', 'find', 'history', 'systemctl', 'nano'
+      'jobs', 'fg', 'ping', 'ip', 'curl', 'find', 'history', 'systemctl', 'nano',
+      'bash', 'sed', 'awk', 'cut', 'tr', 'ln', 'tar', 'chown', 'export', 'env'
     ];
     this.installedPackages = new Set(defaultPkgs);
     if (installedPackages) {
@@ -357,6 +358,13 @@ export class ShellSession {
         this.installedPackages.add(pkg);
       }
     }
+    this.env = {
+      USER: 'learner',
+      HOME: '/home/learner',
+      PATH: '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+      SHELL: '/bin/bash',
+      TERM: 'xterm-256color'
+    };
   }
 
   // Expand wildcard patterns (* and ?) against the virtual filesystem
@@ -418,14 +426,22 @@ export class ShellSession {
 
     this.history.push(trimmed);
 
+    // Substitute environment variables (except inside single quotes if possible)
+    let substituted = trimmed;
+    const varRegex = /\$(\w+)/g;
+    substituted = substituted.replace(varRegex, (match, varName) => {
+      if (/^\d+$/.test(varName)) return match;
+      return this.env[varName] !== undefined ? this.env[varName] : '';
+    });
+
     // Support pipeline split
     const pipelineSegments = [];
     let currentSegment = '';
     let inQuotes = false;
     let quoteChar = '';
 
-    for (let i = 0; i < trimmed.length; i++) {
-      const char = trimmed[i];
+    for (let i = 0; i < substituted.length; i++) {
+      const char = substituted[i];
       if ((char === '"' || char === "'") && (i === 0 || trimmed[i - 1] !== '\\')) {
         if (inQuotes && char === quoteChar) {
           inQuotes = false;
@@ -540,6 +556,37 @@ export class ShellSession {
         }
         command = cmdArgs[0];
         cmdArgs = cmdArgs.slice(1);
+      }
+
+      const isPathExecution = command.startsWith('./') || command.startsWith('/');
+      if (isPathExecution) {
+        const node = this.fs.getNodeByPath(this.currentPath, command);
+        if (!node) {
+          lastResult = { stdout: '', stderr: `bash: ${command}: No such file or directory`, currentPath: this.currentPath };
+          break;
+        }
+        if (node.type !== 'file') {
+          lastResult = { stdout: '', stderr: `bash: ${command}: Is a directory`, currentPath: this.currentPath };
+          break;
+        }
+        // Check executable bits
+        const digits = String(node.permissions).split('').map(Number);
+        const isExec = digits.some(d => d % 2 !== 0); // odd digits have executable permission
+        if (!isExec) {
+          lastResult = { stdout: '', stderr: `bash: ${command}: Permission denied`, currentPath: this.currentPath };
+          break;
+        }
+        // Execute it as bash script
+        const runRes = this.runBash([command, ...cmdArgs]);
+        lastResult = runRes;
+        
+        // Also ensure any FS changes in script update parent window if in browser
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('app:filesystem-update'));
+        }
+        
+        stdin = lastResult.stdout;
+        continue;
       }
 
       if (!this.installedPackages.has(command)) {
@@ -847,6 +894,46 @@ export class ShellSession {
           }
           break;
 
+        case 'bash':
+          result = this.runBash(cmdArgs);
+          break;
+
+        case 'sed':
+          result = this.runSed(cmdArgs, stdin, isSudo);
+          break;
+
+        case 'awk':
+          result = this.runAwk(cmdArgs, stdin, isSudo);
+          break;
+
+        case 'cut':
+          result = this.runCut(cmdArgs, stdin, isSudo);
+          break;
+
+        case 'tr':
+          result = this.runTr(cmdArgs, stdin, isSudo);
+          break;
+
+        case 'ln':
+          result = this.runLn(cmdArgs);
+          break;
+
+        case 'tar':
+          result = this.runTar(cmdArgs);
+          break;
+
+        case 'chown':
+          result = this.runChown(cmdArgs);
+          break;
+
+        case 'export':
+          result = this.runExport(cmdArgs);
+          break;
+
+        case 'env':
+          result = this.runEnv(cmdArgs);
+          break;
+
         default:
           result.stderr = `bash: ${command}: command not found`;
       }
@@ -1034,7 +1121,10 @@ export class ShellSession {
     } else {
       const contents = [];
       for (const file of files) {
-        const node = this.fs.getNodeByPath(this.currentPath, file);
+        let node = this.fs.getNodeByPath(this.currentPath, file);
+        if (node && node.type === 'link') {
+          node = this.fs.getNodeByPath('/', node.target);
+        }
         if (!node) {
           return { stdout: '', stderr: `wc: ${file}: No such file or directory`, currentPath: this.currentPath };
         }
@@ -1331,7 +1421,7 @@ export class ShellSession {
   }
 
   formatFileRow(node) {
-    const typeChar = node.type === 'dir' ? 'd' : '-';
+    const typeChar = node.type === 'dir' ? 'd' : (node.type === 'link' ? 'l' : '-');
     // Map permissions (e.g. 755 -> rwxr-xr-x)
     const mapPerms = (octalStr) => {
       const lookup = ['---', '--x', '-w-', '-wx', 'r--', 'r-x', 'rw-', 'rwx'];
@@ -1344,6 +1434,8 @@ export class ShellSession {
     let size = 4096;
     if (node.type === 'file') {
       size = node.content ? node.content.length : 0;
+    } else if (node.type === 'link') {
+      size = node.target ? node.target.length : 0;
     }
     
     return `${typeChar}${permsString} 1 ${node.owner} ${node.group} ${size} Jul 3 13:37 ${node.name}`;
@@ -1416,7 +1508,10 @@ export class ShellSession {
     const errors = [];
 
     for (const target of args) {
-      const node = this.fs.getNodeByPath(this.currentPath, target);
+      let node = this.fs.getNodeByPath(this.currentPath, target);
+      if (node && node.type === 'link') {
+        node = this.fs.getNodeByPath('/', node.target);
+      }
       if (!node) {
         errors.push(`cat: ${target}: No such file or directory`);
       } else if (node.type === 'dir') {
@@ -1668,7 +1763,10 @@ export class ShellSession {
     if (!target) {
       content = stdin || '';
     } else {
-      const node = this.fs.getNodeByPath(this.currentPath, target);
+      let node = this.fs.getNodeByPath(this.currentPath, target);
+      if (node && node.type === 'link') {
+        node = this.fs.getNodeByPath('/', node.target);
+      }
       if (!node) {
         return { stdout: '', stderr: `grep: ${target}: No such file or directory`, currentPath: this.currentPath };
       }
@@ -1692,5 +1790,456 @@ export class ShellSession {
       stderr: '',
       currentPath: this.currentPath
     };
+  }
+
+  runBash(args) {
+    const scriptName = args[0];
+    if (!scriptName) {
+      return { stdout: '', stderr: 'bash: missing script name', currentPath: this.currentPath };
+    }
+    const node = this.fs.getNodeByPath(this.currentPath, scriptName);
+    if (!node || node.type !== 'file') {
+      return { stdout: '', stderr: `bash: ${scriptName}: No such file or directory`, currentPath: this.currentPath };
+    }
+
+    const scriptArgs = args.slice(1);
+    const lines = node.content.split('\n');
+    const stdoutParts = [];
+    const stderrParts = [];
+
+    for (let line of lines) {
+      line = line.trim();
+      if (!line || line.startsWith('#')) continue;
+
+      // Replace positional parameters: $1, $2, etc.
+      for (let i = 0; i < scriptArgs.length; i++) {
+        line = line.replace(new RegExp('\\$' + (i + 1), 'g'), scriptArgs[i]);
+      }
+      // Replace $# (argument count)
+      line = line.replace(/\$#/g, String(scriptArgs.length));
+
+      const res = this.execute(line);
+      if (res.stdout) stdoutParts.push(res.stdout);
+      if (res.stderr) stderrParts.push(res.stderr);
+      this.currentPath = res.currentPath; // Let directories change inside script if cd runs
+    }
+
+    return {
+      stdout: stdoutParts.join('\n'),
+      stderr: stderrParts.join('\n'),
+      currentPath: this.currentPath
+    };
+  }
+
+  runSed(args, stdin, isSudo) {
+    let inPlace = false;
+    const cleanArgs = [];
+    for (const arg of args) {
+      if (arg === '-i') {
+        inPlace = true;
+      } else {
+        cleanArgs.push(arg);
+      }
+    }
+
+    if (cleanArgs.length === 0) {
+      return { stdout: '', stderr: 'sed: missing expression', currentPath: this.currentPath };
+    }
+
+    const script = cleanArgs[0].replace(/['"]/g, '');
+    const file = cleanArgs[1];
+    let content = '';
+    let fileNode = null;
+
+    if (!file) {
+      content = stdin || '';
+    } else {
+      fileNode = this.fs.getNodeByPath(this.currentPath, file);
+      if (fileNode && fileNode.type === 'link') {
+        fileNode = this.fs.getNodeByPath('/', fileNode.target);
+      }
+      if (!fileNode) {
+        return { stdout: '', stderr: `sed: can't read ${file}: No such file or directory`, currentPath: this.currentPath };
+      }
+      if (fileNode.type !== 'file') {
+        return { stdout: '', stderr: `sed: ${file}: Is a directory`, currentPath: this.currentPath };
+      }
+      content = fileNode.content;
+    }
+
+    if (script.startsWith('s/')) {
+      const parts = script.split('/');
+      if (parts.length >= 3) {
+        const pattern = parts[1];
+        const replacement = parts[2];
+        const flags = parts[3] || '';
+        const global = flags.includes('g') ? 'g' : '';
+        try {
+          const regex = new RegExp(pattern, global);
+          content = content.replace(regex, replacement);
+        } catch (e) {
+          return { stdout: '', stderr: `sed: invalid regular expression: ${pattern}`, currentPath: this.currentPath };
+        }
+      }
+    }
+
+    if (inPlace && fileNode) {
+      fileNode.content = content;
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('app:filesystem-update'));
+      }
+      return { stdout: '', stderr: '', currentPath: this.currentPath };
+    }
+
+    return { stdout: content, stderr: '', currentPath: this.currentPath };
+  }
+
+  runAwk(args, stdin, isSudo) {
+    let separator = /\s+/;
+    let script = '';
+    let file = '';
+
+    let i = 0;
+    while (i < args.length) {
+      const arg = args[i];
+      if (arg === '-F') {
+        const sepChar = args[i + 1]?.replace(/['"]/g, '') || ' ';
+        separator = new RegExp(sepChar);
+        i += 2;
+      } else if (arg.startsWith('-F')) {
+        const sepChar = arg.substring(2).replace(/['"]/g, '') || ' ';
+        separator = new RegExp(sepChar);
+        i += 1;
+      } else {
+        if (!script) {
+          script = arg;
+        } else {
+          file = arg;
+        }
+        i += 1;
+      }
+    }
+
+    if (!script) {
+      return { stdout: '', stderr: 'awk: missing script', currentPath: this.currentPath };
+    }
+
+    let content = '';
+    if (!file) {
+      content = stdin || '';
+    } else {
+      let node = this.fs.getNodeByPath(this.currentPath, file);
+      if (node && node.type === 'link') {
+        node = this.fs.getNodeByPath('/', node.target);
+      }
+      if (!node) {
+        return { stdout: '', stderr: `awk: cannot open ${file}: No such file or directory`, currentPath: this.currentPath };
+      }
+      content = node.content;
+    }
+
+    const cleanScript = script.replace(/['"]/g, '').trim();
+    const match = cleanScript.match(/\{print\s+([^}]+)\}/);
+    if (match) {
+      const printArgsStr = match[1];
+      const printTokens = printArgsStr.split(/\s*,\s*|\s+/).filter(Boolean);
+
+      const lines = content.split('\n');
+      if (lines.length > 0 && lines[lines.length - 1] === '') {
+        lines.pop();
+      }
+
+      const outLines = lines.map(line => {
+        const fields = line.split(separator);
+        return printTokens.map(token => {
+          if (token === '$0') return line;
+          if (token.startsWith('$')) {
+            const idx = parseInt(token.substring(1));
+            return fields[idx - 1] || '';
+          }
+          return token.replace(/['"]/g, '');
+        }).join(' ');
+      });
+
+      return { stdout: outLines.join('\n'), stderr: '', currentPath: this.currentPath };
+    }
+
+    return { stdout: content, stderr: '', currentPath: this.currentPath };
+  }
+
+  runCut(args, stdin, isSudo) {
+    let delimiter = '\t';
+    let fields = [];
+    let chars = null;
+    let file = '';
+
+    let i = 0;
+    while (i < args.length) {
+      const arg = args[i];
+      if (arg === '-d') {
+        delimiter = args[i + 1] || '\t';
+        i += 2;
+      } else if (arg.startsWith('-d')) {
+        delimiter = arg.substring(2);
+        i += 1;
+      } else if (arg === '-f') {
+        fields = (args[i + 1] || '').split(',').map(Number);
+        i += 2;
+      } else if (arg.startsWith('-f')) {
+        fields = arg.substring(2).split(',').map(Number);
+        i += 1;
+      } else if (arg === '-c') {
+        chars = args[i + 1] || '';
+        i += 2;
+      } else if (arg.startsWith('-c')) {
+        chars = arg.substring(2);
+        i += 1;
+      } else {
+        file = arg;
+        i += 1;
+      }
+    }
+
+    let content = '';
+    if (!file) {
+      content = stdin || '';
+    } else {
+      let node = this.fs.getNodeByPath(this.currentPath, file);
+      if (node && node.type === 'link') {
+        node = this.fs.getNodeByPath('/', node.target);
+      }
+      if (!node) {
+        return { stdout: '', stderr: `cut: ${file}: No such file or directory`, currentPath: this.currentPath };
+      }
+      content = node.content;
+    }
+
+    const lines = content.split('\n');
+    if (lines.length > 0 && lines[lines.length - 1] === '') {
+      lines.pop();
+    }
+
+    let outLines = [];
+    if (chars) {
+      let start = 0, end = 0;
+      if (chars.includes('-')) {
+        const parts = chars.split('-');
+        start = parseInt(parts[0]) - 1;
+        end = parseInt(parts[1]);
+      } else {
+        start = parseInt(chars) - 1;
+        end = start + 1;
+      }
+      outLines = lines.map(line => line.substring(start, end));
+    } else {
+      outLines = lines.map(line => {
+        const parts = line.split(delimiter);
+        if (fields.length > 0) {
+          return fields.map(f => parts[f - 1] || '').join(delimiter);
+        }
+        return line;
+      });
+    }
+
+    return { stdout: outLines.join('\n'), stderr: '', currentPath: this.currentPath };
+  }
+
+  runTr(args, stdin, isSudo) {
+    if (args.length === 0) {
+      return { stdout: '', stderr: 'tr: missing operand', currentPath: this.currentPath };
+    }
+
+    const content = stdin || '';
+    const opt = args[0];
+
+    if (opt === '-d') {
+      const target = (args[1] || '').replace(/['"]/g, '');
+      let out = content;
+      for (const char of target) {
+        out = out.split(char).join('');
+      }
+      return { stdout: out, stderr: '', currentPath: this.currentPath };
+    }
+
+    const set1 = args[0].replace(/['"]/g, '');
+    const set2 = (args[1] || '').replace(/['"]/g, '');
+
+    if (set1 === 'a-z' && set2 === 'A-Z') {
+      return { stdout: content.toUpperCase(), stderr: '', currentPath: this.currentPath };
+    } else if (set1 === 'A-Z' && set2 === 'a-z') {
+      return { stdout: content.toLowerCase(), stderr: '', currentPath: this.currentPath };
+    }
+
+    let out = '';
+    for (let i = 0; i < content.length; i++) {
+      const char = content[i];
+      const idx = set1.indexOf(char);
+      if (idx !== -1 && set2[idx]) {
+        out += set2[idx];
+      } else {
+        out += char;
+      }
+    }
+    return { stdout: out, stderr: '', currentPath: this.currentPath };
+  }
+
+  runLn(args) {
+    let symbolic = false;
+    const paths = [];
+    for (const arg of args) {
+      if (arg === '-s' || arg === '--symbolic') {
+        symbolic = true;
+      } else {
+        paths.push(arg);
+      }
+    }
+    if (paths.length < 2) {
+      return { stdout: '', stderr: 'ln: missing file operand', currentPath: this.currentPath };
+    }
+    const target = paths[0];
+    const linkName = paths[1];
+
+    const targetAbs = this.fs.resolvePathStr(this.currentPath, target);
+
+    const res = this.fs.createNode(this.currentPath, linkName, symbolic ? 'link' : 'file', {
+      target: targetAbs
+    });
+
+    if (!res.success) {
+      return { stdout: '', stderr: `ln: failed to create link '${linkName}': ${res.error}`, currentPath: this.currentPath };
+    }
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('app:filesystem-update'));
+    }
+
+    return { stdout: '', stderr: '', currentPath: this.currentPath };
+  }
+
+  runTar(args) {
+    let create = false;
+    let extract = false;
+    let archiveFile = '';
+    let target = '';
+
+    let i = 0;
+    while (i < args.length) {
+      const arg = args[i];
+      if (arg.startsWith('-')) {
+        if (arg.includes('c')) create = true;
+        if (arg.includes('x')) extract = true;
+        if (arg.includes('f')) {
+          archiveFile = args[i + 1];
+          i += 2;
+          continue;
+        }
+      } else {
+        if (!target) {
+          target = arg;
+        }
+      }
+      i++;
+    }
+
+    if (create) {
+      if (!archiveFile || !target) {
+        return { stdout: '', stderr: 'tar: missing archive file or target', currentPath: this.currentPath };
+      }
+      const targetNode = this.fs.getNodeByPath(this.currentPath, target);
+      if (!targetNode) {
+        return { stdout: '', stderr: `tar: ${target}: Cannot stat: No such file or directory`, currentPath: this.currentPath };
+      }
+
+      const createRes = this.fs.createNode(this.currentPath, archiveFile, 'file', {
+        content: `MOCK_TAR_ARCHIVE:${target}`
+      });
+      if (!createRes.success) {
+        return { stdout: '', stderr: `tar: failed to create archive: ${createRes.error}`, currentPath: this.currentPath };
+      }
+
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('app:filesystem-update'));
+      }
+
+      return {
+        stdout: `${target}/\n${target}/app.log\n${target}/security.log`,
+        stderr: '',
+        currentPath: this.currentPath
+      };
+    }
+
+    if (extract) {
+      if (!archiveFile) {
+        archiveFile = args.find(a => !a.startsWith('-'));
+      }
+      if (!archiveFile) {
+        return { stdout: '', stderr: 'tar: missing archive file name', currentPath: this.currentPath };
+      }
+      const archiveNode = this.fs.getNodeByPath(this.currentPath, archiveFile);
+      if (!archiveNode || archiveNode.type !== 'file') {
+        return { stdout: '', stderr: `tar: ${archiveFile}: Cannot open: No such file or directory`, currentPath: this.currentPath };
+      }
+
+      if (archiveNode.content.startsWith('MOCK_TAR_ARCHIVE:')) {
+        const targetName = archiveNode.content.replace('MOCK_TAR_ARCHIVE:', '');
+        if (!this.fs.getNodeByPath(this.currentPath, targetName)) {
+          this.fs.createNode(this.currentPath, targetName, 'dir');
+          this.fs.createNode(this.currentPath + '/' + targetName, 'app.log', 'file', { content: 'recovered log' });
+        }
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('app:filesystem-update'));
+        }
+      }
+
+      return { stdout: 'extracted files', stderr: '', currentPath: this.currentPath };
+    }
+
+    return { stdout: '', stderr: 'tar: must specify -c or -x', currentPath: this.currentPath };
+  }
+
+  runChown(args) {
+    if (args.length < 2) {
+      return { stdout: '', stderr: 'chown: missing operand', currentPath: this.currentPath };
+    }
+    const ownerGroup = args[0];
+    const target = args[1];
+
+    const node = this.fs.getNodeByPath(this.currentPath, target);
+    if (!node) {
+      return { stdout: '', stderr: `chown: cannot access '${target}': No such file or directory`, currentPath: this.currentPath };
+    }
+
+    const parts = ownerGroup.split(':');
+    node.owner = parts[0] || node.owner;
+    if (parts[1]) {
+      node.group = parts[1];
+    }
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('app:filesystem-update'));
+    }
+
+    return { stdout: '', stderr: '', currentPath: this.currentPath };
+  }
+
+  runExport(args) {
+    if (args.length === 0) {
+      const out = Object.keys(this.env).map(k => `declare -x ${k}="${this.env[k]}"`).join('\n');
+      return { stdout: out, stderr: '', currentPath: this.currentPath };
+    }
+    for (const arg of args) {
+      if (arg.includes('=')) {
+        const parts = arg.split('=');
+        const key = parts[0];
+        const val = parts.slice(1).join('=').replace(/['"]/g, '');
+        this.env[key] = val;
+      }
+    }
+    return { stdout: '', stderr: '', currentPath: this.currentPath };
+  }
+
+  runEnv(args) {
+    const out = Object.keys(this.env).map(k => `${k}=${this.env[k]}`).join('\n');
+    return { stdout: out, stderr: '', currentPath: this.currentPath };
   }
 }

@@ -63,7 +63,7 @@
         const connector = isLast ? '└── ' : '├── ';
         const childPrefix = isLast ? '    ' : '│   ';
 
-        const icon = child.type === 'dir' ? '📁' : '📄';
+        const icon = child.type === 'dir' ? '📁' : (child.type === 'link' ? '🔗' : '📄');
         const colorClass = child.type === 'dir' ? 'text-primary font-medium' : 'text-body hover:text-ink';
         
         // Highlight active directory

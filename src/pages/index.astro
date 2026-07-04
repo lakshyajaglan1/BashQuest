@@ -144,7 +144,8 @@ import LessonPanel from '../components/LessonPanel.astro';
           'pwd', 'whoami', 'clear', 'help', 'cd', 'ls', 'mkdir', 'touch', 'cat', 'echo', 
           'rm', 'cp', 'mv', 'chmod', 'grep', 'wc', 'uniq', 'sort', 'man', 'apt',
           'df', 'du', 'free', 'uptime', 'uname', 'ps', 'top', 'htop', 'kill', 'sleep',
-          'jobs', 'fg', 'ping', 'ip', 'curl', 'find', 'history', 'systemctl', 'nano'
+          'jobs', 'fg', 'ping', 'ip', 'curl', 'find', 'history', 'systemctl', 'nano',
+          'bash', 'sed', 'awk', 'cut', 'tr', 'ln', 'tar', 'chown', 'export', 'env'
         ]
       };
 
@@ -268,6 +269,15 @@ import LessonPanel from '../components/LessonPanel.astro';
         }
       }
 
+      // Quest 41: reports.csv
+      if (!completed.includes(41)) {
+        if (!fs.getNodeByPath('/home/learner', 'reports.csv')) {
+          fs.createNode('/home/learner', 'reports.csv', 'file', {
+            content: 'date,sales,visitors\njul 1,1200,450\njul 2,1500,500\njul 3,1800,600\n'
+          });
+        }
+      }
+
       // Keep state.fsTree in sync with the tree
       this.state.fsTree = fs.tree;
 
@@ -352,7 +362,8 @@ import LessonPanel from '../components/LessonPanel.astro';
             'pwd', 'whoami', 'clear', 'help', 'cd', 'ls', 'mkdir', 'touch', 'cat', 'echo', 
             'rm', 'cp', 'mv', 'chmod', 'grep', 'wc', 'uniq', 'sort', 'man', 'apt',
             'df', 'du', 'free', 'uptime', 'uname', 'ps', 'top', 'htop', 'kill', 'sleep',
-            'jobs', 'fg', 'ping', 'ip', 'curl', 'find', 'history', 'systemctl', 'nano'
+            'jobs', 'fg', 'ping', 'ip', 'curl', 'find', 'history', 'systemctl', 'nano',
+            'bash', 'sed', 'awk', 'cut', 'tr', 'ln', 'tar', 'chown', 'export', 'env'
           ]
         };
         this.resetFilesystem();

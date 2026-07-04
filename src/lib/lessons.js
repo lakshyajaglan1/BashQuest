@@ -11,7 +11,11 @@ export const modules = [
   { id: 'networking', title: '8. Network Troubleshooting' },
   { id: 'searching', title: '9. Finding Files & Search' },
   { id: 'services', title: '10. Services & Systemd' },
-  { id: 'editing', title: '11. Terminal Text Editing' }
+  { id: 'editing', title: '11. Terminal Text Editing' },
+  { id: 'scripting', title: '12. Shell Scripting & Automation' },
+  { id: 'processing', title: '13. Advanced Text Processing' },
+  { id: 'env_admin', title: '14. Environment & Users' },
+  { id: 'adv_fs', title: '15. Advanced Filesystem' }
 ];
 
 export const lessons = [
@@ -1096,6 +1100,390 @@ export const lessons = [
         checks: [
           { id: 'opened_nano', passed: openedNano },
           { id: 'port_configured', passed: !!portConfigured }
+        ]
+      };
+    }
+  },
+  {
+    id: 35,
+    moduleId: 'scripting',
+    title: 'Writing Your First Bash Script',
+    xp: 250,
+    badge: 'Script-Kiddie',
+    description: 'Automation is a superpower in Linux. Instead of typing commands one-by-one, you can write them inside a file called a shell script, and execute them all at once!\n\nEvery script starts with a shebang `#!/bin/bash` on the first line to tell Linux which interpreter to use.\n\nAfter writing the script, you must grant it execute permission with `chmod +x <filename>` (or `chmod 755`) and run it with `./<filename>`.',
+    instructions: 'Create a script file named `hello.sh` in `/home/learner` using `touch hello.sh` or `nano hello.sh`. Add `#!/bin/bash` on the first line and `echo "Hello, BashQuest User!"` on the second line. Make it executable with `chmod 755 hello.sh` and run it using `./hello.sh`.',
+    commandHelp: [
+      { cmd: 'touch hello.sh', desc: 'Create script file' },
+      { cmd: 'chmod 755 hello.sh', desc: 'Grant execution permissions' },
+      { cmd: './hello.sh', desc: 'Execute the script in current directory' }
+    ],
+    objectives: [
+      { id: 'script_exists', text: 'Create script file "hello.sh"' },
+      { id: 'script_content', text: 'Add shebang and hello message inside script' },
+      { id: 'script_executable', text: 'Make script executable (permissions odd digit)' },
+      { id: 'script_executed', text: 'Run the script using "./hello.sh"' }
+    ],
+    verify: (fs, session, history) => {
+      const node = fs.getNodeByPath('/home/learner', 'hello.sh');
+      const exists = node && node.type === 'file';
+      const hasContent = exists && node.content.includes('#!/bin/bash') && node.content.includes('Hello, BashQuest User!');
+      
+      const digits = exists ? String(node.permissions).split('').map(Number) : [];
+      const isExec = exists && digits.some(d => d % 2 !== 0);
+
+      const executed = history.some(cmd => cmd.trim() === './hello.sh' || cmd.trim() === 'bash hello.sh');
+
+      return {
+        success: exists && hasContent && isExec && executed,
+        checks: [
+          { id: 'script_exists', passed: !!exists },
+          { id: 'script_content', passed: !!hasContent },
+          { id: 'script_executable', passed: !!isExec },
+          { id: 'script_executed', passed: executed }
+        ]
+      };
+    }
+  },
+  {
+    id: 36,
+    moduleId: 'scripting',
+    title: 'Variables & Arguments ($1)',
+    xp: 250,
+    badge: 'Arg-Master',
+    description: 'Scripts can be dynamic using command-line arguments. In bash, the special variables `$1`, `$2`, etc., hold the values passed to the script when calling it.\n\nFor example, if you run `./greet.sh Alice`, then inside the script `$1` holds the string "Alice". `$#` holds the total count of arguments passed to the script.',
+    instructions: 'Create a script named `greet.sh` inside your home directory. Write `#!/bin/bash` and `echo "Hello, $1!"` on the next line. Run `chmod 755 greet.sh` and execute `./greet.sh Alice` to verify it prints "Hello, Alice!".',
+    commandHelp: [
+      { cmd: './greet.sh Alice', desc: 'Execute script with argument "Alice"' }
+    ],
+    objectives: [
+      { id: 'greet_exists', text: 'Create script file "greet.sh"' },
+      { id: 'greet_content', text: 'Use $1 inside greet.sh' },
+      { id: 'greet_executable', text: 'Make greet.sh executable' },
+      { id: 'greet_executed', text: 'Run the script with "Alice" argument' }
+    ],
+    verify: (fs, session, history) => {
+      const node = fs.getNodeByPath('/home/learner', 'greet.sh');
+      const exists = node && node.type === 'file';
+      const hasContent = exists && node.content.includes('#!/bin/bash') && node.content.includes('$1');
+      
+      const digits = exists ? String(node.permissions).split('').map(Number) : [];
+      const isExec = exists && digits.some(d => d % 2 !== 0);
+
+      const executed = history.some(cmd => cmd.trim() === './greet.sh Alice' || cmd.trim() === 'bash greet.sh Alice');
+
+      return {
+        success: exists && hasContent && isExec && executed,
+        checks: [
+          { id: 'greet_exists', passed: !!exists },
+          { id: 'greet_content', passed: !!hasContent },
+          { id: 'greet_executable', passed: !!isExec },
+          { id: 'greet_executed', passed: executed }
+        ]
+      };
+    }
+  },
+  {
+    id: 37,
+    moduleId: 'scripting',
+    title: 'Conditional Logic (if/else)',
+    xp: 270,
+    badge: 'Logician',
+    description: 'We can check conditions in bash scripts using `if` blocks. The syntax is:\n\n```bash\nif [ -f "$1" ]; then\n  echo "File exists"\nelse\n  echo "File missing"\nfi\n```\n\n- The `-f` flag checks if a path is a regular file.\n- The `-d` flag checks if a path is a directory.',
+    instructions: 'Create a script named `check_file.sh` in `/home/learner` that checks if the file provided as `$1` exists. It must have shebang, `if [ -f "$1" ]; then echo "Exists" else echo "Missing" fi` structure. Make it executable and run `./check_file.sh names.txt`.',
+    commandHelp: [
+      { cmd: 'if [ -f file ]; then ...', desc: 'Syntax for file existence checks' }
+    ],
+    objectives: [
+      { id: 'check_exists', text: 'Create script "check_file.sh"' },
+      { id: 'check_logic', text: 'Implement -f checks inside script' },
+      { id: 'check_executable', text: 'Make script executable' },
+      { id: 'check_executed', text: 'Run the script with "names.txt"' }
+    ],
+    verify: (fs, session, history) => {
+      const node = fs.getNodeByPath('/home/learner', 'check_file.sh');
+      const exists = node && node.type === 'file';
+      const logicOK = exists && node.content.includes('-f') && node.content.includes('if') && node.content.includes('fi');
+      
+      const digits = exists ? String(node.permissions).split('').map(Number) : [];
+      const isExec = exists && digits.some(d => d % 2 !== 0);
+
+      const executed = history.some(cmd => cmd.trim() === './check_file.sh names.txt' || cmd.trim() === 'bash check_file.sh names.txt');
+
+      return {
+        success: exists && logicOK && isExec && executed,
+        checks: [
+          { id: 'check_exists', passed: !!exists },
+          { id: 'check_logic', passed: !!logicOK },
+          { id: 'check_executable', passed: !!isExec },
+          { id: 'check_executed', passed: executed }
+        ]
+      };
+    }
+  },
+  {
+    id: 38,
+    moduleId: 'scripting',
+    title: 'Automating with Loops',
+    xp: 280,
+    badge: 'Loop-King',
+    description: 'Loops let us repeat actions across multiple items. A `for` loop in bash follows this structure:\n\n```bash\nfor file in *.txt; do\n  echo "Processing $file"\ndone\n```\n\nThis is useful to automate backups, bulk edits, or multi-file renaming.',
+    instructions: 'Create a script named `backup_logs.sh` in home. Write a `for` loop that iterates over all files matching `*.log` in the current directory, copying each one to a directory named `backup`. Ensure the script creates the `backup` directory first (`mkdir -p backup`). Make it executable and run it.',
+    commandHelp: [
+      { cmd: 'for x in pattern; do ...', desc: 'For loop automation syntax' }
+    ],
+    objectives: [
+      { id: 'backup_script_exists', text: 'Create script "backup_logs.sh"' },
+      { id: 'backup_logic', text: 'Implement a for loop with cp' },
+      { id: 'backup_executed', text: 'Run the backup_logs.sh script' },
+      { id: 'backup_dir_ok', text: 'Directory "backup/" holds copies' }
+    ],
+    verify: (fs, session, history) => {
+      const node = fs.getNodeByPath('/home/learner', 'backup_logs.sh');
+      const exists = node && node.type === 'file';
+      const logicOK = exists && node.content.includes('for') && node.content.includes('cp') && node.content.includes('done');
+      
+      const executed = history.some(cmd => cmd.trim() === './backup_logs.sh' || cmd.trim() === 'bash backup_logs.sh');
+      
+      const backupDir = fs.getNodeByPath('/home/learner', 'backup');
+      const backupDirOK = backupDir && backupDir.type === 'dir';
+
+      return {
+        success: exists && logicOK && executed && backupDirOK,
+        checks: [
+          { id: 'backup_script_exists', passed: !!exists },
+          { id: 'backup_logic', passed: !!logicOK },
+          { id: 'backup_executed', passed: executed },
+          { id: 'backup_dir_ok', passed: !!backupDirOK }
+        ]
+      };
+    }
+  },
+  {
+    id: 39,
+    moduleId: 'processing',
+    title: 'Stream Editing with sed',
+    xp: 260,
+    badge: 'Sed-Master',
+    description: '`sed` (stream editor) performs search and replace on text files. The replacement pattern syntax is `s/pattern/replacement/flags`.\n\nFor example, `sed "s/red/blue/g" colors.txt` outputs colors.txt with all occurrences of "red" changed to "blue".\n\nAdding the `-i` flag edits the target file **in-place** (saving the changes back into the original file).',
+    instructions: 'Modify the file `server.conf` in your home folder. Change the port parameter `port=80` to `port=8080` using `sed` with the in-place `-i` flag: `sed -i "s/port=80/port=8080/g" server.conf`.',
+    commandHelp: [
+      { cmd: 'sed -i "s/old/new/g" file', desc: 'Perform in-place text replacement in a file' }
+    ],
+    objectives: [
+      { id: 'used_sed', text: 'Use the "sed" command with -i flag' },
+      { id: 'port_changed', text: 'Set port configuration to port=8080 in server.conf' }
+    ],
+    verify: (fs, session, history) => {
+      const usedSed = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts[0] === 'sed' && parts.includes('-i');
+      });
+      const node = fs.getNodeByPath('/home/learner', 'server.conf');
+      const portChanged = node && node.type === 'file' && node.content.includes('port=8080') && !node.content.includes('port=80\n');
+
+      return {
+        success: usedSed && portChanged,
+        checks: [
+          { id: 'used_sed', passed: usedSed },
+          { id: 'port_changed', passed: !!portChanged }
+        ]
+      };
+    }
+  },
+  {
+    id: 40,
+    moduleId: 'processing',
+    title: 'Data Extraction with awk',
+    xp: 280,
+    badge: 'Awk-Wizard',
+    description: '`awk` is a scanning and processing language. It extracts columns (or fields) of structured text. By default, columns are separated by whitespace.\n\n- `$1` refers to field 1, `$2` to field 2, and `$0` to the entire line.\n- Use option `-F` to specify a custom delimiter (e.g. `-F:` for colons, `-F,` for commas).\n\nFor example, `awk -F: \'{print $1}\' /etc/passwd` lists only the first column (usernames) from /etc/passwd.',
+    instructions: 'Extract all usernames (the first column) from the `/etc/shadow` file using `awk` with a colon `:` delimiter, and redirect the output to `shadow_users.txt` (i.e. `sudo awk -F: \'{print $1}\' /etc/shadow > shadow_users.txt`).',
+    commandHelp: [
+      { cmd: "awk -F: '{print $1}' file", desc: 'Print first field of colon-delimited file' }
+    ],
+    objectives: [
+      { id: 'used_awk', text: 'Use "awk" with field separator flag -F' },
+      { id: 'created_shadow_users', text: 'Output names to "shadow_users.txt"' },
+      { id: 'correct_shadow_users', text: 'Check shadow_users.txt has root and learner' }
+    ],
+    verify: (fs, session, history) => {
+      const usedAwk = history.some(cmd => {
+        return cmd.includes('awk') && (cmd.includes('-F:') || cmd.includes('-F ":"') || cmd.includes("-F ':'"));
+      });
+      const node = fs.getNodeByPath('/home/learner', 'shadow_users.txt');
+      const exists = node && node.type === 'file';
+      const correctUsers = exists && node.content.includes('root') && node.content.includes('learner');
+
+      return {
+        success: usedAwk && exists && correctUsers,
+        checks: [
+          { id: 'used_awk', passed: usedAwk },
+          { id: 'created_shadow_users', passed: !!exists },
+          { id: 'correct_shadow_users', passed: !!correctUsers }
+        ]
+      };
+    }
+  },
+  {
+    id: 41,
+    moduleId: 'processing',
+    title: 'Translating & Cutting Data',
+    xp: 260,
+    badge: 'Parser',
+    description: '`cut` cuts sections of text. `-d` specifies delimiter, `-f` field selection, and `-c` character index.\n\n`tr` (translate) swaps or deletes characters from standard input. E.g. `echo "foo" | tr "o" "a"` prints "faa", and `tr "a-z" "A-Z"` converts lowercase text to uppercase.',
+    instructions: 'Extract the first column of the file `reports.csv` using `cut -d, -f1 reports.csv`, translate all text to UPPERCASE using `tr "a-z" "A-Z"`, and write the output to a new file named `upper_reports.txt`.',
+    commandHelp: [
+      { cmd: 'cut -d, -f1 file | tr "a-z" "A-Z"', desc: 'Pipe cut field into translation' }
+    ],
+    objectives: [
+      { id: 'used_cut', text: 'Use "cut" with comma delimiter' },
+      { id: 'used_tr', text: 'Translate characters to uppercase with "tr"' },
+      { id: 'upper_reports_exists', text: 'Create file "upper_reports.txt"' },
+      { id: 'content_uppercase', text: 'Verify text is UPPERCASE' }
+    ],
+    verify: (fs, session, history) => {
+      const usedCut = history.some(cmd => cmd.includes('cut') && (cmd.includes('-d,') || cmd.includes("-d ','") || cmd.includes('-d ","')));
+      const usedTr = history.some(cmd => cmd.includes('tr') && cmd.includes('a-z') && cmd.includes('A-Z'));
+      
+      const node = fs.getNodeByPath('/home/learner', 'upper_reports.txt');
+      const exists = node && node.type === 'file';
+      const contentUpper = exists && node.content.trim() === 'DATE\nJUL 1\nJUL 2\nJUL 3';
+
+      return {
+        success: usedCut && usedTr && exists && contentUpper,
+        checks: [
+          { id: 'used_cut', passed: usedCut },
+          { id: 'used_tr', passed: usedTr },
+          { id: 'upper_reports_exists', passed: !!exists },
+          { id: 'content_uppercase', passed: !!contentUpper }
+        ]
+      };
+    }
+  },
+  {
+    id: 42,
+    moduleId: 'env_admin',
+    title: 'Managing Environment Variables',
+    xp: 250,
+    badge: 'Env-Architect',
+    description: 'Environment variables affect the configuration of running processes. We can view them with the `env` command.\n\nTo define a variable that is passed to child shell processes, we use the `export` command:\n\n`export APP_ENV=production`\n\nWe reference variables using a dollar sign: `echo $APP_ENV`.',
+    instructions: 'Define and export an environment variable named `APP_ENV` with value `production` by running `export APP_ENV=production`. Verify it is set by echoing it: `echo $APP_ENV`.',
+    commandHelp: [
+      { cmd: 'export VAR=val', desc: 'Define environment variable' },
+      { cmd: 'echo $VAR', desc: 'Print variable value' }
+    ],
+    objectives: [
+      { id: 'exported_env', text: 'Run the "export" command' },
+      { id: 'env_correct', text: 'Set APP_ENV env variable to "production"' },
+      { id: 'echoed_env', text: 'Print variable using "echo $APP_ENV"' }
+    ],
+    verify: (fs, session, history) => {
+      const exportedEnv = history.some(cmd => cmd.startsWith('export'));
+      const envCorrect = session.env.APP_ENV === 'production';
+      const echoedEnv = history.some(cmd => cmd.includes('echo') && cmd.includes('APP_ENV'));
+
+      return {
+        success: exportedEnv && envCorrect && echoedEnv,
+        checks: [
+          { id: 'exported_env', passed: exportedEnv },
+          { id: 'env_correct', passed: envCorrect },
+          { id: 'echoed_env', passed: echoedEnv }
+        ]
+      };
+    }
+  },
+  {
+    id: 43,
+    moduleId: 'env_admin',
+    title: 'Archives & Compression (tar)',
+    xp: 280,
+    badge: 'Packer',
+    description: 'We bundle files together for storage or backups using `tar` (tape archive).\n\n- `-c` creates an archive.\n- `-x` extracts an archive.\n- `-z` compresses using gzip.\n- `-v` enables verbose (listing files processed).\n- `-f` specifies archive filename.\n\nE.g. `tar -czvf backup.tar.gz folder/` packages "folder/" into a zipped tarball.',
+    instructions: 'Archive and compress the `logs` folder inside `/home/learner` into a file named `logs.tar.gz` using `tar -czvf logs.tar.gz logs`.',
+    commandHelp: [
+      { cmd: 'tar -czvf archive.tar.gz folder', desc: 'Create compressed tar archive' }
+    ],
+    objectives: [
+      { id: 'used_tar_c', text: 'Use "tar" command with -c (create) and -z (gzip) flags' },
+      { id: 'archive_exists', text: 'Create "logs.tar.gz" in home directory' }
+    ],
+    verify: (fs, session, history) => {
+      const usedTarC = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts[0] === 'tar' && parts.some(p => p.startsWith('-') && p.includes('c') && p.includes('z'));
+      });
+      const node = fs.getNodeByPath('/home/learner', 'logs.tar.gz');
+      const exists = node && node.type === 'file';
+
+      return {
+        success: usedTarC && exists,
+        checks: [
+          { id: 'used_tar_c', passed: usedTarC },
+          { id: 'archive_exists', passed: !!exists }
+        ]
+      };
+    }
+  },
+  {
+    id: 44,
+    moduleId: 'adv_fs',
+    title: 'Creating Links (ln -s)',
+    xp: 270,
+    badge: 'Linker',
+    description: 'Links are pointers to other files. There are two types:\n\n- **Hard Link**: A direct reference to file inodes on disk. If original is deleted, link still works.\n- **Symbolic Link (Soft Link)**: A shortcut to a file path (like Windows shortcuts). If target is deleted, link breaks. Created using `ln -s target link_name`.',
+    instructions: 'Create a symbolic link named `app_link.log` in `/home/learner` that points to the target file `logs/app.log` (i.e. `ln -s logs/app.log app_link.log`).',
+    commandHelp: [
+      { cmd: 'ln -s target link_name', desc: 'Create symbolic link' }
+    ],
+    objectives: [
+      { id: 'used_ln_s', text: 'Use "ln" with symbolic flag -s' },
+      { id: 'link_created', text: 'Create link "app_link.log" pointing to target logs/app.log' }
+    ],
+    verify: (fs, session, history) => {
+      const usedLnS = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts[0] === 'ln' && (parts.includes('-s') || parts.includes('--symbolic') || parts.some(p => p.startsWith('-') && p.includes('s')));
+      });
+      const node = fs.getNodeByPath('/home/learner', 'app_link.log');
+      const isLink = node && node.type === 'link';
+      const targetCorrect = isLink && (node.target === '/home/learner/logs/app.log' || node.target === 'logs/app.log');
+
+      return {
+        success: usedLnS && isLink && targetCorrect,
+        checks: [
+          { id: 'used_ln_s', passed: usedLnS },
+          { id: 'link_created', passed: !!(isLink && targetCorrect) }
+        ]
+      };
+    }
+  },
+  {
+    id: 45,
+    moduleId: 'adv_fs',
+    title: 'Processing Search Results (xargs)',
+    xp: 290,
+    badge: 'Advanced-Ops',
+    description: 'We can run a command on multiple search results by using `xargs` (execute arguments).\n\n`xargs` takes standard input lines (like file lists from `find`) and feeds them as arguments to another command.\n\nFor example, `find . -name "*.tmp" | xargs rm` finds all temporary files and removes them all at once.',
+    instructions: 'Find all files in `/home/learner/logs` ending with `.log` using `find logs -name "*.log"`, and pipe them into `xargs wc -l` to count their lines collectively (i.e. `find logs -name "*.log" | xargs wc -l`).',
+    commandHelp: [
+      { cmd: 'find path -name "pattern" | xargs command', desc: 'Pass search results to command' }
+    ],
+    objectives: [
+      { id: 'used_find', text: 'Run the "find" command on logs folder' },
+      { id: 'used_xargs', text: 'Pipe results into "xargs"' },
+      { id: 'ran_wc_l', text: 'Run "wc -l" via xargs pipeline' }
+    ],
+    verify: (fs, session, history) => {
+      const usedFind = history.some(cmd => cmd.includes('find') && cmd.includes('logs'));
+      const usedXargs = history.some(cmd => cmd.includes('|') && cmd.includes('xargs'));
+      const ranWcL = history.some(cmd => cmd.includes('wc') && (cmd.includes('-l') || cmd.includes('--lines')));
+
+      return {
+        success: usedFind && usedXargs && ranWcL,
+        checks: [
+          { id: 'used_find', passed: usedFind },
+          { id: 'used_xargs', passed: usedXargs },
+          { id: 'ran_wc_l', passed: ranWcL }
         ]
       };
     }
