@@ -148,6 +148,54 @@ export const lessons = [
   },
   {
     id: 5,
+    moduleId: 'basics',
+    title: 'Clearing the Screen',
+    xp: 100,
+    badge: 'Neat-Freak',
+    description: 'When your terminal screen gets cluttered with command outputs, you can clean it up using the `clear` command. This scrolls the screen down to present a clean prompt at the top.',
+    instructions: 'Clear the terminal output screen by running the `clear` command.',
+    commandHelp: [
+      { cmd: 'clear', desc: 'Clear the terminal screen' }
+    ],
+    objectives: [
+      { id: 'ran_clear', text: 'Run the "clear" command' }
+    ],
+    verify: (fs, session, history) => {
+      const ranClear = history.some(cmd => cmd.trim() === 'clear');
+      return {
+        success: ranClear,
+        checks: [
+          { id: 'ran_clear', passed: ranClear }
+        ]
+      };
+    }
+  },
+  {
+    id: 6,
+    moduleId: 'basics',
+    title: 'Finding Shell Help',
+    xp: 100,
+    badge: 'Helpful',
+    description: 'If you are ever unsure which commands are supported in this emulator, you can use the `help` command. It lists all available utilities along with support details for redirection and pipes.',
+    instructions: 'List all available shell commands in this terminal simulator by running the `help` command.',
+    commandHelp: [
+      { cmd: 'help', desc: 'List available commands' }
+    ],
+    objectives: [
+      { id: 'ran_help', text: 'Run the "help" command' }
+    ],
+    verify: (fs, session, history) => {
+      const ranHelp = history.some(cmd => cmd.trim() === 'help');
+      return {
+        success: ranHelp,
+        checks: [
+          { id: 'ran_help', passed: ranHelp }
+        ]
+      };
+    }
+  },
+  {
+    id: 7,
     moduleId: 'manipulation',
     title: 'Creating Empty Files',
     xp: 150,
@@ -180,7 +228,7 @@ export const lessons = [
     }
   },
   {
-    id: 6,
+    id: 8,
     moduleId: 'manipulation',
     title: 'Reading File Contents',
     xp: 150,
@@ -209,7 +257,7 @@ export const lessons = [
     }
   },
   {
-    id: 7,
+    id: 9,
     moduleId: 'manipulation',
     title: 'Handling Spaces in File Names',
     xp: 170,
@@ -240,7 +288,7 @@ export const lessons = [
     }
   },
   {
-    id: 8,
+    id: 10,
     moduleId: 'manipulation',
     title: 'Writing & Overwriting Files',
     xp: 200,
@@ -274,7 +322,7 @@ export const lessons = [
     }
   },
   {
-    id: 9,
+    id: 11,
     moduleId: 'manipulation',
     title: 'Appending to Files',
     xp: 200,
@@ -319,7 +367,7 @@ export const lessons = [
     }
   },
   {
-    id: 10,
+    id: 12,
     moduleId: 'manipulation',
     title: 'Copying & Moving Files',
     xp: 200,
@@ -356,7 +404,7 @@ export const lessons = [
     }
   },
   {
-    id: 11,
+    id: 13,
     moduleId: 'manipulation',
     title: 'Wildcards & Multi-File Operations',
     xp: 220,
@@ -393,7 +441,7 @@ export const lessons = [
     }
   },
   {
-    id: 12,
+    id: 14,
     moduleId: 'manipulation',
     title: 'Removing Files & Folders',
     xp: 200,
@@ -425,7 +473,7 @@ export const lessons = [
     }
   },
   {
-    id: 13,
+    id: 15,
     moduleId: 'plumbing',
     title: 'Introduction to Pipes & wc',
     xp: 230,
@@ -464,7 +512,7 @@ export const lessons = [
     }
   },
   {
-    id: 14,
+    id: 16,
     moduleId: 'plumbing',
     title: 'Sorting and Finding Uniques',
     xp: 240,
@@ -505,7 +553,7 @@ export const lessons = [
     }
   },
   {
-    id: 15,
+    id: 17,
     moduleId: 'plumbing',
     title: 'Filtering with grep',
     xp: 240,
@@ -542,7 +590,7 @@ export const lessons = [
     }
   },
   {
-    id: 16,
+    id: 18,
     moduleId: 'advanced',
     title: 'Changing File Permissions',
     xp: 250,
@@ -576,7 +624,7 @@ export const lessons = [
     }
   },
   {
-    id: 17,
+    id: 19,
     moduleId: 'advanced',
     title: 'Hidden Files & Configurations',
     xp: 220,
@@ -619,7 +667,39 @@ export const lessons = [
     }
   },
   {
-    id: 18,
+    id: 20,
+    moduleId: 'advanced',
+    title: 'Changing File Ownership',
+    xp: 250,
+    badge: 'Owner',
+    description: 'In Linux, every file and folder belongs to a specific owner and group. We change them using the `chown` (change owner) command.\n\nSince modifying ownership affects system security, this command requires administrator privileges: `sudo chown <owner>:<group> <file>`.',
+    instructions: 'Change the owner of `/home/learner/reports.csv` to `root` using superuser privileges: `sudo chown root reports.csv`.',
+    commandHelp: [
+      { cmd: 'sudo chown root reports.csv', desc: 'Change owner of reports.csv to root' }
+    ],
+    objectives: [
+      { id: 'used_chown', text: 'Run the "chown" command with sudo' },
+      { id: 'owner_changed', text: 'Set owner of reports.csv to root' }
+    ],
+    verify: (fs, session, history) => {
+      const usedChown = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('chown');
+      });
+      const node = fs.getNodeByPath('/home/learner', 'reports.csv');
+      const ownerChanged = node && node.owner === 'root';
+      
+      return {
+        success: usedChown && ownerChanged,
+        checks: [
+          { id: 'used_chown', passed: usedChown },
+          { id: 'owner_changed', passed: !!ownerChanged }
+        ]
+      };
+    }
+  },
+  {
+    id: 21,
     moduleId: 'system',
     title: 'Superuser Privileges (sudo)',
     xp: 260,
@@ -656,7 +736,7 @@ export const lessons = [
     }
   },
   {
-    id: 19,
+    id: 22,
     moduleId: 'system',
     title: 'Package Management (apt)',
     xp: 280,
@@ -688,7 +768,7 @@ export const lessons = [
     }
   },
   {
-    id: 20,
+    id: 23,
     moduleId: 'resources',
     title: 'Checking Disk Space (df)',
     xp: 150,
@@ -715,7 +795,7 @@ export const lessons = [
     }
   },
   {
-    id: 21,
+    id: 24,
     moduleId: 'resources',
     title: 'Finding Directory Sizes (du)',
     xp: 150,
@@ -745,7 +825,7 @@ export const lessons = [
     }
   },
   {
-    id: 22,
+    id: 25,
     moduleId: 'resources',
     title: 'Checking Memory Usage (free)',
     xp: 150,
@@ -772,7 +852,7 @@ export const lessons = [
     }
   },
   {
-    id: 23,
+    id: 26,
     moduleId: 'resources',
     title: 'System Uptime & Kernel Details',
     xp: 160,
@@ -803,7 +883,7 @@ export const lessons = [
     }
   },
   {
-    id: 24,
+    id: 27,
     moduleId: 'processes',
     title: 'Listing Running Processes (ps)',
     xp: 180,
@@ -830,7 +910,7 @@ export const lessons = [
     }
   },
   {
-    id: 25,
+    id: 28,
     moduleId: 'processes',
     title: 'Interactive Process Monitor (top)',
     xp: 180,
@@ -854,7 +934,7 @@ export const lessons = [
     }
   },
   {
-    id: 26,
+    id: 29,
     moduleId: 'processes',
     title: 'Stopping Rogue Processes (kill)',
     xp: 200,
@@ -878,7 +958,7 @@ export const lessons = [
     }
   },
   {
-    id: 27,
+    id: 30,
     moduleId: 'processes',
     title: 'Running Jobs in the Background',
     xp: 220,
@@ -910,7 +990,7 @@ export const lessons = [
     }
   },
   {
-    id: 28,
+    id: 31,
     moduleId: 'networking',
     title: 'Testing Connectivity (ping)',
     xp: 180,
@@ -937,7 +1017,7 @@ export const lessons = [
     }
   },
   {
-    id: 29,
+    id: 32,
     moduleId: 'networking',
     title: 'Network Interfaces & Local IP',
     xp: 180,
@@ -964,7 +1044,7 @@ export const lessons = [
     }
   },
   {
-    id: 30,
+    id: 33,
     moduleId: 'networking',
     title: 'Downloading Web Files (curl)',
     xp: 200,
@@ -992,7 +1072,7 @@ export const lessons = [
     }
   },
   {
-    id: 31,
+    id: 34,
     moduleId: 'searching',
     title: 'Finding Files by Name (find)',
     xp: 220,
@@ -1019,7 +1099,7 @@ export const lessons = [
     }
   },
   {
-    id: 32,
+    id: 35,
     moduleId: 'searching',
     title: 'Checking Command History',
     xp: 180,
@@ -1043,7 +1123,34 @@ export const lessons = [
     }
   },
   {
-    id: 33,
+    id: 36,
+    moduleId: 'searching',
+    title: 'Consulting Manual Pages',
+    xp: 200,
+    badge: 'Scholar',
+    description: 'Linux commands have extensive documentation called manual pages (or "man pages"). You can access them using the `man` command followed by the command name.\n\nE.g. `man ls` opens the manual page for `ls`. Inside a real man page, you navigate with the arrow keys and press `q` to quit.',
+    instructions: 'Open the manual page for the `grep` command to check its options: `man grep`.',
+    commandHelp: [
+      { cmd: 'man grep', desc: 'Display manual page for grep' }
+    ],
+    objectives: [
+      { id: 'ran_man_grep', text: 'Run the "man grep" command' }
+    ],
+    verify: (fs, session, history) => {
+      const ranManGrep = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts[0] === 'man' && parts[1] === 'grep';
+      });
+      return {
+        success: ranManGrep,
+        checks: [
+          { id: 'ran_man_grep', passed: ranManGrep }
+        ]
+      };
+    }
+  },
+  {
+    id: 37,
     moduleId: 'services',
     title: 'Controlling Services (systemctl)',
     xp: 240,
@@ -1074,7 +1181,7 @@ export const lessons = [
     }
   },
   {
-    id: 34,
+    id: 38,
     moduleId: 'editing',
     title: 'Editing Config Files (nano)',
     xp: 250,
@@ -1105,7 +1212,7 @@ export const lessons = [
     }
   },
   {
-    id: 35,
+    id: 39,
     moduleId: 'scripting',
     title: 'Writing Your First Bash Script',
     xp: 250,
@@ -1145,7 +1252,7 @@ export const lessons = [
     }
   },
   {
-    id: 36,
+    id: 40,
     moduleId: 'scripting',
     title: 'Variables & Arguments ($1)',
     xp: 250,
@@ -1183,7 +1290,7 @@ export const lessons = [
     }
   },
   {
-    id: 37,
+    id: 41,
     moduleId: 'scripting',
     title: 'Conditional Logic (if/else)',
     xp: 270,
@@ -1221,7 +1328,7 @@ export const lessons = [
     }
   },
   {
-    id: 38,
+    id: 42,
     moduleId: 'scripting',
     title: 'Automating with Loops',
     xp: 280,
@@ -1259,7 +1366,7 @@ export const lessons = [
     }
   },
   {
-    id: 39,
+    id: 43,
     moduleId: 'processing',
     title: 'Stream Editing with sed',
     xp: 260,
@@ -1291,7 +1398,7 @@ export const lessons = [
     }
   },
   {
-    id: 40,
+    id: 44,
     moduleId: 'processing',
     title: 'Data Extraction with awk',
     xp: 280,
@@ -1325,7 +1432,7 @@ export const lessons = [
     }
   },
   {
-    id: 41,
+    id: 45,
     moduleId: 'processing',
     title: 'Translating & Cutting Data',
     xp: 260,
@@ -1361,7 +1468,7 @@ export const lessons = [
     }
   },
   {
-    id: 42,
+    id: 46,
     moduleId: 'env_admin',
     title: 'Managing Environment Variables',
     xp: 250,
@@ -1393,7 +1500,7 @@ export const lessons = [
     }
   },
   {
-    id: 43,
+    id: 47,
     moduleId: 'env_admin',
     title: 'Archives & Compression (tar)',
     xp: 280,
@@ -1425,7 +1532,31 @@ export const lessons = [
     }
   },
   {
-    id: 44,
+    id: 48,
+    moduleId: 'env_admin',
+    title: 'Inspecting the Environment',
+    xp: 200,
+    badge: 'Env-Watcher',
+    description: 'The `env` command prints a list of all currently active environment variables in your shell session. This is useful for checking system configurations, paths, or active user details.',
+    instructions: 'List all environment variables in your active shell by running the `env` command.',
+    commandHelp: [
+      { cmd: 'env', desc: 'List active environment variables' }
+    ],
+    objectives: [
+      { id: 'ran_env', text: 'Run the "env" command' }
+    ],
+    verify: (fs, session, history) => {
+      const ranEnv = history.some(cmd => cmd.trim() === 'env');
+      return {
+        success: ranEnv,
+        checks: [
+          { id: 'ran_env', passed: ranEnv }
+        ]
+      };
+    }
+  },
+  {
+    id: 49,
     moduleId: 'adv_fs',
     title: 'Creating Links (ln -s)',
     xp: 270,
@@ -1458,7 +1589,7 @@ export const lessons = [
     }
   },
   {
-    id: 45,
+    id: 50,
     moduleId: 'adv_fs',
     title: 'Processing Search Results (xargs)',
     xp: 290,
@@ -1484,137 +1615,6 @@ export const lessons = [
           { id: 'used_find', passed: usedFind },
           { id: 'used_xargs', passed: usedXargs },
           { id: 'ran_wc_l', passed: ranWcL }
-        ]
-      };
-    }
-  },
-  {
-    id: 46,
-    moduleId: 'searching',
-    title: 'Consulting Manual Pages',
-    xp: 200,
-    badge: 'Scholar',
-    description: 'Linux commands have extensive documentation called manual pages (or "man pages"). You can access them using the `man` command followed by the command name.\n\nE.g. `man ls` opens the manual page for `ls`. Inside a real man page, you navigate with the arrow keys and press `q` to quit.',
-    instructions: 'Open the manual page for the `grep` command to check its options: `man grep`.',
-    commandHelp: [
-      { cmd: 'man grep', desc: 'Display manual page for grep' }
-    ],
-    objectives: [
-      { id: 'ran_man_grep', text: 'Run the "man grep" command' }
-    ],
-    verify: (fs, session, history) => {
-      const ranManGrep = history.some(cmd => {
-        const parts = cmd.trim().split(/\s+/);
-        return parts[0] === 'man' && parts[1] === 'grep';
-      });
-      return {
-        success: ranManGrep,
-        checks: [
-          { id: 'ran_man_grep', passed: ranManGrep }
-        ]
-      };
-    }
-  },
-  {
-    id: 47,
-    moduleId: 'advanced',
-    title: 'Changing File Ownership',
-    xp: 250,
-    badge: 'Owner',
-    description: 'In Linux, every file and folder belongs to a specific owner and group. We change them using the `chown` (change owner) command.\n\nSince modifying ownership affects system security, this command requires administrator privileges: `sudo chown <owner>:<group> <file>`.',
-    instructions: 'Change the owner of `/home/learner/reports.csv` to `root` using superuser privileges: `sudo chown root reports.csv`.',
-    commandHelp: [
-      { cmd: 'sudo chown root reports.csv', desc: 'Change owner of reports.csv to root' }
-    ],
-    objectives: [
-      { id: 'used_chown', text: 'Run the "chown" command with sudo' },
-      { id: 'owner_changed', text: 'Set owner of reports.csv to root' }
-    ],
-    verify: (fs, session, history) => {
-      const usedChown = history.some(cmd => {
-        const parts = cmd.trim().split(/\s+/);
-        return parts.includes('chown');
-      });
-      const node = fs.getNodeByPath('/home/learner', 'reports.csv');
-      const ownerChanged = node && node.owner === 'root';
-      
-      return {
-        success: usedChown && ownerChanged,
-        checks: [
-          { id: 'used_chown', passed: usedChown },
-          { id: 'owner_changed', passed: !!ownerChanged }
-        ]
-      };
-    }
-  },
-  {
-    id: 48,
-    moduleId: 'env_admin',
-    title: 'Inspecting the Environment',
-    xp: 200,
-    badge: 'Env-Watcher',
-    description: 'The `env` command prints a list of all currently active environment variables in your shell session. This is useful for checking system configurations, paths, or active user details.',
-    instructions: 'List all environment variables in your active shell by running the `env` command.',
-    commandHelp: [
-      { cmd: 'env', desc: 'List active environment variables' }
-    ],
-    objectives: [
-      { id: 'ran_env', text: 'Run the "env" command' }
-    ],
-    verify: (fs, session, history) => {
-      const ranEnv = history.some(cmd => cmd.trim() === 'env');
-      return {
-        success: ranEnv,
-        checks: [
-          { id: 'ran_env', passed: ranEnv }
-        ]
-      };
-    }
-  },
-  {
-    id: 49,
-    moduleId: 'basics',
-    title: 'Clearing the Screen',
-    xp: 100,
-    badge: 'Neat-Freak',
-    description: 'When your terminal screen gets cluttered with command outputs, you can clean it up using the `clear` command. This scrolls the screen down to present a clean prompt at the top.',
-    instructions: 'Clear the terminal output screen by running the `clear` command.',
-    commandHelp: [
-      { cmd: 'clear', desc: 'Clear the terminal screen' }
-    ],
-    objectives: [
-      { id: 'ran_clear', text: 'Run the "clear" command' }
-    ],
-    verify: (fs, session, history) => {
-      const ranClear = history.some(cmd => cmd.trim() === 'clear');
-      return {
-        success: ranClear,
-        checks: [
-          { id: 'ran_clear', passed: ranClear }
-        ]
-      };
-    }
-  },
-  {
-    id: 50,
-    moduleId: 'basics',
-    title: 'Finding Shell Help',
-    xp: 100,
-    badge: 'Helpful',
-    description: 'If you are ever unsure which commands are supported in this emulator, you can use the `help` command. It lists all available utilities along with support details for redirection and pipes.',
-    instructions: 'List all available shell commands in this terminal simulator by running the `help` command.',
-    commandHelp: [
-      { cmd: 'help', desc: 'List available commands' }
-    ],
-    objectives: [
-      { id: 'ran_help', text: 'Run the "help" command' }
-    ],
-    verify: (fs, session, history) => {
-      const ranHelp = history.some(cmd => cmd.trim() === 'help');
-      return {
-        success: ranHelp,
-        checks: [
-          { id: 'ran_help', passed: ranHelp }
         ]
       };
     }

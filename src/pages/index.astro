@@ -175,8 +175,8 @@ import LessonPanel from '../components/LessonPanel.astro';
       // Ensure quest-required seeded files exist in the persisted filesystem
       const completed = this.state.completedLessons;
 
-      // Quest 8/10: status.txt needed for Writing & Copying quests
-      if (completed.includes(8) && !completed.includes(10)) {
+      // Quest 10/12: status.txt needed for Writing & Copying quests
+      if (completed.includes(10) && !completed.includes(12)) {
         const statusNode = fs.getNodeByPath('/home/learner', 'status.txt');
         if (!statusNode) {
           fs.createNode('/home/learner', 'status.txt', 'file', {
@@ -185,8 +185,8 @@ import LessonPanel from '../components/LessonPanel.astro';
         }
       }
 
-      // Quest 11: Ensure log_1.txt, log_2.txt, log_3.txt exist for wildcard operations
-      if (!completed.includes(11)) {
+      // Quest 13: Ensure log_1.txt, log_2.txt, log_3.txt exist for wildcard operations
+      if (!completed.includes(13)) {
         const logFiles = [
           { name: 'log_1.txt', content: 'Log entry 1: System initiated.\n' },
           { name: 'log_2.txt', content: 'Log entry 2: System update started.\n' },
@@ -201,15 +201,15 @@ import LessonPanel from '../components/LessonPanel.astro';
         }
       }
 
-      // Quest 12: Ensure downloads directory exists for removal quest
-      if (!completed.includes(12)) {
+      // Quest 14: Ensure downloads directory exists for removal quest
+      if (!completed.includes(14)) {
         if (!fs.getNodeByPath('/home/learner', 'downloads')) {
           fs.createNode('/home/learner', 'downloads', 'dir');
         }
       }
 
-      // Quest 14: Ensure names.txt exists for sort/uniq quest
-      if (!completed.includes(14)) {
+      // Quest 16: Ensure names.txt exists for sort/uniq quest
+      if (!completed.includes(16)) {
         if (!fs.getNodeByPath('/home/learner', 'names.txt')) {
           fs.createNode('/home/learner', 'names.txt', 'file', {
             content: 'Alice\nBob\nAlice\nCharlie\nBob\nDavid\nCharlie\n'
@@ -217,8 +217,8 @@ import LessonPanel from '../components/LessonPanel.astro';
         }
       }
 
-      // Quest 15: Ensure logs.txt exists for grep quest
-      if (!completed.includes(15)) {
+      // Quest 17: Ensure logs.txt exists for grep quest
+      if (!completed.includes(17)) {
         if (!fs.getNodeByPath('/home/learner', 'logs.txt')) {
           fs.createNode('/home/learner', 'logs.txt', 'file', {
             content: '[INFO] Service started.\n[WARNING] High memory usage.\n[ERROR] Database connection failed.\n[INFO] User logged in.\n[ERROR] Failed to start database service.\n'
@@ -226,8 +226,8 @@ import LessonPanel from '../components/LessonPanel.astro';
         }
       }
 
-      // Quest 16: Ensure deploy.sh exists for chmod quest (with default 644 permissions)
-      if (!completed.includes(16)) {
+      // Quest 18: Ensure deploy.sh exists for chmod quest (with default 644 permissions)
+      if (!completed.includes(18)) {
         if (!fs.getNodeByPath('/home/learner', 'deploy.sh')) {
           fs.createNode('/home/learner', 'deploy.sh', 'file', {
             content: '#!/bin/bash\necho "Deploying application..."\necho "Done!"\n',
@@ -236,8 +236,8 @@ import LessonPanel from '../components/LessonPanel.astro';
         }
       }
 
-      // Quest 18: Ensure /etc/shadow exists for sudo quest
-      if (!completed.includes(18)) {
+      // Quest 21: Ensure /etc/shadow exists for sudo quest
+      if (!completed.includes(21)) {
         if (!fs.getNodeByPath('/etc', 'shadow')) {
           fs.createNode('/etc', 'shadow', 'file', {
             content: 'root:$6$8zLx92xp$H9s2:18200:0:99999:7:::\nlearner:$6$1bYtM2op$P4w1:18200:0:99999:7:::\n',
@@ -249,7 +249,7 @@ import LessonPanel from '../components/LessonPanel.astro';
       }
 
       // Seeds for new Quests
-      // Quest 21/31: logs directory and logs files
+      // Quest 24/34: logs directory and logs files
       if (!fs.getNodeByPath('/home/learner', 'logs')) {
         fs.createNode('/home/learner', 'logs', 'dir');
         fs.createNode('/home/learner/logs', 'app.log', 'file', {
@@ -260,8 +260,8 @@ import LessonPanel from '../components/LessonPanel.astro';
         });
       }
       
-      // Quest 34: server.conf
-      if (!completed.includes(34)) {
+      // Quest 38: server.conf
+      if (!completed.includes(38)) {
         if (!fs.getNodeByPath('/home/learner', 'server.conf')) {
           fs.createNode('/home/learner', 'server.conf', 'file', {
             content: 'host=127.0.0.1\nport=80\nmax_connections=100\n'
@@ -269,8 +269,8 @@ import LessonPanel from '../components/LessonPanel.astro';
         }
       }
 
-      // Quest 41: reports.csv
-      if (!completed.includes(41)) {
+      // Quest 45: reports.csv
+      if (!completed.includes(45)) {
         if (!fs.getNodeByPath('/home/learner', 'reports.csv')) {
           fs.createNode('/home/learner', 'reports.csv', 'file', {
             content: 'date,sales,visitors\njul 1,1200,450\njul 2,1500,500\njul 3,1800,600\n'
