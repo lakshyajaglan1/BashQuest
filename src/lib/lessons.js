@@ -36,8 +36,14 @@ export const lessons = [
       { id: 'ran_pwd', text: 'Run the "pwd" command' }
     ],
     verify: (fs, session, history) => {
-      const ranWhoami = history.some(cmd => cmd.trim() === 'whoami');
-      const ranPwd = history.some(cmd => cmd.trim() === 'pwd');
+      const ranWhoami = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('whoami');
+      });
+      const ranPwd = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('pwd');
+      });
       return {
         success: ranWhoami && ranPwd,
         checks: [
@@ -64,10 +70,40 @@ export const lessons = [
       { id: 'ran_ls', text: 'Run the "ls" command in /var/log' }
     ],
     verify: (fs, session, history) => {
-      const inVarLog = session.currentPath === '/var/log';
-      const ranLs = history.some(cmd => {
+      let path = '/home/learner';
+      let visitedVarLog = false;
+      let ranLsInVarLog = false;
+      for (const cmd of history) {
         const parts = cmd.trim().split(/\s+/);
-        return parts[0] === 'ls' && session.currentPath === '/var/log';
+        if (parts[0] === 'cd') {
+          const target = parts[1] || '~';
+          if (target === '~' || target === '/home/learner') {
+            path = '/home/learner';
+          } else if (target === '/var/log' || (target === 'log' && path === '/var')) {
+            path = '/var/log';
+          } else if (target === '..') {
+            const segs = path.split('/').filter(Boolean);
+            segs.pop();
+            path = '/' + segs.join('/');
+          } else if (target.startsWith('/')) {
+            path = target;
+          } else {
+            path = path + (path === '/' ? '' : '/') + target;
+          }
+        }
+        if (path === '/var/log') {
+          visitedVarLog = true;
+        }
+        if (parts.includes('ls')) {
+          if (path === '/var/log' || parts.includes('/var/log')) {
+            ranLsInVarLog = true;
+          }
+        }
+      }
+      const inVarLog = visitedVarLog || session.currentPath === '/var/log';
+      const ranLs = ranLsInVarLog || history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('ls') && (parts.includes('/var/log') || session.currentPath === '/var/log');
       });
       return {
         success: inVarLog && ranLs,
@@ -96,10 +132,32 @@ export const lessons = [
       { id: 'dir_exists', text: 'Create a directory named "projects"' }
     ],
     verify: (fs, session, history) => {
-      const inHome = session.currentPath === '/home/learner';
+      let path = '/home/learner';
+      let wasInHome = true;
+      for (const cmd of history) {
+        const parts = cmd.trim().split(/\s+/);
+        if (parts[0] === 'cd') {
+          const target = parts[1] || '~';
+          if (target === '~' || target === '/home/learner') {
+            path = '/home/learner';
+          } else if (target === '..') {
+            const segs = path.split('/').filter(Boolean);
+            segs.pop();
+            path = '/' + segs.join('/');
+          } else if (target.startsWith('/')) {
+            path = target;
+          } else {
+            path = path + (path === '/' ? '' : '/') + target;
+          }
+        }
+        if (path === '/home/learner') {
+          wasInHome = true;
+        }
+      }
+      const inHome = wasInHome || session.currentPath === '/home/learner';
       const usedMkdir = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
-        return parts[0] === 'mkdir';
+        return parts.includes('mkdir');
       });
       const node = fs.getNodeByPath('/home/learner', 'projects');
       const dirExists = node && node.type === 'dir';
@@ -134,7 +192,8 @@ export const lessons = [
       const nestedDirExists = node && node.type === 'dir';
       const usedPSwitch = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
-        return parts[0] === 'mkdir' && (parts.includes('-p') || parts.includes('--parents') || parts.some(p => p.startsWith('-') && p.includes('p')));
+        const mkdirIdx = parts.indexOf('mkdir');
+        return mkdirIdx !== -1 && (parts.includes('-p') || parts.includes('--parents') || parts.some(p => p.startsWith('-') && p.includes('p')));
       });
 
       return {
@@ -161,7 +220,10 @@ export const lessons = [
       { id: 'ran_clear', text: 'Run the "clear" command' }
     ],
     verify: (fs, session, history) => {
-      const ranClear = history.some(cmd => cmd.trim() === 'clear');
+      const ranClear = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('clear');
+      });
       return {
         success: ranClear,
         checks: [
@@ -185,7 +247,10 @@ export const lessons = [
       { id: 'ran_help', text: 'Run the "help" command' }
     ],
     verify: (fs, session, history) => {
-      const ranHelp = history.some(cmd => cmd.trim() === 'help');
+      const ranHelp = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('help');
+      });
       return {
         success: ranHelp,
         checks: [
@@ -213,7 +278,7 @@ export const lessons = [
     verify: (fs, session, history) => {
       const usedTouch = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
-        return parts[0] === 'touch';
+        return parts.includes('touch');
       });
       const node = fs.getNodeByPath('/home/learner/projects', 'task.txt');
       const fileExists = node && node.type === 'file';
@@ -243,9 +308,11 @@ export const lessons = [
     ],
     verify: (fs, session, history) => {
       const catHosts = history.some(cmd => {
-        const cleaned = cmd.trim().replace(/\s+/g, ' ');
-        return cleaned === 'cat /etc/hosts' || 
-               (cleaned === 'cat hosts' && session.currentPath === '/etc');
+        const parts = cmd.trim().split(/\s+/);
+        const catIdx = parts.indexOf('cat');
+        if (catIdx === -1) return false;
+        const args = parts.slice(catIdx + 1);
+        return args.some(arg => arg === '/etc/hosts' || arg === 'hosts' || arg === 'etc/hosts');
       });
 
       return {
@@ -344,7 +411,7 @@ export const lessons = [
       });
       const usedCat = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
-        return parts[0] === 'cat';
+        return parts.includes('cat');
       });
       const node = fs.getNodeByPath('/home/learner', 'status.txt');
       if (!node || node.type !== 'file') {
@@ -385,7 +452,7 @@ export const lessons = [
     verify: (fs, session, history) => {
       const usedMv = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
-        return parts[0] === 'mv';
+        return parts.includes('mv');
       });
       const oldNode = fs.getNodeByPath('/home/learner', 'status.txt');
       const newNode = fs.getNodeByPath('/home/learner', 'system.log');
@@ -458,7 +525,7 @@ export const lessons = [
     verify: (fs, session, history) => {
       const usedRm = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
-        return parts[0] === 'rm' && (parts.includes('-r') || parts.includes('-rf') || parts.includes('-fr') || parts.some(p => p.startsWith('-') && p.includes('r')));
+        return parts.includes('rm') && (parts.includes('-r') || parts.includes('-rf') || parts.includes('-fr') || parts.some(p => p.startsWith('-') && p.includes('r')));
       });
       const node = fs.getNodeByPath('/home/learner', 'downloads');
       const downloadsRemoved = !node;
@@ -532,7 +599,7 @@ export const lessons = [
     verify: (fs, session, history) => {
       const usedSort = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
-        return parts[0] === 'sort';
+        return parts.includes('sort');
       });
       const usedUniq = history.some(cmd => {
         return cmd.includes('|') && cmd.includes('uniq');
@@ -572,7 +639,7 @@ export const lessons = [
     verify: (fs, session, history) => {
       const usedGrep = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
-        return parts[0] === 'grep';
+        return parts.includes('grep');
       });
       const node = fs.getNodeByPath('/home/learner', 'errors.log');
       const exists = node && node.type === 'file';
@@ -608,7 +675,7 @@ export const lessons = [
     verify: (fs, session, history) => {
       const usedChmod = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
-        return parts[0] === 'chmod';
+        return parts.includes('chmod');
       });
       const node = fs.getNodeByPath('/home/learner', 'deploy.sh');
       const scriptExists = node && node.type === 'file';
@@ -644,11 +711,11 @@ export const lessons = [
     verify: (fs, session, history) => {
       const usedMv = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
-        return parts[0] === 'mv';
+        return parts.includes('mv');
       });
       const usedLsA = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
-        return parts[0] === 'ls' && (parts.includes('-a') || parts.includes('-la') || parts.includes('-al') || parts.some(p => p.startsWith('-') && p.includes('a')));
+        return parts.includes('ls') && (parts.includes('-a') || parts.includes('-la') || parts.includes('-al') || parts.some(p => p.startsWith('-') && p.includes('a')));
       });
       const node = fs.getNodeByPath('/home/learner', '.config_names');
       const oldNode = fs.getNodeByPath('/home/learner', 'unique_names.txt');
@@ -716,14 +783,18 @@ export const lessons = [
     ],
     verify: (fs, session, history) => {
       const triedWithoutSudo = history.some(cmd => {
-        const cleaned = cmd.trim().replace(/\s+/g, ' ');
-        return cleaned === 'cat /etc/shadow' || 
-               (cleaned === 'cat shadow' && session.currentPath === '/etc');
+        const parts = cmd.trim().split(/\s+/);
+        const catIdx = parts.indexOf('cat');
+        if (catIdx === -1 || parts.includes('sudo')) return false;
+        const args = parts.slice(catIdx + 1);
+        return args.some(arg => arg === '/etc/shadow' || arg === 'shadow' || arg === 'etc/shadow');
       });
       const ranSudoCat = history.some(cmd => {
-        const cleaned = cmd.trim().replace(/\s+/g, ' ');
-        return cleaned === 'sudo cat /etc/shadow' || 
-               (cleaned === 'sudo cat shadow' && session.currentPath === '/etc');
+        const parts = cmd.trim().split(/\s+/);
+        const catIdx = parts.indexOf('cat');
+        if (catIdx === -1 || !parts.includes('sudo')) return false;
+        const args = parts.slice(catIdx + 1);
+        return args.some(arg => arg === '/etc/shadow' || arg === 'shadow' || arg === 'etc/shadow');
       });
 
       return {
@@ -755,7 +826,7 @@ export const lessons = [
       const installedTree = session.installedPackages.has('tree');
       const ranTree = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
-        return parts[0] === 'tree';
+        return parts.includes('tree');
       });
 
       return {
@@ -784,7 +855,7 @@ export const lessons = [
     verify: (fs, session, history) => {
       const ranDfH = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
-        return parts[0] === 'df' && (parts.includes('-h') || parts.includes('--human-readable'));
+        return parts.includes('df') && (parts.includes('-h') || parts.includes('--human-readable'));
       });
       return {
         success: ranDfH,
@@ -811,7 +882,7 @@ export const lessons = [
     verify: (fs, session, history) => {
       const ranDu = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
-        const isDu = parts[0] === 'du';
+        const isDu = parts.includes('du');
         const hasS = parts.some(p => p.startsWith('-') && !p.startsWith('--') && p.includes('s')) || parts.includes('--summary');
         const hasH = parts.some(p => p.startsWith('-') && !p.startsWith('--') && p.includes('h')) || parts.includes('--human-readable');
         return isDu && hasS && hasH;
@@ -841,7 +912,7 @@ export const lessons = [
     verify: (fs, session, history) => {
       const ranFree = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
-        return parts[0] === 'free' && (parts.includes('-h') || parts.includes('-m') || parts.includes('--human') || parts.includes('--mega'));
+        return parts.includes('free') && (parts.includes('-h') || parts.includes('-m') || parts.includes('--human') || parts.includes('--mega'));
       });
       return {
         success: ranFree,
@@ -868,10 +939,13 @@ export const lessons = [
       { id: 'ran_uname', text: 'Run the "uname -a" command' }
     ],
     verify: (fs, session, history) => {
-      const ranUptime = history.some(cmd => cmd.trim() === 'uptime');
+      const ranUptime = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('uptime');
+      });
       const ranUname = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
-        return parts[0] === 'uname' && (parts.includes('-a') || parts.includes('--all'));
+        return parts.includes('uname') && (parts.includes('-a') || parts.includes('--all'));
       });
       return {
         success: ranUptime && ranUname,
@@ -899,7 +973,7 @@ export const lessons = [
     verify: (fs, session, history) => {
       const ranPs = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
-        return parts[0] === 'ps' && (parts.includes('aux') || parts.includes('-ef'));
+        return parts.includes('ps') && (parts.includes('aux') || parts.includes('-ef'));
       });
       return {
         success: ranPs,
@@ -924,7 +998,10 @@ export const lessons = [
       { id: 'ran_top', text: 'Run the "top" command' }
     ],
     verify: (fs, session, history) => {
-      const ranTop = history.some(cmd => cmd.trim() === 'top' || cmd.trim() === 'htop');
+      const ranTop = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('top') || parts.includes('htop');
+      });
       return {
         success: ranTop,
         checks: [
@@ -976,9 +1053,15 @@ export const lessons = [
       { id: 'ran_fg', text: 'Bring the job back to foreground with "fg"' }
     ],
     verify: (fs, session, history) => {
-      const ranBgJob = history.some(cmd => /sleep\s+\d+\s+&/.test(cmd));
-      const ranJobs = history.some(cmd => cmd.trim() === 'jobs');
-      const ranFg = history.some(cmd => cmd.trim() === 'fg' || cmd.trim().startsWith('fg %'));
+      const ranBgJob = history.some(cmd => /sleep\s+\d+\s*&/.test(cmd));
+      const ranJobs = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('jobs');
+      });
+      const ranFg = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('fg');
+      });
       return {
         success: ranBgJob && ranJobs && ranFg,
         checks: [
@@ -1006,7 +1089,9 @@ export const lessons = [
     verify: (fs, session, history) => {
       const ranPing = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
-        return parts[0] === 'ping' && (parts.includes('-c') && parts[parts.indexOf('-c') + 1] === '3');
+        const hasPing = parts.includes('ping');
+        const hasC3 = parts.includes('-c3') || (parts.includes('-c') && parts[parts.indexOf('-c') + 1] === '3');
+        return hasPing && hasC3;
       });
       return {
         success: ranPing,
@@ -1033,7 +1118,7 @@ export const lessons = [
     verify: (fs, session, history) => {
       const ranIp = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
-        return parts[0] === 'ip' && (parts.includes('addr') || parts.includes('a') || parts.includes('address'));
+        return parts.includes('ip') && (parts.includes('addr') || parts.includes('a') || parts.includes('address'));
       });
       return {
         success: ranIp,
@@ -1088,7 +1173,7 @@ export const lessons = [
     verify: (fs, session, history) => {
       const ranFind = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
-        return parts[0] === 'find' && parts.includes('-name');
+        return parts.includes('find') && parts.includes('-name');
       });
       return {
         success: ranFind,
@@ -1113,7 +1198,10 @@ export const lessons = [
       { id: 'ran_history', text: 'Run the "history" command' }
     ],
     verify: (fs, session, history) => {
-      const ranHistory = history.some(cmd => cmd.trim() === 'history');
+      const ranHistory = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('history');
+      });
       return {
         success: ranHistory,
         checks: [
@@ -1139,7 +1227,7 @@ export const lessons = [
     verify: (fs, session, history) => {
       const ranManGrep = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
-        return parts[0] === 'man' && parts[1] === 'grep';
+        return parts.includes('man') && parts.includes('grep');
       });
       return {
         success: ranManGrep,
@@ -1169,7 +1257,7 @@ export const lessons = [
       const startedService = session.services.apache2 === 'active';
       const checkedStatus = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
-        return parts[0] === 'systemctl' && parts[1] === 'status' && parts[2] === 'apache2';
+        return parts.includes('systemctl') && parts.includes('status') && parts.includes('apache2');
       });
       return {
         success: startedService && checkedStatus,
@@ -1198,7 +1286,7 @@ export const lessons = [
     verify: (fs, session, history) => {
       const openedNano = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
-        return parts[0] === 'nano' && parts[1] === 'server.conf';
+        return parts.includes('nano') && parts.some(p => p.includes('server.conf'));
       });
       const node = fs.getNodeByPath('/home/learner', 'server.conf');
       const portConfigured = node && node.type === 'file' && node.content.includes('port=8080');
@@ -1238,7 +1326,10 @@ export const lessons = [
       const digits = exists ? String(node.permissions).split('').map(Number) : [];
       const isExec = exists && digits.some(d => d % 2 !== 0);
 
-      const executed = history.some(cmd => cmd.trim() === './hello.sh' || cmd.trim() === 'bash hello.sh');
+      const executed = history.some(cmd => {
+        const trimmed = cmd.trim();
+        return trimmed === './hello.sh' || trimmed === 'bash hello.sh' || trimmed === 'sh hello.sh' || trimmed.endsWith('/hello.sh');
+      });
 
       return {
         success: exists && hasContent && isExec && executed,
@@ -1276,7 +1367,10 @@ export const lessons = [
       const digits = exists ? String(node.permissions).split('').map(Number) : [];
       const isExec = exists && digits.some(d => d % 2 !== 0);
 
-      const executed = history.some(cmd => cmd.trim() === './greet.sh Alice' || cmd.trim() === 'bash greet.sh Alice');
+      const executed = history.some(cmd => {
+        const trimmed = cmd.trim();
+        return trimmed === './greet.sh Alice' || trimmed === 'bash greet.sh Alice' || trimmed === 'sh greet.sh Alice' || trimmed.endsWith('/greet.sh Alice');
+      });
 
       return {
         success: exists && hasContent && isExec && executed,
@@ -1314,7 +1408,10 @@ export const lessons = [
       const digits = exists ? String(node.permissions).split('').map(Number) : [];
       const isExec = exists && digits.some(d => d % 2 !== 0);
 
-      const executed = history.some(cmd => cmd.trim() === './check_file.sh names.txt' || cmd.trim() === 'bash check_file.sh names.txt');
+      const executed = history.some(cmd => {
+        const trimmed = cmd.trim();
+        return trimmed === './check_file.sh names.txt' || trimmed === 'bash check_file.sh names.txt' || trimmed === 'sh check_file.sh names.txt' || trimmed.endsWith('/check_file.sh names.txt');
+      });
 
       return {
         success: exists && logicOK && isExec && executed,
@@ -1349,7 +1446,10 @@ export const lessons = [
       const exists = node && node.type === 'file';
       const logicOK = exists && node.content.includes('for') && node.content.includes('cp') && node.content.includes('done');
       
-      const executed = history.some(cmd => cmd.trim() === './backup_logs.sh' || cmd.trim() === 'bash backup_logs.sh');
+      const executed = history.some(cmd => {
+        const trimmed = cmd.trim();
+        return trimmed === './backup_logs.sh' || trimmed === 'bash backup_logs.sh' || trimmed === 'sh backup_logs.sh' || trimmed.endsWith('/backup_logs.sh');
+      });
       
       const backupDir = fs.getNodeByPath('/home/learner', 'backup');
       const backupDirOK = backupDir && backupDir.type === 'dir';
@@ -1383,7 +1483,7 @@ export const lessons = [
     verify: (fs, session, history) => {
       const usedSed = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
-        return parts[0] === 'sed' && parts.includes('-i');
+        return parts.includes('sed') && parts.includes('-i');
       });
       const node = fs.getNodeByPath('/home/learner', 'server.conf');
       const portChanged = node && node.type === 'file' && node.content.includes('port=8080') && !node.content.includes('port=80\n');
@@ -1415,7 +1515,8 @@ export const lessons = [
     ],
     verify: (fs, session, history) => {
       const usedAwk = history.some(cmd => {
-        return cmd.includes('awk') && (cmd.includes('-F:') || cmd.includes('-F ":"') || cmd.includes("-F ':'"));
+        const clean = cmd.replace(/\s+/g, '');
+        return cmd.includes('awk') && (clean.includes('-F:') || clean.includes('-F":"') || clean.includes("-F':'") || clean.includes("-F\\:"));
       });
       const node = fs.getNodeByPath('/home/learner', 'shadow_users.txt');
       const exists = node && node.type === 'file';
@@ -1449,8 +1550,16 @@ export const lessons = [
       { id: 'content_uppercase', text: 'Verify text is UPPERCASE' }
     ],
     verify: (fs, session, history) => {
-      const usedCut = history.some(cmd => cmd.includes('cut') && (cmd.includes('-d,') || cmd.includes("-d ','") || cmd.includes('-d ","')));
-      const usedTr = history.some(cmd => cmd.includes('tr') && cmd.includes('a-z') && cmd.includes('A-Z'));
+      const usedCut = history.some(cmd => {
+        const clean = cmd.replace(/\s+/g, '');
+        return cmd.includes('cut') && (clean.includes('-d,') || clean.includes("-d','") || clean.includes('-d","'));
+      });
+      const usedTr = history.some(cmd => {
+        return cmd.includes('tr') && (
+          (cmd.includes('a-z') && cmd.includes('A-Z')) || 
+          (cmd.includes('[:lower:]') && cmd.includes('[:upper:]'))
+        );
+      });
       
       const node = fs.getNodeByPath('/home/learner', 'upper_reports.txt');
       const exists = node && node.type === 'file';
@@ -1485,7 +1594,10 @@ export const lessons = [
       { id: 'echoed_env', text: 'Print variable using "echo $APP_ENV"' }
     ],
     verify: (fs, session, history) => {
-      const exportedEnv = history.some(cmd => cmd.startsWith('export'));
+      const exportedEnv = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('export');
+      });
       const envCorrect = session.env.APP_ENV === 'production';
       const echoedEnv = history.some(cmd => cmd.includes('echo') && cmd.includes('APP_ENV'));
 
@@ -1517,7 +1629,10 @@ export const lessons = [
     verify: (fs, session, history) => {
       const usedTarC = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
-        return parts[0] === 'tar' && parts.some(p => p.startsWith('-') && p.includes('c') && p.includes('z'));
+        const tarIdx = parts.indexOf('tar');
+        if (tarIdx === -1) return false;
+        const options = parts.slice(tarIdx + 1);
+        return options.some(p => (p.includes('c') && p.includes('z')) || (p.startsWith('--') && (p.includes('create') || p.includes('gzip'))));
       });
       const node = fs.getNodeByPath('/home/learner', 'logs.tar.gz');
       const exists = node && node.type === 'file';
@@ -1546,7 +1661,10 @@ export const lessons = [
       { id: 'ran_env', text: 'Run the "env" command' }
     ],
     verify: (fs, session, history) => {
-      const ranEnv = history.some(cmd => cmd.trim() === 'env');
+      const ranEnv = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('env');
+      });
       return {
         success: ranEnv,
         checks: [
@@ -1573,7 +1691,7 @@ export const lessons = [
     verify: (fs, session, history) => {
       const usedLnS = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
-        return parts[0] === 'ln' && (parts.includes('-s') || parts.includes('--symbolic') || parts.some(p => p.startsWith('-') && p.includes('s')));
+        return parts.includes('ln') && (parts.includes('-s') || parts.includes('--symbolic') || parts.some(p => p.startsWith('-') && p.includes('s')));
       });
       const node = fs.getNodeByPath('/home/learner', 'app_link.log');
       const isLink = node && node.type === 'link';
