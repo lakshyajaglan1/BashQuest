@@ -1,7 +1,7 @@
 ---
 import { modules, lessons } from '../lib/lessons';
 ---
-<div class="mesh-gradient min-h-[calc(100vh-64px)] w-full py-12 px-4 md:px-8 select-none">
+<div class="bg-canvas-soft mesh-gradient min-h-[calc(100vh-64px)] w-full py-12 px-4 md:px-8 select-none">
   <div class="w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
     
     <!-- User Profile & Stats (Left Column) -->
@@ -53,7 +53,7 @@ import { modules, lessons } from '../lib/lessons';
       </div>
 
       <!-- Badges Card -->
-      <div class="card-marketing p-6 shadow-level-3">
+      <div class="card-marketing bg-canvas p-6 shadow-level-3">
         <h3 class="text-xs font-bold tracking-widest text-mute uppercase font-mono mb-4 border-l-2 border-primary pl-2">Earned Badges</h3>
         <div id="dashboard-badges-rack" class="grid grid-cols-3 gap-3">
           <!-- Dynamically filled with badges -->
@@ -64,12 +64,12 @@ import { modules, lessons } from '../lib/lessons';
     <!-- Curriculum Skill Tree (Right Column) -->
     <div class="lg:col-span-2 space-y-8">
       <!-- Intro Banner -->
-      <div class="card-marketing bg-primary text-on-primary border border-hairline p-5 md:p-6 flex flex-col gap-4 relative overflow-hidden shadow-level-4">
+      <div class="mesh-gradient bg-neutral-900 dark:bg-black text-white p-5 md:p-6 flex flex-col gap-4 relative overflow-hidden shadow-level-4 rounded-md">
         <!-- Subtle mesh gradient glow in the top right corner -->
         <div class="absolute -right-16 -top-16 w-48 h-48 rounded-full bg-gradient-to-br from-violet/25 via-link/15 to-transparent blur-3xl pointer-events-none"></div>
         
         <div class="relative z-10">
-          <h2 class="text-base md:text-lg font-bold text-on-primary tracking-tight font-sans">
+          <h2 class="text-base md:text-lg font-bold text-white tracking-tight font-sans">
             Learn Linux by actually using it.
           </h2>
           <p class="text-xs md:text-sm text-zinc-400 mt-1.5 leading-relaxed max-w-xl">
@@ -322,28 +322,22 @@ import { modules, lessons } from '../lib/lessons';
         `;
       } else {
         badgesRack.innerHTML = earnedBadges.map((item, index) => {
-          // Color palettes from DESIGN.md matching Vercel guidelines
+          // Color palettes matching Vercel premium collectible chip style
           const colors = [
             {
-              bg: 'bg-violet-soft/30 dark:bg-violet-soft/10',
-              text: 'text-violet-deep dark:text-violet-soft',
-              border: 'border-violet-soft/50 dark:border-violet-deep/30',
-              iconBg: 'bg-violet-soft text-violet-deep dark:bg-violet-deep dark:text-violet-soft',
-              iconBorder: 'border-violet-soft/65'
+              bg: 'bg-violet-500/10 dark:bg-violet-400/10',
+              text: 'text-violet-600 dark:text-violet-400',
+              iconBg: 'bg-violet-500/20 dark:bg-violet-400/20 text-violet-700 dark:text-violet-300'
             },
             {
-              bg: 'bg-cyan-soft/30 dark:bg-cyan-soft/10',
-              text: 'text-cyan-deep dark:text-cyan-soft',
-              border: 'border-cyan-soft/50 dark:border-cyan-deep/30',
-              iconBg: 'bg-cyan-soft text-cyan-deep dark:bg-cyan-deep/20 dark:text-cyan-soft',
-              iconBorder: 'border-cyan-soft/65'
+              bg: 'bg-cyan-500/10 dark:bg-cyan-400/10',
+              text: 'text-cyan-600 dark:text-cyan-400',
+              iconBg: 'bg-cyan-500/20 dark:bg-cyan-400/20 text-cyan-700 dark:text-cyan-300'
             },
             {
-              bg: 'bg-warning-soft/30 dark:bg-warning-soft/10',
-              text: 'text-warning-deep dark:text-warning-soft',
-              border: 'border-warning-soft/50 dark:border-warning-deep/30',
-              iconBg: 'bg-warning-soft text-warning-deep dark:bg-warning-deep/20 dark:text-warning-soft',
-              iconBorder: 'border-warning-soft/65'
+              bg: 'bg-warning-500/10 dark:bg-warning-400/10',
+              text: 'text-warning-600 dark:text-warning-400',
+              iconBg: 'bg-warning-500/20 dark:bg-warning-400/20 text-warning-700 dark:text-warning-300'
             }
           ];
           const color = colors[index % colors.length];
@@ -372,13 +366,13 @@ import { modules, lessons } from '../lib/lessons';
           else if (badgeLower.includes('filterer')) emoji = '🔍';
 
           return `
-            <div class="flex flex-col items-center justify-center p-3 border ${color.border} ${color.bg} rounded-md text-center relative group/badge transition-all duration-300 hover:-translate-y-1 hover:shadow-level-2 select-none">
-              <div class="w-10 h-10 rounded-full ${color.iconBg} flex items-center justify-center font-bold text-lg mb-1.5 border ${color.iconBorder} transition-transform group-hover/badge:scale-110">
+            <div class="flex flex-col items-center justify-center p-3.5 ${color.bg} rounded-xl text-center relative group/badge transition-all duration-300 hover:-translate-y-1 hover:shadow-level-2 select-none cursor-default">
+              <div class="w-11 h-11 rounded-full ${color.iconBg} flex items-center justify-center font-bold text-xl mb-2 transition-transform duration-300 group-hover/badge:scale-110">
                 ${emoji}
               </div>
-              <span class="text-[10px] font-bold ${color.text} truncate w-full tracking-wide">${item.badge}</span>
+              <span class="text-[10px] font-mono font-bold ${color.text} truncate w-full tracking-wide">${item.badge}</span>
               <!-- Tooltip -->
-              <div class="absolute bottom-full mb-2 opacity-0 scale-95 pointer-events-none group-hover/badge:opacity-100 group-hover/badge:scale-100 bg-primary text-on-primary text-[9px] font-mono py-1.5 px-2.5 rounded shadow-level-3 border border-hairline z-10 transition-all duration-200 origin-bottom whitespace-normal max-w-[125px] text-center">
+              <div class="absolute bottom-full mb-2 opacity-0 scale-95 pointer-events-none group-hover/badge:opacity-100 group-hover/badge:scale-100 bg-primary text-on-primary text-[9px] font-mono py-1.5 px-2.5 rounded-sm shadow-level-3 border border-hairline z-10 transition-all duration-200 origin-bottom whitespace-normal max-w-[125px] text-center">
                 Quest ${item.title}
               </div>
             </div>
@@ -403,26 +397,42 @@ import { modules, lessons } from '../lib/lessons';
       const statusBadge = node.querySelector('.node-status-badge');
       const lockOverlay = node.querySelector('.node-lock-overlay');
       const startText = node.querySelector('.start-btn-text');
+      const titleEl = node.querySelector('h3');
 
       node.classList.remove(
         'opacity-60', 'pointer-events-none', 
-        'border-success', 'border-violet', 'shadow-level-4', 'shadow-level-3', 'shadow-level-2',
+        'border-success', 'border-violet', 'border-violet/50', 'shadow-level-4', 'shadow-level-3', 'shadow-level-2',
+        'shadow-[0_0_20px_rgba(121,40,202,0.15)]',
         'bg-emerald-50/5', 'dark:bg-emerald-950/5', 'opacity-40', 'bg-canvas-soft-2', 
         'border-hairline', 'border-emerald-500/20', 'bg-emerald-500/[0.02]', 'dark:bg-emerald-500/[0.01]', 
-        'bg-canvas', 'opacity-75'
+        'bg-canvas', 'bg-transparent', 'opacity-75', 'opacity-70'
       );
       lockOverlay?.classList.add('hidden');
       startText?.classList.remove('animate-pulse-subtle', 'text-violet', 'font-bold');
       startText?.classList.add('text-mute');
+      if (startText) {
+        startText.innerHTML = 'Start <span class="font-mono">→</span>';
+      }
+      if (titleEl) {
+        titleEl.classList.remove('text-mute');
+        titleEl.classList.add('text-ink');
+      }
 
       if (isCompleted) {
-        node.classList.add('border-emerald-500/20', 'bg-emerald-500/[0.02]', 'dark:bg-emerald-500/[0.01]', 'opacity-75');
+        node.classList.add('bg-transparent', 'border-hairline', 'opacity-70');
+        if (titleEl) {
+          titleEl.classList.remove('text-ink');
+          titleEl.classList.add('text-mute');
+        }
         if (statusBadge) {
           statusBadge.textContent = 'Passed';
           statusBadge.className = 'node-status-badge text-[10px] font-mono font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 dark:text-emerald-400 dark:bg-emerald-950/20 dark:border-emerald-800/40 px-2 py-0.5 rounded';
         }
+        if (startText) {
+          startText.innerHTML = 'Review <span class="font-mono">→</span>';
+        }
       } else if (isUnlocked) {
-        node.classList.add('border-violet', 'bg-canvas', 'shadow-level-4');
+        node.classList.add('border-violet/50', 'bg-canvas', 'shadow-[0_0_20px_rgba(121,40,202,0.15)]');
         if (startText) {
           startText.classList.remove('text-mute');
           startText.classList.add('animate-pulse-subtle', 'text-violet', 'font-bold');
