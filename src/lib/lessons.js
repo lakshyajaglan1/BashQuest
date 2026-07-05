@@ -35,6 +35,11 @@ export const lessons = [
       { id: 'ran_whoami', text: 'Run the "whoami" command' },
       { id: 'ran_pwd', text: 'Run the "pwd" command' }
     ],
+    hints: [
+      "Check which commands you need to run to identify your user and path.",
+      "The 'whoami' command shows your username, and 'pwd' shows your current path.",
+      "Try running: whoami, and then pwd"
+    ],
     verify: (fs, session, history) => {
       const ranWhoami = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
@@ -68,6 +73,11 @@ export const lessons = [
     objectives: [
       { id: 'in_var_log', text: 'Change directory to /var/log' },
       { id: 'ran_ls', text: 'Run the "ls" command in /var/log' }
+    ],
+    hints: [
+      "Think about how to navigate and list files in a specific directory.",
+      "Change directory to /var/log using cd, then use ls.",
+      "Try running: cd /var/log, and then ls"
     ],
     verify: (fs, session, history) => {
       let path = '/home/learner';
@@ -131,6 +141,11 @@ export const lessons = [
       { id: 'used_mkdir', text: 'Use the "mkdir" command' },
       { id: 'dir_exists', text: 'Create a directory named "projects"' }
     ],
+    hints: [
+      "Ensure you are in the correct starting directory first.",
+      "Go to your home directory (~ or /home/learner) and use the mkdir command.",
+      "Try running: cd ~ followed by mkdir projects"
+    ],
     verify: (fs, session, history) => {
       let path = '/home/learner';
       let wasInHome = true;
@@ -187,6 +202,11 @@ export const lessons = [
       { id: 'nested_dir_exists', text: 'Create nested directory workspace/src/utils' },
       { id: 'used_p_switch', text: 'Use the -p or --parents switch in mkdir' }
     ],
+    hints: [
+      "Look for a mkdir flag that creates parent directories automatically if they don't exist.",
+      "Use mkdir with the -p switch to create nested folders.",
+      "Try running: mkdir -p workspace/src/utils"
+    ],
     verify: (fs, session, history) => {
       const node = fs.getNodeByPath('/home/learner/workspace/src', 'utils');
       const nestedDirExists = node && node.type === 'dir';
@@ -219,6 +239,11 @@ export const lessons = [
     objectives: [
       { id: 'ran_clear', text: 'Run the "clear" command' }
     ],
+    hints: [
+      "Sweep all the old text away and start fresh.",
+      "Run the command that clears the terminal screen.",
+      "Try running: clear"
+    ],
     verify: (fs, session, history) => {
       const ranClear = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
@@ -246,7 +271,12 @@ export const lessons = [
     objectives: [
       { id: 'ran_help', text: 'Run the "help" command' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Review the instructions to find the appropriate command for rulebook help.",
+      "Use the 'help' command.",
+      "Try running: help"
+    ],
+verify: (fs, session, history) => {
       const ranHelp = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('help');
@@ -275,7 +305,12 @@ export const lessons = [
       { id: 'used_touch', text: 'Use the "touch" command' },
       { id: 'file_exists', text: 'Create file "task.txt" inside "projects"' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Think about which command creates a new empty file.",
+      "Use the 'touch' command inside the 'projects' directory.",
+      "Try running: touch projects/task.txt"
+    ],
+verify: (fs, session, history) => {
       const usedTouch = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('touch');
@@ -306,7 +341,12 @@ export const lessons = [
     objectives: [
       { id: 'cat_hosts', text: 'Run the "cat" command on /etc/hosts' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Think about which command outputs/displays the contents of a file.",
+      "Use the 'cat' command on the file /etc/hosts.",
+      "Try running: cat /etc/hosts"
+    ],
+verify: (fs, session, history) => {
       const catHosts = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         const catIdx = parts.indexOf('cat');
@@ -339,7 +379,12 @@ export const lessons = [
       { id: 'dir_with_space_exists', text: 'Create directory "my code"' },
       { id: 'file_with_space_exists', text: 'Create file "my task" inside "my code"' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "When creating files or directories with spaces in their names, wrap the name in quotes.",
+      "Use mkdir \"my code\" followed by touch \"my code/my task\".",
+      "Try running: mkdir \"my code\" and touch \"my code/my task\""
+    ],
+verify: (fs, session, history) => {
       const dirNode = fs.getNodeByPath('/home/learner', 'my code');
       const dirExists = dirNode && dirNode.type === 'dir';
       const fileNode = fs.getNodeByPath('/home/learner/my code', 'my task');
@@ -370,7 +415,12 @@ export const lessons = [
       { id: 'file_created', text: 'Create "status.txt" in home directory' },
       { id: 'content_correct', text: 'File content is exactly "System Online"' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "To write text to a file, you can redirect the output of the echo command.",
+      "Use the '>' operator to redirect echo \"System Online\" to status.txt.",
+      "Try running: echo \"System Online\" > status.txt"
+    ],
+verify: (fs, session, history) => {
       const usedEchoRedirect = history.some(cmd => {
         return cmd.includes('echo') && cmd.includes('>');
       });
@@ -405,7 +455,12 @@ export const lessons = [
       { id: 'has_second_line', text: 'Second line has "All Checks Green"' },
       { id: 'used_cat', text: 'Verify the result using the "cat" command' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Use append redirection so you don't overwrite the existing file content.",
+      "Use the '>>' operator to append text, and 'cat' to verify it.",
+      "Try running: echo \"All Checks Green\" >> status.txt and cat status.txt"
+    ],
+verify: (fs, session, history) => {
       const usedAppend = history.some(cmd => {
         return cmd.includes('echo') && cmd.includes('>>');
       });
@@ -449,7 +504,12 @@ export const lessons = [
       { id: 'old_removed', text: 'Original status.txt is deleted/renamed' },
       { id: 'new_created', text: 'New file system.log exists with correct contents' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Think about which command renames or moves a file.",
+      "Use the 'mv' command to rename status.txt to system.log.",
+      "Try running: mv status.txt system.log"
+    ],
+verify: (fs, session, history) => {
       const usedMv = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('mv');
@@ -486,7 +546,12 @@ export const lessons = [
       { id: 'combined_exists', text: 'Create "combined.log" in home directory' },
       { id: 'content_combined', text: 'Verify it has logs from log_1, log_2, and log_3' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Think about how to use wildcards to match multiple files starting with log_.",
+      "Use cat log_* to read all match files and redirect the output to combined.log.",
+      "Try running: cat log_* > combined.log"
+    ],
+verify: (fs, session, history) => {
       const usedWildcard = history.some(cmd => {
         return cmd.includes('cat') && cmd.includes('*');
       });
@@ -522,7 +587,12 @@ export const lessons = [
       { id: 'used_rm', text: 'Use the "rm" command with -r flag' },
       { id: 'downloads_removed', text: 'Directory /home/learner/downloads is deleted' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Think about which command removes a file or directory recursively.",
+      "Use the 'rm' command with the recursive option (-r).",
+      "Try running: rm -r downloads"
+    ],
+verify: (fs, session, history) => {
       const usedRm = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('rm') && (parts.includes('-r') || parts.includes('-rf') || parts.includes('-fr') || parts.some(p => p.startsWith('-') && p.includes('r')));
@@ -556,7 +626,12 @@ export const lessons = [
       { id: 'file_count_exists', text: 'Create file "file_count.txt" in home directory' },
       { id: 'count_is_correct', text: 'Verify file contains the correct numeric file count' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Think about how to redirect the output of one command into another using a pipe.",
+      "Pipe the output of ls into wc -l, then redirect the result to file_count.txt.",
+      "Try running: ls | wc -l > file_count.txt"
+    ],
+verify: (fs, session, history) => {
       const usedPipe = history.some(cmd => {
         return cmd.includes('|') && cmd.includes('wc');
       });
@@ -596,7 +671,12 @@ export const lessons = [
       { id: 'unique_names_exists', text: 'Create file "unique_names.txt"' },
       { id: 'sorted_and_unique', text: 'Verify content has unique sorted names' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "You need to sort the names alphabetically first, then filter out duplicates.",
+      "Pipe the output of sort names.txt into uniq, and redirect it to unique_names.txt.",
+      "Try running: sort names.txt | uniq > unique_names.txt"
+    ],
+verify: (fs, session, history) => {
       const usedSort = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('sort');
@@ -636,7 +716,12 @@ export const lessons = [
       { id: 'errors_log_exists', text: 'Create file "errors.log" in home directory' },
       { id: 'only_errors', text: 'Verify errors.log contains only [ERROR] entries' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Think about which command filters lines matching a specific pattern.",
+      "Use grep to search logs.txt for '[ERROR]' and redirect output to errors.log.",
+      "Try running: grep \"[ERROR]\" logs.txt > errors.log"
+    ],
+verify: (fs, session, history) => {
       const usedGrep = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('grep');
@@ -672,7 +757,12 @@ export const lessons = [
       { id: 'used_chmod', text: 'Run the "chmod" command on deploy.sh' },
       { id: 'is_executable', text: 'Set permissions of deploy.sh to 755' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Think about which command changes file permissions.",
+      "Use the 'chmod' command with permission code 755 on deploy.sh.",
+      "Try running: chmod 755 deploy.sh"
+    ],
+verify: (fs, session, history) => {
       const usedChmod = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('chmod');
@@ -708,7 +798,12 @@ export const lessons = [
       { id: 'old_file_removed', text: 'Verify original unique_names.txt is removed' },
       { id: 'used_ls_a', text: 'Use "ls -a" to verify hidden file is present' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "In Linux, hidden files are prefixed with a dot (.) and shown using a special ls flag.",
+      "Use mv unique_names.txt .config_names and run ls -a to reveal it.",
+      "Try running: mv unique_names.txt .config_names followed by ls -a"
+    ],
+verify: (fs, session, history) => {
       const usedMv = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('mv');
@@ -748,7 +843,12 @@ export const lessons = [
       { id: 'used_chown', text: 'Run the "chown" command with sudo' },
       { id: 'owner_changed', text: 'Set owner of reports.csv to root' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Think about which command changes file ownership, and remember it requires admin privileges.",
+      "Use the 'chown' command prefixed with 'sudo' to change the owner to root.",
+      "Try running: sudo chown root reports.csv"
+    ],
+verify: (fs, session, history) => {
       const usedChown = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('chown');
@@ -781,7 +881,12 @@ export const lessons = [
       { id: 'tried_without_sudo', text: 'Try "cat /etc/shadow" and observe permission error' },
       { id: 'ran_sudo_cat', text: 'Run "sudo cat /etc/shadow" successfully' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "You need administrator privileges to read restricted system files.",
+      "First run cat /etc/shadow without sudo to see the error, then prepend it with sudo.",
+      "Try running: cat /etc/shadow and then: sudo cat /etc/shadow"
+    ],
+verify: (fs, session, history) => {
       const triedWithoutSudo = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         const catIdx = parts.indexOf('cat');
@@ -822,7 +927,12 @@ export const lessons = [
       { id: 'installed_tree', text: 'Install package "tree" using apt install' },
       { id: 'ran_tree', text: 'Run the "tree" command to visualize directories' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Think about how to install packages on Ubuntu using the package manager with admin privileges.",
+      "Run sudo apt install tree, and then visualize directories by running the tree command.",
+      "Try running: sudo apt install tree and then tree"
+    ],
+verify: (fs, session, history) => {
       const installedTree = session.installedPackages.has('tree');
       const ranTree = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
@@ -852,7 +962,12 @@ export const lessons = [
     objectives: [
       { id: 'ran_df_h', text: 'Run the "df -h" command' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Think about which command shows free disk space.",
+      "Use the 'df' command with the human-readable option.",
+      "Try running: df -h"
+    ],
+verify: (fs, session, history) => {
       const ranDfH = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('df') && (parts.includes('-h') || parts.includes('--human-readable'));
@@ -879,7 +994,12 @@ export const lessons = [
     objectives: [
       { id: 'ran_du', text: 'Run "du" with options -s and -h' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Think about which command checks disk usage for folders.",
+      "Use the 'du' command with summary (-s) and human-readable (-h) options.",
+      "Try running: du -sh /home/learner"
+    ],
+verify: (fs, session, history) => {
       const ranDu = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         const isDu = parts.includes('du');
@@ -909,7 +1029,12 @@ export const lessons = [
     objectives: [
       { id: 'ran_free', text: 'Run "free" with the -h or -m option' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Think about which command displays memory statistics.",
+      "Use the 'free' command with human-readable option.",
+      "Try running: free -h"
+    ],
+verify: (fs, session, history) => {
       const ranFree = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('free') && (parts.includes('-h') || parts.includes('-m') || parts.includes('--human') || parts.includes('--mega'));
@@ -938,7 +1063,12 @@ export const lessons = [
       { id: 'ran_uptime', text: 'Run the "uptime" command' },
       { id: 'ran_uname', text: 'Run the "uname -a" command' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "You need to run two commands: one for system uptime and one for kernel info.",
+      "Use the 'uptime' command, and 'uname' with the -a flag.",
+      "Try running: uptime and then: uname -a"
+    ],
+verify: (fs, session, history) => {
       const ranUptime = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('uptime');
@@ -970,7 +1100,12 @@ export const lessons = [
     objectives: [
       { id: 'ran_ps_aux', text: 'Run the "ps aux" command' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Think about which command lists processes, and how to list all processes on the system.",
+      "Use the 'ps' command with the aux options.",
+      "Try running: ps aux"
+    ],
+verify: (fs, session, history) => {
       const ranPs = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('ps') && (parts.includes('aux') || parts.includes('-ef'));
@@ -997,7 +1132,12 @@ export const lessons = [
     objectives: [
       { id: 'ran_top', text: 'Run the "top" command' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Think about which command launches the interactive process monitor.",
+      "Use the 'top' or 'htop' command.",
+      "Try running: top"
+    ],
+verify: (fs, session, history) => {
       const ranTop = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('top') || parts.includes('htop');
@@ -1024,7 +1164,12 @@ export const lessons = [
     objectives: [
       { id: 'process_killed', text: 'Stop the rogue process with PID 9999' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Think about which command terminates processes by their ID.",
+      "Use the 'kill' command followed by the process ID 9999.",
+      "Try running: kill 9999"
+    ],
+verify: (fs, session, history) => {
       const processKilled = !session.rogueProcessAlive;
       return {
         success: processKilled,
@@ -1052,7 +1197,12 @@ export const lessons = [
       { id: 'ran_jobs', text: 'Run the "jobs" command' },
       { id: 'ran_fg', text: 'Bring the job back to foreground with "fg"' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "To run a job in the background, append an ampersand (&) to the command.",
+      "Run sleep 100 in background, check with jobs, and bring back with fg.",
+      "Try running: sleep 100 & followed by jobs and then fg"
+    ],
+verify: (fs, session, history) => {
       const ranBgJob = history.some(cmd => /sleep\s+\d+\s*&/.test(cmd));
       const ranJobs = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
@@ -1086,7 +1236,12 @@ export const lessons = [
     objectives: [
       { id: 'ran_ping_c3', text: 'Ping google.com exactly 3 times using -c flag' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Think about which command sends ICMP echo packets to test connection.",
+      "Use ping with count option set to 3 for google.com.",
+      "Try running: ping -c 3 google.com"
+    ],
+verify: (fs, session, history) => {
       const ranPing = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         const hasPing = parts.includes('ping');
@@ -1115,7 +1270,12 @@ export const lessons = [
     objectives: [
       { id: 'ran_ip_addr', text: 'Run the "ip addr" or "ip a" command' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Think about which command shows network interface configurations.",
+      "Use the 'ip' command with the addr or a argument.",
+      "Try running: ip addr"
+    ],
+verify: (fs, session, history) => {
       const ranIp = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('ip') && (parts.includes('addr') || parts.includes('a') || parts.includes('address'));
@@ -1143,7 +1303,12 @@ export const lessons = [
       { id: 'used_curl', text: 'Use the "curl" command' },
       { id: 'download_saved', text: 'Save downloaded script as "update.sh" in home folder' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Think about which command downloads web files, and how to redirect it to a file.",
+      "Use curl to download the file and redirection '>' to save it as update.sh.",
+      "Try running: curl http://api.bashquest.com/update.sh > update.sh"
+    ],
+verify: (fs, session, history) => {
       const usedCurl = history.some(cmd => cmd.includes('curl'));
       const fileNode = fs.getNodeByPath('/home/learner', 'update.sh');
       const downloadSaved = fileNode && fileNode.type === 'file' && fileNode.content.includes('echo "Updating BashQuest"');
@@ -1170,7 +1335,12 @@ export const lessons = [
     objectives: [
       { id: 'ran_find', text: 'Run the "find" command with -name option' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Think about which command finds files recursively by name matching a pattern.",
+      "Use find in the current directory (.) with name pattern '*.log'.",
+      "Try running: find . -name \"*.log\""
+    ],
+verify: (fs, session, history) => {
       const ranFind = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('find') && parts.includes('-name');
@@ -1197,7 +1367,12 @@ export const lessons = [
     objectives: [
       { id: 'ran_history', text: 'Run the "history" command' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Think about which command lists recently run commands.",
+      "Use the 'history' command.",
+      "Try running: history"
+    ],
+verify: (fs, session, history) => {
       const ranHistory = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('history');
@@ -1224,7 +1399,12 @@ export const lessons = [
     objectives: [
       { id: 'ran_man_grep', text: 'Run the "man grep" command' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Think about which command displays the built-in system reference manual.",
+      "Use the 'man' command followed by the command name you want to look up.",
+      "Try running: man grep"
+    ],
+verify: (fs, session, history) => {
       const ranManGrep = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('man') && parts.includes('grep');
@@ -1253,7 +1433,12 @@ export const lessons = [
       { id: 'started_service', text: 'Start the "apache2" web service' },
       { id: 'checked_status', text: 'Check the status of "apache2"' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "You need to check the status of apache2, and start it.",
+      "Use systemctl status apache2, and remember starting services requires admin privileges (sudo).",
+      "Try running: sudo systemctl start apache2 and then systemctl status apache2"
+    ],
+verify: (fs, session, history) => {
       const startedService = session.services.apache2 === 'active';
       const checkedStatus = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
@@ -1283,7 +1468,12 @@ export const lessons = [
       { id: 'opened_nano', text: 'Open the file "server.conf" in Nano' },
       { id: 'port_configured', text: 'Add configuration line "port=8080" and save' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Think about which terminal-based text editor the instructions ask you to use.",
+      "Run nano server.conf, write 'port=8080' inside, then save with Ctrl+O and exit with Ctrl+X.",
+      "Try running: nano server.conf"
+    ],
+verify: (fs, session, history) => {
       const openedNano = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('nano') && parts.some(p => p.includes('server.conf'));
@@ -1318,7 +1508,12 @@ export const lessons = [
       { id: 'script_executable', text: 'Make script executable (permissions odd digit)' },
       { id: 'script_executed', text: 'Run the script using "./hello.sh"' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Create the file, add shebang and hello message, make it executable, and run it.",
+      "Use touch hello.sh, edit it to contain #!/bin/bash and the hello message, then chmod 755 hello.sh and run ./hello.sh.",
+      "Try running: touch hello.sh, write the content, chmod 755 hello.sh and execute with ./hello.sh"
+    ],
+verify: (fs, session, history) => {
       const node = fs.getNodeByPath('/home/learner', 'hello.sh');
       const exists = node && node.type === 'file';
       const hasContent = exists && node.content.includes('#!/bin/bash') && node.content.includes('Hello, BashQuest User!');
@@ -1359,7 +1554,12 @@ export const lessons = [
       { id: 'greet_executable', text: 'Make greet.sh executable' },
       { id: 'greet_executed', text: 'Run the script with "Alice" argument' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Create a script named greet.sh, use $1 to greet the first argument, make it executable, and run it with 'Alice'.",
+      "Use echo 'Hello, $1!' inside the script, chmod 755 greet.sh, then run ./greet.sh Alice.",
+      "Try running: touch greet.sh, add shebang and echo 'Hello, $1!', chmod 755 greet.sh, and ./greet.sh Alice"
+    ],
+verify: (fs, session, history) => {
       const node = fs.getNodeByPath('/home/learner', 'greet.sh');
       const exists = node && node.type === 'file';
       const hasContent = exists && node.content.includes('#!/bin/bash') && node.content.includes('$1');
@@ -1400,7 +1600,12 @@ export const lessons = [
       { id: 'check_executable', text: 'Make script executable' },
       { id: 'check_executed', text: 'Run the script with "names.txt"' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Create check_file.sh, implement a condition to test if the filename argument exists, make it executable, and run it.",
+      "Use 'if [ -f \"$1\" ]; then echo \"Exists\" else echo \"Missing\" fi' inside check_file.sh, make it executable, and run it with names.txt.",
+      "Try running: touch check_file.sh, write the file check logic, chmod 755, and execute ./check_file.sh names.txt"
+    ],
+verify: (fs, session, history) => {
       const node = fs.getNodeByPath('/home/learner', 'check_file.sh');
       const exists = node && node.type === 'file';
       const logicOK = exists && node.content.includes('-f') && node.content.includes('if') && node.content.includes('fi');
@@ -1441,7 +1646,12 @@ export const lessons = [
       { id: 'backup_executed', text: 'Run the backup_logs.sh script' },
       { id: 'backup_dir_ok', text: 'Directory "backup/" holds copies' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Create backup_logs.sh, make backup folder, use a for loop to copy all .log files, and run it.",
+      "Use mkdir -p backup, then 'for file in *.log; do cp \"$file\" backup/; done' in backup_logs.sh, and execute it.",
+      "Try running: touch backup_logs.sh, write the loop inside, make it executable, and run ./backup_logs.sh"
+    ],
+verify: (fs, session, history) => {
       const node = fs.getNodeByPath('/home/learner', 'backup_logs.sh');
       const exists = node && node.type === 'file';
       const logicOK = exists && node.content.includes('for') && node.content.includes('cp') && node.content.includes('done');
@@ -1480,7 +1690,12 @@ export const lessons = [
       { id: 'used_sed', text: 'Use the "sed" command with -i flag' },
       { id: 'port_changed', text: 'Set port configuration to port=8080 in server.conf' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Think about which command does stream editing and search-replace.",
+      "Use sed with the in-place option (-i) to substitute 'port=80' with 'port=8080'.",
+      "Try running: sed -i \"s/port=80/port=8080/g\" server.conf"
+    ],
+verify: (fs, session, history) => {
       const usedSed = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('sed') && parts.includes('-i');
@@ -1513,7 +1728,12 @@ export const lessons = [
       { id: 'created_shadow_users', text: 'Output names to "shadow_users.txt"' },
       { id: 'correct_shadow_users', text: 'Check shadow_users.txt has root and learner' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Think about which command splits columns of data using a custom field separator.",
+      "Use awk with -F: to print the first column ($1) of /etc/shadow with sudo, and redirect output to shadow_users.txt.",
+      "Try running: sudo awk -F: '{print $1}' /etc/shadow > shadow_users.txt"
+    ],
+verify: (fs, session, history) => {
       const usedAwk = history.some(cmd => {
         const clean = cmd.replace(/\s+/g, '');
         return cmd.includes('awk') && (clean.includes('-F:') || clean.includes('-F":"') || clean.includes("-F':'") || clean.includes("-F\\:"));
@@ -1549,7 +1769,12 @@ export const lessons = [
       { id: 'upper_reports_exists', text: 'Create file "upper_reports.txt"' },
       { id: 'content_uppercase', text: 'Verify text is UPPERCASE' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "You need to slice reports.csv to extract the first column, convert it to uppercase, and save it.",
+      "Use cut -d, -f1 reports.csv, pipe (|) it into tr \"a-z\" \"A-Z\", and redirect (>) to upper_reports.txt.",
+      "Try running: cut -d, -f1 reports.csv | tr \"a-z\" \"A-Z\" > upper_reports.txt"
+    ],
+verify: (fs, session, history) => {
       const usedCut = history.some(cmd => {
         const clean = cmd.replace(/\s+/g, '');
         return cmd.includes('cut') && (clean.includes('-d,') || clean.includes("-d','") || clean.includes('-d","'));
@@ -1593,7 +1818,12 @@ export const lessons = [
       { id: 'env_correct', text: 'Set APP_ENV env variable to "production"' },
       { id: 'echoed_env', text: 'Print variable using "echo $APP_ENV"' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Think about which command defines environment variables.",
+      "Use export APP_ENV=production, and print it using echo $APP_ENV.",
+      "Try running: export APP_ENV=production followed by echo $APP_ENV"
+    ],
+verify: (fs, session, history) => {
       const exportedEnv = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('export');
@@ -1626,7 +1856,12 @@ export const lessons = [
       { id: 'used_tar_c', text: 'Use "tar" command with -c (create) and -z (gzip) flags' },
       { id: 'archive_exists', text: 'Create "logs.tar.gz" in home directory' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Think about which command packages and compresses folders into tarball archives.",
+      "Use tar with the create (-c), gzip (-z), verbose (-v), and file (-f) options.",
+      "Try running: tar -czvf logs.tar.gz logs"
+    ],
+verify: (fs, session, history) => {
       const usedTarC = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         const tarIdx = parts.indexOf('tar');
@@ -1660,7 +1895,12 @@ export const lessons = [
     objectives: [
       { id: 'ran_env', text: 'Run the "env" command' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Think about which command prints all active environment variables.",
+      "Use the 'env' command.",
+      "Try running: env"
+    ],
+verify: (fs, session, history) => {
       const ranEnv = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('env');
@@ -1688,7 +1928,12 @@ export const lessons = [
       { id: 'used_ln_s', text: 'Use "ln" with symbolic flag -s' },
       { id: 'link_created', text: 'Create link "app_link.log" pointing to target logs/app.log' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Think about which command creates file shortcuts/links.",
+      "Use 'ln -s' with the target path followed by the link name.",
+      "Try running: ln -s logs/app.log app_link.log"
+    ],
+verify: (fs, session, history) => {
       const usedLnS = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('ln') && (parts.includes('-s') || parts.includes('--symbolic') || parts.some(p => p.startsWith('-') && p.includes('s')));
@@ -1722,7 +1967,12 @@ export const lessons = [
       { id: 'used_xargs', text: 'Pipe results into "xargs"' },
       { id: 'ran_wc_l', text: 'Run "wc -l" via xargs pipeline' }
     ],
-    verify: (fs, session, history) => {
+        hints: [
+      "Search for all log files, and pipe the names into wc -l using xargs.",
+      "Use find logs -name \"*.log\" and pipe (|) it into xargs wc -l.",
+      "Try running: find logs -name \"*.log\" | xargs wc -l"
+    ],
+verify: (fs, session, history) => {
       const usedFind = history.some(cmd => cmd.includes('find') && cmd.includes('logs'));
       const usedXargs = history.some(cmd => cmd.includes('|') && cmd.includes('xargs'));
       const ranWcL = history.some(cmd => cmd.includes('wc') && (cmd.includes('-l') || cmd.includes('--lines')));

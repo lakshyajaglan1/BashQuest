@@ -36,6 +36,19 @@
         <!-- Injected dynamically -->
       </div>
     </div>
+
+    <!-- Hints Section -->
+    <div id="lesson-hints-section" class="hidden space-y-3 pt-3 border-t border-hairline/60 animate-in fade-in duration-200">
+      <h4 class="text-xs font-mono font-bold uppercase text-amber-600 dark:text-amber-500 tracking-wider flex items-center gap-1.5">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 .364l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 01-2 2h0a2 2 0 01-2-2v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+        </svg>
+        Revealed Hints
+      </h4>
+      <div id="lesson-hints-container" class="space-y-2">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
   </div>
 
   <!-- Action CTAs -->
@@ -84,8 +97,14 @@
 <script>
   import { lessons } from '../lib/lessons';
 
+  // Configurable thresholds for progressive hints
+  const HINT_1_THRESHOLD = 3;
+  const HINT_2_THRESHOLD = 5;
+  const HINT_3_THRESHOLD = 8;
+
   let activeLesson = null;
   let validationResult = { success: false, checks: [] };
+  let failedAttempts = 0;
 
   const lessonEyebrow = document.getElementById('lesson-eyebrow');
   const lessonTitle = document.getElementById('lesson-title');
@@ -113,6 +132,9 @@
 
     // Reset verification states
     validationResult = { success: false, checks: lesson.objectives.map(o => ({ id: o.id, passed: false })) };
+
+    failedAttempts = 0;
+    renderHints();
 
     // Draw fields
     if (lessonEyebrow) lessonEyebrow.textContent = `QUEST ${lesson.id}`;
@@ -183,12 +205,62 @@
     }).join('');
   }
 
+  function renderHints() {
+    const hintsSection = document.getElementById('lesson-hints-section');
+    const hintsContainer = document.getElementById('lesson-hints-container');
+    if (!hintsSection || !hintsContainer || !activeLesson) return;
+
+    if (!activeLesson.hints || activeLesson.hints.length === 0) {
+      hintsSection.classList.add('hidden');
+      return;
+    }
+
+    const revealedHints = [];
+    if (failedAttempts >= HINT_1_THRESHOLD && activeLesson.hints[0]) {
+      revealedHints.push({ index: 1, text: activeLesson.hints[0], type: 'info' });
+    }
+    if (failedAttempts >= HINT_2_THRESHOLD && activeLesson.hints[1]) {
+      revealedHints.push({ index: 2, text: activeLesson.hints[1], type: 'info' });
+    }
+    if (failedAttempts >= HINT_3_THRESHOLD && activeLesson.hints[2]) {
+      revealedHints.push({ index: 3, text: activeLesson.hints[2], type: 'answer' });
+    }
+
+    if (revealedHints.length === 0) {
+      hintsSection.classList.add('hidden');
+      return;
+    }
+
+    hintsSection.classList.remove('hidden');
+    hintsContainer.innerHTML = revealedHints.map(hint => {
+      if (hint.type === 'answer') {
+        return `
+          <div class="p-3 bg-violet-50 border border-violet-200 dark:bg-violet-950/20 dark:border-violet-800/40 rounded-sm text-xs leading-relaxed text-violet-800 dark:text-violet-300 font-sans flex items-start gap-2.5 animate-in fade-in duration-200">
+            <span class="font-mono font-bold text-violet-600 dark:text-violet-400 shrink-0">DIRECT ANSWER:</span>
+            <span class="flex-1 font-semibold">${hint.text}</span>
+          </div>
+        `;
+      } else {
+        return `
+          <div class="p-3 bg-amber-50 border border-amber-200 dark:bg-amber-950/20 dark:border-amber-900/40 rounded-sm text-xs leading-relaxed text-amber-800 dark:text-amber-300 font-sans flex items-start gap-2.5 animate-in fade-in duration-200">
+            <span class="font-mono font-bold text-amber-600 dark:text-amber-500 shrink-0">HINT ${hint.index}:</span>
+            <span class="flex-1">${hint.text}</span>
+          </div>
+        `;
+      }
+    }).join('');
+  }
+
   function showCompletionUI() {
     successBanner?.classList.remove('hidden');
     if (successBadge && activeLesson) {
       successBadge.textContent = activeLesson.badge ? `Unlocked badge: ${activeLesson.badge}` : 'Earned Bonus XP!';
     }
     btnVerify?.classList.add('hidden');
+    
+    // Hide hints section upon completion
+    const hintsSection = document.getElementById('lesson-hints-section');
+    hintsSection?.classList.add('hidden');
     
     // Check if there is a next lesson
     const nextLesson = lessons.find(l => l.id === activeLesson.id + 1);
@@ -227,6 +299,8 @@
         showCompletionUI();
       } else {
         // Failed
+        failedAttempts++;
+        renderHints();
         if (btnVerify) btnVerify.innerHTML = '<span>Verify Challenge</span>';
         alert('Some objectives are still pending. Please review the instructions and check your terminal commands.');
       }
