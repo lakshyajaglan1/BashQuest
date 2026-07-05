@@ -95,6 +95,8 @@
 </div>
 
 <script>
+  declare global { interface Window { appState: any; } }
+
   import { lessons } from '../lib/lessons';
 
   // Configurable thresholds for progressive hints
@@ -102,8 +104,8 @@
   const HINT_2_THRESHOLD = 5;
   const HINT_3_THRESHOLD = 8;
 
-  let activeLesson = null;
-  let validationResult = { success: false, checks: [] };
+  let activeLesson: any = null;
+  let validationResult: any = { success: false, checks: [] };
   let failedAttempts = 0;
   const dismissedHints = new Set<number>();
 
@@ -192,8 +194,8 @@
   function renderObjectives() {
     if (!activeLesson || !lessonObjectives) return;
 
-    lessonObjectives.innerHTML = activeLesson.objectives.map(obj => {
-      const checkState = validationResult.checks.find(c => c.id === obj.id);
+    lessonObjectives.innerHTML = activeLesson.objectives.map((obj: any) => {
+      const checkState = validationResult.checks.find((c: any) => c.id === obj.id);
       const passed = checkState ? checkState.passed : false;
       
       const checkIcon = passed 

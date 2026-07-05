@@ -47,6 +47,8 @@
 </div>
 
 <script>
+  declare global { interface Window { appState: any; } }
+
   // DOM selectors
   const termHistory = document.getElementById('terminal-history');
   const termInput = document.getElementById('terminal-input') as HTMLInputElement;
@@ -67,7 +69,7 @@
   });
 
   // Shorten paths for shell prompt
-  function getShortPath(path) {
+  function getShortPath(path: string) {
     if (path === '/home/learner') return '~';
     if (path.startsWith('/home/learner')) {
       return '~' + path.substring(13);
@@ -86,7 +88,7 @@
   }
 
   // Write a row to the terminal log
-  function writeRow(htmlContent, isCommand = false, cmdString = '') {
+  function writeRow(htmlContent: string, isCommand: boolean = false, cmdString: string = '') {
     if (!termHistory) return;
 
     const row = document.createElement('div');
@@ -108,7 +110,7 @@
   }
 
   // Execute a command
-  function submitCommand(commandText) {
+  function submitCommand(commandText: string) {
     const trimmed = commandText.trim();
     writeRow('', true, commandText); // echo command to screen
 
@@ -181,7 +183,7 @@
     const node = fs.getNodeByPath(session.currentPath, targetDir);
     
     if (node && node.type === 'dir' && node.children) {
-      const matches = node.children.filter(child => child.name.startsWith(filePrefix));
+      const matches = node.children.filter((child: any) => child.name.startsWith(filePrefix));
       
       if (matches.length === 1) {
         // Complete the word
@@ -193,7 +195,7 @@
         termInput.value = parts.join(' ');
       } else if (matches.length > 1) {
         // Multiple matches, output them to screen
-        const matchNames = matches.map(m => m.name + (m.type === 'dir' ? '/' : ''));
+        const matchNames = matches.map((m: any) => m.name + (m.type === 'dir' ? '/' : ''));
         writeRow('', true, value);
         writeRow(`<div class="text-[#888] font-semibold">${matchNames.join('  ')}</div>`);
       }

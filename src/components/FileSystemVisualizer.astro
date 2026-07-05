@@ -27,6 +27,8 @@
 </div>
 
 <script>
+  declare global { interface Window { appState: any; } }
+
   function escapeHtml(str: string): string {
     if (!str) return '';
     return str
@@ -58,7 +60,7 @@
     }
   }
 
-  function buildTreeHtml(node, prefix = '') {
+  function buildTreeHtml(node: any, prefix: string = '') {
     let html = '';
     
     if (node.name === '/') {

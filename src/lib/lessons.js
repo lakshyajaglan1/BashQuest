@@ -41,7 +41,7 @@ export const lessons = [
       "The 'whoami' command shows your username, and 'pwd' shows your current path.",
       "Try running: whoami, and then pwd"
     ],
-    verify: (fs, session, history) => {
+    verify: (_fs, _session, history) => {
       const ranWhoami = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('whoami');
@@ -80,7 +80,7 @@ export const lessons = [
       "Change directory to /var/log using cd, then use ls.",
       "Try running: cd /var/log, and then ls"
     ],
-    verify: (fs, session, history) => {
+    verify: (_fs, session, history) => {
       let path = '/home/learner';
       let visitedVarLog = false;
       let ranLsInVarLog = false;
@@ -208,7 +208,7 @@ export const lessons = [
       "Use mkdir with the -p switch to create nested folders.",
       "Try running: mkdir -p workspace/src/utils"
     ],
-    verify: (fs, session, history) => {
+    verify: (fs, _session, history) => {
       const node = fs.getNodeByPath('/home/learner/workspace/src', 'utils');
       const nestedDirExists = node && node.type === 'dir';
       const usedPSwitch = history.some(cmd => {
@@ -245,7 +245,7 @@ export const lessons = [
       "Run the command that clears the terminal screen.",
       "Try running: clear"
     ],
-    verify: (fs, session, history) => {
+    verify: (_fs, _session, history) => {
       const ranClear = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('clear');
@@ -277,7 +277,7 @@ export const lessons = [
       "Use the 'help' command.",
       "Try running: help"
     ],
-verify: (fs, session, history) => {
+verify: (_fs, _session, history) => {
       const ranHelp = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('help');
@@ -311,7 +311,7 @@ verify: (fs, session, history) => {
       "Use the 'touch' command inside the 'projects' directory.",
       "Try running: touch projects/task.txt"
     ],
-verify: (fs, session, history) => {
+verify: (fs, _session, history) => {
       const usedTouch = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('touch');
@@ -347,7 +347,7 @@ verify: (fs, session, history) => {
       "Use the 'cat' command on the file /etc/hosts.",
       "Try running: cat /etc/hosts"
     ],
-verify: (fs, session, history) => {
+verify: (_fs, _session, history) => {
       const catHosts = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         const catIdx = parts.indexOf('cat');
@@ -387,7 +387,7 @@ verify: (fs, session, history) => {
       "To follow live logs, add the -f option to the tail command.",
       "Try running: head -n 5 logs/app.log, then tail -n 3 logs/security.log, and finally tail -f logs/app.log"
     ],
-    verify: (fs, session, history) => {
+    verify: (_fs, _session, history) => {
       const ranHead = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         const idx = parts.indexOf('head');
@@ -442,7 +442,7 @@ verify: (fs, session, history) => {
       "Use the 'less' or 'more' command on the file path /etc/hosts.",
       "Try running: less /etc/hosts"
     ],
-    verify: (fs, session, history) => {
+    verify: (_fs, _session, history) => {
       const ranPager = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return (parts.includes('less') || parts.includes('more')) && parts.some(arg => arg.includes('hosts'));
@@ -476,7 +476,7 @@ verify: (fs, session, history) => {
       "Use mkdir \"my code\" followed by touch \"my code/my task\".",
       "Try running: mkdir \"my code\" and touch \"my code/my task\""
     ],
-verify: (fs, session, history) => {
+verify: (fs, _session, _history) => {
       const dirNode = fs.getNodeByPath('/home/learner', 'my code');
       const dirExists = dirNode && dirNode.type === 'dir';
       const fileNode = fs.getNodeByPath('/home/learner/my code', 'my task');
@@ -512,7 +512,7 @@ verify: (fs, session, history) => {
       "Use the '>' operator to redirect echo \"System Online\" to status.txt.",
       "Try running: echo \"System Online\" > status.txt"
     ],
-verify: (fs, session, history) => {
+verify: (fs, _session, history) => {
       const usedEchoRedirect = history.some(cmd => {
         return cmd.includes('echo') && cmd.includes('>');
       });
@@ -552,7 +552,7 @@ verify: (fs, session, history) => {
       "Use the '>>' operator to append text, and 'cat' to verify it.",
       "Try running: echo \"All Checks Green\" >> status.txt and cat status.txt"
     ],
-verify: (fs, session, history) => {
+verify: (fs, _session, history) => {
       const usedAppend = history.some(cmd => {
         return cmd.includes('echo') && cmd.includes('>>');
       });
@@ -601,7 +601,7 @@ verify: (fs, session, history) => {
       "Use the 'mv' command to rename status.txt to system.log.",
       "Try running: mv status.txt system.log"
     ],
-verify: (fs, session, history) => {
+verify: (fs, _session, history) => {
       const usedMv = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('mv');
@@ -643,7 +643,7 @@ verify: (fs, session, history) => {
       "Use cat log_* to read all match files and redirect the output to combined.log.",
       "Try running: cat log_* > combined.log"
     ],
-verify: (fs, session, history) => {
+verify: (fs, _session, history) => {
       const usedWildcard = history.some(cmd => {
         return cmd.includes('cat') && cmd.includes('*');
       });
@@ -684,7 +684,7 @@ verify: (fs, session, history) => {
       "Use the 'rm' command with the recursive option (-r).",
       "Try running: rm -r downloads"
     ],
-verify: (fs, session, history) => {
+verify: (fs, _session, history) => {
       const usedRm = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('rm') && (parts.includes('-r') || parts.includes('-rf') || parts.includes('-fr') || parts.some(p => p.startsWith('-') && p.includes('r')));
@@ -723,7 +723,7 @@ verify: (fs, session, history) => {
       "Pipe the output of ls into wc -l, then redirect the result to file_count.txt.",
       "Try running: ls | wc -l > file_count.txt"
     ],
-verify: (fs, session, history) => {
+verify: (fs, _session, history) => {
       const usedPipe = history.some(cmd => {
         return cmd.includes('|') && cmd.includes('wc');
       });
@@ -768,7 +768,7 @@ verify: (fs, session, history) => {
       "Pipe the output of sort names.txt into uniq, and redirect it to unique_names.txt.",
       "Try running: sort names.txt | uniq > unique_names.txt"
     ],
-verify: (fs, session, history) => {
+verify: (fs, _session, history) => {
       const usedSort = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('sort');
@@ -813,7 +813,7 @@ verify: (fs, session, history) => {
       "Use grep to search logs.txt for '[ERROR]' and redirect output to errors.log.",
       "Try running: grep \"[ERROR]\" logs.txt > errors.log"
     ],
-verify: (fs, session, history) => {
+verify: (fs, _session, history) => {
       const usedGrep = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('grep');
@@ -854,7 +854,7 @@ verify: (fs, session, history) => {
       "Use the 'chmod' command with permission code 755 on deploy.sh.",
       "Try running: chmod 755 deploy.sh"
     ],
-verify: (fs, session, history) => {
+verify: (fs, _session, history) => {
       const usedChmod = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('chmod');
@@ -895,7 +895,7 @@ verify: (fs, session, history) => {
       "Use mv unique_names.txt .config_names and run ls -a to reveal it.",
       "Try running: mv unique_names.txt .config_names followed by ls -a"
     ],
-verify: (fs, session, history) => {
+verify: (fs, _session, history) => {
       const usedMv = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('mv');
@@ -940,7 +940,7 @@ verify: (fs, session, history) => {
       "Use the 'chown' command prefixed with 'sudo' to change the owner to root.",
       "Try running: sudo chown root reports.csv"
     ],
-verify: (fs, session, history) => {
+verify: (fs, _session, history) => {
       const usedChown = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('chown');
@@ -978,7 +978,7 @@ verify: (fs, session, history) => {
       "First run cat /etc/shadow without sudo to see the error, then prepend it with sudo.",
       "Try running: cat /etc/shadow and then: sudo cat /etc/shadow"
     ],
-verify: (fs, session, history) => {
+verify: (_fs, _session, history) => {
       const triedWithoutSudo = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         const catIdx = parts.indexOf('cat');
@@ -1024,7 +1024,7 @@ verify: (fs, session, history) => {
       "Run sudo apt install tree, and then visualize directories by running the tree command.",
       "Try running: sudo apt install tree and then tree"
     ],
-verify: (fs, session, history) => {
+verify: (_fs, session, history) => {
       const installedTree = session.installedPackages.has('tree');
       const ranTree = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
@@ -1059,7 +1059,7 @@ verify: (fs, session, history) => {
       "Use the 'df' command with the human-readable option.",
       "Try running: df -h"
     ],
-verify: (fs, session, history) => {
+verify: (_fs, _session, history) => {
       const ranDfH = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('df') && (parts.includes('-h') || parts.includes('--human-readable'));
@@ -1091,7 +1091,7 @@ verify: (fs, session, history) => {
       "Use the 'du' command with summary (-s) and human-readable (-h) options.",
       "Try running: du -sh /home/learner"
     ],
-verify: (fs, session, history) => {
+verify: (_fs, _session, history) => {
       const ranDu = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         const isDu = parts.includes('du');
@@ -1126,7 +1126,7 @@ verify: (fs, session, history) => {
       "Use the 'free' command with human-readable option.",
       "Try running: free -h"
     ],
-verify: (fs, session, history) => {
+verify: (_fs, _session, history) => {
       const ranFree = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('free') && (parts.includes('-h') || parts.includes('-m') || parts.includes('--human') || parts.includes('--mega'));
@@ -1160,7 +1160,7 @@ verify: (fs, session, history) => {
       "Use the 'uptime' command, and 'uname' with the -a flag.",
       "Try running: uptime and then: uname -a"
     ],
-verify: (fs, session, history) => {
+verify: (_fs, _session, history) => {
       const ranUptime = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('uptime');
@@ -1197,7 +1197,7 @@ verify: (fs, session, history) => {
       "Use the 'ps' command with the aux options.",
       "Try running: ps aux"
     ],
-verify: (fs, session, history) => {
+verify: (_fs, _session, history) => {
       const ranPs = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('ps') && (parts.includes('aux') || parts.includes('-ef'));
@@ -1229,7 +1229,7 @@ verify: (fs, session, history) => {
       "Use the 'top' or 'htop' command.",
       "Try running: top"
     ],
-verify: (fs, session, history) => {
+verify: (_fs, _session, history) => {
       const ranTop = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('top') || parts.includes('htop');
@@ -1261,7 +1261,7 @@ verify: (fs, session, history) => {
       "Use the 'kill' command followed by the process ID 9999.",
       "Try running: kill 9999"
     ],
-verify: (fs, session, history) => {
+verify: (_fs, session, _history) => {
       const processKilled = !session.rogueProcessAlive;
       return {
         success: processKilled,
@@ -1294,7 +1294,7 @@ verify: (fs, session, history) => {
       "Run sleep 100 in background, check with jobs, and bring back with fg.",
       "Try running: sleep 100 & followed by jobs and then fg"
     ],
-verify: (fs, session, history) => {
+verify: (_fs, _session, history) => {
       const ranBgJob = history.some(cmd => /sleep\s+\d+\s*&/.test(cmd));
       const ranJobs = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
@@ -1333,7 +1333,7 @@ verify: (fs, session, history) => {
       "Use ping with count option set to 3 for google.com.",
       "Try running: ping -c 3 google.com"
     ],
-verify: (fs, session, history) => {
+verify: (_fs, _session, history) => {
       const ranPing = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         const hasPing = parts.includes('ping');
@@ -1367,7 +1367,7 @@ verify: (fs, session, history) => {
       "Use the 'ip' command with the addr or a argument.",
       "Try running: ip addr"
     ],
-verify: (fs, session, history) => {
+verify: (_fs, _session, history) => {
       const ranIp = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('ip') && (parts.includes('addr') || parts.includes('a') || parts.includes('address'));
@@ -1400,7 +1400,7 @@ verify: (fs, session, history) => {
       "Use curl to download the file and redirection '>' to save it as update.sh.",
       "Try running: curl http://api.bashquest.com/update.sh > update.sh"
     ],
-verify: (fs, session, history) => {
+verify: (fs, _session, history) => {
       const usedCurl = history.some(cmd => cmd.includes('curl'));
       const fileNode = fs.getNodeByPath('/home/learner', 'update.sh');
       const downloadSaved = fileNode && fileNode.type === 'file' && fileNode.content.includes('echo "Updating BashQuest"');
@@ -1432,7 +1432,7 @@ verify: (fs, session, history) => {
       "Use find in the current directory (.) with name pattern '*.log'.",
       "Try running: find . -name \"*.log\""
     ],
-verify: (fs, session, history) => {
+verify: (_fs, _session, history) => {
       const ranFind = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('find') && parts.includes('-name');
@@ -1464,7 +1464,7 @@ verify: (fs, session, history) => {
       "Use the 'history' command.",
       "Try running: history"
     ],
-verify: (fs, session, history) => {
+verify: (_fs, _session, history) => {
       const ranHistory = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('history');
@@ -1496,7 +1496,7 @@ verify: (fs, session, history) => {
       "Use the 'man' command followed by the command name you want to look up.",
       "Try running: man grep"
     ],
-verify: (fs, session, history) => {
+verify: (_fs, _session, history) => {
       const ranManGrep = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('man') && parts.includes('grep');
@@ -1530,7 +1530,7 @@ verify: (fs, session, history) => {
       "Use systemctl status apache2, and remember starting services requires admin privileges (sudo).",
       "Try running: sudo systemctl start apache2 and then systemctl status apache2"
     ],
-verify: (fs, session, history) => {
+verify: (_fs, session, history) => {
       const startedService = session.services.apache2 === 'active';
       const checkedStatus = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
@@ -1566,7 +1566,7 @@ verify: (fs, session, history) => {
       "To limit the logs to the last 5 lines, use journalctl -n 5.",
       "Try running: journalctl -u apache2, and then: journalctl -n 5"
     ],
-    verify: (fs, session, history) => {
+    verify: (_fs, _session, history) => {
       const ranJournalctlU = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         const idx = parts.indexOf('journalctl');
@@ -1612,7 +1612,7 @@ verify: (fs, session, history) => {
       "Run nano server.conf, write 'port=8080' inside, then save with Ctrl+O and exit with Ctrl+X.",
       "Try running: nano server.conf"
     ],
-verify: (fs, session, history) => {
+verify: (fs, _session, history) => {
       const openedNano = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('nano') && parts.some(p => p.includes('server.conf'));
@@ -1652,7 +1652,7 @@ verify: (fs, session, history) => {
       "Use touch hello.sh, edit it to contain #!/bin/bash and the hello message, then chmod 755 hello.sh and run ./hello.sh.",
       "Try running: touch hello.sh, write the content, chmod 755 hello.sh and execute with ./hello.sh"
     ],
-verify: (fs, session, history) => {
+verify: (fs, _session, history) => {
       const node = fs.getNodeByPath('/home/learner', 'hello.sh');
       const exists = node && node.type === 'file';
       const hasContent = exists && node.content.includes('#!/bin/bash') && node.content.includes('Hello, BashQuest User!');
@@ -1698,7 +1698,7 @@ verify: (fs, session, history) => {
       "Use echo 'Hello, $1!' inside the script, chmod 755 greet.sh, then run ./greet.sh Alice.",
       "Try running: touch greet.sh, add shebang and echo 'Hello, $1!', chmod 755 greet.sh, and ./greet.sh Alice"
     ],
-verify: (fs, session, history) => {
+verify: (fs, _session, history) => {
       const node = fs.getNodeByPath('/home/learner', 'greet.sh');
       const exists = node && node.type === 'file';
       const hasContent = exists && node.content.includes('#!/bin/bash') && node.content.includes('$1');
@@ -1744,7 +1744,7 @@ verify: (fs, session, history) => {
       "Use 'if [ -f \"$1\" ]; then echo \"Exists\" else echo \"Missing\" fi' inside check_file.sh, make it executable, and run it with names.txt.",
       "Try running: touch check_file.sh, write the file check logic, chmod 755, and execute ./check_file.sh names.txt"
     ],
-verify: (fs, session, history) => {
+verify: (fs, _session, history) => {
       const node = fs.getNodeByPath('/home/learner', 'check_file.sh');
       const exists = node && node.type === 'file';
       const logicOK = exists && node.content.includes('-f') && node.content.includes('if') && node.content.includes('fi');
@@ -1790,7 +1790,7 @@ verify: (fs, session, history) => {
       "Use mkdir -p backup, then 'for file in *.log; do cp \"$file\" backup/; done' in backup_logs.sh, and execute it.",
       "Try running: touch backup_logs.sh, write the loop inside, make it executable, and run ./backup_logs.sh"
     ],
-verify: (fs, session, history) => {
+verify: (fs, _session, history) => {
       const node = fs.getNodeByPath('/home/learner', 'backup_logs.sh');
       const exists = node && node.type === 'file';
       const logicOK = exists && node.content.includes('for') && node.content.includes('cp') && node.content.includes('done');
@@ -1835,7 +1835,7 @@ verify: (fs, session, history) => {
       "Remember to run chmod 755 backup_helper.sh to make it executable before running ./backup_helper.sh.",
       "Try defining the function: log_msg() { echo \"[LOG] $1\"; } and then call it like: log_msg 'Starting'"
     ],
-    verify: (fs, session, history) => {
+    verify: (fs, _session, history) => {
       const node = fs.getNodeByPath('/home/learner', 'backup_helper.sh');
       const exists = node && node.type === 'file';
       const hasFunction = exists && (node.content.includes('log_msg()') || node.content.includes('function log_msg'));
@@ -1926,7 +1926,7 @@ verify: (fs, session, history) => {
       "Use sed with the in-place option (-i) to substitute 'port=80' with 'port=8080'.",
       "Try running: sed -i \"s/port=80/port=8080/g\" server.conf"
     ],
-verify: (fs, session, history) => {
+verify: (fs, _session, history) => {
       const usedSed = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('sed') && parts.includes('-i');
@@ -1964,7 +1964,7 @@ verify: (fs, session, history) => {
       "Use awk with -F: to print the first column ($1) of /etc/shadow with sudo, and redirect output to shadow_users.txt.",
       "Try running: sudo awk -F: '{print $1}' /etc/shadow > shadow_users.txt"
     ],
-verify: (fs, session, history) => {
+verify: (fs, _session, history) => {
       const usedAwk = history.some(cmd => {
         const clean = cmd.replace(/\s+/g, '');
         return cmd.includes('awk') && (clean.includes('-F:') || clean.includes('-F":"') || clean.includes("-F':'") || clean.includes("-F\\:"));
@@ -2005,7 +2005,7 @@ verify: (fs, session, history) => {
       "Use cut -d, -f1 reports.csv, pipe (|) it into tr \"a-z\" \"A-Z\", and redirect (>) to upper_reports.txt.",
       "Try running: cut -d, -f1 reports.csv | tr \"a-z\" \"A-Z\" > upper_reports.txt"
     ],
-verify: (fs, session, history) => {
+verify: (fs, _session, history) => {
       const usedCut = history.some(cmd => {
         const clean = cmd.replace(/\s+/g, '');
         return cmd.includes('cut') && (clean.includes('-d,') || clean.includes("-d','") || clean.includes('-d","'));
@@ -2054,7 +2054,7 @@ verify: (fs, session, history) => {
       "Use export APP_ENV=production, and print it using echo $APP_ENV.",
       "Try running: export APP_ENV=production followed by echo $APP_ENV"
     ],
-verify: (fs, session, history) => {
+verify: (_fs, session, history) => {
       const exportedEnv = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('export');
@@ -2092,7 +2092,7 @@ verify: (fs, session, history) => {
       "Use tar with the create (-c), gzip (-z), verbose (-v), and file (-f) options.",
       "Try running: tar -czvf logs.tar.gz logs"
     ],
-verify: (fs, session, history) => {
+verify: (fs, _session, history) => {
       const usedTarC = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         const tarIdx = parts.indexOf('tar');
@@ -2131,7 +2131,7 @@ verify: (fs, session, history) => {
       "Use the 'env' command.",
       "Try running: env"
     ],
-verify: (fs, session, history) => {
+verify: (_fs, _session, history) => {
       const ranEnv = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('env');
@@ -2164,7 +2164,7 @@ verify: (fs, session, history) => {
       "Run which ls to find the path of ls, and which grep to find the path of grep.",
       "Try running: which ls, and then which grep"
     ],
-    verify: (fs, session, history) => {
+    verify: (_fs, _session, history) => {
       const ranWhichLs = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('which') && parts.includes('ls');
@@ -2203,7 +2203,7 @@ verify: (fs, session, history) => {
       "Run the alias la command in the terminal to verify it works.",
       "Try running: alias la='ls -a' followed by: la"
     ],
-    verify: (fs, session, history) => {
+    verify: (_fs, _session, history) => {
       const aliasCreated = history.some(cmd => {
         const clean = cmd.replace(/\s+/g, '');
         return clean.includes("aliasla=") && (clean.includes("ls-a") || clean.includes("ls-la") || clean.includes("ls-CF"));
@@ -2241,7 +2241,7 @@ verify: (fs, session, history) => {
       "Use 'ln -s' with the target path followed by the link name.",
       "Try running: ln -s logs/app.log app_link.log"
     ],
-verify: (fs, session, history) => {
+verify: (fs, _session, history) => {
       const usedLnS = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('ln') && (parts.includes('-s') || parts.includes('--symbolic') || parts.some(p => p.startsWith('-') && p.includes('s')));
@@ -2280,7 +2280,7 @@ verify: (fs, session, history) => {
       "Use find logs -name \"*.log\" and pipe (|) it into xargs wc -l.",
       "Try running: find logs -name \"*.log\" | xargs wc -l"
     ],
-verify: (fs, session, history) => {
+verify: (_fs, _session, history) => {
       const usedFind = history.some(cmd => cmd.includes('find') && cmd.includes('logs'));
       const usedXargs = history.some(cmd => cmd.includes('|') && cmd.includes('xargs'));
       const ranWcL = history.some(cmd => cmd.includes('wc') && (cmd.includes('-l') || cmd.includes('--lines')));
@@ -2316,7 +2316,7 @@ verify: (fs, session, history) => {
       "Set the password by running sudo passwd deployer.",
       "Try running: sudo useradd deployer, and then: sudo passwd deployer"
     ],
-    verify: (fs, session, history) => {
+    verify: (fs, _session, history) => {
       const ranUseradd = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('useradd') && parts.includes('deployer') && parts.includes('sudo');
@@ -2358,7 +2358,7 @@ verify: (fs, session, history) => {
       "Check who is active by typing whoami.",
       "Try running: su deployer, then whoami, and then exit"
     ],
-    verify: (fs, session, history) => {
+    verify: (_fs, session, history) => {
       const ranSu = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('su') && parts.includes('deployer');
@@ -2395,7 +2395,7 @@ verify: (fs, session, history) => {
       "Use the ssh command followed by user@host. Here, user is admin and host is 192.168.1.100.",
       "Try running: ssh admin@192.168.1.100"
     ],
-    verify: (fs, session, history) => {
+    verify: (_fs, _session, history) => {
       const ranSsh = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         const sshIdx = parts.indexOf('ssh');
@@ -2429,7 +2429,7 @@ verify: (fs, session, history) => {
       "Specify scp followed by the local file logs.tar.gz, and then the remote destination admin@192.168.1.100:/tmp/.",
       "Try running: scp logs.tar.gz admin@192.168.1.100:/tmp/"
     ],
-    verify: (fs, session, history) => {
+    verify: (_fs, _session, history) => {
       const ranScp = history.some(cmd => {
         const parts = cmd.trim().split(/\s+/);
         const scpIdx = parts.indexOf('scp');

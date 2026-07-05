@@ -106,6 +106,8 @@
 </div>
 
 <script>
+  declare global { interface Window { appState: any; } }
+
   // DOM Elements
   const btnDashboard = document.getElementById('btn-nav-dashboard');
   const btnSandbox = document.getElementById('btn-nav-sandbox');
@@ -144,12 +146,12 @@
   });
 
   // Toggle View Handler
-  function setView(view) {
+  function setView(view: string) {
     updateNavHighlights(view);
     window.dispatchEvent(new CustomEvent('app:view-change', { detail: { view } }));
   }
 
-  function updateNavHighlights(view) {
+  function updateNavHighlights(view: string) {
     if (view === 'dashboard') {
       btnDashboard?.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
       btnDashboard?.classList.remove('text-body', 'hover:text-ink', 'hover:bg-canvas-soft-2');
@@ -171,18 +173,22 @@
     // Fetch AI hints from window state
     if (window.appState && window.appState.activeLesson) {
       const lesson = window.appState.activeLesson;
-      aiHintContent.innerHTML = `
-        <p class="font-medium text-ink">Stuck on "${lesson.title}"?</p>
-        <p>Here's a hint to guide you:</p>
-        <div class="p-3 bg-canvas-soft-2 border border-hairline rounded-sm font-mono text-xs text-ink">
-          ${lesson.instructions}
-        </div>
-        <p class="text-xs text-mute mt-2">💡 Tip: Make sure you are in the correct directory. You can type <code class="px-1.5 py-0.5 bg-canvas-soft-2 border border-hairline rounded text-violet-deep font-mono text-xs">pwd</code> to verify your location.</p>
-      `;
+      if (aiHintContent) {
+        aiHintContent.innerHTML = `
+          <p class="font-medium text-ink">Stuck on "${lesson.title}"?</p>
+          <p>Here's a hint to guide you:</p>
+          <div class="p-3 bg-canvas-soft-2 border border-hairline rounded-sm font-mono text-xs text-ink">
+            ${lesson.instructions}
+          </div>
+          <p class="text-xs text-mute mt-2">💡 Tip: Make sure you are in the correct directory. You can type <code class="px-1.5 py-0.5 bg-canvas-soft-2 border border-hairline rounded text-violet-deep font-mono text-xs">pwd</code> to verify your location.</p>
+        `;
+      }
     } else {
-      aiHintContent.innerHTML = `
-        <p>I can help you build commands and complete challenges! Please open the Workspace and choose a lesson first.</p>
-      `;
+      if (aiHintContent) {
+        aiHintContent.innerHTML = `
+          <p>I can help you build commands and complete challenges! Please open the Workspace and choose a lesson first.</p>
+        `;
+      }
     }
     modalAI?.classList.remove('hidden');
   });

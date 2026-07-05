@@ -126,11 +126,14 @@ import LessonPanel from '../components/LessonPanel.astro';
 </Layout>
 
 <script>
+  declare global { interface Window { appState: any; } }
+
   import { FileSystem, ShellSession } from '../lib/linuxEngine';
   import { lessons } from '../lib/lessons';
 
   // Global Client-Side State Manager
   class AppStateManager {
+    state: any;
     constructor() {
       this.state = {
         xp: 0,
