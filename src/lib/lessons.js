@@ -25,8 +25,8 @@ export const lessons = [
     title: 'Who Am I and Where Am I?',
     xp: 100,
     badge: 'Explorer',
-    description: 'Welcome to BashQuest! In the Linux shell, you interact with the operating system using commands. Before we start making changes, we need to answer two fundamental questions: "Who am I logged in as?" and "Where in the filesystem am I right now?"\n\n- The `whoami` command prints the username of the active session.\n- The `pwd` (print working directory) command outputs the absolute path of your current folder.',
-    instructions: 'Run `whoami` to check your username, and then run `pwd` to print your current location in the filesystem.',
+    description: 'Imagine walking into a massive, dark library with millions of books, but you have no map, and you can\'t even remember your own name tag. Before you can look up anything, you need to know who you are and where you are standing. In the Linux shell, we start with the exact same questions!\n\n- The `whoami` command prints the username you are currently logged in as.\n- The `pwd` (print working directory) command acts like a GPS, showing you the exact folder path where you are currently standing.',
+    instructions: 'Let\'s find our bearings! First, run `whoami` to see your active username, and then run `pwd` to print your current folder location in the filesystem.',
     commandHelp: [
       { cmd: 'whoami', desc: 'Prints active username' },
       { cmd: 'pwd', desc: 'Prints current working directory' }
@@ -53,8 +53,8 @@ export const lessons = [
     title: 'Navigating & Listing Files',
     xp: 120,
     badge: 'Navigator',
-    description: 'To browse the filesystem, we use two crucial commands:\n\n- `ls`: Lists files and folders in the current folder.\n- `cd <path>`: Changes the current working directory to the target path.\n\nPaths can be **absolute** (starting from the root `/`, like `/var/log`) or **relative** (relative to your current position). You can also use `..` to go up one folder.',
-    instructions: 'Navigate into the `/var/log` directory using `cd /var/log`, and then list its contents using the `ls` command to find the log files.',
+    description: 'Now that you know where you are, how do you look around and move to a different room in this digital library? In Linux, we do this using two simple commands:\n\n- `ls`: It\'s like turning on the lights in a room to see all the files and folders sitting inside it.\n- `cd <path>`: Short for "change directory", this lets you walk through a door into another folder.\n\nTo specify where you want to go, you can use **absolute** paths (starting from the very root `/` of the system, like `/var/log`) or **relative** paths (based on where you are right now, like using `..` to step back out into the parent folder).',
+    instructions: 'Let\'s explore. Step into the `/var/log` folder by running `cd /var/log`, and then run the `ls` command to see the log files stored inside.',
     commandHelp: [
       { cmd: 'ls', desc: 'Lists files in the current directory' },
       { cmd: 'cd /var/log', desc: 'Change directory to /var/log' }
@@ -84,8 +84,8 @@ export const lessons = [
     title: 'Creating Directories',
     xp: 150,
     badge: 'Builder',
-    description: 'Folders (directories) help organize files in Linux. We create them using the `mkdir` (make directory) command.\n\nFor example, `mkdir code` creates a folder named "code" in the current directory. You can use relative or absolute paths to specify where the folder should go.',
-    instructions: 'Go back to your home directory (`cd ~` or `cd /home/learner`) and create a new directory named `projects` inside `/home/learner`.',
+    description: 'Imagine your desk is piled high with loose papers, and you need physical folders to keep things tidy. In Linux, we organize files by creating folders (directories) using the `mkdir` (make directory) command.\n\nRunning `mkdir code` creates a brand-new folder named "code" right where you are. You can create folders anywhere in the filesystem by giving `mkdir` a relative or absolute path.',
+    instructions: 'Let\'s build a workspace. Go back to your home directory by running `cd ~` (or `cd /home/learner`), then create a new folder named `projects` inside it.',
     commandHelp: [
       { cmd: 'cd ~', desc: 'Go back to home directory' },
       { cmd: 'mkdir projects', desc: 'Create projects folder' }
@@ -120,8 +120,8 @@ export const lessons = [
     title: 'Nested Directories & Options',
     xp: 160,
     badge: 'Architect',
-    description: 'When creating nested folders (folders inside folders), the `mkdir` command fails by default if parent directories do not exist. We can override this behavior by using options (or switches).\n\nThe option `-p` (or `--parents`) creates parent directories as needed. For example, `mkdir -p workspace/src/utils` creates `workspace`, `workspace/src`, and `workspace/src/utils` all at once.',
-    instructions: 'Create a nested folder path `workspace/src/utils` in your home directory `/home/learner` using the parents switch `-p` (i.e. `mkdir -p workspace/src/utils`).',
+    description: 'Imagine trying to build a set of nesting dolls, but you have to build the outermost ones before you can build the tiny one inside. By default, `mkdir` is like that—it refuses to create a folder deep inside folders that don\'t exist yet. To skip the hassle of creating folders one-by-one, we use a switch:\n\n- The `-p` (or `--parents`) option tells `mkdir` to automatically build any missing parent folders on its way to the final folder. For example, `mkdir -p workspace/src/utils` creates `workspace`, `workspace/src`, and `workspace/src/utils` all in a single command.',
+    instructions: 'Let\'s build a deep folder structure. Create a nested path `workspace/src/utils` in your home folder using `mkdir -p workspace/src/utils`.',
     commandHelp: [
       { cmd: 'mkdir -p path', desc: 'Create nested directories and parent directories' }
     ],
@@ -152,8 +152,8 @@ export const lessons = [
     title: 'Clearing the Screen',
     xp: 100,
     badge: 'Neat-Freak',
-    description: 'When your terminal screen gets cluttered with command outputs, you can clean it up using the `clear` command. This scrolls the screen down to present a clean prompt at the top.',
-    instructions: 'Clear the terminal output screen by running the `clear` command.',
+    description: 'Ever get overwhelmed when your desk is covered in messy notes and papers? Your terminal can get just as cluttered. When it does, you can sweep all the old text away and start fresh.\n\n- The `clear` command wipes the visible screen clean, sliding previous output out of view so you have a fresh, blank canvas at the top of the terminal.',
+    instructions: 'Give yourself some breathing room! Run `clear` to sweep the screen clean.',
     commandHelp: [
       { cmd: 'clear', desc: 'Clear the terminal screen' }
     ],
@@ -176,8 +176,8 @@ export const lessons = [
     title: 'Finding Shell Help',
     xp: 100,
     badge: 'Helpful',
-    description: 'If you are ever unsure which commands are supported in this emulator, you can use the `help` command. It lists all available utilities along with support details for redirection and pipes.',
-    instructions: 'List all available shell commands in this terminal simulator by running the `help` command.',
+    description: 'When you buy a new board game, you usually peek at the rulebook or reference card to see what moves are allowed. In our terminal emulator, you have a built-in cheat sheet!\n\n- The `help` command lists every single command this simulator supports, along with details about whether it supports piping or redirecting outputs.',
+    instructions: 'Let\'s inspect the rulebook. Run `help` to see the full list of commands you can play with.',
     commandHelp: [
       { cmd: 'help', desc: 'List available commands' }
     ],
@@ -200,8 +200,8 @@ export const lessons = [
     title: 'Creating Empty Files',
     xp: 150,
     badge: 'Creator',
-    description: 'We can create new empty files or update the modification time of existing files using the `touch` command.\n\nE.g. `touch draft.txt` creates an empty file named `draft.txt` in the current folder. Let\'s place a file inside our new `projects` directory.',
-    instructions: 'Create an empty file named `task.txt` inside the `projects` directory you created. (You can navigate into `projects` first or do it via `touch projects/task.txt`).',
+    description: 'Imagine wanting to start writing a new journal entry, but first you need a blank piece of paper. In Linux, we grab a fresh, empty text file using the `touch` command.\n\n- The `touch` command creates a brand new, empty file if it doesn\'t exist yet (like running `touch draft.txt` to create `draft.txt`). If the file already exists, it simply updates the file\'s "last modified" timestamp without changing its contents. Let\'s put a file in our new projects folder.',
+    instructions: 'Let\'s create a blank slate. Create an empty file named `task.txt` inside the `projects` folder (either enter the folder first or use `touch projects/task.txt`).',
     commandHelp: [
       { cmd: 'cd projects', desc: 'Enter the projects folder' },
       { cmd: 'touch task.txt', desc: 'Create file task.txt' }
@@ -233,8 +233,8 @@ export const lessons = [
     title: 'Reading File Contents',
     xp: 150,
     badge: 'Reader',
-    description: 'In Linux, almost everything is represented as a file. To view the text inside a file quickly, we use the `cat` (concatenate) command.\n\nFor example, running `cat notes.txt` prints its content on the screen. Let\'s look at some system configurations.',
-    instructions: 'Display the contents of the global hosts file located at `/etc/hosts` by running the command `cat /etc/hosts`.',
+    description: 'Think of opening a folder, pulling out a page of text, and holding it up to read. In Linux, we read files instantly without opening a heavy text editor using the `cat` (concatenate) command.\n\n- The `cat` command prints the entire contents of a file directly onto your terminal screen. For instance, running `cat notes.txt` lets you see what is written inside `notes.txt` right away.',
+    instructions: 'Let\'s read a system file. Print the contents of the local network configuration file at `/etc/hosts` by running `cat /etc/hosts`.',
     commandHelp: [
       { cmd: 'cat /etc/hosts', desc: 'Print hosts file content' }
     ],
@@ -262,8 +262,8 @@ export const lessons = [
     title: 'Handling Spaces in File Names',
     xp: 170,
     badge: 'Quoter',
-    description: 'Linux uses spaces to separate commands and arguments. If you create a file or directory with a space in the name (e.g. `mkdir my folder`), Linux interprets it as two separate arguments, creating "my" and "folder".\n\nTo handle spaces in names, we must escape them by enclosing the name in double quotes `"my folder"`, single quotes `\'my folder\'`, or using a backslash escape `my\\ folder`.',
-    instructions: 'Create a directory named `"my code"` (with space) in your home directory, and inside it create an empty file named `"my task"` (also with space).',
+    description: 'If you tell a robot to "paint my bedroom blue", it needs to know whether "my bedroom" is a single place or if "my" and "bedroom" are two different instructions. Linux uses spaces to separate commands from their arguments. So if you run `mkdir my folder`, Linux thinks you want to create two separate folders: one named "my" and another named "folder"!\n\n- To tell Linux that a name with spaces is a single item, we must wrap it in quotes (`"my folder"` or `\'my folder\'`) or use a backslash to escape the space (`my\\ folder`).',
+    instructions: 'Let\'s handle names with spaces. Create a folder named `"my code"` in your home directory, and then create an empty file named `"my task"` inside it.',
     commandHelp: [
       { cmd: 'mkdir "my code"', desc: 'Create a folder with a space in the name' },
       { cmd: 'touch "my code/my task"', desc: 'Create a file with a space in the name' }
@@ -293,8 +293,8 @@ export const lessons = [
     title: 'Writing & Overwriting Files',
     xp: 200,
     badge: 'Writer',
-    description: 'To write text to files, we can combine `echo` with **output redirection**.\n\n- `echo "Hello"` prints Hello on screen.\n- The `>` symbol redirects standard output into a file, **overwriting** its existing content.\n\nE.g. `echo "Hi" > greeting.txt` writes "Hi" to `greeting.txt`, creating it if it doesn\'t exist.',
-    instructions: 'Write the text "System Online" to a file named `status.txt` in your home folder `/home/learner`. Ensure it matches exactly.',
+    description: 'If you want to write a message on a chalkboard, you first wipe the board completely clean and then write your new words. In Linux, we write messages to files using the `>` (output redirection) operator.\n\n- The `echo "message"` command normally prints text to the screen.\n- By adding the `>` symbol, we redirect that text into a file instead. E.g., `echo "Hi" > greeting.txt` writes "Hi" into `greeting.txt`. If the file already has text, `>` completely overwrites it with the new message.',
+    instructions: 'Let\'s write to a new file. Save the text "System Online" into a file named `status.txt` in your home folder `/home/learner`.',
     commandHelp: [
       { cmd: 'echo "System Online" > status.txt', desc: 'Create status.txt with text' }
     ],
@@ -327,8 +327,8 @@ export const lessons = [
     title: 'Appending to Files',
     xp: 200,
     badge: 'Journalist',
-    description: 'While `>` overwrites a file, the double redirection operator `>>` **appends** text to the end of the file without deleting existing contents.\n\nE.g. `echo "New Line" >> logs.txt` adds "New Line" to the bottom of the file.',
-    instructions: 'Append the text "All Checks Green" to the file `status.txt` inside your home folder `/home/learner`. Verify the result using `cat`.',
+    description: 'Instead of cleaning the chalkboard, what if you just want to add a new line at the bottom? In Linux, we add text to the end of a file without touching the existing content using the `>>` (append redirection) operator.\n\n- The `>>` operator appends your new text to the very bottom of the file. E.g., `echo "New Line" >> logs.txt` adds "New Line" to the end of `logs.txt` while keeping all your old logs safe.',
+    instructions: 'Let\'s add a line. Append the text "All Checks Green" to the bottom of your `status.txt` file inside your home folder `/home/learner`, and then run `cat` on it to see both lines.',
     commandHelp: [
       { cmd: 'echo "All Checks Green" >> status.txt', desc: 'Append text to status.txt' }
     ],
@@ -372,8 +372,8 @@ export const lessons = [
     title: 'Copying & Moving Files',
     xp: 200,
     badge: 'Archivist',
-    description: 'We organize our workspace by copying and moving files around:\n\n- `cp <source> <destination>` copies files.\n- `mv <source> <destination>` moves or **renames** files.\n\nFor example, `mv old.txt new.txt` renames a file. Let\'s back up our status log.',
-    instructions: 'Rename the file `status.txt` in your home folder to `system.log` using the `mv` command.',
+    description: 'Imagine reorganizing your room: sometimes you want to make a photocopy of a document to keep in another drawer, and other times you just want to grab a folder and slide it into a new shelf or change its label. We do this in Linux with simple commands:\n\n- `cp <source> <destination>` creates an identical duplicate of a file in a new location.\n- `mv <source> <destination>` moves a file to a new folder, or renames the file if you keep it in the same folder (e.g., `mv old.txt new.txt`).',
+    instructions: 'Let\'s rename a file. Change the name of `status.txt` in your home folder to `system.log` using the `mv` command.',
     commandHelp: [
       { cmd: 'mv status.txt system.log', desc: 'Rename status.txt to system.log' }
     ],
@@ -409,8 +409,8 @@ export const lessons = [
     title: 'Wildcards & Multi-File Operations',
     xp: 220,
     badge: 'Wildcard',
-    description: 'Linux supports **wildcards** to perform actions on multiple files at once:\n\n- `*` matches zero or more characters. E.g. `cat log_*.txt` displays all files starting with log_ and ending with .txt.\n- `?` matches exactly one character. E.g. `cat log_?.txt` displays log_1.txt, but not log_12.txt.\n\nLet\'s combine wildcards with redirection to consolidate logs.',
-    instructions: 'Concatenate the contents of all files starting with `log_` in your home directory into a single file named `combined.log` using redirection (i.e. `cat log_* > combined.log`).',
+    description: 'Imagine you have a stack of folders labeled "log_monday", "log_tuesday", and "log_wednesday", and you want to open and read all of them at once without typing every name out. Linux lets you use **wildcards** as search shortcuts!\n\n- The `*` symbol matches any characters of any length. E.g., `cat log_*` reads every file that starts with "log_".\n- The `?` symbol acts as a single-character placeholder. E.g., `log_?.txt` matches `log_1.txt` but will ignore `log_12.txt`.',
+    instructions: 'Let\'s merge multiple logs. Combine the contents of all files starting with `log_` in your home directory into a single file named `combined.log` using the `*` wildcard and `>` redirection.',
     commandHelp: [
       { cmd: 'cat log_* > combined.log', desc: 'Combine all matching files into combined.log' }
     ],
@@ -446,8 +446,8 @@ export const lessons = [
     title: 'Removing Files & Folders',
     xp: 200,
     badge: 'Cleaner',
-    description: 'To clean up files and folders, we use the `rm` (remove) command:\n\n- `rm file.txt` deletes a file.\n- `rm -r folder/` deletes a directory and all of its contents **recursively**.\n\nBe extremely careful, because removing files in Linux is permanent — there is no recycle bin!',
-    instructions: 'Delete the `downloads` directory inside `/home/learner`. Since it is a directory, make sure to use recursive option `rm -r downloads` or `rm -rf downloads`.',
+    description: 'When you clean up your physical desk, you might throw old papers into a recycling bin where you can retrieve them if you made a mistake. In Linux, there is no safety net—when you delete something from the terminal, it is gone forever!\n\n- The `rm` command deletes files.\n- Because folders can contain other files, `rm` won\'t delete a folder by default. You must add the `-r` (recursive) flag to tell Linux to dive in and delete the folder along with everything inside it.',
+    instructions: 'Let\'s clean up our home directory. Permanently delete the `downloads` folder and all its contents by running `rm -r downloads`.',
     commandHelp: [
       { cmd: 'rm -r downloads', desc: 'Delete folder recursively' }
     ],
@@ -478,8 +478,8 @@ export const lessons = [
     title: 'Introduction to Pipes & wc',
     xp: 230,
     badge: 'Plumber',
-    description: 'One of the most powerful features of Linux is command piping. A **pipe** (`|`) redirects the output (**stdout**) of one command directly into the input (**stdin**) of another.\n\nFor example, `ls | wc -l` takes the file list produced by `ls` and feeds it to `wc -l` (word count - lines), which counts the number of files without needing a temporary file.',
-    instructions: 'Count the files and directories in `/home/learner` using a pipe (`ls | wc -l`), and redirect this line count into a new file named `file_count.txt` (using `ls | wc -l > file_count.txt`).',
+    description: 'Imagine an assembly line where one worker wraps a product and immediately hands it to the next worker to pack it into a box—no intermediate storage needed. In Linux, we connect commands exactly like this using a **pipe** (`|`).\n\n- A pipe (`|`) routes the output of one command directly into the input of the next command. For example, `ls | wc -l` lists files and immediately hands that list to `wc -l` (word count - lines), which counts them up on the fly without needing temporary files.',
+    instructions: 'Let\'s connect some commands. Count the files in `/home/learner` using a pipe (`ls | wc -l`), and write the final count into a file named `file_count.txt` using `>` redirection.',
     commandHelp: [
       { cmd: 'ls | wc -l', desc: 'Count files and folders in current directory' },
       { cmd: 'ls | wc -l > file_count.txt', desc: 'Write files count to file_count.txt' }
@@ -517,8 +517,8 @@ export const lessons = [
     title: 'Sorting and Finding Uniques',
     xp: 240,
     badge: 'Organizer',
-    description: 'The `sort` command rearranges lines of text alphabetically. The `uniq` command filters out duplicate lines, but **only if they are adjacent**.\n\nTo find true unique lines in an unsorted list, you must sort the file first, and then pipe it into uniq! E.g. `sort raw.txt | uniq`.',
-    instructions: 'The file `names.txt` in your home folder contains duplicate names. Use a pipeline of `sort` and `uniq` to output only unique sorted names, and write the output into `unique_names.txt` (i.e. `sort names.txt | uniq > unique_names.txt`).',
+    description: 'Imagine sorting a deck of cards where duplicates are scattered all over. To easily spot and remove duplicates, you\'d first group the identical cards together. In Linux, the `uniq` command filters out repeating lines, but it has a catch: it **only detects duplicates that are right next to each other**!\n\n- To remove all duplicates from a messy list, you must first sort the lines using `sort` and then pass the result to `uniq`. E.g., `sort raw.txt | uniq` organizes and cleans the list in one go.',
+    instructions: 'Let\'s clean up a messy guest list. The file `names.txt` contains duplicate names. Connect `sort` and `uniq` with a pipe to find all unique names alphabetically, and save them in `unique_names.txt`.',
     commandHelp: [
       { cmd: 'sort names.txt', desc: 'Sort lines of names.txt alphabetically' },
       { cmd: 'sort names.txt | uniq > unique_names.txt', desc: 'Sort and filter duplicates into a file' }
@@ -558,8 +558,8 @@ export const lessons = [
     title: 'Filtering with grep',
     xp: 240,
     badge: 'Filterer',
-    description: 'The `grep` command searches files (or piped text) for lines containing a specific keyword or pattern.\n\nFor example, `grep "ERROR" logs.txt` outputs only lines in logs.txt that contain the word "ERROR". Or we can pipe output: `cat logs.txt | grep "ERROR"`.',
-    instructions: 'Search the file `logs.txt` for all lines containing `[ERROR]` and save them into a new file named `errors.log` (i.e. `grep "[ERROR]" logs.txt > errors.log`).',
+    description: 'Imagine looking through a massive, thousand-page logbook to find every time a system error occurred. Doing this manually would take hours! In Linux, we use `grep` as our digital magnifying glass to search for specific words or patterns instantly.\n\n- The `grep` command filters files or piped text, printing only the lines that match your search word. For example, running `grep "ERROR" logs.txt` scans the file and extracts only the lines containing "ERROR".',
+    instructions: 'Let\'s filter our logs. Search `logs.txt` for all lines containing `[ERROR]` and save them into a new file named `errors.log`.',
     commandHelp: [
       { cmd: 'grep "[ERROR]" logs.txt', desc: 'Search logs.txt for lines containing [ERROR]' },
       { cmd: 'grep "[ERROR]" logs.txt > errors.log', desc: 'Save matching errors into errors.log' }
@@ -595,8 +595,8 @@ export const lessons = [
     title: 'Changing File Permissions',
     xp: 250,
     badge: 'Sysadmin',
-    description: 'Linux secures files through permissions. Every file has owner, group, and other permissions, often set using numbers (octal representation):\n\n- `7` = read + write + execute (`rwx`)\n- `6` = read + write (`rw-`)\n- `5` = read + execute (`r-x`)\n- `4` = read (`r--`)\n\nWe set permissions with `chmod <octal> <file>`. For example, `chmod 755 script.sh` makes a script executable by the owner and readable by others.\n\nA file named `deploy.sh` already exists in your home folder, but currently has restrictive permissions (`644` — read/write for owner only). You need to make it executable.',
-    instructions: 'The file `deploy.sh` already exists in `/home/learner` with default permissions (644). Use `chmod 755 deploy.sh` to make it executable by the owner and readable/executable by others.',
+    description: 'Imagine running a business where only managers can sign checks, employees can read schedules, and visitors can only look at the store sign. In Linux, we control who can read, write, or run files using a security system of numbers (called octal representation):\n\n- `7` = Full access: Read + Write + Execute (`rwx`)\n- `6` = Modify access: Read + Write (`rw-`)\n- `5` = Read and run access: Read + Execute (`r-x`)\n- `4` = Read-only access: Read (`r--`)\n\nWe apply these settings with `chmod <octal> <file>`. E.g., `chmod 755 script.sh` lets you run the script, while others can only read and run it. We have a script named `deploy.sh` that\'s currently locked down—let\'s make it executable!',
+    instructions: 'Let\'s change permissions. The file `deploy.sh` currently has restricted permissions (644). Run `chmod 755 deploy.sh` to make it executable by the owner and readable/executable by everyone else.',
     commandHelp: [
       { cmd: 'chmod 755 deploy.sh', desc: 'Set executable permissions' },
       { cmd: 'ls -l deploy.sh', desc: 'Check current file permissions' }
@@ -629,8 +629,8 @@ export const lessons = [
     title: 'Hidden Files & Configurations',
     xp: 220,
     badge: 'Ghost',
-    description: 'In Linux, any file or directory whose name begins with a dot (`.`) is treated as **hidden**.\n\nThese are typically used for user-specific configurations (like `.bashrc` or `.config`). Standard directory listings (`ls`) do not display them. You must pass the `-a` (show all) switch to see them: `ls -a`.',
-    instructions: 'Rename the file `unique_names.txt` in your home folder to a hidden file named `.config_names` (using `mv unique_names.txt .config_names`). Check its presence using `ls -a`.',
+    description: 'Think of a secret drawer under your desk where you keep system settings so they don\'t clutter up your main workspace. In Linux, we create hidden files simply by starting their names with a dot (`.`).\n\n- These dotfiles (like `.bashrc` or `.config`) store user preferences and config settings behind the scenes.\n- A standard `ls` command won\'t show them. To peek at these hidden files, you must add the `-a` (all) flag, running `ls -a`.',
+    instructions: 'Let\'s hide a file! Rename `unique_names.txt` in your home folder to a hidden file named `.config_names` using `mv`, then reveal it by running `ls -a`.',
     commandHelp: [
       { cmd: 'ls -a', desc: 'List all files, including hidden files' },
       { cmd: 'mv file .file', desc: 'Hide a file by prefixing its name with a dot' }
@@ -672,8 +672,8 @@ export const lessons = [
     title: 'Changing File Ownership',
     xp: 250,
     badge: 'Owner',
-    description: 'In Linux, every file and folder belongs to a specific owner and group. We change them using the `chown` (change owner) command.\n\nSince modifying ownership affects system security, this command requires administrator privileges: `sudo chown <owner>:<group> <file>`.',
-    instructions: 'Change the owner of `/home/learner/reports.csv` to `root` using superuser privileges: `sudo chown root reports.csv`.',
+    description: 'Imagine buying a house and having to officially register the deed under a new owner\'s name. In Linux, every file and folder has an official owner and a group. If you need to hand a file\'s ownership over to someone else (like the system administrator), you use the `chown` (change owner) command.\n\n- Because changing who owns a file is a sensitive security action, you must prefix it with `sudo` to run it with administrative privileges. E.g., `sudo chown root reports.csv` assigns the file to the user "root".',
+    instructions: 'Let\'s transfer ownership. Change the owner of `/home/learner/reports.csv` to the administrator `root` by running `sudo chown root reports.csv`.',
     commandHelp: [
       { cmd: 'sudo chown root reports.csv', desc: 'Change owner of reports.csv to root' }
     ],
@@ -704,8 +704,8 @@ export const lessons = [
     title: 'Superuser Privileges (sudo)',
     xp: 260,
     badge: 'Guardian',
-    description: 'Linux systems have an administrator account traditionally named `root`, which has unrestricted access. To protect the system, users run normal sessions and use `sudo` ("switch user and do") to execute individual commands as the administrator.\n\nIf you try to read restricted files (like the password hashes file `/etc/shadow`) with normal user permissions, you will receive `Permission denied`. Prefixing the command with `sudo` bypasses this protection.',
-    instructions: 'Try running `cat /etc/shadow` and observe the permission error. Then run it using administrator privileges: `sudo cat /etc/shadow`.',
+    description: 'Imagine working on your computer with a standard account to prevent accidentally deleting critical operating system files. When you need to install software or modify system settings, your computer asks for admin authorization. In Linux, we use `sudo` (short for "superuser do") as our administrative key card.\n\n- The `root` user is the master administrator account with full control over the system.\n- Standard users are blocked from reading sensitive files (like the password database `/etc/shadow`). By typing `sudo` before a command, you run it with temporary administrator powers to bypass these blocks.',
+    instructions: 'Let\'s test superuser powers. Run `cat /etc/shadow` to see the permission error. Then bypass it by running the command with admin privileges: `sudo cat /etc/shadow`.',
     commandHelp: [
       { cmd: 'sudo command', desc: 'Run a command with administrator/superuser privileges' },
       { cmd: 'cat /etc/shadow', desc: 'Read password hashes database (restricted)' }
@@ -741,8 +741,8 @@ export const lessons = [
     title: 'Package Management (apt)',
     xp: 280,
     badge: 'Guru',
-    description: 'Linux distributions use package managers to download, install, update, and remove applications from secure repositories.\n\nOn Ubuntu/Debian-based systems, `apt` (Advanced Packaging Tool) is used. Since installing software modifies system files, it requires superuser privileges: `sudo apt install <package_name>`.',
-    instructions: 'Install the directory visualization tool `tree` by running `sudo apt install tree`. After installation completes, run the `tree` command to view your files.',
+    description: 'Think of installing apps on your smartphone using the App Store or Google Play Store. It is safe, curated, and automated. In Linux, we use a command-line app store called a package manager to fetch and install software securely.\n\n- On Ubuntu/Debian systems, the standard package manager is `apt` (Advanced Packaging Tool).\n- Installing software changes system-wide folders, so you always need to authorize it using `sudo`. E.g., `sudo apt install tree` downloads and installs the directory visualizer "tree".',
+    instructions: 'Let\'s install some software. Run `sudo apt install tree` to install the `tree` program. Once it finishes, run `tree` to visualize your home folder in a neat tree-like format.',
     commandHelp: [
       { cmd: 'sudo apt install tree', desc: 'Install the tree package' },
       { cmd: 'tree', desc: 'Run tree to visualize directories' }
@@ -773,8 +773,8 @@ export const lessons = [
     title: 'Checking Disk Space (df)',
     xp: 150,
     badge: 'Spacer',
-    description: 'When running out of storage on your laptop, the first tool you should reach for is `df` (disk free). It displays the amount of disk space available on filesystems.\n\nRunning `df -h` (human-readable) shows storage in gigabytes (G) and megabytes (M) instead of block counts, making it much easier to see which partition (like `/` or `/home`) is full.',
-    instructions: 'Run `df -h` to check the disk space usage on your system\'s partitions in human-readable format.',
+    description: 'Imagine trying to download a huge video game and getting a "storage full" error, but you aren\'t sure which disk drive is the bottleneck. In Linux, we check our system\'s storage capacity using the `df` (disk free) command.\n\n- The `df` command displays the total, used, and available space on all your connected drives.\n- By running `df -h` (adding the `-h` flag for "human-readable"), you see storage in friendly gigabytes (G) and megabytes (M) instead of confusing block counts, making it easy to spot which drive (like `/` or `/home`) is full.',
+    instructions: 'Let\'s check our system storage. Run `df -h` to see how much space is left on your partitions in a human-readable format.',
     commandHelp: [
       { cmd: 'df -h', desc: 'Show free disk space on filesystems in human-readable format' }
     ],
@@ -800,8 +800,8 @@ export const lessons = [
     title: 'Finding Directory Sizes (du)',
     xp: 150,
     badge: 'Weigher',
-    description: 'While `df` tells you which disk is full, `du` (disk usage) tells you which directories and files are taking up that space.\n\n- `du <directory>` lists sizes of all subdirectories.\n- `du -sh <directory>` (summary, human-readable) outputs a single size total for that directory.\n- `du -sh *` inside a directory lists the sizes of each file and folder in the current directory.',
-    instructions: 'Determine the size of the home directory by running the summary, human-readable command: `du -sh /home/learner`.',
+    description: 'Once you know *which* drive is full, how do you find the specific folder that is hoarding all your space? Is it your downloads folder, or maybe some hidden cache? We solve this mystery using the `du` (disk usage) command.\n\n- `du <directory>` lists the size of a folder and every subfolder inside it.\n- `du -sh <directory>` (where `-s` means "summary" and `-h` means "human-readable") calculates and prints a single, clean total size for that specific folder.',
+    instructions: 'Let\'s track down storage hogs. Calculate the total size of the learner\'s home directory by running `du -sh /home/learner`.',
     commandHelp: [
       { cmd: 'du -sh /home/learner', desc: 'Display total size of the learner home directory' }
     ],
@@ -830,8 +830,8 @@ export const lessons = [
     title: 'Checking Memory Usage (free)',
     xp: 150,
     badge: 'RAM-Watcher',
-    description: 'If your laptop is running sluggishly, you might be running out of random access memory (RAM). The `free` command displays the total amount of free and used physical memory and swap space in the system.\n\n- `free -m` displays memory in megabytes.\n- `free -h` displays memory in human-readable sizes (GB/MB).',
-    instructions: 'Display system memory usage in human-readable format using `free -h`.',
+    description: 'Imagine your laptop starts lagging, web pages freeze, and switching apps feels painfully slow. This usually means your computer is running out of active memory (RAM). In Linux, we can check how much breathing room our system has using the `free` command.\n\n- The `free` command shows total, used, and available physical memory (RAM) and swap space.\n- Adding the `-h` flag (running `free -h`) formats the memory sizes into easy-to-read gigabytes (GB) and megabytes (MB) so you can tell if a program is eating up all your resources.',
+    instructions: 'Let\'s check the system\'s memory. Check the available RAM in human-readable format by running `free -h`.',
     commandHelp: [
       { cmd: 'free -h', desc: 'Display RAM usage in human-readable format' }
     ],
@@ -857,8 +857,8 @@ export const lessons = [
     title: 'System Uptime & Kernel Details',
     xp: 160,
     badge: 'Inspector',
-    description: 'To check how long your computer has been running since boot, you can use the `uptime` command. It also lists the number of users and the load average (over 1, 5, and 15 minutes).\n\nAdditionally, to see system specifications and the Linux kernel version, you can run `uname -a` (unix name).',
-    instructions: 'Run `uptime` to check system run statistics, and then run `uname -a` to print the system kernel version and platform details.',
+    description: 'Imagine troubleshooting a server that started misbehaving and needing to know if it recently rebooted, or checking exactly what operating system version is running under the hood. We can query these system details in seconds:\n\n- The `uptime` command tells you exactly how long your machine has been running since its last boot, along with how busy it has been (system load).\n- The `uname -a` (unix name) command prints a full report of your system\'s kernel, platform name, and machine architecture.',
+    instructions: 'Let\'s inspect the system stats. Run `uptime` to check how long the system has been running, and then run `uname -a` to print the full kernel and machine details.',
     commandHelp: [
       { cmd: 'uptime', desc: 'Show how long the system has been running' },
       { cmd: 'uname -a', desc: 'Print all system and kernel information' }
@@ -888,8 +888,8 @@ export const lessons = [
     title: 'Listing Running Processes (ps)',
     xp: 180,
     badge: 'Tracker',
-    description: 'In Linux, every running program is called a **process**. Each process has a unique process ID (PID).\n\nThe `ps` command is used to list running processes.\n\n- `ps` alone shows processes in your current terminal session.\n- `ps aux` lists ALL running processes on the system, regardless of who owns them or what terminal they run on. (The `a` stands for all users, `u` for user-oriented format, and `x` for processes not attached to a terminal).',
-    instructions: 'View all running processes on the laptop by executing `ps aux`. Take note of the columns: USER, PID, %CPU, %MEM, and COMMAND.',
+    description: 'Think of your operating system as a busy office where every employee (or running program) is assigned a unique name tag called a Process ID (PID). In Linux, we call these active programs **processes**, and we list them using the `ps` command.\n\n- Running `ps` by itself only shows programs running inside your current terminal window.\n- Running `ps aux` acts like a master office registry, listing every single active program running across the entire system, who started it, and how much CPU and memory it is using.',
+    instructions: 'Let\'s check the registry. Run `ps aux` to list all running processes on the laptop, and notice columns like PID, %CPU, and %MEM.',
     commandHelp: [
       { cmd: 'ps aux', desc: 'List all running processes on the system' }
     ],
@@ -915,8 +915,8 @@ export const lessons = [
     title: 'Interactive Process Monitor (top)',
     xp: 180,
     badge: 'Monitor',
-    description: 'While `ps` gives a single static snapshot, the `top` command (and its modern, colorful alternative `htop`) provides a real-time, dynamic view of a running system.\n\nIt updates every few seconds to show you which processes are consuming the most CPU, memory, and system load at this exact moment.',
-    instructions: 'Launch the real-time process monitor by running the `top` command.',
+    description: 'Imagine looking at a static photo of a highway versus watching a live traffic camera feed. While `ps` gives you a quick snapshot of what is running right now, `top` lets you watch your system\'s performance live.\n\n- The `top` command launches an interactive, real-time dashboard that updates every few seconds. It displays CPU usage, load averages, and dynamically ranks the most resource-heavy processes running at this exact moment.',
+    instructions: 'Let\'s watch the live feed. Launch the interactive process monitor by running the `top` command.',
     commandHelp: [
       { cmd: 'top', desc: 'Launch interactive process monitor' }
     ],
@@ -939,8 +939,8 @@ export const lessons = [
     title: 'Stopping Rogue Processes (kill)',
     xp: 200,
     badge: 'Terminator',
-    description: 'If an application freezes, slows down your laptop, or goes rogue, you can force it to stop using the `kill` command followed by the process ID (PID).\n\nE.g. `kill 1234` sends a signal asking the process with PID 1234 to shut down safely. If it refuses, `kill -9 1234` forces it to terminate immediately.\n\nThere is currently a runaway background script named `rogue_process` running on this system, consuming 99% CPU. Its Process ID is `9999`. Let\'s stop it!',
-    instructions: 'Terminate the rogue process with PID `9999` using the `kill` command (i.e. `kill 9999`).',
+    description: 'Imagine an app on your phone freezes up, completely locking your screen, and you need to force-close it to get things running smoothly again. In Linux, we stop misbehaving or frozen programs by using the `kill` command followed by the program\'s Process ID (PID).\n\n- Running `kill 1234` sends a polite request asking the program to save its work and close down.\n- If it is frozen and ignores the polite request, `kill -9 1234` forces the operating system to shut it down instantly. We have a runaway process with PID `9999` hogging all our CPU right now—let\'s shut it down!',
+    instructions: 'Let\'s stop the rogue process. Force-close the process with PID `9999` by running `kill 9999`.',
     commandHelp: [
       { cmd: 'kill 9999', desc: 'Terminate process with PID 9999' }
     ],
@@ -963,8 +963,8 @@ export const lessons = [
     title: 'Running Jobs in the Background',
     xp: 220,
     badge: 'Juggler',
-    description: 'If a command takes a long time to complete (like a backup or download), you don\'t want it blocking your terminal. You can run it in the background by appending an ampersand `&` to the end of the command.\n\n- `sleep 100 &` runs sleep in the background.\n- The `jobs` command lists all your current background tasks.\n- The `fg` command (foreground) pulls a background job back to the active screen (e.g. `fg`).',
-    instructions: 'Start a sleep command for 100 seconds in the background (`sleep 100 &`), then run the `jobs` command to list active jobs. Finally, bring it to the foreground using `fg`.',
+    description: 'Imagine trying to copy a massive folder to a USB drive, but while it copies, you want to keep working and typing other commands in the same window. In Linux, we can run time-consuming tasks in the "background" so they don\'t lock up our command line.\n\n- Adding an ampersand `&` to the end of a command (like `sleep 100 &`) tells the terminal to run it in the background and give you your prompt back immediately.\n- The `jobs` command shows what is currently running in the background.\n- The `fg` (foreground) command pulls a background task back to center stage.',
+    instructions: 'Let\'s multi-task. Run `sleep 100 &` to start a background task, check it with `jobs`, and then pull it back to the foreground by running `fg`.',
     commandHelp: [
       { cmd: 'sleep 100 &', desc: 'Run sleep in the background' },
       { cmd: 'jobs', desc: 'List background jobs' },
@@ -995,8 +995,8 @@ export const lessons = [
     title: 'Testing Connectivity (ping)',
     xp: 180,
     badge: 'Pinger',
-    description: 'When your internet goes down or a site won\'t load, `ping` is the go-to tool. It sends small packets of data (ICMP Echo Requests) to an IP address or domain name and measures how long it takes to get a response.\n\nBy default, `ping` runs forever on Linux. Use option `-c <count>` to specify the number of packets to send (e.g. `ping -c 3 google.com`).',
-    instructions: 'Test your connection to `google.com` by sending exactly 3 pings: `ping -c 3 google.com`.',
+    description: 'Imagine trying to load a webpage, but your browser spins endlessly, leaving you wondering if your home Wi-Fi is disconnected or if the website itself has crashed. In Linux, we test our basic network connection using the `ping` command.\n\n- The `ping` command sends tiny packets of data to a server (like `google.com`) and measures how many milliseconds it takes to receive a response.\n- On Linux, `ping` will keep running forever by default. To make it stop after a few attempts, we use the `-c` (count) flag, running `ping -c 3 google.com`.',
+    instructions: 'Let\'s check our connectivity. Test your connection to `google.com` by sending exactly 3 packets: `ping -c 3 google.com`.',
     commandHelp: [
       { cmd: 'ping -c 3 google.com', desc: 'Send 3 echo packets to google.com' }
     ],
@@ -1022,8 +1022,8 @@ export const lessons = [
     title: 'Network Interfaces & Local IP',
     xp: 180,
     badge: 'Netadmin',
-    description: 'To find your laptop\'s IP address on the local network (Wi-Fi or Ethernet), you can check your network interfaces using the `ip` utility.\n\nRunning `ip addr` (or `ip a`) lists all network interfaces (like `lo` for loopback, `eth0` or `wlan0` for wireless) along with their assigned IP addresses.',
-    instructions: 'Check your network interfaces and IP addresses by running `ip addr`.',
+    description: 'Imagine setting up a network printer or sharing files with a friend\'s computer on the same Wi-Fi, and needing to know your machine\'s local IP address. In Linux, we inspect our network hardware and IPs using the `ip` command.\n\n- Running `ip addr` (or simply `ip a`) prints a list of all your network interface devices (like `eth0` for wired ethernet or `wlan0` for wireless) along with their assigned local IP addresses.',
+    instructions: 'Let\'s inspect our network setup. Display all local network interfaces and IP addresses by running `ip addr`.',
     commandHelp: [
       { cmd: 'ip addr', desc: 'Show network interface details and IP addresses' }
     ],
@@ -1049,8 +1049,8 @@ export const lessons = [
     title: 'Downloading Web Files (curl)',
     xp: 200,
     badge: 'Downloader',
-    description: 'In the terminal, we can download files from servers using `curl` (Client URL). It can fetch webpages, download source codes, or test API endpoints.\n\n- `curl <url>` prints the URL\'s content directly on the screen.\n- Redirecting the output (`curl <url> > file.sh`) or using `-o <file>` saves the downloaded content to a file.',
-    instructions: 'Download the script from `http://api.bashquest.com/update.sh` and save it locally as a file named `update.sh` (e.g. `curl http://api.bashquest.com/update.sh > update.sh`).',
+    description: 'Imagine wanting to download a file or grab the code of a setup script directly from a web server without opening a browser and clicking a "Download" button. In Linux, we fetch web data using `curl` (short for "Client URL").\n\n- Running `curl <url>` downloads the page content and prints it right on your screen.\n- To save the downloaded content as a file instead of displaying it, we pair it with `>` redirection or the `-o` output flag.',
+    instructions: 'Let\'s download a script. Fetch the file at `http://api.bashquest.com/update.sh` and save it locally as `update.sh` by running `curl http://api.bashquest.com/update.sh > update.sh`.',
     commandHelp: [
       { cmd: 'curl http://api.bashquest.com/update.sh > update.sh', desc: 'Download webpage content and save it to update.sh' }
     ],
@@ -1077,8 +1077,8 @@ export const lessons = [
     title: 'Finding Files by Name (find)',
     xp: 220,
     badge: 'Scout',
-    description: 'Laptops store thousands of files. The `find` command is an incredibly powerful search engine that queries the directory tree for files matching specific criteria (like name, type, size, or modification date).\n\nFormat: `find <starting_directory> -name "<pattern>"`\n\nE.g. `find . -name "*.txt"` searches the current directory recursively for all files ending in `.txt`.',
-    instructions: 'Search the current directory recursively for all files with a `.log` extension by running the command `find . -name "*.log"`.',
+    description: 'Imagine misplacing an important text file somewhere in your user folder and having to search through dozens of nested directories one-by-one. In Linux, we bypass manual digging by using the `find` utility as a lightning-fast system-wide search engine.\n\n- The `find` command searches through directory trees based on name, size, type, or date.\n- The syntax is `find <where> -name "<pattern>"`. E.g., `find . -name "*.txt"` searches the current directory and all subfolders for files ending in `.txt`.',
+    instructions: 'Let\'s track down some files. Search the current directory and its subfolders for any files with a `.log` extension by running `find . -name "*.log"`.',
     commandHelp: [
       { cmd: 'find . -name "*.log"', desc: 'Find all files ending in .log in current folder and subfolders' }
     ],
@@ -1104,8 +1104,8 @@ export const lessons = [
     title: 'Checking Command History',
     xp: 180,
     badge: 'Historian',
-    description: 'Don\'t waste time typing long commands again. Linux maintains a log of recently run commands, which you can view using the `history` command.\n\n- Type `history` to view your numbered history list.\n- Type `!number` to quickly re-run a specific command from that list (e.g. `!5` runs command #5).',
-    instructions: 'Display the list of your past commands by running the command `history`.',
+    description: 'Imagine you typed a long, complex network diagnostic command ten minutes ago, and now you need to run it again, but you can\'t remember the exact options or syntax. Instead of scratching your head or typing it all over, Linux remembers it for you!\n\n- The `history` command displays a numbered list of all commands you\'ve recently executed.\n- You can quickly re-run any item by typing an exclamation point followed by its list number (like `!42` to re-execute command #42).',
+    instructions: 'Let\'s check the archives. Run `history` to view the list of commands you\'ve run in this session.',
     commandHelp: [
       { cmd: 'history', desc: 'Display a list of recently executed commands' }
     ],
@@ -1128,8 +1128,8 @@ export const lessons = [
     title: 'Consulting Manual Pages',
     xp: 200,
     badge: 'Scholar',
-    description: 'Linux commands have extensive documentation called manual pages (or "man pages"). You can access them using the `man` command followed by the command name.\n\nE.g. `man ls` opens the manual page for `ls`. Inside a real man page, you navigate with the arrow keys and press `q` to quit.',
-    instructions: 'Open the manual page for the `grep` command to check its options: `man grep`.',
+    description: 'Imagine trying to use a new command, but you aren\'t sure what flags it supports or how its inputs should be formatted. Instead of searching online, Linux has an official, comprehensive user manual built right into the terminal!\n\n- The `man` (manual) command followed by any utility name (e.g., `man ls`) opens a detailed reference guide.\n- Inside the guide, you scroll with the arrow keys, search with "/", and press `q` to close the manual and return to your prompt.',
+    instructions: 'Let\'s consult the docs. Open the built-in manual page for the `grep` command by running `man grep`.',
     commandHelp: [
       { cmd: 'man grep', desc: 'Display manual page for grep' }
     ],
@@ -1155,8 +1155,8 @@ export const lessons = [
     title: 'Controlling Services (systemctl)',
     xp: 240,
     badge: 'Service-Master',
-    description: 'Modern Linux systems use `systemd` to manage background services (like database servers, web servers, or bluetooth daemons). We control these services using the `systemctl` command.\n\n- `systemctl status <service>` checks if a service is running.\n- `sudo systemctl start <service>` starts it.\n- `sudo systemctl stop <service>` stops it.\n\nSince managing services changes system states, starting and stopping them requires `sudo` privileges.',
-    instructions: 'A web server daemon `apache2` is currently installed but stopped. Use `sudo systemctl start apache2` to start the service, and verify its state with `systemctl status apache2`.',
+    description: 'Imagine hosting a website on your computer, but visitors get a "site cannot be reached" error because the background web server program isn\'t running. In Linux, background processes that start automatically and run in the background (like databases, firewalls, or web servers) are called **services**, and we manage them using `systemctl`.\n\n- The `systemctl status <service>` command checks if a service is active or stopped.\n- Since starting or stopping a service affects all users and the system\'s security, you must use `sudo` to run commands like `sudo systemctl start <service>` or `sudo systemctl stop <service>`.',
+    instructions: 'Let\'s launch a web server. The web server service `apache2` is currently stopped. Start it by running `sudo systemctl start apache2`, and verify it is running with `systemctl status apache2`.',
     commandHelp: [
       { cmd: 'systemctl status apache2', desc: 'Check status of apache2 web service' },
       { cmd: 'sudo systemctl start apache2', desc: 'Start the apache2 web service' }
@@ -1186,8 +1186,8 @@ export const lessons = [
     title: 'Editing Config Files (nano)',
     xp: 250,
     badge: 'Editor',
-    description: 'To edit system configurations on your laptop, you need a terminal text editor. `nano` is the easiest and most common command-line text editor.\n\nWhen you run `nano <filename>`, it opens the file in a text-editing workspace directly inside your terminal.\n\n- To exit the editor, press `Ctrl+X`.\n- To save (write out) changes, press `Ctrl+O`.',
-    instructions: 'Open the config file `server.conf` in your home folder using `nano server.conf`. Edit its contents so that it contains the line `port=8080`, then save and exit nano.',
+    description: 'Imagine SSH-ing into a remote cloud server where you don\'t have a graphical desktop or cursor, and you need to quickly fix a line in a configuration file. In these scenarios, you must use a terminal text editor like `nano`.\n\n- Running `nano <filename>` loads a simple, lightweight text editor directly inside your shell window.\n- The shortcuts are always displayed at the bottom of the screen: press `Ctrl+O` to write out (save) your changes, and `Ctrl+X` to exit the editor.',
+    instructions: 'Let\'s edit a configuration file. Open `server.conf` in your home directory using `nano server.conf`, add a line reading `port=8080`, and then save and exit the editor.',
     commandHelp: [
       { cmd: 'nano server.conf', desc: 'Open server.conf in the Nano text editor' }
     ],
@@ -1217,8 +1217,8 @@ export const lessons = [
     title: 'Writing Your First Bash Script',
     xp: 250,
     badge: 'Script-Kiddie',
-    description: 'Automation is a superpower in Linux. Instead of typing commands one-by-one, you can write them inside a file called a shell script, and execute them all at once!\n\nEvery script starts with a shebang `#!/bin/bash` on the first line to tell Linux which interpreter to use.\n\nAfter writing the script, you must grant it execute permission with `chmod +x <filename>` (or `chmod 755`) and run it with `./<filename>`.',
-    instructions: 'Create a script file named `hello.sh` in `/home/learner` using `touch hello.sh` or `nano hello.sh`. Add `#!/bin/bash` on the first line and `echo "Hello, BashQuest User!"` on the second line. Make it executable with `chmod 755 hello.sh` and run it using `./hello.sh`.',
+    description: 'Imagine having a list of 20 tasks that you have to run every single morning. Typing them out manually is tedious and leaves room for typos. In Linux, we bundle commands into a file called a shell script so we can execute them all at once!\n\n- Every script starts with a "shebang" (`#!/bin/bash`) on the very first line to tell the system which shell interpreter to use to run the file.\n- After saving your script, you make it runnable by granting it execute permission via `chmod 755 script.sh` and then running it with `./script.sh`.',
+    instructions: 'Let\'s automate! Create a file named `hello.sh` in your home folder. Write `#!/bin/bash` on the first line and `echo "Hello, BashQuest User!"` on the second. Grant it run permissions with `chmod 755 hello.sh` and execute it using `./hello.sh`.',
     commandHelp: [
       { cmd: 'touch hello.sh', desc: 'Create script file' },
       { cmd: 'chmod 755 hello.sh', desc: 'Grant execution permissions' },
@@ -1257,8 +1257,8 @@ export const lessons = [
     title: 'Variables & Arguments ($1)',
     xp: 250,
     badge: 'Arg-Master',
-    description: 'Scripts can be dynamic using command-line arguments. In bash, the special variables `$1`, `$2`, etc., hold the values passed to the script when calling it.\n\nFor example, if you run `./greet.sh Alice`, then inside the script `$1` holds the string "Alice". `$#` holds the total count of arguments passed to the script.',
-    instructions: 'Create a script named `greet.sh` inside your home directory. Write `#!/bin/bash` and `echo "Hello, $1!"` on the next line. Run `chmod 755 greet.sh` and execute `./greet.sh Alice` to verify it prints "Hello, Alice!".',
+    description: 'Imagine creating a personalized welcome message for a website. You wouldn\'t want to write a separate script for every single customer\'s name! Instead, you write one script that takes a name as input when you run it.\n\n- In bash scripts, variables like `$1`, `$2`, and so on hold the "arguments" or inputs you pass at the command line.\n- E.g., running `./greet.sh Alice` means `$1` inside the script will automatically contain the text "Alice". Similarly, `$#` keeps track of how many inputs the user provided.',
+    instructions: 'Let\'s build a dynamic script. Create `greet.sh` in your home directory with the shebang and the line `echo "Hello, $1!"`. Make it executable and run `./greet.sh Alice` to test it.',
     commandHelp: [
       { cmd: './greet.sh Alice', desc: 'Execute script with argument "Alice"' }
     ],
@@ -1295,8 +1295,8 @@ export const lessons = [
     title: 'Conditional Logic (if/else)',
     xp: 270,
     badge: 'Logician',
-    description: 'We can check conditions in bash scripts using `if` blocks. The syntax is:\n\n```bash\nif [ -f "$1" ]; then\n  echo "File exists"\nelse\n  echo "File missing"\nfi\n```\n\n- The `-f` flag checks if a path is a regular file.\n- The `-d` flag checks if a path is a directory.',
-    instructions: 'Create a script named `check_file.sh` in `/home/learner` that checks if the file provided as `$1` exists. It must have shebang, `if [ -f "$1" ]; then echo "Exists" else echo "Missing" fi` structure. Make it executable and run `./check_file.sh names.txt`.',
+    description: 'Imagine building a script that processes a CSV report, but it crashes if the report file doesn\'t actually exist on disk. To prevent errors, we write scripts that make decisions using `if/else` conditional logic.\n\n- We check conditions using brackets: `if [ -f "$1" ]; then ... fi`.\n- The `-f` flag checks if a path points to a file, while `-d` checks if it is a directory. The script branches its actions depending on whether the condition evaluates to true or false.',
+    instructions: 'Let\'s add decision-making logic. Create `check_file.sh` in your home directory that checks if the filename passed as `$1` exists (using `if [ -f "$1" ]; then echo "Exists" else echo "Missing" fi`). Make it executable and test it on `names.txt`.',
     commandHelp: [
       { cmd: 'if [ -f file ]; then ...', desc: 'Syntax for file existence checks' }
     ],
@@ -1333,8 +1333,8 @@ export const lessons = [
     title: 'Automating with Loops',
     xp: 280,
     badge: 'Loop-King',
-    description: 'Loops let us repeat actions across multiple items. A `for` loop in bash follows this structure:\n\n```bash\nfor file in *.txt; do\n  echo "Processing $file"\ndone\n```\n\nThis is useful to automate backups, bulk edits, or multi-file renaming.',
-    instructions: 'Create a script named `backup_logs.sh` in home. Write a `for` loop that iterates over all files matching `*.log` in the current directory, copying each one to a directory named `backup`. Ensure the script creates the `backup` directory first (`mkdir -p backup`). Make it executable and run it.',
+    description: 'Imagine having a folder of 100 log files, and you need to make a backup copy of every single one. Copying them individually would be exhausting. In Linux, we use `for` loops to repeat the same action across a whole list of items automatically!\n\n- A `for` loop (like `for file in *.txt; do ... done`) iterates over every item that matches a pattern, processing them one after the other in a split second.',
+    instructions: 'Let\'s automate backups. Create a script named `backup_logs.sh`. Have it create a directory named `backup` (using `mkdir -p backup`), then use a `for` loop to copy all `.log` files in the current folder into `backup`. Make it executable and run it.',
     commandHelp: [
       { cmd: 'for x in pattern; do ...', desc: 'For loop automation syntax' }
     ],
@@ -1371,8 +1371,8 @@ export const lessons = [
     title: 'Stream Editing with sed',
     xp: 260,
     badge: 'Sed-Master',
-    description: '`sed` (stream editor) performs search and replace on text files. The replacement pattern syntax is `s/pattern/replacement/flags`.\n\nFor example, `sed "s/red/blue/g" colors.txt` outputs colors.txt with all occurrences of "red" changed to "blue".\n\nAdding the `-i` flag edits the target file **in-place** (saving the changes back into the original file).',
-    instructions: 'Modify the file `server.conf` in your home folder. Change the port parameter `port=80` to `port=8080` using `sed` with the in-place `-i` flag: `sed -i "s/port=80/port=8080/g" server.conf`.',
+    description: 'Imagine you have a huge database dump file, and you need to replace all occurrences of an old server IP address with a new one. Opening it in an editor might freeze your computer. In Linux, we edit text streams on the fly using `sed` (short for "stream editor").\n\n- The basic syntax is `sed "s/old/new/g" file.txt` to find and replace text.\n- Adding the `-i` (in-place) flag saves the replacements directly back into the file itself, rather than just printing the modified text on screen.',
+    instructions: 'Let\'s update a setting. Edit `server.conf` in your home folder. Change `port=80` to `port=8080` in-place by running `sed -i "s/port=80/port=8080/g" server.conf`.',
     commandHelp: [
       { cmd: 'sed -i "s/old/new/g" file', desc: 'Perform in-place text replacement in a file' }
     ],
@@ -1403,8 +1403,8 @@ export const lessons = [
     title: 'Data Extraction with awk',
     xp: 280,
     badge: 'Awk-Wizard',
-    description: '`awk` is a scanning and processing language. It extracts columns (or fields) of structured text. By default, columns are separated by whitespace.\n\n- `$1` refers to field 1, `$2` to field 2, and `$0` to the entire line.\n- Use option `-F` to specify a custom delimiter (e.g. `-F:` for colons, `-F,` for commas).\n\nFor example, `awk -F: \'{print $1}\' /etc/passwd` lists only the first column (usernames) from /etc/passwd.',
-    instructions: 'Extract all usernames (the first column) from the `/etc/shadow` file using `awk` with a colon `:` delimiter, and redirect the output to `shadow_users.txt` (i.e. `sudo awk -F: \'{print $1}\' /etc/shadow > shadow_users.txt`).',
+    description: 'Imagine receiving a large spreadsheet saved as plain text, where columns are separated by commas or spaces, and you only need to extract the very first column of data. In Linux, we parse structured columns of text using the powerhouse language `awk`.\n\n- By default, `awk` splits lines by whitespace, assigning column 1 to `$1`, column 2 to `$2`, and so on.\n- The `-F` flag lets you specify a custom separator (like `-F:` for colons). E.g., `awk -F: \'{print $1}\' /etc/passwd` extracts just the usernames from a colon-separated list.',
+    instructions: 'Let\'s extract some data. Retrieve all usernames (the first column) from `/etc/shadow` using `awk` with a colon `:` separator, and save them into `shadow_users.txt` using `sudo awk -F: \'{print $1}\' /etc/shadow > shadow_users.txt`.',
     commandHelp: [
       { cmd: "awk -F: '{print $1}' file", desc: 'Print first field of colon-delimited file' }
     ],
@@ -1437,8 +1437,8 @@ export const lessons = [
     title: 'Translating & Cutting Data',
     xp: 260,
     badge: 'Parser',
-    description: '`cut` cuts sections of text. `-d` specifies delimiter, `-f` field selection, and `-c` character index.\n\n`tr` (translate) swaps or deletes characters from standard input. E.g. `echo "foo" | tr "o" "a"` prints "faa", and `tr "a-z" "A-Z"` converts lowercase text to uppercase.',
-    instructions: 'Extract the first column of the file `reports.csv` using `cut -d, -f1 reports.csv`, translate all text to UPPERCASE using `tr "a-z" "A-Z"`, and write the output to a new file named `upper_reports.txt`.',
+    description: 'Imagine working with a CSV spreadsheet of transaction dates and names. You want to extract only the first column (dates) and convert all text to capital letters for consistency. In Linux, we can combine lightweight parsing tools in a pipeline:\n\n- The `cut` command slices out specific columns from structured text. E.g., `cut -d, -f1` splits lines by commas (`-d,`) and extracts the first column (`-f1`).\n- The `tr` (translate) command transforms characters from standard input, like swapping lowercase characters for uppercase (`tr "a-z" "A-Z"`).',
+    instructions: 'Let\'s slice and transform data. Extract the first column of `reports.csv` using `cut -d, -f1 reports.csv`, pipe it into `tr "a-z" "A-Z"` to make it uppercase, and redirect the final result to `upper_reports.txt`.',
     commandHelp: [
       { cmd: 'cut -d, -f1 file | tr "a-z" "A-Z"', desc: 'Pipe cut field into translation' }
     ],
@@ -1473,8 +1473,8 @@ export const lessons = [
     title: 'Managing Environment Variables',
     xp: 250,
     badge: 'Env-Architect',
-    description: 'Environment variables affect the configuration of running processes. We can view them with the `env` command.\n\nTo define a variable that is passed to child shell processes, we use the `export` command:\n\n`export APP_ENV=production`\n\nWe reference variables using a dollar sign: `echo $APP_ENV`.',
-    instructions: 'Define and export an environment variable named `APP_ENV` with value `production` by running `export APP_ENV=production`. Verify it is set by echoing it: `echo $APP_ENV`.',
+    description: 'Imagine you are deploying a web application, and it needs to know whether to run in a safe local "development" sandbox or connect to the live "production" database. In Linux, we pass configurations like this to running programs using **environment variables**.\n\n- We use the `export` command to define a variable so that any programs started by our shell can read it. E.g., `export APP_ENV=production`.\n- To check or display a variable\'s value, we prefix its name with a dollar sign: `echo $APP_ENV`.',
+    instructions: 'Let\'s configure the environment. Set and export a variable named `APP_ENV` with the value `production` by running `export APP_ENV=production`, and then verify it by running `echo $APP_ENV`.',
     commandHelp: [
       { cmd: 'export VAR=val', desc: 'Define environment variable' },
       { cmd: 'echo $VAR', desc: 'Print variable value' }
@@ -1505,8 +1505,8 @@ export const lessons = [
     title: 'Archives & Compression (tar)',
     xp: 280,
     badge: 'Packer',
-    description: 'We bundle files together for storage or backups using `tar` (tape archive).\n\n- `-c` creates an archive.\n- `-x` extracts an archive.\n- `-z` compresses using gzip.\n- `-v` enables verbose (listing files processed).\n- `-f` specifies archive filename.\n\nE.g. `tar -czvf backup.tar.gz folder/` packages "folder/" into a zipped tarball.',
-    instructions: 'Archive and compress the `logs` folder inside `/home/learner` into a file named `logs.tar.gz` using `tar -czvf logs.tar.gz logs`.',
+    description: 'Imagine you have a folder containing 500 server logs, and you want to email it to a colleague or back it up to cloud storage. Sending 500 individual files is slow and inefficient. In Linux, we compress them into a single, compact zip-like file using `tar` (short for "tape archive").\n\n- We create compressed archives using flags: `-c` (create), `-z` (compress with gzip), `-v` (verbose listing of files), and `-f` (specify filename). E.g., `tar -czvf backup.tar.gz folder/` bundles and zips the directory.',
+    instructions: 'Let\'s package our logs. Bundle and compress the `logs` folder inside `/home/learner` into a file named `logs.tar.gz` by running `tar -czvf logs.tar.gz logs`.',
     commandHelp: [
       { cmd: 'tar -czvf archive.tar.gz folder', desc: 'Create compressed tar archive' }
     ],
@@ -1537,8 +1537,8 @@ export const lessons = [
     title: 'Inspecting the Environment',
     xp: 200,
     badge: 'Env-Watcher',
-    description: 'The `env` command prints a list of all currently active environment variables in your shell session. This is useful for checking system configurations, paths, or active user details.',
-    instructions: 'List all environment variables in your active shell by running the `env` command.',
+    description: 'Imagine you are trying to debug a script that keeps failing because it can\'t find a program\'s path, or you want to see which user account is active in this terminal. In Linux, all these session-wide configurations are stored together.\n\n- The `env` command prints out a complete directory of all environment variables currently loaded in your active session, letting you verify configurations in one go.',
+    instructions: 'Let\'s inspect the environment list. Print all active environment variables in your terminal session by running the `env` command.',
     commandHelp: [
       { cmd: 'env', desc: 'List active environment variables' }
     ],
@@ -1561,8 +1561,8 @@ export const lessons = [
     title: 'Creating Links (ln -s)',
     xp: 270,
     badge: 'Linker',
-    description: 'Links are pointers to other files. There are two types:\n\n- **Hard Link**: A direct reference to file inodes on disk. If original is deleted, link still works.\n- **Symbolic Link (Soft Link)**: A shortcut to a file path (like Windows shortcuts). If target is deleted, link breaks. Created using `ln -s target link_name`.',
-    instructions: 'Create a symbolic link named `app_link.log` in `/home/learner` that points to the target file `logs/app.log` (i.e. `ln -s logs/app.log app_link.log`).',
+    description: 'Imagine you have a config file buried deep in a nested folder, say `/var/www/html/configs/app/settings.conf`, but you need to edit it constantly. Instead of typing the long folder path every time, you want a quick desktop shortcut. In Linux, we do this by creating links.\n\n- **Hard Link**: A direct clone pointing to the raw file data. If you delete the original file, the link still works.\n- **Symbolic Link (Soft Link)**: A path-based shortcut (just like Windows shortcuts). If you delete the original file, the link breaks. We create them using `ln -s target link_name`.',
+    instructions: 'Let\'s create a shortcut. Create a symbolic link named `app_link.log` in `/home/learner` that points to the target file `logs/app.log` by running `ln -s logs/app.log app_link.log`.',
     commandHelp: [
       { cmd: 'ln -s target link_name', desc: 'Create symbolic link' }
     ],
@@ -1594,8 +1594,8 @@ export const lessons = [
     title: 'Processing Search Results (xargs)',
     xp: 290,
     badge: 'Advanced-Ops',
-    description: 'We can run a command on multiple search results by using `xargs` (execute arguments).\n\n`xargs` takes standard input lines (like file lists from `find`) and feeds them as arguments to another command.\n\nFor example, `find . -name "*.tmp" | xargs rm` finds all temporary files and removes them all at once.',
-    instructions: 'Find all files in `/home/learner/logs` ending with `.log` using `find logs -name "*.log"`, and pipe them into `xargs wc -l` to count their lines collectively (i.e. `find logs -name "*.log" | xargs wc -l`).',
+    description: 'Imagine you ran a search that returned 100 temporary files, and now you want to delete all of them. The search output is just a list of text names on your screen—how do you feed those names as direct inputs to the delete command? In Linux, we bridge this gap using `xargs`.\n\n- The `xargs` (execute arguments) command takes lines of standard input (like the file list from `find`) and feeds them one by one as arguments to another command.\n- E.g., `find . -name "*.tmp" | xargs rm` finds all temporary files and removes them all in a single sweep.',
+    instructions: 'Let\'s process some search results. Find all `.log` files in `/home/learner/logs` using `find logs -name "*.log"`, and pipe them into `xargs wc -l` to count all of their lines collectively.',
     commandHelp: [
       { cmd: 'find path -name "pattern" | xargs command', desc: 'Pass search results to command' }
     ],
