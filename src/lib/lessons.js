@@ -15,7 +15,8 @@ export const modules = [
   { id: 'scripting', title: '12. Shell Scripting & Automation' },
   { id: 'processing', title: '13. Advanced Text Processing' },
   { id: 'env_admin', title: '14. Environment & Users' },
-  { id: 'adv_fs', title: '15. Advanced Filesystem' }
+  { id: 'adv_fs', title: '15. Advanced Filesystem' },
+  { id: 'remote_users', title: '16. Remote Access & User Admin' }
 ];
 
 export const lessons = [
@@ -359,6 +360,97 @@ verify: (fs, session, history) => {
         success: catHosts,
         checks: [
           { id: 'cat_hosts', passed: catHosts }
+        ]
+      };
+    }
+  },
+  {
+    id: 51,
+    moduleId: 'manipulation',
+    title: 'Peeking at Files (head & tail)',
+    xp: 180,
+    badge: 'Peeker',
+    description: 'Now that you can read a whole file with `cat`, what if the file has thousands of lines and you only want to see the top or bottom? Dumping a huge file with `cat` floods your screen. Instead, we use `head` and `tail` to peek at the edges.\n\n- The `head` command displays the first 10 lines of a file by default. You can change this using `-n <number>` (e.g. `head -n 5 log.txt` for the first 5 lines).\n- The `tail` command displays the last 10 lines by default, supporting the same `-n` option.\n- Crucially, `tail -f` (follow) monitors a file in real-time, showing new lines as they are written by the system. This is a sysadmin\'s favorite tool for watching live logs.',
+    instructions: 'Let\'s inspect the logs. Use `head -n 5 logs/app.log` to view the first 5 lines of the application log. Next, run `tail -n 3 logs/security.log` to view the last 3 security events. Finally, run `tail -f logs/app.log` to simulate real-time log monitoring (it will print mock entries and exit).',
+    commandHelp: [
+      { cmd: 'head -n 5 logs/app.log', desc: 'Display first 5 lines of app.log' },
+      { cmd: 'tail -n 3 logs/security.log', desc: 'Display last 3 lines of security.log' },
+      { cmd: 'tail -f logs/app.log', desc: 'Monitor app.log updates in real-time' }
+    ],
+    objectives: [
+      { id: 'used_head', text: 'Run the "head" command with -n 5 on logs/app.log' },
+      { id: 'used_tail', text: 'Run the "tail" command with -n 3 on logs/security.log' },
+      { id: 'used_tail_f', text: 'Run the "tail" command with -f to follow app.log' }
+    ],
+    hints: [
+      "Use head -n 5 followed by the filename, and tail -n 3 followed by the security log path.",
+      "To follow live logs, add the -f option to the tail command.",
+      "Try running: head -n 5 logs/app.log, then tail -n 3 logs/security.log, and finally tail -f logs/app.log"
+    ],
+    verify: (fs, session, history) => {
+      const ranHead = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        const idx = parts.indexOf('head');
+        if (idx === -1) return false;
+        const options = parts.slice(idx + 1);
+        const hasN5 = options.includes('-n5') || (options.includes('-n') && options[options.indexOf('-n') + 1] === '5');
+        const hasFile = options.some(arg => arg.includes('app.log'));
+        return hasN5 && hasFile;
+      });
+      const ranTail = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        const idx = parts.indexOf('tail');
+        if (idx === -1) return false;
+        const options = parts.slice(idx + 1);
+        const hasN3 = options.includes('-n3') || (options.includes('-n') && options[options.indexOf('-n') + 1] === '3');
+        const hasFile = options.some(arg => arg.includes('security.log'));
+        return hasN3 && hasFile;
+      });
+      const ranTailF = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        const idx = parts.indexOf('tail');
+        if (idx === -1) return false;
+        const options = parts.slice(idx + 1);
+        return options.includes('-f') || options.includes('--follow');
+      });
+      return {
+        success: ranHead && ranTail && ranTailF,
+        checks: [
+          { id: 'used_head', passed: ranHead },
+          { id: 'used_tail', passed: ranTail },
+          { id: 'used_tail_f', passed: ranTailF }
+        ]
+      };
+    }
+  },
+  {
+    id: 52,
+    moduleId: 'manipulation',
+    title: 'Interactive File Scrolling (less & more)',
+    xp: 150,
+    badge: 'Pager',
+    description: 'Peeking at the top and bottom of a file with `head` and `tail` is great, but what if you need to browse a long configuration file page-by-page? That\'s what pagers like `less` and `more` are for.\n\n- Pagers load files interactively, showing one page of text at a time to prevent system slowdowns on large files.\n- `less` is the modern choice, allowing you to scroll both forward and backward using the arrow keys, search text with `/`, and exit by pressing `q`.\n- `more` is an older, simpler pager that only scrolls forward.',
+    instructions: 'Let\'s read a long file page-by-page. Run `less /etc/hosts` to open it in a scrolling view. (In our terminal, this will output the contents in a scrollable frame. Press `q` to return).',
+    commandHelp: [
+      { cmd: 'less /etc/hosts', desc: 'Open hosts file in the less pager' },
+      { cmd: 'more /etc/hosts', desc: 'Open hosts file in the more pager' }
+    ],
+    objectives: [
+      { id: 'used_less', text: 'Open /etc/hosts in a pager (less or more)' }
+    ],
+    hints: [
+      "Use the 'less' or 'more' command on the file path /etc/hosts.",
+      "Try running: less /etc/hosts"
+    ],
+    verify: (fs, session, history) => {
+      const ranPager = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return (parts.includes('less') || parts.includes('more')) && parts.some(arg => arg.includes('hosts'));
+      });
+      return {
+        success: ranPager,
+        checks: [
+          { id: 'used_less', passed: ranPager }
         ]
       };
     }
@@ -1454,6 +1546,53 @@ verify: (fs, session, history) => {
     }
   },
   {
+    id: 53,
+    moduleId: 'services',
+    title: 'System Logging (journalctl)',
+    xp: 220,
+    badge: 'Log-Reader',
+    description: 'Now that you can start and stop background services with `systemctl`, how do you troubleshoot them when they fail? The `journalctl` utility lets you inspect system logs generated by services managed by systemd.\n\n- By default, `journalctl` shows all system logs. Because this can be massive, we filter them to stay focused.\n- The `-u <service>` option filters logs to only show messages from a specific service (e.g. `journalctl -u apache2`).\n- The `-n <number>` option displays only the most recent entries (e.g. `journalctl -n 5` for the last 5 logs).\n- The `-f` (follow) flag displays logs in real-time as they are written.',
+    instructions: 'Let\'s investigate the web server logs. Run `journalctl -u apache2` to filter system logs for the `apache2` service. Then run `journalctl -n 5` to view the last 5 general system log messages.',
+    commandHelp: [
+      { cmd: 'journalctl -u apache2', desc: 'Show logs for the apache2 service' },
+      { cmd: 'journalctl -n 5', desc: 'Show the last 5 system log messages' }
+    ],
+    objectives: [
+      { id: 'used_journalctl_u', text: 'Filter logs for the apache2 service using journalctl -u' },
+      { id: 'used_journalctl_n', text: 'View the last few log entries using journalctl -n' }
+    ],
+    hints: [
+      "Use journalctl with the -u option set to apache2 to view web server logs.",
+      "To limit the logs to the last 5 lines, use journalctl -n 5.",
+      "Try running: journalctl -u apache2, and then: journalctl -n 5"
+    ],
+    verify: (fs, session, history) => {
+      const ranJournalctlU = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        const idx = parts.indexOf('journalctl');
+        if (idx === -1) return false;
+        const options = parts.slice(idx + 1);
+        const hasU = options.includes('-u') && options[options.indexOf('-u') + 1] === 'apache2';
+        return hasU;
+      });
+      const ranJournalctlN = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        const idx = parts.indexOf('journalctl');
+        if (idx === -1) return false;
+        const options = parts.slice(idx + 1);
+        const hasN = options.includes('-n') && /^\d+$/.test(options[options.indexOf('-n') + 1]);
+        return hasN;
+      });
+      return {
+        success: ranJournalctlU && ranJournalctlN,
+        checks: [
+          { id: 'used_journalctl_u', passed: ranJournalctlU },
+          { id: 'used_journalctl_n', passed: ranJournalctlN }
+        ]
+      };
+    }
+  },
+  {
     id: 38,
     moduleId: 'editing',
     title: 'Editing Config Files (nano)',
@@ -1671,6 +1810,98 @@ verify: (fs, session, history) => {
           { id: 'backup_logic', passed: !!logicOK },
           { id: 'backup_executed', passed: executed },
           { id: 'backup_dir_ok', passed: !!backupDirOK }
+        ]
+      };
+    }
+  },
+  {
+    id: 54,
+    moduleId: 'scripting',
+    title: 'Reusable Logic (bash functions)',
+    xp: 260,
+    badge: 'Modular',
+    description: 'You\'ve written loops and conditionals to automate actions in scripts. But as your scripts grow, copy-pasting the same logic over and over makes them hard to maintain. In bash, we can group commands into reusable functions.\n\n- To define a function, we declare it by name followed by parentheses and curly braces: `log_msg() { echo "msg"; }`.\n- Functions can receive arguments just like shell scripts, which are accessed using local position parameters `$1`, `$2`, etc. inside the function body.\n- To call a function, simply use its name like any other command: `log_msg "Backup started"`.',
+    instructions: 'Let\'s build a modular backup script. Create a script named `backup_helper.sh` in your home folder. Define a function named `log_msg` that prints a message with a timestamp (e.g. `log_msg() { echo "[$(date +%T)] $1"; }` or similar), and call it at least twice inside the script to log actions. Make it executable and run it.',
+    commandHelp: [
+      { cmd: 'func_name() { ... }', desc: 'Define a function in bash' }
+    ],
+    objectives: [
+      { id: 'script_exists', text: 'Create script file "backup_helper.sh" in home' },
+      { id: 'has_function', text: 'Define the log_msg function inside the script' },
+      { id: 'script_executed', text: 'Make script executable and run it' }
+    ],
+    hints: [
+      "Use touch backup_helper.sh, then edit it to include shebang #!/bin/bash, log_msg() { ... }, and call log_msg twice.",
+      "Remember to run chmod 755 backup_helper.sh to make it executable before running ./backup_helper.sh.",
+      "Try defining the function: log_msg() { echo \"[LOG] $1\"; } and then call it like: log_msg 'Starting'"
+    ],
+    verify: (fs, session, history) => {
+      const node = fs.getNodeByPath('/home/learner', 'backup_helper.sh');
+      const exists = node && node.type === 'file';
+      const hasFunction = exists && (node.content.includes('log_msg()') || node.content.includes('function log_msg'));
+      
+      const digits = exists ? String(node.permissions).split('').map(Number) : [];
+      const isExec = exists && digits.some(d => d % 2 !== 0);
+
+      const executed = history.some(cmd => {
+        const trimmed = cmd.trim();
+        return trimmed === './backup_helper.sh' || trimmed === 'bash backup_helper.sh' || trimmed === 'sh backup_helper.sh' || trimmed.endsWith('/backup_helper.sh');
+      });
+
+      return {
+        success: exists && hasFunction && isExec && executed,
+        checks: [
+          { id: 'script_exists', passed: !!exists },
+          { id: 'has_function', passed: !!hasFunction },
+          { id: 'script_executed', passed: isExec && executed }
+        ]
+      };
+    }
+  },
+  {
+    id: 55,
+    moduleId: 'scripting',
+    title: 'Scheduling Tasks (crontab)',
+    xp: 280,
+    badge: 'Scheduler',
+    description: 'Now that you have written robust shell scripts, you wouldn\'t want to log in at midnight just to run your backup helper. Linux provides the `cron` service to run commands or scripts automatically at specific times.\n\n- The cron service checks a scheduling table called `crontab`.\n- Each cron schedule has 5 fields representing time: `minute hour day-of-month month day-of-week` followed by the command.\n- E.g., `30 2 * * * /path/to/script.sh` runs a script every day at 2:30 AM.\n- We use `crontab -l` to list our active cron jobs, and `crontab <filename>` to load schedules from a file.',
+    instructions: 'Let\'s automate our backup helper. Write a cron scheduling string into a file named `my_cron` (for example, `* * * * * /home/learner/backup_helper.sh` to run every minute). Install this schedule by running `crontab my_cron`, and verify it by running `crontab -l`.',
+    commandHelp: [
+      { cmd: 'crontab my_cron', desc: 'Install cron jobs from the file my_cron' },
+      { cmd: 'crontab -l', desc: 'List active cron jobs for the current user' }
+    ],
+    objectives: [
+      { id: 'cron_file_created', text: 'Create file "my_cron" in home with cron schedule' },
+      { id: 'cron_installed', text: 'Install the cron schedule using crontab my_cron' },
+      { id: 'cron_listed', text: 'List the active cron schedule with crontab -l' }
+    ],
+    hints: [
+      "Use echo '* * * * * /home/learner/backup_helper.sh' > my_cron to create the cron file.",
+      "Load the cron file into the crontab table by running crontab my_cron.",
+      "Check the installed cron jobs using crontab -l"
+    ],
+    verify: (fs, session, history) => {
+      const node = fs.getNodeByPath('/home/learner', 'my_cron');
+      const fileCreated = node && node.type === 'file';
+      const hasCronString = fileCreated && node.content.includes('backup_helper.sh');
+      
+      const ranCrontabInstall = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts[0] === 'crontab' && parts[1] === 'my_cron';
+      });
+      const ranCrontabL = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('crontab') && parts.includes('-l');
+      });
+
+      const installed = session.crontab && session.crontab.includes('backup_helper.sh');
+
+      return {
+        success: fileCreated && hasCronString && (ranCrontabInstall || installed) && ranCrontabL,
+        checks: [
+          { id: 'cron_file_created', passed: !!(fileCreated && hasCronString) },
+          { id: 'cron_installed', passed: !!(ranCrontabInstall || installed) },
+          { id: 'cron_listed', passed: ranCrontabL }
         ]
       };
     }
@@ -1914,6 +2145,83 @@ verify: (fs, session, history) => {
     }
   },
   {
+    id: 56,
+    moduleId: 'env_admin',
+    title: 'Finding Commands (which)',
+    xp: 150,
+    badge: 'Locator',
+    description: 'Now that you are familiar with active environment variables like `PATH` (which stores the directories where Linux looks for commands), how do you find the exact file path of the program that runs when you type `ls` or `grep`? We use `which` to locate command binaries.\n\n- The `which` command searches the folders listed in your `$PATH` variable and prints the absolute path of the binary executed when the command is run (e.g. `which ls` outputs `/bin/ls`).\n- This is useful to find where a tool is installed or resolve conflicts between multiple versions of the same tool.',
+    instructions: 'Let\'s find our tools. Run `which ls` to see where the `ls` executable is stored on the system. Then, find the path of the `grep` command by running `which grep`.',
+    commandHelp: [
+      { cmd: 'which ls', desc: 'Find absolute path of ls' },
+      { cmd: 'which grep', desc: 'Find absolute path of grep' }
+    ],
+    objectives: [
+      { id: 'used_which_ls', text: 'Run the "which" command on ls' },
+      { id: 'used_which_grep', text: 'Run the "which" command on grep' }
+    ],
+    hints: [
+      "Run which ls to find the path of ls, and which grep to find the path of grep.",
+      "Try running: which ls, and then which grep"
+    ],
+    verify: (fs, session, history) => {
+      const ranWhichLs = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('which') && parts.includes('ls');
+      });
+      const ranWhichGrep = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('which') && parts.includes('grep');
+      });
+      return {
+        success: ranWhichLs && ranWhichGrep,
+        checks: [
+          { id: 'used_which_ls', passed: ranWhichLs },
+          { id: 'used_which_grep', passed: ranWhichGrep }
+        ]
+      };
+    }
+  },
+  {
+    id: 57,
+    moduleId: 'env_admin',
+    title: 'Custom Shell Shortcuts (alias)',
+    xp: 180,
+    badge: 'Shortcutter',
+    description: 'Typing long commands with multiple flags can get exhausting. In Linux, we can create custom shortcuts called aliases. For example, you can map `ll` to run `ls -la` automatically.\n\n- To create a temporary alias, run `alias name=\'command\'` (e.g. `alias ll=\'ls -la\'`).\n- Running `alias` without arguments lists all active aliases in the current session.\n- To make aliases permanent across reboots, they are typically written to `.bashrc` or `.bash_profile` configuration files.',
+    instructions: 'Let\'s set up some shortcuts. Create a temporary alias named `la` that runs `ls -a` by running `alias la=\'ls -a\'`. Test it by running `la` in your terminal.',
+    commandHelp: [
+      { cmd: 'alias la=\'ls -a\'', desc: 'Alias la to run ls -a' },
+      { cmd: 'alias', desc: 'List active aliases' }
+    ],
+    objectives: [
+      { id: 'alias_created', text: 'Create alias la for ls -a' },
+      { id: 'alias_run', text: 'Execute the newly created alias la' }
+    ],
+    hints: [
+      "Define the alias using alias la='ls -a' exactly as shown.",
+      "Run the alias la command in the terminal to verify it works.",
+      "Try running: alias la='ls -a' followed by: la"
+    ],
+    verify: (fs, session, history) => {
+      const aliasCreated = history.some(cmd => {
+        const clean = cmd.replace(/\s+/g, '');
+        return clean.includes("aliasla=") && (clean.includes("ls-a") || clean.includes("ls-la") || clean.includes("ls-CF"));
+      });
+      const aliasRun = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('la');
+      });
+      return {
+        success: aliasCreated && aliasRun,
+        checks: [
+          { id: 'alias_created', passed: aliasCreated },
+          { id: 'alias_run', passed: aliasRun }
+        ]
+      };
+    }
+  },
+  {
     id: 49,
     moduleId: 'adv_fs',
     title: 'Creating Links (ln -s)',
@@ -1983,6 +2291,157 @@ verify: (fs, session, history) => {
           { id: 'used_find', passed: usedFind },
           { id: 'used_xargs', passed: usedXargs },
           { id: 'ran_wc_l', passed: ranWcL }
+        ]
+      };
+    }
+  },
+  {
+    id: 58,
+    moduleId: 'remote_users',
+    title: 'User Administration (useradd & passwd)',
+    xp: 220,
+    badge: 'Sys-Creator',
+    description: 'So far, you\'ve been working as the `learner` user. But in real-world servers, sysadmins must manage multiple accounts. Let\'s learn how to add new users and set their passwords.\n\n- The `useradd` command creates a brand new user account. Since creating accounts affects system security, it must be run with superuser privileges (e.g. `sudo useradd deployer`).\n- The `passwd` command sets or changes a user\'s password. Run as `sudo passwd deployer` to set the deployer user\'s password.',
+    instructions: 'Let\'s add a colleague\'s account. Create a new user named `deployer` by running `sudo useradd deployer`. Then, set a password for them by running `sudo passwd deployer` (type any mock password when prompted).',
+    commandHelp: [
+      { cmd: 'sudo useradd deployer', desc: 'Create new user deployer' },
+      { cmd: 'sudo passwd deployer', desc: 'Set password for user deployer' }
+    ],
+    objectives: [
+      { id: 'user_created', text: 'Create user "deployer" using useradd' },
+      { id: 'passwd_changed', text: 'Set password for "deployer" using passwd' }
+    ],
+    hints: [
+      "Use sudo useradd deployer to register the user account.",
+      "Set the password by running sudo passwd deployer.",
+      "Try running: sudo useradd deployer, and then: sudo passwd deployer"
+    ],
+    verify: (fs, session, history) => {
+      const ranUseradd = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('useradd') && parts.includes('deployer') && parts.includes('sudo');
+      });
+      const ranPasswd = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('passwd') && parts.includes('deployer') && parts.includes('sudo');
+      });
+      const passwdNode = fs.getNodeByPath('/etc', 'passwd');
+      const userExists = passwdNode && passwdNode.content.includes('deployer:');
+      return {
+        success: ranUseradd && ranPasswd && userExists,
+        checks: [
+          { id: 'user_created', passed: !!(ranUseradd && userExists) },
+          { id: 'passwd_changed', passed: ranPasswd }
+        ]
+      };
+    }
+  },
+  {
+    id: 59,
+    moduleId: 'remote_users',
+    title: 'Switching Security Contexts (su)',
+    xp: 200,
+    badge: 'Shapeshifter',
+    description: 'Now that you\'ve created the `deployer` account, how do you log into it locally to test its environment? In Linux, we use the `su` (substitute user) command to switch accounts without logging out.\n\n- The `su <username>` command switches the current terminal shell to that user\'s session.\n- When switched, running `whoami` will reflect the new user name.\n- To return to your original user account session, type `exit` or press `Ctrl+D`.',
+    instructions: 'Let\'s switch contexts. Switch to the `deployer` user by running `su deployer`. Once logged in, run `whoami` to verify you are indeed running as `deployer`. When you\'re done, type `exit` to switch back.',
+    commandHelp: [
+      { cmd: 'su deployer', desc: 'Substitute user session to deployer' },
+      { cmd: 'whoami', desc: 'Verify the active user session name' },
+      { cmd: 'exit', desc: 'Exit active user session' }
+    ],
+    objectives: [
+      { id: 'switched_user', text: 'Switch shell context to deployer using su' },
+      { id: 'verified_whoami', text: 'Run whoami to confirm you are deployer' }
+    ],
+    hints: [
+      "Use su deployer to switch to the deployer shell session.",
+      "Check who is active by typing whoami.",
+      "Try running: su deployer, then whoami, and then exit"
+    ],
+    verify: (fs, session, history) => {
+      const ranSu = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('su') && parts.includes('deployer');
+      });
+      const ranWhoami = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('whoami');
+      });
+      const switched = session.env.USER === 'deployer';
+      return {
+        success: ranSu && ranWhoami && switched,
+        checks: [
+          { id: 'switched_user', passed: ranSu && switched },
+          { id: 'verified_whoami', passed: ranWhoami }
+        ]
+      };
+    }
+  },
+  {
+    id: 60,
+    moduleId: 'remote_users',
+    title: 'Secure Shell Access (ssh)',
+    xp: 240,
+    badge: 'Teleporter',
+    description: 'Switching users locally is useful, but in cloud computing, servers live in remote data centers. To connect to them securely over the network, we use `ssh` (Secure Shell).\n\n- The `ssh` command encrypts the connection between your machine and a remote host to prevent eavesdropping.\n- Syntax: `ssh user@hostname` or `ssh user@ip_address` (e.g. `ssh admin@192.168.1.100`).\n- The first connection will prompt you to verify the remote host\'s authenticity by displaying a unique ECDSA fingerprint.',
+    instructions: 'Let\'s connect to a remote staging server. Connect to the server at `192.168.1.100` as the `admin` user by running `ssh admin@192.168.1.100` (type `yes` if prompted to verify host key, and enter any password).',
+    commandHelp: [
+      { cmd: 'ssh admin@192.168.1.100', desc: 'Securely connect to remote staging server' }
+    ],
+    objectives: [
+      { id: 'ssh_connected', text: 'SSH into the remote server at 192.168.1.100 as admin' }
+    ],
+    hints: [
+      "Use the ssh command followed by user@host. Here, user is admin and host is 192.168.1.100.",
+      "Try running: ssh admin@192.168.1.100"
+    ],
+    verify: (fs, session, history) => {
+      const ranSsh = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        const sshIdx = parts.indexOf('ssh');
+        if (sshIdx === -1) return false;
+        const dest = parts[sshIdx + 1] || '';
+        return dest.includes('192.168.1.100') && dest.includes('admin');
+      });
+      return {
+        success: ranSsh,
+        checks: [
+          { id: 'ssh_connected', passed: ranSsh }
+        ]
+      };
+    }
+  },
+  {
+    id: 61,
+    moduleId: 'remote_users',
+    title: 'Secure File Transfer (scp)',
+    xp: 250,
+    badge: 'Transporter',
+    description: 'Now that you know how to log into a remote server via SSH, how do you copy a local file (like a backup archive) to it? The `scp` (secure copy) command copies files securely between hosts using SSH under the hood.\n\n- The syntax is `scp source_path user@host:destination_path`.\n- E.g., `scp log.txt admin@192.168.1.100:/tmp/` copies the local `log.txt` file to the remote `/tmp/` folder.',
+    instructions: 'Let\'s send our log archive to the remote staging server. Copy the local archive `logs.tar.gz` to the `/tmp` folder on `192.168.1.100` as the `admin` user by running `scp logs.tar.gz admin@192.168.1.100:/tmp/`.',
+    commandHelp: [
+      { cmd: 'scp logs.tar.gz admin@192.168.1.100:/tmp/', desc: 'Copy logs.tar.gz to remote server /tmp folder' }
+    ],
+    objectives: [
+      { id: 'scp_completed', text: 'Transfer logs.tar.gz to 192.168.1.100:/tmp/ via scp' }
+    ],
+    hints: [
+      "Specify scp followed by the local file logs.tar.gz, and then the remote destination admin@192.168.1.100:/tmp/.",
+      "Try running: scp logs.tar.gz admin@192.168.1.100:/tmp/"
+    ],
+    verify: (fs, session, history) => {
+      const ranScp = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        const scpIdx = parts.indexOf('scp');
+        if (scpIdx === -1) return false;
+        const src = parts[scpIdx + 1] || '';
+        const dest = parts[scpIdx + 2] || '';
+        return src.includes('logs.tar.gz') && dest.includes('192.168.1.100') && dest.includes('admin') && dest.includes('/tmp');
+      });
+      return {
+        success: ranScp,
+        checks: [
+          { id: 'scp_completed', passed: ranScp }
         ]
       };
     }

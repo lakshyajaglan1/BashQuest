@@ -350,7 +350,9 @@ export class ShellSession {
       'rm', 'cp', 'mv', 'chmod', 'grep', 'wc', 'uniq', 'sort', 'man', 'apt',
       'df', 'du', 'free', 'uptime', 'uname', 'ps', 'top', 'htop', 'kill', 'sleep',
       'jobs', 'fg', 'ping', 'ip', 'curl', 'find', 'history', 'systemctl', 'nano',
-      'bash', 'sed', 'awk', 'cut', 'tr', 'ln', 'tar', 'chown', 'export', 'env', 'xargs'
+      'bash', 'sed', 'awk', 'cut', 'tr', 'ln', 'tar', 'chown', 'export', 'env', 'xargs',
+      'head', 'tail', 'less', 'more', 'journalctl', 'which', 'alias', 'crontab',
+      'useradd', 'passwd', 'su', 'ssh', 'scp'
     ];
     this.installedPackages = new Set(defaultPkgs);
     if (installedPackages) {
@@ -936,6 +938,55 @@ export class ShellSession {
 
         case 'env':
           result = this.runEnv(cmdArgs);
+          break;
+
+        case 'head':
+          result = this.runHead(cmdArgs, stdin, isSudo);
+          break;
+
+        case 'tail':
+          result = this.runTail(cmdArgs, stdin, isSudo);
+          break;
+
+        case 'less':
+        case 'more':
+          result = this.runLess(cmdArgs, stdin, isSudo);
+          break;
+
+        case 'journalctl':
+          result = this.runJournalctl(cmdArgs, isSudo);
+          break;
+
+        case 'which':
+          result = this.runWhich(cmdArgs);
+          break;
+
+        case 'alias':
+          result = this.runAlias(cmdArgs);
+          break;
+
+        case 'crontab':
+          result = this.runCrontab(cmdArgs, stdin);
+          break;
+
+        case 'useradd':
+          result = this.runUseradd(cmdArgs, isSudo);
+          break;
+
+        case 'passwd':
+          result = this.runPasswd(cmdArgs, isSudo);
+          break;
+
+        case 'su':
+          result = this.runSu(cmdArgs);
+          break;
+
+        case 'ssh':
+          result = this.runSsh(cmdArgs);
+          break;
+
+        case 'scp':
+          result = this.runScp(cmdArgs);
           break;
 
         default:
@@ -2266,5 +2317,436 @@ export class ShellSession {
   runEnv(args) {
     const out = Object.keys(this.env).map(k => `${k}=${this.env[k]}`).join('\n');
     return { stdout: out, stderr: '', currentPath: this.currentPath };
+  }
+
+  runHead(args, stdin, isSudo) {
+    let numLines = 10;
+    const files = [];
+    for (let i = 0; i < args.length; i++) {
+      if (args[i] === '-n' && args[i + 1]) {
+        numLines = parseInt(args[i + 1], 10) || 10;
+        i++;
+      } else if (args[i].startsWith('-n')) {
+        numLines = parseInt(args[i].substring(2), 10) || 10;
+      } else {
+        files.push(args[i]);
+      }
+    }
+
+    if (files.length === 0) {
+      if (!stdin) return { stdout: '', stderr: '', currentPath: this.currentPath };
+      const lines = stdin.split('\n').slice(0, numLines);
+      return { stdout: lines.join('\n'), stderr: '', currentPath: this.currentPath };
+    }
+
+    const outputs = [];
+    const errors = [];
+    for (const target of files) {
+      let node = this.fs.getNodeByPath(this.currentPath, target);
+      if (node && node.type === 'link') {
+        node = this.fs.getNodeByPath('/', node.target);
+      }
+      if (!node) {
+        errors.push(`head: cannot open '${target}' for reading: No such file or directory`);
+      } else if (node.type === 'dir') {
+        errors.push(`head: error reading '${target}': Is a directory`);
+      } else if (node.permissions === '000' && !isSudo) {
+        errors.push(`head: cannot open '${target}' for reading: Permission denied`);
+      } else {
+        const fileLines = node.content.split('\n');
+        const sliced = fileLines.slice(0, numLines);
+        outputs.push(sliced.join('\n'));
+      }
+    }
+
+    return {
+      stdout: outputs.join('\n'),
+      stderr: errors.join('\n'),
+      currentPath: this.currentPath
+    };
+  }
+
+  runTail(args, stdin, isSudo) {
+    let numLines = 10;
+    let follow = false;
+    const files = [];
+    for (let i = 0; i < args.length; i++) {
+      if (args[i] === '-n' && args[i + 1]) {
+        numLines = parseInt(args[i + 1], 10) || 10;
+        i++;
+      } else if (args[i].startsWith('-n')) {
+        numLines = parseInt(args[i].substring(2), 10) || 10;
+      } else if (args[i] === '-f' || args[i] === '--follow') {
+        follow = true;
+      } else {
+        files.push(args[i]);
+      }
+    }
+
+    if (follow) {
+      const target = files[0] || 'stdin';
+      return {
+        stdout: `Jul 5 18:10:04 [INFO] Web server socket opened.\nJul 5 18:10:05 [INFO] Connection received from 192.168.1.15.\nJul 5 18:10:06 [INFO] Request GET /index.html HTTP/1.1 200.\n[Live monitoring active on ${target}. Press Ctrl+C to stop...]`,
+        stderr: '',
+        currentPath: this.currentPath
+      };
+    }
+
+    if (files.length === 0) {
+      if (!stdin) return { stdout: '', stderr: '', currentPath: this.currentPath };
+      const lines = stdin.split('\n');
+      const sliced = lines.slice(-numLines);
+      return { stdout: sliced.join('\n'), stderr: '', currentPath: this.currentPath };
+    }
+
+    const outputs = [];
+    const errors = [];
+    for (const target of files) {
+      let node = this.fs.getNodeByPath(this.currentPath, target);
+      if (node && node.type === 'link') {
+        node = this.fs.getNodeByPath('/', node.target);
+      }
+      if (!node) {
+        errors.push(`tail: cannot open '${target}' for reading: No such file or directory`);
+      } else if (node.type === 'dir') {
+        errors.push(`tail: error reading '${target}': Is a directory`);
+      } else if (node.permissions === '000' && !isSudo) {
+        errors.push(`tail: cannot open '${target}' for reading: Permission denied`);
+      } else {
+        const fileLines = node.content.split('\n');
+        const cleanLines = (fileLines[fileLines.length - 1] === '') ? fileLines.slice(0, -1) : fileLines;
+        const sliced = cleanLines.slice(-numLines);
+        outputs.push(sliced.join('\n'));
+      }
+    }
+
+    return {
+      stdout: outputs.join('\n'),
+      stderr: errors.join('\n'),
+      currentPath: this.currentPath
+    };
+  }
+
+  runLess(args, stdin, isSudo) {
+    if (args.length === 0 && !stdin) {
+      return { stdout: '', stderr: 'less: missing filename', currentPath: this.currentPath };
+    }
+
+    let content = '';
+    let targetName = 'standard input';
+    if (args.length > 0) {
+      const target = args[0];
+      targetName = target;
+      let node = this.fs.getNodeByPath(this.currentPath, target);
+      if (node && node.type === 'link') {
+        node = this.fs.getNodeByPath('/', node.target);
+      }
+      if (!node) {
+        return { stdout: '', stderr: `less: ${target}: No such file or directory`, currentPath: this.currentPath };
+      }
+      if (node.type === 'dir') {
+        return { stdout: '', stderr: `less: ${target}: Is a directory`, currentPath: this.currentPath };
+      }
+      if (node.permissions === '000' && !isSudo) {
+        return { stdout: '', stderr: `less: ${target}: Permission denied`, currentPath: this.currentPath };
+      }
+      content = node.content;
+    } else {
+      content = stdin;
+    }
+
+    return {
+      stdout: `${content}\n\n--- Page 1 of 1 ---\n[Pager: showing ${targetName} content. Press 'q' to return to terminal]`,
+      stderr: '',
+      currentPath: this.currentPath
+    };
+  }
+
+  runJournalctl(args, isSudo) {
+    let service = null;
+    let numLines = null;
+    let follow = false;
+
+    for (let i = 0; i < args.length; i++) {
+      if ((args[i] === '-u' || args[i] === '--unit') && args[i + 1]) {
+        service = args[i + 1];
+        i++;
+      } else if (args[i] === '-n' && args[i + 1]) {
+        numLines = parseInt(args[i + 1], 10);
+        i++;
+      } else if (args[i] === '-f' || args[i] === '--follow') {
+        follow = true;
+      }
+    }
+
+    let logs = [
+      `Jul 05 17:55:12 kernel: Booting Linux kernel version 6.8.0-35-generic...`,
+      `Jul 05 17:55:14 systemd[1]: Started Journal Service.`,
+      `Jul 05 17:55:15 systemd[1]: Reached target Local File Systems.`,
+      `Jul 05 17:55:16 systemd[1]: Started Network Time Synchronization.`,
+      `Jul 05 17:56:00 systemd[1]: Starting OpenSSH Daemon...`,
+      `Jul 05 17:56:01 sshd[945]: Server listening on 0.0.0.0 port 22.`,
+      `Jul 05 17:56:01 sshd[945]: Server listening on :: port 22.`,
+      `Jul 05 17:56:01 systemd[1]: Started OpenSSH Daemon.`,
+      `Jul 05 18:00:00 systemd[1]: Starting LSB: Apache2 web server...`,
+      `Jul 05 18:00:02 apache2[1025]:  * Starting Apache httpd web server apache2`,
+      `Jul 05 18:00:05 apache2[1025]:  *`,
+      `Jul 05 18:00:06 systemd[1]: Started LSB: Apache2 web server.`,
+      `Jul 05 18:01:00 sshd[1240]: Connection closed by authenticating user root 192.168.1.100 port 45212 [preauth]`,
+      `Jul 05 18:05:12 sshd[1245]: Accepted password for learner from 192.168.1.15 port 51240 ssh2`,
+      `Jul 05 18:05:12 systemd-logind[452]: New session 1 of user learner.`,
+      `Jul 05 18:10:00 systemd[1]: Starting Daily Cleanup of Temporary Directories...`,
+      `Jul 05 18:10:01 systemd[1]: systemd-tmpfiles-clean.service: Deactivated successfully.`,
+      `Jul 05 18:10:01 systemd[1]: Finished Daily Cleanup of Temporary Directories.`
+    ];
+
+    if (service) {
+      logs = logs.filter(log => log.includes(service));
+      if (logs.length === 0) {
+        logs = [`-- No entries for unit ${service} --`];
+      }
+    }
+
+    if (numLines !== null && numLines > 0) {
+      logs = logs.slice(-numLines);
+    }
+
+    if (follow) {
+      logs.push(`[Live logs following active. Press Ctrl+C to exit...]`);
+    }
+
+    return {
+      stdout: logs.join('\n'),
+      stderr: '',
+      currentPath: this.currentPath
+    };
+  }
+
+  runWhich(args) {
+    if (args.length === 0) {
+      return { stdout: '', stderr: '', currentPath: this.currentPath };
+    }
+    const target = args[0];
+    if (this.installedPackages.has(target)) {
+      const pathMap = {
+        pwd: '/bin/pwd',
+        whoami: '/usr/bin/whoami',
+        clear: '/usr/bin/clear',
+        cd: 'shell built-in',
+        ls: '/bin/ls',
+        grep: '/bin/grep',
+        cat: '/bin/cat',
+        bash: '/bin/bash'
+      };
+      const foundPath = pathMap[target] || `/usr/bin/${target}`;
+      return { stdout: foundPath, stderr: '', currentPath: this.currentPath };
+    }
+    return { stdout: '', stderr: '', currentPath: this.currentPath };
+  }
+
+  runAlias(args) {
+    if (!this.aliases) {
+      this.aliases = {
+        la: 'ls -a',
+        ll: 'ls -la',
+        l: 'ls -CF'
+      };
+    }
+    if (args.length === 0) {
+      const out = Object.keys(this.aliases).map(k => `alias ${k}='${this.aliases[k]}'`).join('\n');
+      return { stdout: out, stderr: '', currentPath: this.currentPath };
+    }
+    for (const arg of args) {
+      if (arg.includes('=')) {
+        const parts = arg.split('=');
+        const name = parts[0];
+        const val = parts.slice(1).join('=').replace(/['"]/g, '');
+        this.aliases[name] = val;
+      } else {
+        const val = this.aliases[arg];
+        if (val) {
+          return { stdout: `alias ${arg}='${val}'`, stderr: '', currentPath: this.currentPath };
+        } else {
+          return { stdout: '', stderr: `bash: alias: ${arg}: not found`, currentPath: this.currentPath };
+        }
+      }
+    }
+    return { stdout: '', stderr: '', currentPath: this.currentPath };
+  }
+
+  runCrontab(args, stdin) {
+    if (!this.crontab) {
+      this.crontab = '';
+    }
+    let list = false;
+    let edit = false;
+    let filename = null;
+
+    for (const arg of args) {
+      if (arg === '-l') list = true;
+      else if (arg === '-e') edit = true;
+      else if (!arg.startsWith('-')) filename = arg;
+    }
+
+    if (list) {
+      if (!this.crontab) {
+        return { stdout: '', stderr: 'no crontab for learner', currentPath: this.currentPath };
+      }
+      return { stdout: this.crontab, stderr: '', currentPath: this.currentPath };
+    }
+
+    if (edit) {
+      return {
+        stdout: `[ crontab editor opened. Simulated update: crontab saved ]`,
+        stderr: '',
+        currentPath: this.currentPath
+      };
+    }
+
+    if (filename) {
+      const node = this.fs.getNodeByPath(this.currentPath, filename);
+      if (!node) {
+        return { stdout: '', stderr: `crontab: file '${filename}' does not exist`, currentPath: this.currentPath };
+      }
+      if (node.type !== 'file') {
+        return { stdout: '', stderr: `crontab: '${filename}' is not a regular file`, currentPath: this.currentPath };
+      }
+      this.crontab = node.content;
+      return { stdout: '', stderr: '', currentPath: this.currentPath };
+    }
+
+    if (stdin) {
+      this.crontab = stdin;
+      return { stdout: '', stderr: '', currentPath: this.currentPath };
+    }
+
+    return {
+      stdout: '',
+      stderr: 'crontab: usage error: must specify -l, -e, or a input file',
+      currentPath: this.currentPath
+    };
+  }
+
+  runUseradd(args, isSudo) {
+    if (!isSudo) {
+      return { stdout: '', stderr: 'useradd: Permission denied.', currentPath: this.currentPath };
+    }
+    if (args.length === 0) {
+      return { stdout: '', stderr: 'useradd: missing username operand', currentPath: this.currentPath };
+    }
+    const username = args[args.length - 1];
+    
+    let passwdNode = this.fs.getNodeByPath('/etc', 'passwd');
+    if (!passwdNode) {
+      passwdNode = this.fs.createNode('/etc', 'passwd', 'file', {
+        content: 'root:x:0:0:root:/root:/bin/bash\nlearner:x:1000:1000:learner:/home/learner:/bin/bash\n',
+        permissions: '644',
+        owner: 'root',
+        group: 'root'
+      });
+    }
+    
+    if (passwdNode.content.includes(`${username}:`)) {
+      return { stdout: '', stderr: `useradd: user '${username}' already exists`, currentPath: this.currentPath };
+    }
+
+    passwdNode.content += `${username}:x:1001:1001::/home/${username}:/bin/bash\n`;
+    
+    if (!this.fs.getNodeByPath('/home', username)) {
+      this.fs.createNode('/home', username, 'dir', {
+        permissions: '755',
+        owner: username,
+        group: username
+      });
+    }
+
+    return { stdout: '', stderr: '', currentPath: this.currentPath };
+  }
+
+  runPasswd(args, isSudo) {
+    if (args.length === 0) {
+      return {
+        stdout: `Changing password for learner.\nCurrent password: \nNew password: \nRetype new password: \npasswd: password updated successfully`,
+        stderr: '',
+        currentPath: this.currentPath
+      };
+    }
+    const username = args[0];
+    if (!isSudo && username !== 'learner') {
+      return { stdout: '', stderr: 'passwd: You may not view or modify password information for other users.', currentPath: this.currentPath };
+    }
+    return {
+      stdout: `New password: \nRetype new password: \npasswd: password updated successfully for ${username}`,
+      stderr: '',
+      currentPath: this.currentPath
+    };
+  }
+
+  runSu(args) {
+    const targetUser = args[0] || 'root';
+    if (targetUser === 'deployer') {
+      const passwdNode = this.fs.getNodeByPath('/etc', 'passwd');
+      if (!passwdNode || !passwdNode.content.includes('deployer:')) {
+        return { stdout: '', stderr: 'su: user deployer does not exist', currentPath: this.currentPath };
+      }
+      this.env.USER = 'deployer';
+      this.env.HOME = '/home/deployer';
+      this.currentPath = '/home/deployer';
+      return {
+        stdout: `Password: \nWelcome to the deployer account.`,
+        stderr: '',
+        currentPath: this.currentPath
+      };
+    } else if (targetUser === 'root' || targetUser === '-') {
+      this.env.USER = 'root';
+      this.env.HOME = '/root';
+      this.currentPath = '/root';
+      return {
+        stdout: `Password: \nWelcome to the superuser root account.`,
+        stderr: '',
+        currentPath: this.currentPath
+      };
+    } else if (targetUser === 'learner') {
+      this.env.USER = 'learner';
+      this.env.HOME = '/home/learner';
+      this.currentPath = '/home/learner';
+      return {
+        stdout: `Password: \nReturned to learner account.`,
+        stderr: '',
+        currentPath: this.currentPath
+      };
+    }
+    return { stdout: '', stderr: `su: user ${targetUser} does not exist`, currentPath: this.currentPath };
+  }
+
+  runSsh(args) {
+    if (args.length === 0) {
+      return { stdout: '', stderr: 'ssh: missing hostname or destination address', currentPath: this.currentPath };
+    }
+    const destination = args[args.length - 1];
+    return {
+      stdout: `The authenticity of host '${destination} (${destination})' can't be established.\nECDSA key fingerprint is SHA256:abc123xyz987qwe...\nAre you sure you want to continue connecting (yes/no)? yes\nWarning: Permanently added '${destination}' (ECDSA) to the list of known hosts.\nConnection to ${destination} established.\nWelcome to remote-host!\nLast login: Sun Jul  5 18:05:12 2026 from 192.168.1.15\n\n[Remote session active. Type exit to close connection]\nConnection closed by remote host.`,
+      stderr: '',
+      currentPath: this.currentPath
+    };
+  }
+
+  runScp(args) {
+    if (args.length < 2) {
+      return { stdout: '', stderr: 'scp: missing file operand or destination', currentPath: this.currentPath };
+    }
+    const src = args[0];
+    const dest = args[1];
+
+    const srcNode = this.fs.getNodeByPath(this.currentPath, src);
+    if (!srcNode) {
+      return { stdout: '', stderr: `scp: ${src}: No such file or directory`, currentPath: this.currentPath };
+    }
+
+    return {
+      stdout: `Sending file...\n${src}              100%   12KB  12.0KB/s   00:01\nTransfer completed successfully.`,
+      stderr: '',
+      currentPath: this.currentPath
+    };
   }
 }

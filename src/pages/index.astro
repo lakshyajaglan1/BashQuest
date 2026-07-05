@@ -146,7 +146,9 @@ import LessonPanel from '../components/LessonPanel.astro';
           'rm', 'cp', 'mv', 'chmod', 'grep', 'wc', 'uniq', 'sort', 'man', 'apt',
           'df', 'du', 'free', 'uptime', 'uname', 'ps', 'top', 'htop', 'kill', 'sleep',
           'jobs', 'fg', 'ping', 'ip', 'curl', 'find', 'history', 'systemctl', 'nano',
-          'bash', 'sed', 'awk', 'cut', 'tr', 'ln', 'tar', 'chown', 'export', 'env', 'xargs'
+          'bash', 'sed', 'awk', 'cut', 'tr', 'ln', 'tar', 'chown', 'export', 'env', 'xargs',
+          'head', 'tail', 'less', 'more', 'journalctl', 'which', 'alias', 'crontab',
+          'useradd', 'passwd', 'su', 'ssh', 'scp'
         ]
       };
 
@@ -279,6 +281,15 @@ import LessonPanel from '../components/LessonPanel.astro';
         }
       }
 
+      // Quest 61: logs.tar.gz
+      if (!completed.includes(61)) {
+        if (!fs.getNodeByPath('/home/learner', 'logs.tar.gz')) {
+          fs.createNode('/home/learner', 'logs.tar.gz', 'file', {
+            content: 'tarball-archive-content\n'
+          });
+        }
+      }
+
       // Keep state.fsTree in sync with the tree
       this.state.fsTree = fs.tree;
 
@@ -389,7 +400,9 @@ import LessonPanel from '../components/LessonPanel.astro';
             'rm', 'cp', 'mv', 'chmod', 'grep', 'wc', 'uniq', 'sort', 'man', 'apt',
             'df', 'du', 'free', 'uptime', 'uname', 'ps', 'top', 'htop', 'kill', 'sleep',
             'jobs', 'fg', 'ping', 'ip', 'curl', 'find', 'history', 'systemctl', 'nano',
-            'bash', 'sed', 'awk', 'cut', 'tr', 'ln', 'tar', 'chown', 'export', 'env', 'xargs'
+            'bash', 'sed', 'awk', 'cut', 'tr', 'ln', 'tar', 'chown', 'export', 'env', 'xargs',
+            'head', 'tail', 'less', 'more', 'journalctl', 'which', 'alias', 'crontab',
+            'useradd', 'passwd', 'su', 'ssh', 'scp'
           ]
         };
         this.resetFilesystem();

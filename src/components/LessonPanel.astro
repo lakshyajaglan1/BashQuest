@@ -273,7 +273,8 @@
     hintsSection?.classList.add('hidden');
     
     // Check if there is a next lesson
-    const nextLesson = lessons.find(l => l.id === activeLesson.id + 1);
+    const currentIndex = lessons.findIndex(l => l.id === activeLesson.id);
+    const nextLesson = lessons[currentIndex + 1];
     if (nextLesson) {
       btnNext?.classList.remove('hidden');
     }
@@ -322,7 +323,9 @@
   // Next Lesson button
   btnNext?.addEventListener('click', () => {
     if (!activeLesson) return;
-    const nextId = activeLesson.id + 1;
+    const currentIndex = lessons.findIndex(l => l.id === activeLesson.id);
+    const nextLesson = lessons[currentIndex + 1];
+    const nextId = nextLesson ? nextLesson.id : activeLesson.id;
     window.dispatchEvent(new CustomEvent('app:select-lesson', { detail: { lessonId: nextId } }));
   });
 

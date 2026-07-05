@@ -268,8 +268,9 @@ import { modules, lessons } from '../lib/lessons';
       
       const isCompleted = completed.includes(lessonId);
       
-      // A lesson is unlocked if it is the first lesson, OR the previous lesson is completed
-      const isUnlocked = lessonId === 1 || completed.includes(lessonId - 1);
+      // A lesson is unlocked if it is the first lesson in the array, OR the preceding lesson in the lessons array is completed
+      const lessonIndex = lessons.findIndex(l => l.id === lessonId);
+      const isUnlocked = lessonIndex === 0 || completed.includes(lessons[lessonIndex - 1].id);
       
       const statusBadge = node.querySelector('.node-status-badge');
       const lockOverlay = node.querySelector('.node-lock-overlay');
