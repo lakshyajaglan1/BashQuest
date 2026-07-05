@@ -2383,7 +2383,7 @@ verify: (fs, session, history) => {
     title: 'Secure Shell Access (ssh)',
     xp: 240,
     badge: 'Teleporter',
-    description: 'Switching users locally is useful, but in cloud computing, servers live in remote data centers. To connect to them securely over the network, we use `ssh` (Secure Shell).\n\n- The `ssh` command encrypts the connection between your machine and a remote host to prevent eavesdropping.\n- Syntax: `ssh user@hostname` or `ssh user@ip_address` (e.g. `ssh admin@192.168.1.100`).\n- The first connection will prompt you to verify the remote host\'s authenticity by displaying a unique ECDSA fingerprint.',
+    description: 'Switching users locally is useful, but in cloud computing, servers live in remote data centers. To connect to them securely over the network, we use `ssh` (Secure Shell).\n\n- The `ssh` command encrypts the connection between your machine and a remote host to prevent eavesdropping.\n- Syntax: `ssh user@hostname` or `ssh user@ip_address` (e.g. `ssh admin@192.168.1.100`).\n- The first connection will prompt you to verify the remote host\'s authenticity by displaying a unique ECDSA fingerprint.\n\n**Note:** Since this is a browser-based sandbox, there\'s no real remote server to connect to. Running this command will show you the expected real-world output pattern (host verification, connection, session) instantly, rather than an actual live interactive session. In a real terminal, ssh would drop you into a genuinely separate remote shell until you type `exit`.',
     instructions: 'Let\'s connect to a remote staging server. Connect to the server at `192.168.1.100` as the `admin` user by running `ssh admin@192.168.1.100` (type `yes` if prompted to verify host key, and enter any password).',
     commandHelp: [
       { cmd: 'ssh admin@192.168.1.100', desc: 'Securely connect to remote staging server' }
@@ -2417,7 +2417,7 @@ verify: (fs, session, history) => {
     title: 'Secure File Transfer (scp)',
     xp: 250,
     badge: 'Transporter',
-    description: 'Now that you know how to log into a remote server via SSH, how do you copy a local file (like a backup archive) to it? The `scp` (secure copy) command copies files securely between hosts using SSH under the hood.\n\n- The syntax is `scp source_path user@host:destination_path`.\n- E.g., `scp log.txt admin@192.168.1.100:/tmp/` copies the local `log.txt` file to the remote `/tmp/` folder.',
+    description: 'Now that you know how to log into a remote server via SSH, how do you copy a local file (like a backup archive) to it? The `scp` (secure copy) command copies files securely between hosts using SSH under the hood.\n\n- The syntax is `scp source_path user@host:destination_path`.\n- E.g., `scp log.txt admin@192.168.1.100:/tmp/` copies the local `log.txt` file to the remote `/tmp/` folder.\n\n**Note:** Just like with ssh, there\'s no real remote server here — running this command confirms your local file exists and shows you the expected transfer output, but doesn\'t actually send data anywhere.',
     instructions: 'Let\'s send our log archive to the remote staging server. Copy the local archive `logs.tar.gz` to the `/tmp` folder on `192.168.1.100` as the `admin` user by running `scp logs.tar.gz admin@192.168.1.100:/tmp/`.',
     commandHelp: [
       { cmd: 'scp logs.tar.gz admin@192.168.1.100:/tmp/', desc: 'Copy logs.tar.gz to remote server /tmp folder' }
