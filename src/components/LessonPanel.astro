@@ -124,7 +124,7 @@
   const btnRestore = document.getElementById('btn-restore-lesson');
 
   // Load lesson
-  function loadActiveLesson(forcedLessonId = null) {
+  function loadActiveLesson(forcedLessonId: any = null) {
     if (!window.appState) return;
     
     const lessonId = forcedLessonId || window.appState.activeLessonId;
@@ -239,7 +239,7 @@
     }
 
     hintsSection.classList.remove('hidden');
-    hintsContainer.innerHTML = revealedHints.map(hint => {
+    hintsContainer.innerHTML = revealedHints.map((hint: any) => {
       const idx = hint.index - 1;
       if (hint.type === 'answer') {
         return `
@@ -276,7 +276,7 @@
     hintsSection?.classList.add('hidden');
     
     // Check if there is a next lesson
-    const currentIndex = lessons.findIndex(l => l.id === activeLesson.id);
+    const currentIndex = lessons.findIndex((l: any) => l.id === activeLesson.id);
     const nextLesson = lessons[currentIndex + 1];
     if (nextLesson) {
       btnNext?.classList.remove('hidden');
@@ -326,7 +326,7 @@
   // Next Lesson button
   btnNext?.addEventListener('click', () => {
     if (!activeLesson) return;
-    const currentIndex = lessons.findIndex(l => l.id === activeLesson.id);
+    const currentIndex = lessons.findIndex((l: any) => l.id === activeLesson.id);
     const nextLesson = lessons[currentIndex + 1];
     const nextId = nextLesson ? nextLesson.id : activeLesson.id;
     window.dispatchEvent(new CustomEvent('app:select-lesson', { detail: { lessonId: nextId } }));
@@ -341,7 +341,7 @@
   });
 
   // Listeners
-  window.addEventListener('app:select-lesson', (e) => {
+  window.addEventListener('app:select-lesson', (e: any) => {
     // Save current commands for state loading
     const detail = (e as CustomEvent).detail;
     const lessonId = detail ? detail.lessonId : null;
@@ -358,7 +358,7 @@
   });
 
   // Check commands as user types to dynamically tick off simple objectives if they pass
-  window.addEventListener('app:terminal-command', (e) => {
+  window.addEventListener('app:terminal-command', (e: any) => {
     // Append command to state
     if (window.appState) {
       if (!window.appState.terminalCommands) window.appState.terminalCommands = [];
@@ -367,7 +367,7 @@
   });
 
   // Dismiss hint listener using event delegation
-  hintsContainer?.addEventListener('click', (e) => {
+  hintsContainer?.addEventListener('click', (e: any) => {
     const target = e.target as HTMLElement;
     const dismissBtn = target.closest('.btn-dismiss-hint');
     if (dismissBtn) {

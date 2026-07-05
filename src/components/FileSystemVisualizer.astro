@@ -70,7 +70,7 @@
     if (node.type === 'dir' && node.children) {
       const children = [...node.children].sort((a, b) => a.name.localeCompare(b.name));
       
-      children.forEach((child, idx) => {
+      children.forEach((child: any, idx: number) => {
         const isLast = idx === children.length - 1;
         const connector = isLast ? '└── ' : '├── ';
         const childPrefix = isLast ? '    ' : '│   ';

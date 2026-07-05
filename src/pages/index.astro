@@ -377,10 +377,14 @@ import LessonPanel from '../components/LessonPanel.astro';
         if (!this.state.completedLessons.includes(lessonId)) {
           this.state.completedLessons.push(lessonId);
           this.state.xp += xp;
-
-          // Update Streak
-          this.updateStreak();
+        } else {
+          // Practice Mode: 10% of lesson's normal XP, minimum of 5 XP
+          const practiceXp = Math.max(5, Math.floor(xp * 0.1));
+          this.state.xp += practiceXp;
         }
+
+        // Always update streak on completion or practice mode
+        this.updateStreak();
 
         this.saveToStorage();
         this.broadcastState();

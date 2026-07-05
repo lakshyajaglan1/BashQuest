@@ -221,16 +221,21 @@ import { modules, lessons } from '../lib/lessons';
 
   // Level Names Mapping
   const levelNames = [
+    'Guest',
     'Linux Novice',
-    'Filesystem Novice',
-    'File Wrangler',
+    'Filesystem Explorer',
     'Shell Apprentice',
-    'Console Squire',
-    'Bash Knight',
+    'Console Wrangler',
+    'Command Initiate',
+    'Script Cadet',
+    'Bash Squire',
     'Permissions Paladin',
-    'Kernel Wizard',
     'Sysadmin',
-    'Root Superuser'
+    'Network Warden',
+    'Kernel Wizard',
+    'Root Superuser',
+    'Linux Archmage',
+    'Linux Demigod'
   ];
 
   // Refresh Stats
@@ -246,11 +251,25 @@ import { modules, lessons } from '../lib/lessons';
     const state = window.appState;
     const completed = state.completedLessons || [];
     
-    // XP math: Level up every 300 XP
-    const xpPerLevel = 300;
-    const level = Math.floor(state.xp / xpPerLevel) + 1;
+    // Progressive leveling curve:
+    // Level 2 requires 100 XP, Level 3 requires an additional 200 XP, etc.
+    let level = 1;
+    let totalXpNeededForNext = 100;
+    let accumulatedXp = 0;
+    while (state.xp >= accumulatedXp + totalXpNeededForNext) {
+      accumulatedXp += totalXpNeededForNext;
+      level++;
+      totalXpNeededForNext = level * 100;
+    }
+    const xpInLevel = state.xp - accumulatedXp;
+    const xpPerLevel = totalXpNeededForNext;
     const levelName = levelNames[Math.min(level - 1, levelNames.length - 1)];
-    const xpInLevel = state.xp % xpPerLevel;
+
+    // Prestige title: if Level > 10, append Lv. number
+    let displayedTitle = levelName;
+    if (level > 10) {
+      displayedTitle = `${levelName} (Lv. ${level})`;
+    }
 
     // Profile Card UI
     const profileTitle = document.getElementById('profile-title');
@@ -261,7 +280,7 @@ import { modules, lessons } from '../lib/lessons';
     const profileBadgeCount = document.getElementById('profile-badge-count');
 
     if (profileTitle) {
-      profileTitle.textContent = /[.?!]$/.test(levelName) ? levelName : levelName + '.';
+      profileTitle.textContent = /[.?!]$/.test(displayedTitle) ? displayedTitle : displayedTitle + '.';
     }
     if (profileLevel) profileLevel.textContent = `Level ${level} User`;
     if (profileXpRatio) profileXpRatio.textContent = `${xpInLevel} / ${xpPerLevel}`;
@@ -278,7 +297,7 @@ import { modules, lessons } from '../lib/lessons';
     if (badgesRack) {
       // Find badges from completed lessons
       const earnedBadges: any[] = [];
-      lessons.forEach(l => {
+      lessons.forEach((l: any) => {
         if (completed.includes(l.id) && l.badge) {
           earnedBadges.push({ badge: l.badge, title: l.title });
         }
@@ -314,12 +333,12 @@ import { modules, lessons } from '../lib/lessons';
       const lessonIdAttr = node.getAttribute('data-lesson-id');
       if (!lessonIdAttr) return;
       const lessonId = parseInt(lessonIdAttr);
-      const lesson = lessons.find(l => l.id === lessonId);
+      const lesson = lessons.find((l: any) => l.id === lessonId);
       
       const isCompleted = completed.includes(lessonId);
       
       // A lesson is unlocked if it is the first lesson in the array, OR the preceding lesson in the lessons array is completed
-      const lessonIndex = lessons.findIndex(l => l.id === lessonId);
+      const lessonIndex = lessons.findIndex((l: any) => l.id === lessonId);
       const isUnlocked = lessonIndex === 0 || completed.includes(lessons[lessonIndex - 1].id);
       
       const statusBadge = node.querySelector('.node-status-badge');
@@ -386,7 +405,7 @@ import { modules, lessons } from '../lib/lessons';
     cancelResetBtn?.addEventListener('click', hideResetModal);
 
     // Hide if clicking outside the modal content card
-    resetModal.addEventListener('click', (e) => {
+    resetModal.addEventListener('click', (e: any) => {
       if (e.target === resetModal) {
         hideResetModal();
       }

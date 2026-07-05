@@ -60,7 +60,7 @@
   let tempCommand = '';
 
   // Focus input on clicking anywhere in terminal
-  document.querySelector('.code-editor-mockup')?.addEventListener('click', (e) => {
+  document.querySelector('.code-editor-mockup')?.addEventListener('click', (e: any) => {
     // If user is highlighting text, do not force focus
     const selection = window.getSelection();
     if (selection && selection.toString().length === 0) {
@@ -203,7 +203,7 @@
   }
 
   // Key Event Listeners
-  termInput?.addEventListener('keydown', (e) => {
+  termInput?.addEventListener('keydown', (e: any) => {
     if (!window.appState || !window.appState.session) return;
     const history = window.appState.session.history || [];
 
