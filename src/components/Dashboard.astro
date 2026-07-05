@@ -212,7 +212,9 @@ import { modules, lessons } from '../lib/lessons';
     const profileCompletedCount = document.getElementById('profile-completed-count');
     const profileBadgeCount = document.getElementById('profile-badge-count');
 
-    if (profileTitle) profileTitle.textContent = levelName + '.';
+    if (profileTitle) {
+      profileTitle.textContent = /[.?!]$/.test(levelName) ? levelName : levelName + '.';
+    }
     if (profileLevel) profileLevel.textContent = `Level ${level} User`;
     if (profileXpRatio) profileXpRatio.textContent = `${xpInLevel} / ${xpPerLevel}`;
     if (profileXpProgress) {

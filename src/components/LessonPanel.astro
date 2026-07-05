@@ -141,7 +141,9 @@
 
     // Draw fields
     if (lessonEyebrow) lessonEyebrow.textContent = `QUEST ${lesson.id}`;
-    if (lessonTitle) lessonTitle.textContent = lesson.title + '.';
+    if (lessonTitle) {
+      lessonTitle.textContent = /[.?!]$/.test(lesson.title) ? lesson.title : lesson.title + '.';
+    }
     if (lessonXpReward) lessonXpReward.textContent = `+${lesson.xp} XP`;
     if (lessonDesc) {
       // Split formatting and wrap bold tags and code blocks
