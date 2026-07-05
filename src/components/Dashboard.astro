@@ -189,6 +189,12 @@ import { modules, lessons } from '../lib/lessons';
   function updateDashboardUI() {
     if (!window.appState) return;
 
+    // Return early if the Dashboard view is hidden to save performance
+    const dashboardView = document.getElementById('view-dashboard');
+    if (dashboardView && dashboardView.classList.contains('hidden')) {
+      return;
+    }
+
     const state = window.appState;
     const completed = state.completedLessons || [];
     
@@ -295,14 +301,14 @@ import { modules, lessons } from '../lib/lessons';
       // Hook click event
       if (isUnlocked) {
         node.classList.remove('pointer-events-none');
-        // Unbind and rebind click
-        const clone = node.cloneNode(true);
-        node.parentNode.replaceChild(clone, node);
-
-        clone.addEventListener('click', () => {
-          window.dispatchEvent(new CustomEvent('app:select-lesson', { detail: { lessonId } }));
-          window.dispatchEvent(new CustomEvent('app:trigger-view-change', { detail: { view: 'sandbox' } }));
-        });
+        // Bind click listener only once using a data attribute flag
+        if (node.getAttribute('data-bound') !== 'true') {
+          node.setAttribute('data-bound', 'true');
+          node.addEventListener('click', () => {
+            window.dispatchEvent(new CustomEvent('app:select-lesson', { detail: { lessonId } }));
+            window.dispatchEvent(new CustomEvent('app:trigger-view-change', { detail: { view: 'sandbox' } }));
+          });
+        }
       }
     });
   }
