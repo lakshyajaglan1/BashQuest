@@ -339,3 +339,43 @@
 .dark ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.2);
 }
+
+/* Stacked Shadows from DESIGN.md */
+.shadow-level-2 {
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.03), 0px 2px 2px rgba(0, 0, 0, 0.05), inset 0px 0px 0px 1px rgba(0, 0, 0, 0.02);
+}
+
+.shadow-level-3 {
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.04), 0px 8px 8px -8px rgba(0, 0, 0, 0.04), inset 0px 0px 0px 1px rgba(0, 0, 0, 0.02);
+}
+
+.shadow-level-4 {
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.04), 0px 8px 16px -4px rgba(0, 0, 0, 0.06), inset 0px 0px 0px 1px rgba(0, 0, 0, 0.02);
+}
+
+.dark .shadow-level-2 {
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2), 0px 2px 4px rgba(0, 0, 0, 0.3), inset 0px 0px 0px 1px rgba(255, 255, 255, 0.05);
+}
+
+.dark .shadow-level-3 {
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25), 0px 8px 8px -8px rgba(0, 0, 0, 0.4), inset 0px 0px 0px 1px rgba(255, 255, 255, 0.08);
+}
+
+.dark .shadow-level-4 {
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3), 0px 8px 16px -4px rgba(0, 0, 0, 0.5), inset 0px 0px 0px 1px rgba(255, 255, 255, 0.1);
+}
+
+/* XP Bar Fill (Develop Gradient) */
+.xp-bar-fill {
+  background: linear-gradient(90deg, var(--color-link) 0%, var(--color-cyan) 100%);
+}
+
+/* Subtle pulse animation for text/elements */
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s infinite ease-in-out;
+}

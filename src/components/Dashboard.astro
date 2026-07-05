@@ -6,15 +6,15 @@ import { modules, lessons } from '../lib/lessons';
     
     <!-- User Profile & Stats (Left Column) -->
     <div class="lg:col-span-1 space-y-6">
-      <div class="card-marketing border border-hairline bg-canvas p-6 flex flex-col justify-between h-auto">
+      <div class="card-marketing border border-hairline bg-canvas p-6 flex flex-col justify-between h-auto shadow-level-3">
         <div>
           <div class="flex items-center gap-4 mb-6">
-            <div class="w-14 h-14 rounded-full bg-primary text-on-primary flex items-center justify-center font-mono text-2xl font-bold border-2 border-hairline">
-              L
+            <div class="w-14 h-14 rounded-full bg-primary text-on-primary flex items-center justify-center font-mono text-2xl font-bold border border-hairline shadow-level-2 relative group/avatar overflow-hidden">
+              <span class="relative z-10 transition-transform duration-300 group-hover/avatar:scale-110 block">L</span>
             </div>
             <div>
-              <h2 id="profile-title" class="text-lg font-bold text-ink tracking-tight">Linux Novice.</h2>
-              <p id="profile-level" class="text-xs text-mute font-mono">Level 1 User</p>
+              <h2 id="profile-title" class="text-xl font-sans font-extrabold text-ink tracking-tight">Linux Novice.</h2>
+              <p id="profile-level" class="text-[11px] text-mute font-mono uppercase tracking-wider font-semibold mt-0.5">Level 1 User</p>
             </div>
           </div>
 
@@ -24,8 +24,8 @@ import { modules, lessons } from '../lib/lessons';
               <span class="text-mute">XP Progress</span>
               <span id="profile-xp-ratio" class="text-ink font-bold">0 / 300</span>
             </div>
-            <div class="w-full h-2 bg-canvas-soft-2 rounded-full overflow-hidden border border-hairline">
-              <div id="profile-xp-progress" class="h-full bg-success transition-all duration-500" style="width: 0%"></div>
+            <div class="w-full h-2.5 bg-canvas-soft-2 rounded-full overflow-hidden border border-hairline shadow-inner">
+              <div id="profile-xp-progress" class="h-full xp-bar-fill transition-all duration-1000 ease-out" style="width: 0%"></div>
             </div>
           </div>
 
@@ -45,7 +45,7 @@ import { modules, lessons } from '../lib/lessons';
         <div>
           <button 
             id="btn-reset-progress" 
-            class="w-full h-9 px-4 rounded-sm border border-red-200 text-error bg-red-50 text-xs font-semibold hover:bg-error-soft hover:text-error-deep hover:border-red-300 dark:bg-red-950/10 dark:border-red-900/30 dark:text-red-400 dark:hover:bg-red-900/20 dark:hover:text-red-300 transition-all cursor-pointer"
+            class="w-full h-9 px-4 rounded-sm border border-red-200 text-error bg-red-50 text-xs font-semibold hover:bg-error-soft hover:text-error-deep hover:border-red-300 dark:bg-red-950/10 dark:border-red-900/30 dark:text-red-400 dark:hover:bg-red-900/20 dark:hover:text-red-300 transition-all cursor-pointer shadow-sm hover:shadow-xs"
           >
             Reset Progress
           </button>
@@ -53,8 +53,8 @@ import { modules, lessons } from '../lib/lessons';
       </div>
 
       <!-- Badges Card -->
-      <div class="card-marketing p-6">
-        <h3 class="text-sm font-bold text-ink tracking-tight mb-4 uppercase font-mono text-mute">Earned Badges</h3>
+      <div class="card-marketing p-6 shadow-level-3">
+        <h3 class="text-xs font-bold tracking-widest text-mute uppercase font-mono mb-4 border-l-2 border-primary pl-2">Earned Badges</h3>
         <div id="dashboard-badges-rack" class="grid grid-cols-3 gap-3">
           <!-- Dynamically filled with badges -->
         </div>
@@ -64,19 +64,22 @@ import { modules, lessons } from '../lib/lessons';
     <!-- Curriculum Skill Tree (Right Column) -->
     <div class="lg:col-span-2 space-y-8">
       <!-- Intro Banner -->
-      <div class="card-marketing !p-4 md:!p-5 flex flex-col gap-3 md:gap-4 relative overflow-hidden">
-        <div>
-          <h2 class="text-sm md:text-base font-bold text-ink tracking-tight">
+      <div class="card-marketing bg-primary text-on-primary border border-hairline p-5 md:p-6 flex flex-col gap-4 relative overflow-hidden shadow-level-4">
+        <!-- Subtle mesh gradient glow in the top right corner -->
+        <div class="absolute -right-16 -top-16 w-48 h-48 rounded-full bg-gradient-to-br from-violet/25 via-link/15 to-transparent blur-3xl pointer-events-none"></div>
+        
+        <div class="relative z-10">
+          <h2 class="text-base md:text-lg font-bold text-on-primary tracking-tight font-sans">
             Learn Linux by actually using it.
           </h2>
-          <p class="text-xs md:text-sm text-body mt-1 leading-relaxed">
+          <p class="text-xs md:text-sm text-zinc-400 mt-1.5 leading-relaxed max-w-xl">
             Real terminal commands, real filesystem simulation — no videos, no fluff.
           </p>
         </div>
         
-        <div class="flex flex-wrap gap-2">
+        <div class="flex flex-wrap gap-2.5 relative z-10">
           <!-- Real Terminal Sandbox -->
-          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-hairline bg-canvas-soft-2 text-[10px] md:text-xs font-mono font-medium text-body">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-[10px] md:text-xs font-mono font-medium text-zinc-300 hover:bg-white/10 transition-colors">
             <svg class="w-3.5 h-3.5 text-violet shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
             </svg>
@@ -84,7 +87,7 @@ import { modules, lessons } from '../lib/lessons';
           </span>
 
           <!-- 60+ Hands-On Quests -->
-          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-hairline bg-canvas-soft-2 text-[10px] md:text-xs font-mono font-medium text-body">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-[10px] md:text-xs font-mono font-medium text-zinc-300 hover:bg-white/10 transition-colors">
             <svg class="w-3.5 h-3.5 text-success shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
             </svg>
@@ -92,16 +95,16 @@ import { modules, lessons } from '../lib/lessons';
           </span>
 
           <!-- Instant Verification -->
-          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-hairline bg-canvas-soft-2 text-[10px] md:text-xs font-mono font-medium text-body">
-            <svg class="w-3.5 h-3.5 text-cyan-deep shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-[10px] md:text-xs font-mono font-medium text-zinc-300 hover:bg-white/10 transition-colors">
+            <svg class="w-3.5 h-3.5 text-cyan shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
             </svg>
             Instant Verification
           </span>
 
           <!-- No Signup Required -->
-          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-hairline bg-canvas-soft-2 text-[10px] md:text-xs font-mono font-medium text-body">
-            <svg class="w-3.5 h-3.5 text-warning-deep shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-[10px] md:text-xs font-mono font-medium text-zinc-300 hover:bg-white/10 transition-colors">
+            <svg class="w-3.5 h-3.5 text-warning shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
             </svg>
             No Signup Required
@@ -121,7 +124,7 @@ import { modules, lessons } from '../lib/lessons';
             <h2 class="text-xs font-mono font-bold tracking-widest text-mute uppercase px-1 border-l-2 border-primary">{mod.title}</h2>
             
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {moduleLessons.map((lesson, idx) => (
+              {moduleLessons.map((lesson) => (
                 <div 
                   data-lesson-id={lesson.id}
                   class="lesson-node-card cursor-pointer border border-hairline rounded-md p-5 bg-canvas flex flex-col justify-between hover:shadow-md transition-all duration-200 relative group opacity-60 pointer-events-none"
@@ -149,7 +152,7 @@ import { modules, lessons } from '../lib/lessons';
                       +{lesson.xp} XP
                     </span>
                     
-                    <span class="text-xs font-sans font-medium text-mute group-hover:translate-x-0.5 transition-transform flex items-center gap-1">
+                    <span class="start-btn-text text-xs font-sans font-medium text-mute group-hover:translate-x-0.5 transition-transform flex items-center gap-1">
                       Start <span class="font-mono">→</span>
                     </span>
                   </div>
@@ -286,7 +289,13 @@ import { modules, lessons } from '../lib/lessons';
     if (profileXpRatio) profileXpRatio.textContent = `${xpInLevel} / ${xpPerLevel}`;
     if (profileXpProgress) {
       const percentage = (xpInLevel / xpPerLevel) * 100;
-      profileXpProgress.style.width = `${percentage}%`;
+      // Start with 0% width first if not set to ensure transition plays
+      if (profileXpProgress.style.width === '') {
+        profileXpProgress.style.width = '0%';
+      }
+      setTimeout(() => {
+        profileXpProgress.style.width = `${percentage}%`;
+      }, 100);
     }
     if (profileCompletedCount) {
       profileCompletedCount.textContent = `${completed.length} / ${lessons.length}`;
@@ -307,23 +316,74 @@ import { modules, lessons } from '../lib/lessons';
 
       if (earnedBadges.length === 0) {
         badgesRack.innerHTML = `
-          <div class="col-span-3 text-center py-4 border border-dashed border-hairline rounded text-mute text-[10px] font-mono">
-            No badges unlocked yet.<br>Complete quests!
+          <div class="col-span-3 text-center py-5 border border-dashed border-hairline rounded-md text-mute text-[10px] font-mono bg-canvas-soft-2/50">
+            No badges unlocked yet.<br>Complete quests to collect!
           </div>
         `;
       } else {
-        badgesRack.innerHTML = earnedBadges.map(item => `
-          <div class="flex flex-col items-center justify-center p-2.5 border border-hairline bg-canvas-soft rounded text-center relative group/badge animate-in fade-in duration-300">
-            <div class="w-9 h-9 rounded-full bg-violet-soft text-violet-deep flex items-center justify-center font-bold text-xs mb-1 border border-violet-soft">
-              🏆
+        badgesRack.innerHTML = earnedBadges.map((item, index) => {
+          // Color palettes from DESIGN.md matching Vercel guidelines
+          const colors = [
+            {
+              bg: 'bg-violet-soft/30 dark:bg-violet-soft/10',
+              text: 'text-violet-deep dark:text-violet-soft',
+              border: 'border-violet-soft/50 dark:border-violet-deep/30',
+              iconBg: 'bg-violet-soft text-violet-deep dark:bg-violet-deep dark:text-violet-soft',
+              iconBorder: 'border-violet-soft/65'
+            },
+            {
+              bg: 'bg-cyan-soft/30 dark:bg-cyan-soft/10',
+              text: 'text-cyan-deep dark:text-cyan-soft',
+              border: 'border-cyan-soft/50 dark:border-cyan-deep/30',
+              iconBg: 'bg-cyan-soft text-cyan-deep dark:bg-cyan-deep/20 dark:text-cyan-soft',
+              iconBorder: 'border-cyan-soft/65'
+            },
+            {
+              bg: 'bg-warning-soft/30 dark:bg-warning-soft/10',
+              text: 'text-warning-deep dark:text-warning-soft',
+              border: 'border-warning-soft/50 dark:border-warning-deep/30',
+              iconBg: 'bg-warning-soft text-warning-deep dark:bg-warning-deep/20 dark:text-warning-soft',
+              iconBorder: 'border-warning-soft/65'
+            }
+          ];
+          const color = colors[index % colors.length];
+          
+          // Emojis mapping based on badge name
+          let emoji = '🏆';
+          const badgeLower = item.badge.toLowerCase();
+          if (badgeLower.includes('explorer')) emoji = '🧭';
+          else if (badgeLower.includes('navigator')) emoji = '🗺️';
+          else if (badgeLower.includes('builder')) emoji = '🛠️';
+          else if (badgeLower.includes('architect')) emoji = '📐';
+          else if (badgeLower.includes('neat')) emoji = '🧹';
+          else if (badgeLower.includes('helpful')) emoji = '❓';
+          else if (badgeLower.includes('creator')) emoji = '✨';
+          else if (badgeLower.includes('reader')) emoji = '📖';
+          else if (badgeLower.includes('peeker')) emoji = '👁️';
+          else if (badgeLower.includes('pager')) emoji = '📄';
+          else if (badgeLower.includes('quoter')) emoji = '💬';
+          else if (badgeLower.includes('writer')) emoji = '✍️';
+          else if (badgeLower.includes('journal')) emoji = '📓';
+          else if (badgeLower.includes('archivist')) emoji = '📦';
+          else if (badgeLower.includes('wildcard')) emoji = '🃏';
+          else if (badgeLower.includes('cleaner')) emoji = '🗑️';
+          else if (badgeLower.includes('plumber')) emoji = '🔧';
+          else if (badgeLower.includes('organizer')) emoji = '🗂️';
+          else if (badgeLower.includes('filterer')) emoji = '🔍';
+
+          return `
+            <div class="flex flex-col items-center justify-center p-3 border ${color.border} ${color.bg} rounded-md text-center relative group/badge transition-all duration-300 hover:-translate-y-1 hover:shadow-level-2 select-none">
+              <div class="w-10 h-10 rounded-full ${color.iconBg} flex items-center justify-center font-bold text-lg mb-1.5 border ${color.iconBorder} transition-transform group-hover/badge:scale-110">
+                ${emoji}
+              </div>
+              <span class="text-[10px] font-bold ${color.text} truncate w-full tracking-wide">${item.badge}</span>
+              <!-- Tooltip -->
+              <div class="absolute bottom-full mb-2 opacity-0 scale-95 pointer-events-none group-hover/badge:opacity-100 group-hover/badge:scale-100 bg-primary text-on-primary text-[9px] font-mono py-1.5 px-2.5 rounded shadow-level-3 border border-hairline z-10 transition-all duration-200 origin-bottom whitespace-normal max-w-[125px] text-center">
+                Quest ${item.title}
+              </div>
             </div>
-            <span class="text-[10px] font-bold text-ink truncate w-full">${item.badge}</span>
-            <!-- Tooltip -->
-            <div class="absolute bottom-full mb-1 scale-0 group-hover/badge:scale-100 bg-primary text-on-primary text-[9px] font-mono py-1 px-2 rounded whitespace-nowrap z-10 transition-transform origin-bottom">
-              Quest ${item.title}
-            </div>
-          </div>
-        `).join('');
+          `;
+        }).join('');
       }
     }
 
@@ -333,7 +393,6 @@ import { modules, lessons } from '../lib/lessons';
       const lessonIdAttr = node.getAttribute('data-lesson-id');
       if (!lessonIdAttr) return;
       const lessonId = parseInt(lessonIdAttr);
-      const lesson = lessons.find((l: any) => l.id === lessonId);
       
       const isCompleted = completed.includes(lessonId);
       
@@ -343,26 +402,37 @@ import { modules, lessons } from '../lib/lessons';
       
       const statusBadge = node.querySelector('.node-status-badge');
       const lockOverlay = node.querySelector('.node-lock-overlay');
-      const startText = node.querySelector('.text-mute.group-hover\\:translate-x-0\\.5');
+      const startText = node.querySelector('.start-btn-text');
 
-      node.classList.remove('opacity-60', 'pointer-events-none', 'border-success', 'border-violet');
+      node.classList.remove(
+        'opacity-60', 'pointer-events-none', 
+        'border-success', 'border-violet', 'shadow-level-4', 'shadow-level-3', 'shadow-level-2',
+        'bg-emerald-50/5', 'dark:bg-emerald-950/5', 'opacity-40', 'bg-canvas-soft-2', 
+        'border-hairline', 'border-emerald-500/20', 'bg-emerald-500/[0.02]', 'dark:bg-emerald-500/[0.01]', 
+        'bg-canvas', 'opacity-75'
+      );
       lockOverlay?.classList.add('hidden');
+      startText?.classList.remove('animate-pulse-subtle', 'text-violet', 'font-bold');
+      startText?.classList.add('text-mute');
 
       if (isCompleted) {
-        node.classList.add('border-success/60', 'bg-emerald-50/5', 'dark:bg-emerald-950/5');
+        node.classList.add('border-emerald-500/20', 'bg-emerald-500/[0.02]', 'dark:bg-emerald-500/[0.01]', 'opacity-75');
         if (statusBadge) {
           statusBadge.textContent = 'Passed';
           statusBadge.className = 'node-status-badge text-[10px] font-mono font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 dark:text-emerald-400 dark:bg-emerald-950/20 dark:border-emerald-800/40 px-2 py-0.5 rounded';
         }
       } else if (isUnlocked) {
-        node.classList.add('border-violet/40', 'shadow-xs', 'animate-pulse-slow');
-        (node as HTMLElement).style.animationDuration = '3s';
+        node.classList.add('border-violet', 'bg-canvas', 'shadow-level-4');
+        if (startText) {
+          startText.classList.remove('text-mute');
+          startText.classList.add('animate-pulse-subtle', 'text-violet', 'font-bold');
+        }
         if (statusBadge) {
           statusBadge.textContent = 'Active';
           statusBadge.className = 'node-status-badge text-[10px] font-mono font-bold text-violet-deep bg-violet-soft border border-violet-soft px-2.5 py-0.5 rounded';
         }
       } else {
-        node.classList.add('opacity-60', 'pointer-events-none');
+        node.classList.add('opacity-40', 'pointer-events-none', 'bg-canvas-soft-2', 'border-hairline');
         lockOverlay?.classList.remove('hidden');
         if (statusBadge) {
           statusBadge.textContent = 'Locked';
