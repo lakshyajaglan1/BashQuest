@@ -140,7 +140,7 @@ import LessonPanel from '../components/LessonPanel.astro';
         completedLessons: [],
         activeView: 'dashboard',
         activeLessonId: 1,
-        streak: 1,
+        streak: 0,
         lastCompletedDate: null,
         fsTree: null,
         lessonStartTrees: {},
@@ -398,7 +398,7 @@ import LessonPanel from '../components/LessonPanel.astro';
           completedLessons: [],
           activeView: 'dashboard',
           activeLessonId: 1,
-          streak: 1,
+          streak: 0,
           lastCompletedDate: null,
           fsTree: null,
           lessonStartTrees: {},
@@ -466,14 +466,18 @@ import LessonPanel from '../components/LessonPanel.astro';
       const footer = document.querySelector('footer');
 
       if (this.state.activeView === 'dashboard') {
+        viewSand?.classList.remove('animate-in', 'fade-in', 'duration-300');
+        
         viewDash?.classList.remove('hidden');
-        viewDash?.classList.add('block');
+        viewDash?.classList.add('block', 'animate-in', 'fade-in', 'duration-300');
         viewSand?.classList.remove('block', 'grid');
         viewSand?.classList.add('hidden');
         footer?.classList.remove('hidden');
       } else {
+        viewDash?.classList.remove('animate-in', 'fade-in', 'duration-300');
+        
         viewSand?.classList.remove('hidden');
-        viewSand?.classList.add('block');
+        viewSand?.classList.add('block', 'animate-in', 'fade-in', 'duration-300');
         viewDash?.classList.remove('block');
         viewDash?.classList.add('hidden');
         footer?.classList.add('hidden');

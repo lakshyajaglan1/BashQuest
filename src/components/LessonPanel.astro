@@ -54,7 +54,7 @@
   <!-- Action CTAs -->
   <div class="pt-4 border-t border-hairline/80 space-y-3">
     <!-- Success Banner -->
-    <div id="success-banner" class="hidden p-3.5 bg-emerald-50 border border-emerald-200 dark:bg-emerald-950/20 dark:border-emerald-800/40 rounded-sm flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
+    <div id="success-banner" class="hidden p-3.5 bg-emerald-50 border border-emerald-200 dark:bg-emerald-950/20 dark:border-emerald-800/40 rounded-sm flex items-center gap-3 animate-in zoom-in-95 fade-in slide-in-from-bottom-2 duration-300 ease-out shadow-[0_0_15px_rgba(16,185,129,0.15)]">
       <div class="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-base shrink-0">
         ✓
       </div>
@@ -62,6 +62,11 @@
         <h4 class="text-sm font-bold text-emerald-800 dark:text-emerald-400">Quest Completed!</h4>
         <p id="success-badge-award" class="text-xs text-emerald-600 dark:text-emerald-500 font-mono">Unlocked badge: Explorer</p>
       </div>
+    </div>
+
+    <!-- Error Banner -->
+    <div id="error-banner" class="hidden p-3.5 bg-error-soft border border-red-200 dark:bg-red-950/20 dark:border-red-900/30 rounded-sm flex items-center gap-3 text-error dark:text-red-400 font-sans text-xs transition-opacity duration-300 ease-out">
+      <span>❌ Verification failed. Check your terminal output and try again.</span>
     </div>
 
     <div class="flex gap-3">
@@ -184,6 +189,9 @@
     if (btnVerify) btnVerify.innerHTML = '<span>Verify Challenge</span>';
     btnNext?.classList.add('hidden');
     successBanner?.classList.add('hidden');
+    const errorBanner = document.getElementById('error-banner');
+    errorBanner?.classList.add('hidden');
+    errorBanner?.classList.remove('opacity-0');
 
     // If already completed previously, show success state immediately but allow re-testing
     if (window.appState.completedLessons.includes(lessonId)) {
@@ -274,6 +282,10 @@
     // Hide hints section upon completion
     const hintsSection = document.getElementById('lesson-hints-section');
     hintsSection?.classList.add('hidden');
+
+    // Hide error banner upon completion
+    const errorBanner = document.getElementById('error-banner');
+    errorBanner?.classList.add('hidden');
     
     // Check if there is a next lesson
     const currentIndex = lessons.findIndex((l: any) => l.id === activeLesson.id);
@@ -318,7 +330,23 @@
         failedAttempts++;
         renderHints();
         if (btnVerify) btnVerify.innerHTML = '<span>Verify Challenge</span>';
-        alert('Some objectives are still pending. Please review the instructions and check your terminal commands.');
+        
+        // Show inline error banner with shake and fade out after 4 seconds
+        const errorBanner = document.getElementById('error-banner');
+        if (errorBanner) {
+          errorBanner.classList.remove('hidden', 'opacity-0', 'animate-shake');
+          void errorBanner.offsetWidth; // trigger reflow
+          errorBanner.classList.add('animate-shake');
+          
+          if ((window as any).errorTimeout) clearTimeout((window as any).errorTimeout);
+          (window as any).errorTimeout = setTimeout(() => {
+            errorBanner.classList.add('opacity-0');
+            setTimeout(() => {
+              errorBanner.classList.add('hidden');
+              errorBanner.classList.remove('opacity-0');
+            }, 300); // match duration-300
+          }, 4000);
+        }
       }
     }, 600);
   });
@@ -377,3 +405,14 @@
     }
   });
 </script>
+
+<style>
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-4px); }
+    40%, 80% { transform: translateX(4px); }
+  }
+  .animate-shake {
+    animation: shake 0.3s ease-in-out;
+  }
+</style>

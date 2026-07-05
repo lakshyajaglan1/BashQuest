@@ -15,11 +15,6 @@
 
   <!-- Terminal Output Screen -->
   <div id="terminal-history" class="flex-1 overflow-y-auto space-y-1.5 pr-2 mb-2">
-    <div class="text-[#888] font-mono leading-relaxed">
-      Welcome to BashQuest Terminal v1.0.0<br>
-      Type <span class="text-success font-semibold">help</span> to list available commands. Redirection (&gt;, &gt;&gt;) is supported.<br>
-      Type your command and press Enter. Tab key autocompletes file paths.
-    </div>
   </div>
 
   <!-- Terminal Prompt Input Line -->
@@ -58,6 +53,59 @@
 
   let historyIdx = -1;
   let tempCommand = '';
+
+  let bootSequenceStarted = false;
+
+  function typeHtml(element: HTMLElement, htmlText: string, speed: number, onComplete?: () => void) {
+    let i = 0;
+    function step() {
+      if (i < htmlText.length) {
+        if (htmlText[i] === '<') {
+          const tagEnd = htmlText.indexOf('>', i);
+          if (tagEnd !== -1) {
+            element.innerHTML = htmlText.substring(0, tagEnd + 1);
+            i = tagEnd + 1;
+          } else {
+            element.innerHTML = htmlText.substring(0, i + 1);
+            i++;
+          }
+        } else if (htmlText[i] === '&') {
+          const entityEnd = htmlText.indexOf(';', i);
+          if (entityEnd !== -1 && entityEnd - i < 8) {
+            element.innerHTML = htmlText.substring(0, entityEnd + 1);
+            i = entityEnd + 1;
+          } else {
+            element.innerHTML = htmlText.substring(0, i + 1);
+            i++;
+          }
+        } else {
+          element.innerHTML = htmlText.substring(0, i + 1);
+          i++;
+        }
+        if (termHistory) {
+          termHistory.scrollTop = termHistory.scrollHeight;
+        }
+        setTimeout(step, speed);
+      } else if (onComplete) {
+        onComplete();
+      }
+    }
+    step();
+  }
+
+  function runBootSequence() {
+    if (bootSequenceStarted || !termHistory) return;
+    bootSequenceStarted = true;
+    
+    termHistory.innerHTML = '';
+    const container = document.createElement('div');
+    container.className = 'text-[#888] font-mono leading-relaxed';
+    termHistory.appendChild(container);
+    
+    const fullHtmlText = `Welcome to BashQuest Terminal v1.0.0<br>Type <span class="text-success font-semibold">help</span> to list available commands. Redirection (&gt;, &gt;&gt;) is supported.<br>Type your command and press Enter. Tab key autocompletes file paths.`;
+    
+    typeHtml(container, fullHtmlText, 12);
+  }
 
   // Focus input on clicking anywhere in terminal
   document.querySelector('.code-editor-mockup')?.addEventListener('click', (e: any) => {
@@ -253,7 +301,12 @@
   }
 
   // Listen for lesson-load event to update terminal paths
-  window.addEventListener('app:state-updated', updatePrompt);
+  window.addEventListener('app:state-updated', () => {
+    updatePrompt();
+    if (window.appState && window.appState.activeView === 'sandbox') {
+      runBootSequence();
+    }
+  });
   window.addEventListener('app:select-lesson', () => {
     updatePrompt();
     clearTerminal();

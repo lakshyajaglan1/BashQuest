@@ -28,11 +28,13 @@
   <!-- Profile & Stats Cluster -->
   <div class="flex items-center gap-4">
     <!-- Streak -->
-    <div class="hidden sm:flex items-center gap-1.5 text-sm font-medium text-warning-deep bg-warning-soft px-2.5 py-1 rounded-sm border border-orange-200">
-      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-        <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
-      </svg>
-      <span id="nav-streak-count">1</span> Day Streak
+    <div id="nav-streak-badge" class="hidden sm:flex items-center gap-1.5 text-sm font-medium text-mute bg-canvas-soft px-2.5 py-1 rounded-sm border border-hairline">
+      <span id="nav-streak-icon-container" class="flex items-center">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+        </svg>
+      </span>
+      <span id="nav-streak-count">0</span> Day Streak
     </div>
 
     <!-- XP Stats -->
@@ -202,6 +204,27 @@
     const state = e.detail;
     if (xpCount) xpCount.textContent = state.xp;
     if (streakCount) streakCount.textContent = state.streak;
+    
+    const streakBadge = document.getElementById('nav-streak-badge');
+    const streakIconContainer = document.getElementById('nav-streak-icon-container');
+    if (streakBadge && streakIconContainer) {
+      if (state.streak === 0) {
+        streakBadge.className = "hidden sm:flex items-center gap-1.5 text-sm font-medium px-2.5 py-1 rounded-sm border text-mute bg-canvas-soft border-hairline";
+        streakIconContainer.innerHTML = `
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+          </svg>
+        `;
+      } else {
+        streakBadge.className = "hidden sm:flex items-center gap-1.5 text-sm font-medium px-2.5 py-1 rounded-sm border text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800/50";
+        streakIconContainer.innerHTML = `
+          <svg class="w-4 h-4 animate-pulse-subtle text-amber-600 dark:text-amber-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.316.492-.533 1.035-.767 1.56-.251.565-.516 1.163-.887 1.637a3.987 3.987 0 01-1.077 1.007c-.43.265-.929.43-1.433.486A4.978 4.978 0 016 10c0-1.455.518-2.79 1.383-3.814a1 1 0 00-.38-1.567 6.002 6.002 0 00-3.328.79C2.466 6.162 1 7.907 1 10a8 8 0 0016 0c0-3.33-1.8-6.242-4.605-7.447z" clip-rule="evenodd" />
+          </svg>
+        `;
+      }
+    }
+
     if (state.activeView) {
       updateNavHighlights(state.activeView);
     }
