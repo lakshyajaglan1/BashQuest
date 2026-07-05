@@ -27,6 +27,16 @@
 </div>
 
 <script>
+  function escapeHtml(str: string): string {
+    if (!str) return '';
+    return str
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
   const treeRoot = document.getElementById('file-tree-root');
   const pathLabel = document.getElementById('explorer-current-path');
 
@@ -79,7 +89,7 @@
           <div class="flex items-center py-0.5 group/node hover:bg-canvas-soft-2/50 rounded px-0.5">
             <span class="text-mute/40 select-none font-light whitespace-pre">${prefix}${connector}</span>
             <span class="mr-1 text-[11px] select-none">${icon}</span>
-            <span class="${colorClass} ${activeBgClass} truncate text-[11px]" title="${child.name}">${child.name}</span>
+            <span class="${colorClass} ${activeBgClass} truncate text-[11px]" title="${escapeHtml(child.name)}">${escapeHtml(child.name)}</span>
             <span class="text-[9px] font-mono text-mute/50 ml-2 opacity-0 group-hover/node:opacity-100 transition-opacity select-none">
               (${child.permissions} ${child.owner})
             </span>
