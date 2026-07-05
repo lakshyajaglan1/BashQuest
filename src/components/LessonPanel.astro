@@ -105,6 +105,7 @@
   let activeLesson = null;
   let validationResult = { success: false, checks: [] };
   let failedAttempts = 0;
+  const dismissedHints = new Set<number>();
 
   const lessonEyebrow = document.getElementById('lesson-eyebrow');
   const lessonTitle = document.getElementById('lesson-title');
@@ -112,6 +113,7 @@
   const lessonDesc = document.getElementById('lesson-desc');
   const lessonCommands = document.getElementById('lesson-commands');
   const lessonObjectives = document.getElementById('lesson-objectives');
+  const hintsContainer = document.getElementById('lesson-hints-container');
   
   const successBanner = document.getElementById('success-banner');
   const successBadge = document.getElementById('success-badge-award');
@@ -134,6 +136,7 @@
     validationResult = { success: false, checks: lesson.objectives.map(o => ({ id: o.id, passed: false })) };
 
     failedAttempts = 0;
+    dismissedHints.clear();
     renderHints();
 
     // Draw fields
@@ -207,7 +210,6 @@
 
   function renderHints() {
     const hintsSection = document.getElementById('lesson-hints-section');
-    const hintsContainer = document.getElementById('lesson-hints-container');
     if (!hintsSection || !hintsContainer || !activeLesson) return;
 
     if (!activeLesson.hints || activeLesson.hints.length === 0) {
@@ -216,10 +218,10 @@
     }
 
     const revealedHints = [];
-    if (failedAttempts >= HINT_1_THRESHOLD && activeLesson.hints[0]) {
+    if (failedAttempts >= HINT_1_THRESHOLD && activeLesson.hints[0] && !dismissedHints.has(0)) {
       revealedHints.push({ index: 1, text: activeLesson.hints[0], type: 'info' });
     }
-    if (failedAttempts >= HINT_2_THRESHOLD && activeLesson.hints[1]) {
+    if (failedAttempts >= HINT_2_THRESHOLD && activeLesson.hints[1] && !dismissedHints.has(1)) {
       revealedHints.push({ index: 2, text: activeLesson.hints[1], type: 'info' });
     }
     if (failedAttempts >= HINT_3_THRESHOLD && activeLesson.hints[2]) {
@@ -233,6 +235,7 @@
 
     hintsSection.classList.remove('hidden');
     hintsContainer.innerHTML = revealedHints.map(hint => {
+      const idx = hint.index - 1;
       if (hint.type === 'answer') {
         return `
           <div class="p-3 bg-violet-50 border border-violet-200 dark:bg-violet-950/20 dark:border-violet-800/40 rounded-sm text-xs leading-relaxed text-violet-800 dark:text-violet-300 font-sans flex items-start gap-2.5 animate-in fade-in duration-200">
@@ -245,6 +248,11 @@
           <div class="p-3 bg-amber-50 border border-amber-200 dark:bg-amber-950/20 dark:border-amber-900/40 rounded-sm text-xs leading-relaxed text-amber-800 dark:text-amber-300 font-sans flex items-start gap-2.5 animate-in fade-in duration-200">
             <span class="font-mono font-bold text-amber-600 dark:text-amber-500 shrink-0">HINT ${hint.index}:</span>
             <span class="flex-1">${hint.text}</span>
+            <button class="btn-dismiss-hint text-amber-400 hover:text-amber-600 dark:text-amber-600 dark:hover:text-amber-400 transition-colors ml-1 cursor-pointer bg-transparent border-none p-0 focus:outline-none" data-hint-idx="${idx}" title="Dismiss hint">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
           </div>
         `;
       }
@@ -295,6 +303,8 @@
 
       if (checkRes.success) {
         // Complete Lesson!
+        failedAttempts = 0;
+        dismissedHints.clear();
         window.dispatchEvent(new CustomEvent('app:complete-lesson', { detail: { lessonId: activeLesson.id, xp: activeLesson.xp } }));
         showCompletionUI();
       } else {
@@ -345,6 +355,17 @@
     if (window.appState) {
       if (!window.appState.terminalCommands) window.appState.terminalCommands = [];
       window.appState.terminalCommands.push((e as CustomEvent).detail.command);
+    }
+  });
+
+  // Dismiss hint listener using event delegation
+  hintsContainer?.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    const dismissBtn = target.closest('.btn-dismiss-hint');
+    if (dismissBtn) {
+      const hintIdx = parseInt(dismissBtn.getAttribute('data-hint-idx') || '0', 10);
+      dismissedHints.add(hintIdx);
+      renderHints();
     }
   });
 </script>
