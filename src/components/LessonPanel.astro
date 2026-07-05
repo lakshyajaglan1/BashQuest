@@ -149,6 +149,7 @@
       // Split formatting and wrap bold tags and code blocks
       let formattedText = lesson.description
         .replace(/\n/g, '<br>')
+        .replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-ink">$1</strong>')
         .replace(/`([^`]+)`/g, '<code class="px-1.5 py-0.5 bg-canvas-soft-2 border border-hairline rounded font-mono text-xs text-primary">$1</code>');
       
       formattedText += `
