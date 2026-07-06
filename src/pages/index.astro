@@ -441,7 +441,7 @@ import LessonPanel from '../components/LessonPanel.astro';
       // Listen for save export request
       window.addEventListener('app:export-save', () => {
         try {
-          const saveCode = btoa(JSON.stringify(this.state));
+          const saveCode = btoa(encodeURIComponent(JSON.stringify(this.state)));
           window.dispatchEvent(new CustomEvent('app:show-export-modal', { detail: { saveCode } }));
         } catch (e) {
           console.error("Failed to export state", e);
@@ -453,7 +453,7 @@ import LessonPanel from '../components/LessonPanel.astro';
         const { saveCode } = e.detail;
         try {
           // Decode from base64 and parse JSON
-          const decoded = atob(saveCode);
+          const decoded = decodeURIComponent(atob(saveCode));
           const parsedState = JSON.parse(decoded);
           
           // Basic validation to check that we have a valid state object
@@ -485,24 +485,25 @@ import LessonPanel from '../components/LessonPanel.astro';
     }
 
     updateStreak() {
-      const today = new Date().toDateString();
-      const lastDate = this.state.lastCompletedDate;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // Normalize to midnight
       
+      const lastDate = this.state.lastCompletedDate ? new Date(this.state.lastCompletedDate) : null;
+      if (lastDate) lastDate.setHours(0, 0, 0, 0);
+
       if (!lastDate) {
         this.state.streak = 1;
       } else {
-        const diffTime = Math.abs(new Date(today).getTime() - new Date(lastDate).getTime());
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        const diffTime = today.getTime() - lastDate.getTime();
+        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
         
         if (diffDays === 1) {
-          // Finished lesson consecutive day, increment!
           this.state.streak += 1;
         } else if (diffDays > 1) {
-          // Streak broken
           this.state.streak = 1;
         }
       }
-      this.state.lastCompletedDate = today;
+      this.state.lastCompletedDate = today.toDateString();
     }
 
     applyViewVisibility() {
