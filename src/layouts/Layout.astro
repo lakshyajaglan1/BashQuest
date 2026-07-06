@@ -7,8 +7,8 @@ interface Props {
 }
 
 const { 
-	title = "BashQuest - Interactive Linux Commands & Filesystem Challenges",
-	description = "Learn Linux commands inside a beautiful web terminal with automated validation tests and real-time visual directory tree representation. Inspired by boot.dev and designed for modern developers."
+	title = "BashQuest — Learn Linux by Actually Using It",
+	description = "A free, interactive Linux terminal simulator with 61+ hands-on quests. No signup, no fluff — just real commands in a real sandbox."
 } = Astro.props;
 ---
 
@@ -44,9 +44,20 @@ const {
 		<meta name="description" content={description} />
 		<meta name="author" content="BashQuest Team" />
 		<meta name="keywords" content="Linux, Command Line, Terminal Simulator, Bash, Learner Tool, Interactive Lessons, boot.dev, Learn Linux, Developer Tools" />
+		
+		<!-- Open Graph -->
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
 		<meta property="og:type" content="website" />
+		<meta property="og:image" content="/og-image.png" />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		
+		<!-- Twitter Cards -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content="/og-image.png" />
 		
 		<!-- Font preloads for better speed -->
 		<link rel="preconnect" href="https://fonts.googleapis.com" />

@@ -1,0 +1,101 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
+import { modules } from '../lib/lessons.js';
+---
+
+<Layout title="About BashQuest — Learn Linux by Actually Using It" description="About BashQuest - the interactive command-line sandbox built to help you learn Linux hands-on.">
+  <div class="flex flex-col min-h-screen">
+    <!-- Navbar -->
+    <Navigation activePage="about" />
+
+    <!-- Main Content -->
+    <main class="flex-1 w-full bg-canvas-soft mesh-gradient py-12 px-4 md:px-8 select-text">
+      <div class="max-w-4xl mx-auto space-y-12">
+        
+        <!-- Header -->
+        <div class="text-center md:text-left space-y-4">
+          <span class="caption-mono uppercase tracking-widest text-mute bg-canvas-soft-2 px-3 py-1 rounded border border-hairline">Project details</span>
+          <h1 class="display-lg text-ink font-bold tracking-tight">About BashQuest.</h1>
+          <p class="body-lg text-body max-w-2xl">
+            A free, open-source Linux learning playground designed to teach you shell commands through actual browser-based filesystem interactions.
+          </p>
+        </div>
+
+        <!-- Details Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          
+          <!-- What is BashQuest Card -->
+          <div class="card-marketing border border-hairline bg-canvas p-6 flex flex-col justify-between shadow-level-3">
+            <div>
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-full bg-violet-soft text-violet flex items-center justify-center font-mono text-lg font-bold">
+                  $
+                </div>
+                <h2 class="text-xl font-sans font-extrabold text-ink tracking-tight">What is BashQuest?</h2>
+              </div>
+              <p class="body-sm text-body leading-relaxed mt-2">
+                BashQuest is a free, interactive command-line learning simulator built specifically for hands-on education. Unlike online video courses or reading guides where you passively watch others work, BashQuest forces you to learn by actually typing commands.
+              </p>
+              <p class="body-sm text-body leading-relaxed mt-4">
+                Under the hood, it features a custom-built, simulated terminal and directory structure. The tasks you execute directly modify a local virtual filesystem that tests and validates your work in real-time, giving you immediate feedback.
+              </p>
+            </div>
+          </div>
+
+          <!-- Why I Built This Card -->
+          <div class="card-marketing border border-hairline bg-canvas p-6 flex flex-col justify-between shadow-level-3">
+            <div>
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-full bg-cyan-soft text-cyan-deep flex items-center justify-center font-sans text-lg font-bold">
+                  💡
+                </div>
+                <h2 class="text-xl font-sans font-extrabold text-ink tracking-tight">Why I built this.</h2>
+              </div>
+              <p class="body-sm text-body leading-relaxed mt-2">
+                I built this because I wanted a hands-on way to learn Linux, and existing resources felt too passive. Most tutorials either ask you to copy-paste blindly or read blocks of dry text without trying anything out. 
+              </p>
+              <p class="body-sm text-body leading-relaxed mt-4 text-mute italic">
+                Note: This is a placeholder personal statement. You can customize this section in src/pages/about.astro with your own background as a developer/student and explain your goals for building this interactive tool!
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Curriculum Module Outline -->
+        <div class="space-y-6">
+          <div class="border-l-2 border-primary pl-4">
+            <h2 class="text-xl font-sans font-extrabold text-ink tracking-tight">What you'll learn.</h2>
+            <p class="body-sm text-body mt-1">Our progressive curriculum covers 16 core Linux administration skill sets:</p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            {modules.map((mod) => (
+              <div class="p-4 bg-canvas border border-hairline rounded-md shadow-level-2 hover:shadow-level-3 transition-shadow">
+                <div class="caption-mono text-mute uppercase font-semibold mb-1">
+                  Module {mod.id}
+                </div>
+                <h3 class="font-sans text-sm font-bold text-ink leading-tight">
+                  {mod.title.replace(/^\d+\.\s*/, '')}
+                </h3>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- CTA Back to learning -->
+        <div class="flex justify-center pt-4">
+          <a href="/?view=dashboard" class="button-primary text-sm font-medium animate-pulse-slow">
+            Go to Curriculum Tree
+          </a>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <Footer />
+  </div>
+</Layout>

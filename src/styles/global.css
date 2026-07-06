@@ -6,6 +6,7 @@
 @theme {
   /* Colors */
   --color-primary: #171717;
+  --color-primary-hover: #000000;
   --color-on-primary: #ffffff;
   --color-ink: #171717;
   --color-body: #4d4d4d;
@@ -51,6 +52,7 @@
 /* Dark Mode overrides for CSS custom properties */
 .dark {
   --color-primary: #ffffff;
+  --color-primary-hover: #eaeaea;
   --color-on-primary: #171717;
   --color-ink: #ffffff;
   --color-body: #a3a3a3;
@@ -176,7 +178,7 @@
 }
 
 .button-primary:hover {
-  background-color: #000000;
+  background-color: var(--color-primary-hover);
 }
 
 .button-primary:active {

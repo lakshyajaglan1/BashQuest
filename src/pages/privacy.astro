@@ -1,0 +1,86 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="Privacy Policy — BashQuest" description="Privacy policy and data storage information for BashQuest.">
+  <div class="flex flex-col min-h-screen">
+    <!-- Navbar -->
+    <Navigation activePage="privacy" />
+
+    <!-- Main Content -->
+    <main class="flex-1 w-full bg-canvas-soft mesh-gradient py-12 px-4 md:px-8 select-text">
+      <div class="max-w-3xl mx-auto space-y-8">
+        
+        <!-- Header -->
+        <div class="space-y-4">
+          <span class="caption-mono uppercase tracking-widest text-mute bg-canvas-soft-2 px-3 py-1 rounded border border-hairline">Privacy & Data</span>
+          <h1 class="display-lg text-ink font-bold tracking-tight">Privacy Policy.</h1>
+          <p class="body-md text-mute font-mono">Last updated: July 2026</p>
+        </div>
+
+        <!-- Privacy Details Card -->
+        <div class="card-marketing border border-hairline bg-canvas p-8 shadow-level-3 space-y-6">
+          
+          <div class="space-y-2">
+            <h2 class="text-lg font-sans font-bold text-ink">1. No Accounts Required.</h2>
+            <p class="body-sm text-body leading-relaxed">
+              We believe in frictionless learning. You do not need to sign up, log in, or provide any personal information (such as your name or email address) to use BashQuest. Simply open the page and start completing quests immediately.
+            </p>
+          </div>
+
+          <hr class="border-hairline" />
+
+          <div class="space-y-2">
+            <h2 class="text-lg font-sans font-bold text-ink">2. Local-Only Storage.</h2>
+            <p class="body-sm text-body leading-relaxed">
+              All your progress data—including completed lessons, earned XP, streaking math, unlocked badges, and simulated filesystem configurations—is stored <strong>exclusively inside your own browser's <code>localStorage</code></strong>. 
+            </p>
+            <p class="body-sm text-body leading-relaxed">
+              None of this information is transmitted to, processed, or stored on any external servers. Your progress stays 100% on your local device.
+            </p>
+          </div>
+
+          <hr class="border-hairline" />
+
+          <div class="space-y-2">
+            <h2 class="text-lg font-sans font-bold text-ink">3. No Cookies or Tracking.</h2>
+            <p class="body-sm text-body leading-relaxed">
+              We do not use cookie storage, analytics libraries, session tracking scripts, or telemetry software. There are no advertising scripts or pixel trackers on this site.
+            </p>
+          </div>
+
+          <hr class="border-hairline" />
+
+          <div class="space-y-2">
+            <h2 class="text-lg font-sans font-bold text-ink animate-pulse-subtle text-amber-600 dark:text-amber-400">4. Risk of Data Loss & Backups.</h2>
+            <p class="body-sm text-body leading-relaxed">
+              Because all your data is stored locally in your browser's memory, <strong>your progress will be permanently lost</strong> if:
+            </p>
+            <ul class="list-disc list-inside space-y-1 pl-4 body-sm text-body">
+              <li>You clear your browser's site cache or local storage data.</li>
+              <li>You switch to a different browser or device.</li>
+              <li>You use private browsing or incognito mode.</li>
+            </ul>
+            <p class="body-sm text-body leading-relaxed mt-3">
+              To prevent losing your progress or to transfer your learning save state to another device, please use the <strong>Export Save</strong> feature located on the Dashboard profile card, which converts your progress into a secure Base64 code that you can copy and restore later.
+            </p>
+          </div>
+
+        </div>
+
+        <!-- CTA Back to learning -->
+        <div class="flex justify-center">
+          <a href="/?view=dashboard" class="button-primary text-sm font-medium">
+            Back to Dashboard
+          </a>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <Footer />
+  </div>
+</Layout>

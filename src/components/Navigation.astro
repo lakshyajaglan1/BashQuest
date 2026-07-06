@@ -1,4 +1,9 @@
 ---
+interface Props {
+  activePage?: 'home' | 'about' | 'privacy';
+}
+
+const { activePage = 'home' } = Astro.props;
 ---
 <header class="sticky top-0 z-50 flex items-center justify-between h-[64px] border-b border-hairline bg-canvas px-4 md:px-8 select-none">
   <!-- Brand Logo -->
@@ -11,18 +16,26 @@
 
   <!-- Central Tab Toggles -->
   <nav class="flex items-center gap-2">
-    <button 
+    <a 
       id="btn-nav-dashboard" 
-      class="h-9 px-4 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer bg-primary text-on-primary shadow-sm"
+      href="/?view=dashboard"
+      class={`h-9 px-4 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-center decoration-none ${activePage === 'home' ? 'bg-primary text-on-primary shadow-sm' : 'text-body hover:text-ink hover:bg-canvas-soft-2'}`}
     >
       Dashboard
-    </button>
-    <button 
+    </a>
+    <a 
       id="btn-nav-sandbox" 
-      class="h-9 px-4 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer text-body hover:text-ink hover:bg-canvas-soft-2"
+      href="/?view=sandbox"
+      class="h-9 px-4 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-center decoration-none text-body hover:text-ink hover:bg-canvas-soft-2"
     >
       Workspace
-    </button>
+    </a>
+    <a 
+      href="/about" 
+      class={`h-9 px-4 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-center decoration-none ${activePage === 'about' ? 'bg-primary text-on-primary shadow-sm' : 'text-body hover:text-ink hover:bg-canvas-soft-2'}`}
+    >
+      About
+    </a>
   </nav>
 
   <!-- Profile & Stats Cluster -->
@@ -167,8 +180,63 @@
     }
   }
 
-  btnDashboard?.addEventListener('click', () => setView('dashboard'));
-  btnSandbox?.addEventListener('click', () => setView('sandbox'));
+  const isHomePage = () => {
+    return window.location.pathname === '/' || window.location.pathname === '' || window.location.pathname.endsWith('/index.html');
+  };
+
+  btnDashboard?.addEventListener('click', (e) => {
+    if (isHomePage()) {
+      e.preventDefault();
+      setView('dashboard');
+    }
+  });
+
+  btnSandbox?.addEventListener('click', (e) => {
+    if (isHomePage()) {
+      e.preventDefault();
+      setView('sandbox');
+    }
+  });
+
+  // Client-side stats loading from storage for non-home pages
+  function loadStatsFromStorage() {
+    try {
+      const saved = localStorage.getItem('bashquest_state');
+      if (saved) {
+        const state = JSON.parse(saved);
+        if (xpCount && state.xp !== undefined) {
+          xpCount.textContent = state.xp.toString();
+        }
+        if (streakCount && state.streak !== undefined) {
+          streakCount.textContent = state.streak.toString();
+        }
+        const streakBadge = document.getElementById('nav-streak-badge');
+        const streakIconContainer = document.getElementById('nav-streak-icon-container');
+        if (streakBadge && streakIconContainer && state.streak !== undefined) {
+          if (state.streak === 0) {
+            streakBadge.className = "hidden sm:flex items-center gap-1.5 text-sm font-medium px-2.5 py-1 rounded-sm border text-mute bg-canvas-soft border-hairline";
+            streakIconContainer.innerHTML = `
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+              </svg>
+            `;
+          } else {
+            streakBadge.className = "hidden sm:flex items-center gap-1.5 text-sm font-medium px-2.5 py-1 rounded-sm border text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800/50";
+            streakIconContainer.innerHTML = `
+              <svg class="w-4 h-4 animate-pulse-subtle text-amber-600 dark:text-amber-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.316.492-.533 1.035-.767 1.56-.251.565-.516 1.163-.887 1.637a3.987 3.987 0 01-1.077 1.007c-.43.265-.929.43-1.433.486A4.978 4.978 0 016 10c0-1.455.518-2.79 1.383-3.814a1 1 0 00-.38-1.567 6.002 6.002 0 00-3.328.79C2.466 6.162 1 7.907 1 10a8 8 0 0016 0c0-3.33-1.8-6.242-4.605-7.447z" clip-rule="evenodd" />
+              </svg>
+            `;
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Failed to load stats in navigation", e);
+    }
+  }
+
+  // Load stats initially on DOM load / script execution
+  loadStatsFromStorage();
 
   // AI Modal Handlers
   btnAskAI?.addEventListener('click', () => {
