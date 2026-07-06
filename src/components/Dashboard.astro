@@ -55,7 +55,7 @@ import { modules, lessons } from '../lib/lessons';
       <!-- Badges Card -->
       <div class="card-marketing bg-canvas p-6 shadow-level-3">
         <h3 class="text-xs font-bold tracking-widest text-mute uppercase font-mono mb-4 border-l-2 border-primary pl-2">Earned Badges</h3>
-        <div id="dashboard-badges-rack" class="grid grid-cols-3 gap-3">
+        <div id="dashboard-badges-rack" class="flex flex-wrap gap-2">
           <!-- Dynamically filled with badges -->
         </div>
       </div>
@@ -64,22 +64,22 @@ import { modules, lessons } from '../lib/lessons';
     <!-- Curriculum Skill Tree (Right Column) -->
     <div class="lg:col-span-2 space-y-8">
       <!-- Intro Banner -->
-      <div class="mesh-gradient bg-neutral-900 dark:bg-black text-white p-5 md:p-6 flex flex-col gap-4 relative overflow-hidden shadow-level-4 rounded-md">
+      <div class="mesh-gradient bg-primary text-on-primary p-5 md:p-6 flex flex-col gap-4 relative overflow-hidden shadow-level-4 rounded-md">
         <!-- Subtle mesh gradient glow in the top right corner -->
         <div class="absolute -right-16 -top-16 w-48 h-48 rounded-full bg-gradient-to-br from-violet/25 via-link/15 to-transparent blur-3xl pointer-events-none"></div>
         
         <div class="relative z-10">
-          <h2 class="text-base md:text-lg font-bold text-white tracking-tight font-sans">
+          <h2 class="text-base md:text-lg font-bold text-on-primary tracking-tight font-sans">
             Learn Linux by actually using it.
           </h2>
-          <p class="text-xs md:text-sm text-zinc-400 mt-1.5 leading-relaxed max-w-xl">
+          <p class="text-xs md:text-sm text-on-primary/70 mt-1.5 leading-relaxed max-w-xl">
             Real terminal commands, real filesystem simulation — no videos, no fluff.
           </p>
         </div>
         
         <div class="flex flex-wrap gap-2.5 relative z-10">
           <!-- Real Terminal Sandbox -->
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-[10px] md:text-xs font-mono font-medium text-zinc-300 hover:bg-white/10 transition-colors">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-on-primary/10 bg-on-primary/5 text-[10px] md:text-xs font-mono font-medium text-on-primary/80 hover:bg-on-primary/10 transition-colors">
             <svg class="w-3.5 h-3.5 text-violet shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
             </svg>
@@ -87,7 +87,7 @@ import { modules, lessons } from '../lib/lessons';
           </span>
 
           <!-- 60+ Hands-On Quests -->
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-[10px] md:text-xs font-mono font-medium text-zinc-300 hover:bg-white/10 transition-colors">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-on-primary/10 bg-on-primary/5 text-[10px] md:text-xs font-mono font-medium text-on-primary/80 hover:bg-on-primary/10 transition-colors">
             <svg class="w-3.5 h-3.5 text-success shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
             </svg>
@@ -95,7 +95,7 @@ import { modules, lessons } from '../lib/lessons';
           </span>
 
           <!-- Instant Verification -->
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-[10px] md:text-xs font-mono font-medium text-zinc-300 hover:bg-white/10 transition-colors">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-on-primary/10 bg-on-primary/5 text-[10px] md:text-xs font-mono font-medium text-on-primary/80 hover:bg-on-primary/10 transition-colors">
             <svg class="w-3.5 h-3.5 text-cyan shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
             </svg>
@@ -103,7 +103,7 @@ import { modules, lessons } from '../lib/lessons';
           </span>
 
           <!-- No Signup Required -->
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-[10px] md:text-xs font-mono font-medium text-zinc-300 hover:bg-white/10 transition-colors">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-on-primary/10 bg-on-primary/5 text-[10px] md:text-xs font-mono font-medium text-on-primary/80 hover:bg-on-primary/10 transition-colors">
             <svg class="w-3.5 h-3.5 text-warning shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
             </svg>
@@ -316,7 +316,7 @@ import { modules, lessons } from '../lib/lessons';
 
       if (earnedBadges.length === 0) {
         badgesRack.innerHTML = `
-          <div class="col-span-3 text-center py-5 border border-dashed border-hairline rounded-md text-mute text-[10px] font-mono bg-canvas-soft-2/50">
+          <div class="w-full text-center py-5 border border-dashed border-hairline rounded-md text-mute text-[10px] font-mono bg-canvas-soft-2/50">
             No badges unlocked yet.<br>Complete quests to collect!
           </div>
         `;
@@ -325,19 +325,19 @@ import { modules, lessons } from '../lib/lessons';
           // Color palettes matching Vercel premium collectible chip style
           const colors = [
             {
-              bg: 'bg-violet-500/10 dark:bg-violet-400/10',
-              text: 'text-violet-600 dark:text-violet-400',
-              iconBg: 'bg-violet-500/20 dark:bg-violet-400/20 text-violet-700 dark:text-violet-300'
+              bg: 'bg-violet-50 dark:bg-violet-950/30',
+              text: 'text-violet-700 dark:text-violet-300',
+              border: 'border-violet-100 dark:border-violet-900/40 hover:bg-violet-100/50 dark:hover:bg-violet-900/30'
             },
             {
-              bg: 'bg-cyan-500/10 dark:bg-cyan-400/10',
-              text: 'text-cyan-600 dark:text-cyan-400',
-              iconBg: 'bg-cyan-500/20 dark:bg-cyan-400/20 text-cyan-700 dark:text-cyan-300'
+              bg: 'bg-blue-50 dark:bg-blue-950/30',
+              text: 'text-blue-700 dark:text-blue-300',
+              border: 'border-blue-100 dark:border-blue-900/40 hover:bg-blue-100/50 dark:hover:bg-blue-900/30'
             },
             {
-              bg: 'bg-warning-500/10 dark:bg-warning-400/10',
-              text: 'text-warning-600 dark:text-warning-400',
-              iconBg: 'bg-warning-500/20 dark:bg-warning-400/20 text-warning-700 dark:text-warning-300'
+              bg: 'bg-amber-50 dark:bg-amber-950/30',
+              text: 'text-amber-700 dark:text-amber-300',
+              border: 'border-amber-100 dark:border-amber-900/40 hover:bg-amber-100/50 dark:hover:bg-amber-900/30'
             }
           ];
           const color = colors[index % colors.length];
@@ -366,13 +366,11 @@ import { modules, lessons } from '../lib/lessons';
           else if (badgeLower.includes('filterer')) emoji = '🔍';
 
           return `
-            <div class="flex flex-col items-center justify-center p-3.5 ${color.bg} rounded-xl text-center relative group/badge transition-all duration-300 hover:-translate-y-1 hover:shadow-level-2 select-none cursor-default">
-              <div class="w-11 h-11 rounded-full ${color.iconBg} flex items-center justify-center font-bold text-xl mb-2 transition-transform duration-300 group-hover/badge:scale-110">
-                ${emoji}
-              </div>
-              <span class="text-[10px] font-mono font-bold ${color.text} truncate w-full tracking-wide">${item.badge}</span>
+            <div class="flex items-center gap-2 px-3 py-1.5 ${color.bg} ${color.border} border rounded-full transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm cursor-default select-none group/badge relative">
+              <span class="text-sm shrink-0">${emoji}</span>
+              <span class="text-[11px] font-mono font-bold ${color.text} truncate max-w-[100px]">${item.badge}</span>
               <!-- Tooltip -->
-              <div class="absolute bottom-full mb-2 opacity-0 scale-95 pointer-events-none group-hover/badge:opacity-100 group-hover/badge:scale-100 bg-primary text-on-primary text-[9px] font-mono py-1.5 px-2.5 rounded-sm shadow-level-3 border border-hairline z-10 transition-all duration-200 origin-bottom whitespace-normal max-w-[125px] text-center">
+              <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 opacity-0 scale-95 pointer-events-none group-hover/badge:opacity-100 group-hover/badge:scale-100 bg-primary text-on-primary text-[9px] font-mono py-1 px-2 rounded shadow-level-3 border border-hairline z-10 transition-all duration-200 whitespace-nowrap">
                 Quest ${item.title}
               </div>
             </div>
@@ -401,14 +399,16 @@ import { modules, lessons } from '../lib/lessons';
 
       node.classList.remove(
         'opacity-60', 'pointer-events-none', 
-        'border-success', 'border-violet', 'border-violet/50', 'shadow-level-4', 'shadow-level-3', 'shadow-level-2',
-        'shadow-[0_0_20px_rgba(121,40,202,0.15)]',
-        'bg-emerald-50/5', 'dark:bg-emerald-950/5', 'opacity-40', 'bg-canvas-soft-2', 
-        'border-hairline', 'border-emerald-500/20', 'bg-emerald-500/[0.02]', 'dark:bg-emerald-500/[0.01]', 
+        'border-success', 'border-violet', 'border-violet/50', 'border-primary',
+        'shadow-level-4', 'shadow-level-3', 'shadow-level-2',
+        'shadow-[0_0_20px_rgba(121,40,202,0.15)]', 'shadow-[0_8px_30px_rgba(0,0,0,0.08)]',
+        'bg-emerald-50/5', 'bg-emerald-50/50', 'dark:bg-emerald-950/5', 'dark:bg-emerald-950/10', 'opacity-40', 'opacity-50', 'bg-canvas-soft-2', 
+        'border-hairline', 'border-emerald-500/20', 'border-emerald-200/50', 'dark:border-emerald-800/40', 'dark:border-emerald-900/30',
+        'bg-emerald-500/[0.02]', 'dark:bg-emerald-500/[0.01]', 
         'bg-canvas', 'bg-transparent', 'opacity-75', 'opacity-70'
       );
       lockOverlay?.classList.add('hidden');
-      startText?.classList.remove('animate-pulse-subtle', 'text-violet', 'font-bold');
+      startText?.classList.remove('animate-pulse-subtle', 'text-violet', 'text-link', 'font-bold');
       startText?.classList.add('text-mute');
       if (startText) {
         startText.innerHTML = 'Start <span class="font-mono">→</span>';
@@ -419,7 +419,7 @@ import { modules, lessons } from '../lib/lessons';
       }
 
       if (isCompleted) {
-        node.classList.add('bg-transparent', 'border-hairline', 'opacity-70');
+        node.classList.add('bg-emerald-50/50', 'border-emerald-200/50', 'dark:bg-emerald-950/10', 'dark:border-emerald-900/30', 'opacity-90');
         if (titleEl) {
           titleEl.classList.remove('text-ink');
           titleEl.classList.add('text-mute');
@@ -432,17 +432,17 @@ import { modules, lessons } from '../lib/lessons';
           startText.innerHTML = 'Review <span class="font-mono">→</span>';
         }
       } else if (isUnlocked) {
-        node.classList.add('border-violet/50', 'bg-canvas', 'shadow-[0_0_20px_rgba(121,40,202,0.15)]');
+        node.classList.add('border-primary', 'dark:border-violet/50', 'bg-canvas', 'shadow-[0_8px_30px_rgba(0,0,0,0.08)]', 'dark:shadow-[0_0_20px_rgba(121,40,202,0.15)]');
         if (startText) {
           startText.classList.remove('text-mute');
-          startText.classList.add('animate-pulse-subtle', 'text-violet', 'font-bold');
+          startText.classList.add('animate-pulse-subtle', 'text-link', 'font-bold');
         }
         if (statusBadge) {
           statusBadge.textContent = 'Active';
           statusBadge.className = 'node-status-badge text-[10px] font-mono font-bold text-violet-deep bg-violet-soft border border-violet-soft px-2.5 py-0.5 rounded';
         }
       } else {
-        node.classList.add('opacity-40', 'pointer-events-none', 'bg-canvas-soft-2', 'border-hairline');
+        node.classList.add('opacity-50', 'pointer-events-none', 'bg-canvas-soft-2', 'border-hairline');
         lockOverlay?.classList.remove('hidden');
         if (statusBadge) {
           statusBadge.textContent = 'Locked';
