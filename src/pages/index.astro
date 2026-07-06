@@ -437,6 +437,51 @@ import LessonPanel from '../components/LessonPanel.astro';
           this.saveToStorage();
         }
       });
+
+      // Listen for save export request
+      window.addEventListener('app:export-save', () => {
+        try {
+          const saveCode = btoa(JSON.stringify(this.state));
+          window.dispatchEvent(new CustomEvent('app:show-export-modal', { detail: { saveCode } }));
+        } catch (e) {
+          console.error("Failed to export state", e);
+        }
+      });
+
+      // Listen for save import request
+      window.addEventListener('app:import-save', (e: any) => {
+        const { saveCode } = e.detail;
+        try {
+          // Decode from base64 and parse JSON
+          const decoded = atob(saveCode);
+          const parsedState = JSON.parse(decoded);
+          
+          // Basic validation to check that we have a valid state object
+          if (!parsedState || typeof parsedState !== 'object' || typeof parsedState.xp !== 'number') {
+            throw new Error('Malformed save code schema');
+          }
+          
+          // Merge parsed state into current state
+          this.state = {
+            ...this.state,
+            ...parsedState
+          };
+          
+          // Save to local storage
+          this.saveToStorage();
+          
+          // Notify dashboard of success
+          window.dispatchEvent(new CustomEvent('app:import-success'));
+          
+          // Reload the page to fully reflect state changes
+          window.location.reload();
+        } catch (err) {
+          console.error("Failed to import save code", err);
+          window.dispatchEvent(new CustomEvent('app:import-error', { 
+            detail: { message: "Invalid save code. Please ensure you copied the entire code correctly." } 
+          }));
+        }
+      });
     }
 
     updateStreak() {
