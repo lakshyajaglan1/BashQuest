@@ -20,7 +20,7 @@
     </div>
   </div>
   
-  <div class="text-[10px] font-mono text-mute mt-3 flex justify-between items-center px-1">
+  <div class="text-[10px] font-mono text-gray-600 dark:text-gray-400 font-medium mt-3 flex justify-between items-center px-1">
     <span>User: learner</span>
     <span id="explorer-current-path">/home/learner</span>
   </div>
@@ -76,20 +76,23 @@
         const childPrefix = isLast ? '    ' : '│   ';
 
         const icon = child.type === 'dir' ? '📁' : (child.type === 'link' ? '🔗' : '📄');
-        const colorClass = child.type === 'dir' ? 'text-primary font-medium' : 'text-body hover:text-ink';
         
         // Highlight active directory
         let activeBgClass = '';
-        if (window.appState && window.appState.session) {
-          const childAbsPath = window.appState.fs.resolvePathStr(prefix ? '' : '/', (prefix ? prefix.replace(/[│├─└\s]/g, '') : '') + '/' + child.name);
-          if (window.appState.session.currentPath === childAbsPath) {
-            activeBgClass = 'bg-link-bg-soft/40 px-1 rounded-xs border border-blue-100/50';
-          }
+        const childAbsPath = window.appState.fs.resolvePathStr(prefix ? '' : '/', (prefix ? prefix.replace(/[│├─└\s]/g, '') : '') + '/' + child.name);
+        const isActive = window.appState && window.appState.session && window.appState.session.currentPath === childAbsPath;
+        
+        if (isActive) {
+          activeBgClass = 'bg-link-bg-soft/70 dark:bg-link-bg-soft/30 px-2 py-0.5 rounded-sm border border-link/10 dark:border-link/25';
         }
+        
+        const colorClass = isActive 
+          ? 'text-link-deep dark:text-link font-semibold' 
+          : 'text-black dark:text-white font-medium';
 
         html += `
           <div class="flex items-center py-0.5 group/node hover:bg-canvas-soft-2/50 rounded px-0.5">
-            <span class="text-mute/40 select-none font-light whitespace-pre">${prefix}${connector}</span>
+            <span class="text-gray-400 select-none font-light whitespace-pre">${prefix}${connector}</span>
             <span class="mr-1 text-[11px] select-none">${icon}</span>
             <span class="${colorClass} ${activeBgClass} truncate text-[11px]" title="${escapeHtml(child.name)}">${escapeHtml(child.name)}</span>
             <span class="text-[9px] font-mono text-mute/50 ml-2 opacity-0 group-hover/node:opacity-100 transition-opacity select-none">
