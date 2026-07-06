@@ -402,13 +402,13 @@ import { modules, lessons } from '../lib/lessons';
         'border-success', 'border-violet', 'border-violet/50', 'border-primary',
         'shadow-level-4', 'shadow-level-3', 'shadow-level-2',
         'shadow-[0_0_20px_rgba(121,40,202,0.15)]', 'shadow-[0_8px_30px_rgba(0,0,0,0.08)]',
-        'bg-emerald-50/5', 'bg-emerald-50/50', 'dark:bg-emerald-950/5', 'dark:bg-emerald-950/10', 'opacity-40', 'opacity-50', 'bg-canvas-soft-2', 
-        'border-hairline', 'border-emerald-500/20', 'border-emerald-200/50', 'dark:border-emerald-800/40', 'dark:border-emerald-900/30',
+        'bg-emerald-50/5', 'bg-emerald-50/20', 'bg-emerald-50/50', 'dark:bg-emerald-950/5', 'dark:bg-emerald-950/10', 'opacity-40', 'opacity-50', 'opacity-90', 'opacity-100', 'bg-canvas-soft-2', 
+        'border-hairline', 'border-emerald-100', 'border-emerald-500/20', 'border-emerald-200/50', 'dark:border-emerald-800/40', 'dark:border-emerald-900/20', 'dark:border-emerald-900/30',
         'bg-emerald-500/[0.02]', 'dark:bg-emerald-500/[0.01]', 
         'bg-canvas', 'bg-transparent', 'opacity-75', 'opacity-70'
       );
       lockOverlay?.classList.add('hidden');
-      startText?.classList.remove('animate-pulse-subtle', 'text-violet', 'text-link', 'font-bold');
+      startText?.classList.remove('animate-pulse-subtle', 'text-violet', 'text-link', 'font-bold', 'group-hover:text-ink', 'transition-colors');
       startText?.classList.add('text-mute');
       if (startText) {
         startText.innerHTML = 'Start <span class="font-mono">→</span>';
@@ -419,17 +419,15 @@ import { modules, lessons } from '../lib/lessons';
       }
 
       if (isCompleted) {
-        node.classList.add('bg-emerald-50/50', 'border-emerald-200/50', 'dark:bg-emerald-950/10', 'dark:border-emerald-900/30', 'opacity-90');
-        if (titleEl) {
-          titleEl.classList.remove('text-ink');
-          titleEl.classList.add('text-mute');
-        }
+        node.classList.add('bg-emerald-50/20', 'border-emerald-100', 'dark:bg-emerald-950/10', 'dark:border-emerald-900/20', 'opacity-100');
         if (statusBadge) {
           statusBadge.textContent = 'Passed';
           statusBadge.className = 'node-status-badge text-[10px] font-mono font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 dark:text-emerald-400 dark:bg-emerald-950/20 dark:border-emerald-800/40 px-2 py-0.5 rounded';
         }
         if (startText) {
           startText.innerHTML = 'Review <span class="font-mono">→</span>';
+          startText.classList.remove('text-mute');
+          startText.classList.add('text-mute', 'group-hover:text-ink', 'transition-colors');
         }
       } else if (isUnlocked) {
         node.classList.add('border-primary', 'dark:border-violet/50', 'bg-canvas', 'shadow-[0_8px_30px_rgba(0,0,0,0.08)]', 'dark:shadow-[0_0_20px_rgba(121,40,202,0.15)]');
