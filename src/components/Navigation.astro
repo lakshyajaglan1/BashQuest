@@ -202,7 +202,27 @@
   // Listen for Global State Updates
   window.addEventListener('app:state-updated', (e: any) => {
     const state = e.detail;
-    if (xpCount) xpCount.textContent = state.xp;
+    if (xpCount) {
+      const currentDisplayedXp = parseInt(xpCount.textContent || '0', 10);
+      if (state.xp > currentDisplayedXp) {
+        let startTimestamp: number | null = null;
+        const step = (timestamp: number) => {
+          if (!startTimestamp) startTimestamp = timestamp;
+          const progress = Math.min((timestamp - startTimestamp) / 800, 1);
+          // easeOutQuart
+          const easeProgress = 1 - Math.pow(1 - progress, 4); 
+          xpCount.textContent = Math.floor(currentDisplayedXp + (state.xp - currentDisplayedXp) * easeProgress).toString();
+          if (progress < 1) {
+            window.requestAnimationFrame(step);
+          } else {
+            xpCount.textContent = state.xp.toString();
+          }
+        };
+        window.requestAnimationFrame(step);
+      } else {
+        xpCount.textContent = state.xp.toString();
+      }
+    }
     if (streakCount) streakCount.textContent = state.streak;
     
     const streakBadge = document.getElementById('nav-streak-badge');
