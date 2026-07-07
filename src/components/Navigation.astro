@@ -5,13 +5,13 @@ interface Props {
 
 const { activePage = 'home' } = Astro.props;
 ---
-<header class="sticky top-0 z-50 flex items-center justify-between h-[64px] border-b border-hairline bg-canvas px-4 md:px-8 select-none">
+<header class="sticky top-0 z-50 flex items-center justify-between h-[64px] border-b border-hairline bg-canvas px-4 md:px-8 select-none overflow-x-auto [&::-webkit-scrollbar]:hidden">
   <!-- Brand Logo -->
   <div class="flex items-center gap-3">
     <div class="flex items-center justify-center w-8 h-8 rounded-sm bg-primary text-on-primary font-mono text-lg font-bold">
       $
     </div>
-    <span class="font-sans text-lg font-semibold tracking-tight text-ink">BashQuest<span class="text-link">.</span></span>
+    <span class="hidden sm:inline-block font-sans text-lg font-semibold tracking-tight text-ink">BashQuest<span class="text-link">.</span></span>
   </div>
 
   <!-- Central Tab Toggles -->
@@ -76,13 +76,13 @@ const { activePage = 'home' } = Astro.props;
     <!-- Ask AI Helper button -->
     <button 
       id="btn-ask-ai" 
-      class="flex items-center gap-1.5 h-8 px-3 rounded-sm border border-hairline bg-canvas text-ink text-xs font-semibold hover:bg-canvas-soft-2 transition-all cursor-pointer"
+      class="flex items-center gap-1.5 h-8 p-2 sm:px-3 rounded-sm border border-hairline bg-canvas text-ink text-xs font-semibold hover:bg-canvas-soft-2 transition-all cursor-pointer"
     >
       <svg class="w-3.5 h-3.5 text-violet" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21l8.904-4.896L21 9l-4.896-8.904L9.813 15.904z"/>
         <path stroke-linecap="round" stroke-linejoin="round" d="M9 10H4a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-5"/>
       </svg>
-      Get a Hint
+      <span class="hidden sm:inline-block">Get a Hint</span>
     </button>
   </div>
 </header>
