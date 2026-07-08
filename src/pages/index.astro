@@ -6,126 +6,18 @@ import FileSystemVisualizer from "../components/FileSystemVisualizer.astro";
 import Terminal from "../components/Terminal.astro";
 import LessonPanel from "../components/LessonPanel.astro";
 import Footer from "../components/Footer.astro";
+import { modules } from "../lib/lessons.js";
 ---
 
 <Layout>
   <!-- Global Application Shell -->
   <div class="flex flex-col min-h-screen">
-    <!-- SEO: indexable homepage text (server-rendered) -->
-    <section class="w-full max-w-4xl mx-auto px-4 md:px-8 py-10">
-      <h1 class="text-2xl md:text-3xl font-bold text-ink tracking-tight">
-        BashQuest — interactive terminal sandbox for practice linux commands
-      </h1>
-      <p class="mt-3 body-md text-body">
-        BashQuest is a browser-based bash learning platform designed for one
-        goal: help you confidently practice linux commands and bash scripting
-        without breaking your system.
-      </p>
-
-      <h2 class="mt-8 text-xl font-bold text-ink">
-        Practice linux commands online, with instant feedback
-      </h2>
-      <p class="mt-2 body-sm text-body">
-        Learning the command line is easier when you can try things immediately.
-        BashQuest provides an interactive terminal sandbox where you can run
-        real shell-style commands against a simulated Linux filesystem. Instead
-        of watching videos or reading static examples, you build skill by
-        completing short quests that guide you step-by-step—then you verify your
-        output right inside the browser.
-      </p>
-
-      <p class="mt-4 body-sm text-body">
-        Each quest focuses on a practical command-line skill: exploring
-        directories, listing files, searching text, using pipes, understanding
-        permissions, and writing small bash scripts. As you progress, the tasks
-        become more realistic so your learning transfers to your real computer.
-      </p>
-
-      <h2 class="mt-8 text-xl font-bold text-ink">
-        A virtual Linux terminal emulator with gamified bash tutorials
-      </h2>
-      <p class="mt-2 body-sm text-body">
-        BashQuest acts like a linux terminal emulator, but with structured
-        learning built in. The experience is gamified: you unlock quests in a
-        curriculum tree, earn XP, and collect badges. That means every practice
-        session has a clear purpose.
-      </p>
-
-      <p class="mt-4 body-sm text-body">
-        The virtual environment is safe. You can experiment freely because your
-        workspace is simulated. If you run a risky command or make a mistake, it
-        stays within the interactive terminal sandbox and does not affect your
-        machine. This makes it ideal for beginners and also useful for
-        experienced users who want a fast way to refresh topics like
-        redirection, wildcard matching, text processing, and permissions.
-      </p>
-
-      <h2 class="mt-8 text-xl font-bold text-ink">
-        Learn bash in browser: from one-liners to bash scripts
-      </h2>
-      <p class="mt-2 body-sm text-body">
-        BashQuest is made for practice bash scripts online and for understanding
-        how bash command-line tools work together. You will work through tasks
-        that gradually expand your ability:
-      </p>
-
-      <ul class="mt-3 list-disc list-inside body-sm text-body space-y-1">
-        <li>Explore and navigate the filesystem using familiar commands</li>
-        <li>Read and manipulate files with text tools and patterns</li>
-        <li>Use pipes and filters to transform output like a real workflow</li>
-        <li>Practice wildcard matching and command substitution concepts</li>
-        <li>Work with permissions and simulate safer command usage</li>
-        <li>Write and test simple bash scripts in a guided environment</li>
-      </ul>
-
-      <p class="mt-4 body-sm text-body">
-        When you finish a quest, you get confidence that your approach is
-        correct, because the system checks your results. This is similar to an
-        online bash compiler workflow—except your focus is learning and building
-        intuition for everyday terminal work.
-      </p>
-
-      <h2 class="mt-8 text-xl font-bold text-ink">
-        Why an online practice environment helps you improve faster
-      </h2>
-      <p class="mt-2 body-sm text-body">
-        The fastest way to improve at the terminal is repetition with structure.
-        BashQuest gives you both: short practice linux commands challenges and a
-        curriculum that keeps you moving forward. You can focus on learning
-        topics one at a time, while still working within a single consistent
-        environment.
-      </p>
-
-      <p class="mt-4 body-sm text-body">
-        Because the simulator is interactive, you can develop real muscle
-        memory: typing commands, reading output, and iterating until you get the
-        exact result. Over time, these steps become automatic, so you spend less
-        effort on syntax and more effort on problem-solving.
-      </p>
-
-      <p class="mt-4 body-sm text-body">
-        Whether you want to learn bash for school, build skills for Linux
-        administration, or just become more comfortable with a linux terminal
-        emulator, BashQuest is built to make practice feel productive and
-        rewarding.
-      </p>
-
-      <p class="mt-6 body-sm text-body">
-        Start practicing now by opening the interactive terminal sandbox from
-        the dashboard. Choose a quest, run commands, and learn by doing.
-        Bam—each completed step adds skill you can reuse in real-world terminal
-        workflows.
-      </p>
-    </section>
-
-    <!-- Visible dashboard continues below -->
-
     <!-- Navbar -->
     <Navigation />
 
     <!-- Views Container -->
     <main class="flex-1 w-full relative">
-      <!-- VIEW 1: Dashboard -->
+      <!-- VIEW 1: Dashboard (Interactive Skill Tree) -->
       <section id="view-dashboard" class="block">
         <Dashboard />
       </section>
@@ -155,6 +47,238 @@ import Footer from "../components/Footer.astro";
             <!-- Terminal Simulator Box -->
             <div class="flex-1 min-h-0">
               <Terminal />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 3: Instant-Load About Page View (Seamless Tab Switching!) -->
+      <section id="view-about" class="hidden">
+        <div class="w-full bg-canvas-soft py-12 px-4 md:px-8 select-text">
+          <div class="max-w-4xl mx-auto space-y-12">
+            <!-- Header -->
+            <div class="text-center md:text-left space-y-4">
+              <span
+                class="caption-mono uppercase tracking-widest text-mute bg-canvas-soft-2 px-3 py-1 rounded border border-hairline"
+                >Project details</span
+              >
+              <h1 class="display-lg text-ink font-bold tracking-tight">
+                About BashQuest.
+              </h1>
+              <p class="body-lg text-body max-w-2xl">
+                A free, open-source Linux learning playground designed to teach
+                you shell commands through actual browser-based filesystem
+                interactions.
+              </p>
+            </div>
+
+            <!-- Details Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <!-- What is BashQuest Card -->
+              <div
+                class="card-marketing border border-hairline bg-canvas p-6 flex flex-col justify-between shadow-level-3"
+              >
+                <div>
+                  <div class="flex items-center gap-3 mb-4">
+                    <div
+                      class="w-10 h-10 rounded-full bg-violet-soft text-violet flex items-center justify-center font-mono text-lg font-bold"
+                    >
+                      $
+                    </div>
+                    <h2
+                      class="text-xl font-sans font-extrabold text-ink tracking-tight"
+                    >
+                      What is BashQuest?
+                    </h2>
+                  </div>
+                  <p class="body-sm text-body leading-relaxed mt-2">
+                    BashQuest is a free, interactive command-line learning
+                    simulator built specifically for hands-on education. Unlike
+                    online video courses where you passively watch others work,
+                    BashQuest forces you to learn by actually typing commands.
+                  </p>
+                  <p class="body-sm text-body leading-relaxed mt-4">
+                    Under the hood, it features a custom-built, simulated
+                    terminal and directory structure. The tasks you execute
+                    directly modify a local virtual filesystem that tests and
+                    validates your work in real-time, giving you immediate
+                    feedback.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Why I Built This Card -->
+              <div
+                class="card-marketing border border-hairline bg-canvas p-6 flex flex-col justify-between shadow-level-3"
+              >
+                <div>
+                  <div class="flex items-center gap-3 mb-4">
+                    <div
+                      class="w-10 h-10 rounded-full bg-cyan-soft text-cyan-deep flex items-center justify-center font-sans text-lg font-bold"
+                    >
+                      💡
+                    </div>
+                    <h2
+                      class="text-xl font-sans font-extrabold text-ink tracking-tight"
+                    >
+                      Why I built this.
+                    </h2>
+                  </div>
+                  <p class="text-sm text-body leading-relaxed mb-4">
+                    When I first started learning Linux, I was terrified of
+                    running the wrong command and breaking my system. Most
+                    tutorials are either boring videos or dry textbooks that
+                    don't let you actually practice.
+                  </p>
+                  <p class="text-sm text-body leading-relaxed">
+                    I wanted to build a hands-on, zero-risk environment where
+                    beginners could learn by doing. I engineered BashQuest using
+                    Astro and Vanilla JS so it runs entirely client-side—meaning
+                    it's lightning fast, requires no servers, and protects your
+                    privacy.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Rich Marketing/SEO Details Section -->
+            <div class="space-y-8 pt-6 border-t border-hairline">
+              <div class="space-y-4">
+                <h2 class="text-2xl font-bold text-ink tracking-tight">
+                  Practice Linux Commands Online, with Instant Feedback
+                </h2>
+                <p class="body-sm text-body leading-relaxed">
+                  Learning the command line is easier when you can try things
+                  immediately. BashQuest provides an interactive terminal
+                  sandbox where you can run real shell-style commands against a
+                  simulated Linux filesystem. Instead of watching videos or
+                  reading static examples, you build skill by completing short
+                  quests that guide you step-by-step—then you verify your output
+                  right inside the browser.
+                </p>
+                <p class="body-sm text-body leading-relaxed">
+                  Each quest focuses on a practical command-line skill:
+                  exploring directories, listing files, searching text, using
+                  pipes, understanding permissions, and writing small bash
+                  scripts. As you progress, the tasks become more realistic so
+                  your learning transfers to your real computer.
+                </p>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+                <div class="space-y-3">
+                  <h3 class="text-lg font-bold text-ink">
+                    A Virtual Linux Terminal Simulator
+                  </h3>
+                  <p class="body-sm text-body leading-relaxed">
+                    BashQuest acts like a Linux terminal emulator, but with
+                    structured learning built in. The experience is gamified:
+                    you unlock quests in a curriculum tree, earn XP, and collect
+                    badges. That means every practice session has a clear
+                    purpose.
+                  </p>
+                  <p class="body-sm text-body leading-relaxed">
+                    The virtual environment is safe. You can experiment freely
+                    because your workspace is simulated. If you run a risky
+                    command or make a mistake, it stays within the interactive
+                    terminal sandbox and does not affect your machine.
+                  </p>
+                </div>
+
+                <div class="space-y-3">
+                  <h3 class="text-lg font-bold text-ink">
+                    Why Practice Helps You Improve Faster
+                  </h3>
+                  <p class="body-sm text-body leading-relaxed">
+                    The fastest way to improve at the terminal is repetition
+                    with structure. BashQuest gives you both: short command
+                    challenges and a curriculum that keeps you moving forward.
+                    You can focus on learning topics one at a time, while still
+                    working within a single consistent environment.
+                  </p>
+                  <p class="body-sm text-body leading-relaxed">
+                    Because the simulator is interactive, you can develop real
+                    muscle memory: typing commands, reading output, and
+                    iterating until you get the exact result. Over time, these
+                    steps become automatic.
+                  </p>
+                </div>
+              </div>
+
+              <div
+                class="card-marketing bg-canvas border border-hairline p-6 space-y-4"
+              >
+                <h3 class="text-base font-bold text-ink">
+                  From One-Liners to Bash Scripts
+                </h3>
+                <p class="body-sm text-body leading-relaxed">
+                  BashQuest is made for practicing bash scripts online and for
+                  understanding how bash command-line tools work together. You
+                  will work through tasks that gradually expand your abilities:
+                </p>
+                <ul
+                  class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono text-body pl-2 animate-none"
+                >
+                  <li class="flex items-center gap-2">
+                    ✓ Explore and navigate filesystems
+                  </li>
+                  <li class="flex items-center gap-2">
+                    ✓ Manipulate text with patterns
+                  </li>
+                  <li class="flex items-center gap-2">
+                    ✓ Pipe & filter command output
+                  </li>
+                  <li class="flex items-center gap-2">
+                    ✓ Practice matching and wildcards
+                  </li>
+                  <li class="flex items-center gap-2">
+                    ✓ Manage file permissions
+                  </li>
+                  <li class="flex items-center gap-2">
+                    ✓ Test simple shell scripts
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Curriculum Module Outline -->
+            <div class="space-y-6 pt-6 border-t border-hairline">
+              <div class="border-l-2 border-primary pl-4">
+                <h2
+                  class="text-xl font-sans font-extrabold text-ink tracking-tight"
+                >
+                  What you'll learn.
+                </h2>
+                <p class="body-sm text-body mt-1">
+                  Our progressive curriculum covers 16 core Linux administration
+                  skill sets:
+                </p>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                {
+                  modules.map((mod) => (
+                    <div class="p-4 bg-canvas border border-hairline rounded-md shadow-level-2 hover:shadow-level-3 transition-all duration-200">
+                      <div class="caption-mono text-mute uppercase font-semibold mb-1">
+                        Module {mod.id}
+                      </div>
+                      <h3 class="font-sans text-sm font-bold text-ink leading-tight">
+                        {mod.title.replace(/^\d+\.\s*/, "")}
+                      </h3>
+                    </div>
+                  ))
+                }
+              </div>
+            </div>
+
+            <!-- CTA Back to learning -->
+            <div class="flex justify-center pt-4">
+              <button
+                id="btn-back-to-dashboard-from-about"
+                class="button-primary text-sm font-medium animate-pulse-slow"
+              >
+                Go to Curriculum Tree
+              </button>
             </div>
           </div>
         </div>
@@ -315,7 +439,6 @@ import Footer from "../components/Footer.astro";
   import { FileSystem, ShellSession } from "../lib/linuxEngine";
   import { lessons } from "../lib/lessons";
 
-  // Global Client-Side State Manager
   class AppStateManager {
     state: any;
     constructor() {
@@ -399,38 +522,30 @@ import Footer from "../components/Footer.astro";
     }
 
     init() {
-      // 1. Load progress from localStorage if it exists
       this.loadFromStorage();
 
-      // Check query parameter for view override (e.g. ?view=sandbox or ?view=dashboard)
       if (typeof window !== "undefined") {
         const urlParams = new URLSearchParams(window.location.search);
         const viewParam = urlParams.get("view");
-        if (viewParam === "dashboard" || viewParam === "sandbox") {
+        if (
+          viewParam === "dashboard" ||
+          viewParam === "sandbox" ||
+          viewParam === "about"
+        ) {
           this.state.activeView = viewParam;
         }
       }
 
-      // 2. Setup initial filesystem instance
       this.resetFilesystem();
-
-      // 3. Bind global event listeners
       this.bindEvents();
-
-      // 4. Trigger initial rendering
       this.broadcastState();
       this.applyViewVisibility();
     }
 
     resetFilesystem() {
-      // Create a fresh FS matching the active lesson's environment, or restore from existing tree
       const fs = new FileSystem(this.state.fsTree);
-
-      // Perform customizations based on lesson needs
-      // Ensure quest-required seeded files exist in the persisted filesystem
       const completed = this.state.completedLessons;
 
-      // Quest 10/12: status.txt needed for Writing & Copying quests
       if (completed.includes(10) && !completed.includes(12)) {
         const statusNode = fs.getNodeByPath("/home/learner", "status.txt");
         if (!statusNode) {
@@ -440,7 +555,6 @@ import Footer from "../components/Footer.astro";
         }
       }
 
-      // Quest 13: Ensure log_1.txt, log_2.txt, log_3.txt exist for wildcard operations
       if (!completed.includes(13)) {
         const logFiles = [
           { name: "log_1.txt", content: "Log entry 1: System initiated.\n" },
@@ -462,14 +576,12 @@ import Footer from "../components/Footer.astro";
         }
       }
 
-      // Quest 14: Ensure downloads directory exists for removal quest
       if (!completed.includes(14)) {
         if (!fs.getNodeByPath("/home/learner", "downloads")) {
           fs.createNode("/home/learner", "downloads", "dir");
         }
       }
 
-      // Quest 16: Ensure names.txt exists for sort/uniq quest
       if (!completed.includes(16)) {
         if (!fs.getNodeByPath("/home/learner", "names.txt")) {
           fs.createNode("/home/learner", "names.txt", "file", {
@@ -478,7 +590,6 @@ import Footer from "../components/Footer.astro";
         }
       }
 
-      // Quest 17: Ensure logs.txt exists for grep quest
       if (!completed.includes(17)) {
         if (!fs.getNodeByPath("/home/learner", "logs.txt")) {
           fs.createNode("/home/learner", "logs.txt", "file", {
@@ -488,7 +599,6 @@ import Footer from "../components/Footer.astro";
         }
       }
 
-      // Quest 18: Ensure deploy.sh exists for chmod quest (with default 644 permissions)
       if (!completed.includes(18)) {
         if (!fs.getNodeByPath("/home/learner", "deploy.sh")) {
           fs.createNode("/home/learner", "deploy.sh", "file", {
@@ -499,7 +609,6 @@ import Footer from "../components/Footer.astro";
         }
       }
 
-      // Quest 21: Ensure /etc/shadow exists for sudo quest
       if (!completed.includes(21)) {
         if (!fs.getNodeByPath("/etc", "shadow")) {
           fs.createNode("/etc", "shadow", "file", {
@@ -512,8 +621,6 @@ import Footer from "../components/Footer.astro";
         }
       }
 
-      // Seeds for new Quests
-      // Quest 24/34: logs directory and logs files
       if (!fs.getNodeByPath("/home/learner", "logs")) {
         fs.createNode("/home/learner", "logs", "dir");
         fs.createNode("/home/learner/logs", "app.log", "file", {
@@ -554,10 +661,8 @@ import Footer from "../components/Footer.astro";
         }
       }
 
-      // Keep state.fsTree in sync with the tree
       this.state.fsTree = fs.tree;
 
-      // Cache starting tree for this quest if it hasn't been saved yet
       if (!this.state.lessonStartTrees) {
         this.state.lessonStartTrees = {};
       }
@@ -574,11 +679,12 @@ import Footer from "../components/Footer.astro";
         this.state.installedPackages,
       );
 
-      window.appState = {
-        ...window.appState,
+      const globalWindow = window as any;
+      globalWindow.appState = {
+        ...globalWindow.appState,
         fs: fs,
         session: session,
-        terminalCommands: [], // commands entered in this lesson session
+        terminalCommands: [],
         xp: this.state.xp,
         completedLessons: this.state.completedLessons,
         activeLessonId: this.state.activeLessonId,
@@ -588,7 +694,7 @@ import Footer from "../components/Footer.astro";
     }
 
     bindEvents() {
-      // Listen for view changes from Navbar
+      // Listen for view changes from Navbar or internal links
       window.addEventListener("app:view-change", (e: any) => {
         this.state.activeView = e.detail.view;
         this.applyViewVisibility();
@@ -599,10 +705,7 @@ import Footer from "../components/Footer.astro";
       // Listen for lesson selection
       window.addEventListener("app:select-lesson", (e: any) => {
         this.state.activeLessonId = e.detail.lessonId;
-
-        // Reset filesystem sandbox to restore state or load current state
         this.resetFilesystem();
-
         this.saveToStorage();
         this.broadcastState();
       });
@@ -611,7 +714,6 @@ import Footer from "../components/Footer.astro";
       window.addEventListener("app:restore-lesson", () => {
         const activeId = this.state.activeLessonId;
 
-        // Restore filesystem tree of the current quest to its cached starting state
         if (
           this.state.lessonStartTrees &&
           this.state.lessonStartTrees[activeId]
@@ -623,7 +725,6 @@ import Footer from "../components/Footer.astro";
           this.state.fsTree = null;
         }
 
-        // Reset completion status and deduct XP for this quest if it was completed
         if (this.state.completedLessons.includes(activeId)) {
           this.state.completedLessons = this.state.completedLessons.filter(
             (id: number) => id !== activeId,
@@ -634,13 +735,10 @@ import Footer from "../components/Footer.astro";
           }
         }
 
-        // Re-initialize a fresh filesystem using the restored tree
         this.resetFilesystem();
-
         this.saveToStorage();
         this.broadcastState();
 
-        // Dispatch app:select-lesson to let the terminal and visual explorer know to reset
         window.dispatchEvent(
           new CustomEvent("app:select-lesson", {
             detail: { lessonId: activeId },
@@ -656,14 +754,11 @@ import Footer from "../components/Footer.astro";
           this.state.completedLessons.push(lessonId);
           this.state.xp += xp;
         } else {
-          // Practice Mode: 10% of lesson's normal XP, minimum of 5 XP
           const practiceXp = Math.max(5, Math.floor(xp * 0.1));
           this.state.xp += practiceXp;
         }
 
-        // Always update streak on completion or practice mode
         this.updateStreak();
-
         this.saveToStorage();
         this.broadcastState();
       });
@@ -749,7 +844,6 @@ import Footer from "../components/Footer.astro";
         this.resetFilesystem();
         this.applyViewVisibility();
 
-        // Return navbar tabs active state
         window.dispatchEvent(
           new CustomEvent("app:trigger-view-change", {
             detail: { view: "dashboard" },
@@ -760,15 +854,14 @@ import Footer from "../components/Footer.astro";
         this.broadcastState();
       });
 
-      // Listen for filesystem updates from the terminal
       window.addEventListener("app:filesystem-update", () => {
-        if (window.appState && window.appState.fs) {
-          this.state.fsTree = window.appState.fs.tree;
+        const globalWindow = window as any;
+        if (globalWindow.appState && globalWindow.appState.fs) {
+          this.state.fsTree = globalWindow.appState.fs.tree;
           this.saveToStorage();
         }
       });
 
-      // Listen for package installation
       window.addEventListener("app:package-installed", (e: any) => {
         if (!this.state.installedPackages.includes(e.detail.package)) {
           this.state.installedPackages.push(e.detail.package);
@@ -776,7 +869,6 @@ import Footer from "../components/Footer.astro";
         }
       });
 
-      // Listen for save export request
       window.addEventListener("app:export-save", () => {
         try {
           const saveCode = btoa(encodeURIComponent(JSON.stringify(this.state)));
@@ -788,15 +880,12 @@ import Footer from "../components/Footer.astro";
         }
       });
 
-      // Listen for save import request
       window.addEventListener("app:import-save", (e: any) => {
         const { saveCode } = e.detail;
         try {
-          // Decode from base64 and parse JSON
           const decoded = decodeURIComponent(atob(saveCode));
           const parsedState = JSON.parse(decoded);
 
-          // Basic validation to check that we have a valid state object
           if (
             !parsedState ||
             typeof parsedState !== "object" ||
@@ -805,19 +894,13 @@ import Footer from "../components/Footer.astro";
             throw new Error("Malformed save code schema");
           }
 
-          // Merge parsed state into current state
           this.state = {
             ...this.state,
             ...parsedState,
           };
 
-          // Save to local storage
           this.saveToStorage();
-
-          // Notify dashboard of success
           window.dispatchEvent(new CustomEvent("app:import-success"));
-
-          // Reload the page to fully reflect state changes
           window.location.reload();
         } catch (err) {
           console.error("Failed to import save code", err);
@@ -831,11 +914,22 @@ import Footer from "../components/Footer.astro";
           );
         }
       });
+
+      // Quick-access from about page button
+      document
+        .getElementById("btn-back-to-dashboard-from-about")
+        ?.addEventListener("click", () => {
+          window.dispatchEvent(
+            new CustomEvent("app:trigger-view-change", {
+              detail: { view: "dashboard" },
+            }),
+          );
+        });
     }
 
     updateStreak() {
       const today = new Date();
-      today.setHours(0, 0, 0, 0); // Normalize to midnight
+      today.setHours(0, 0, 0, 0);
 
       const lastDate = this.state.lastCompletedDate
         ? new Date(this.state.lastCompletedDate)
@@ -860,11 +954,18 @@ import Footer from "../components/Footer.astro";
     applyViewVisibility() {
       const viewDash = document.getElementById("view-dashboard");
       const viewSand = document.getElementById("view-sandbox");
+      const viewAbout = document.getElementById("view-about");
       const footer = document.querySelector("footer");
 
-      if (this.state.activeView === "dashboard") {
-        viewSand?.classList.remove("animate-in", "fade-in", "duration-300");
+      // Hide all views first
+      viewDash?.classList.add("hidden");
+      viewDash?.classList.remove("block");
+      viewSand?.classList.add("hidden");
+      viewSand?.classList.remove("block", "grid");
+      viewAbout?.classList.add("hidden");
+      viewAbout?.classList.remove("block");
 
+      if (this.state.activeView === "dashboard") {
         viewDash?.classList.remove("hidden");
         viewDash?.classList.add(
           "block",
@@ -872,12 +973,8 @@ import Footer from "../components/Footer.astro";
           "fade-in",
           "duration-300",
         );
-        viewSand?.classList.remove("block", "grid");
-        viewSand?.classList.add("hidden");
         footer?.classList.remove("hidden");
-      } else {
-        viewDash?.classList.remove("animate-in", "fade-in", "duration-300");
-
+      } else if (this.state.activeView === "sandbox") {
         viewSand?.classList.remove("hidden");
         viewSand?.classList.add(
           "block",
@@ -885,24 +982,32 @@ import Footer from "../components/Footer.astro";
           "fade-in",
           "duration-300",
         );
-        viewDash?.classList.remove("block");
-        viewDash?.classList.add("hidden");
         footer?.classList.add("hidden");
 
         // Autofocus terminal prompt when entering workspace
         setTimeout(() => {
           document.getElementById("terminal-input")?.focus();
         }, 100);
+      } else if (this.state.activeView === "about") {
+        viewAbout?.classList.remove("hidden");
+        viewAbout?.classList.add(
+          "block",
+          "animate-in",
+          "fade-in",
+          "duration-300",
+        );
+        footer?.classList.remove("hidden");
       }
     }
 
     broadcastState() {
-      // Expose to globally accessible state objects
-      if (window.appState) {
-        window.appState.xp = this.state.xp;
-        window.appState.completedLessons = this.state.completedLessons;
-        window.appState.activeLessonId = this.state.activeLessonId;
-        window.appState.streak = this.state.streak;
+      const globalWindow = window as any;
+      if (globalWindow.appState) {
+        globalWindow.appState.xp = this.state.xp;
+        globalWindow.appState.completedLessons = this.state.completedLessons;
+        globalWindow.appState.activeLessonId = this.state.activeLessonId;
+        globalWindow.appState.streak = this.state.streak;
+        globalWindow.appState.activeView = this.state.activeView;
       }
 
       window.dispatchEvent(
@@ -929,11 +1034,9 @@ import Footer from "../components/Footer.astro";
     }
   }
 
-  // Initialize State Manager on DOM load
   document.addEventListener("DOMContentLoaded", () => {
     new AppStateManager();
 
-    // Nano Text Editor Overlay Management
     let currentNanoFile = "";
     let currentNanoPath = "";
 
@@ -980,10 +1083,14 @@ import Footer from "../components/Footer.astro";
       ) as HTMLTextAreaElement;
       const content = textarea ? textarea.value : "";
 
-      if (window.appState && window.appState.fs && currentNanoFile) {
-        const fs = window.appState.fs;
+      const globalWindow = window as any;
+      if (
+        globalWindow.appState &&
+        globalWindow.appState.fs &&
+        currentNanoFile
+      ) {
+        const fs = globalWindow.appState.fs;
 
-        // Find existing or create new file
         const existing = fs.getNodeByPath(currentNanoPath, currentNanoFile);
         if (existing && existing.type === "file") {
           existing.content = content;
@@ -991,10 +1098,8 @@ import Footer from "../components/Footer.astro";
           fs.createNode(currentNanoPath, currentNanoFile, "file", { content });
         }
 
-        // Dispatch save event to update visual explorer
         window.dispatchEvent(new CustomEvent("app:filesystem-update"));
 
-        // Notify user in terminal
         window.dispatchEvent(
           new CustomEvent("app:print-terminal", {
             detail: {
@@ -1010,7 +1115,6 @@ import Footer from "../components/Footer.astro";
       if (shouldExit) {
         document.getElementById("modal-nano-editor")?.classList.add("hidden");
 
-        // Autofocus terminal input when exiting nano
         setTimeout(() => {
           document.getElementById("terminal-input")?.focus();
         }, 50);
