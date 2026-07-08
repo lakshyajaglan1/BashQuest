@@ -237,7 +237,7 @@
         // Complete the word
         const match = matches[0];
         const suffix = match.type === 'dir' ? '/' : '';
-        const completedWord = (targetDir !== '.' ? targetDir + '/' : '') + match.name + suffix;
+        const completedWord = ((targetDir !== '.' && targetDir !== '/' ? targetDir + '/' : (targetDir === '/' ? '/' : '')) + match.name + suffix).replace(/\/{2,}/g, '/');
         
         parts[parts.length - 1] = completedWord;
         termInput.value = parts.join(' ');

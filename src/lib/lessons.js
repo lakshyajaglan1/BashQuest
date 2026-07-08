@@ -349,11 +349,8 @@ verify: (fs, _session, history) => {
     ],
 verify: (_fs, _session, history) => {
       const catHosts = history.some(cmd => {
-        const parts = cmd.trim().split(/\s+/);
-        const catIdx = parts.indexOf('cat');
-        if (catIdx === -1) return false;
-        const args = parts.slice(catIdx + 1);
-        return args.some(arg => arg === '/etc/hosts' || arg === 'hosts' || arg === 'etc/hosts');
+        const trimmed = cmd.trim();
+        return trimmed.startsWith('cat ') && (trimmed.includes('/etc/hosts') || trimmed.includes('etc/hosts'));
       });
 
       return {
@@ -389,28 +386,28 @@ verify: (_fs, _session, history) => {
     ],
     verify: (_fs, _session, history) => {
       const ranHead = history.some(cmd => {
-        const parts = cmd.trim().split(/\s+/);
-        const idx = parts.indexOf('head');
-        if (idx === -1) return false;
-        const options = parts.slice(idx + 1);
+        const trimmed = cmd.trim();
+        if (!trimmed.startsWith('head ')) return false;
+        const parts = trimmed.split(/\s+/);
+        const options = parts.slice(1);
         const hasN5 = options.includes('-n5') || (options.includes('-n') && options[options.indexOf('-n') + 1] === '5');
         const hasFile = options.some(arg => arg.includes('app.log'));
         return hasN5 && hasFile;
       });
       const ranTail = history.some(cmd => {
-        const parts = cmd.trim().split(/\s+/);
-        const idx = parts.indexOf('tail');
-        if (idx === -1) return false;
-        const options = parts.slice(idx + 1);
+        const trimmed = cmd.trim();
+        if (!trimmed.startsWith('tail ')) return false;
+        const parts = trimmed.split(/\s+/);
+        const options = parts.slice(1);
         const hasN3 = options.includes('-n3') || (options.includes('-n') && options[options.indexOf('-n') + 1] === '3');
         const hasFile = options.some(arg => arg.includes('security.log'));
         return hasN3 && hasFile;
       });
       const ranTailF = history.some(cmd => {
-        const parts = cmd.trim().split(/\s+/);
-        const idx = parts.indexOf('tail');
-        if (idx === -1) return false;
-        const options = parts.slice(idx + 1);
+        const trimmed = cmd.trim();
+        if (!trimmed.startsWith('tail ')) return false;
+        const parts = trimmed.split(/\s+/);
+        const options = parts.slice(1);
         return options.includes('-f') || options.includes('--follow');
       });
       return {
@@ -444,8 +441,8 @@ verify: (_fs, _session, history) => {
     ],
     verify: (_fs, _session, history) => {
       const ranPager = history.some(cmd => {
-        const parts = cmd.trim().split(/\s+/);
-        return (parts.includes('less') || parts.includes('more')) && parts.some(arg => arg.includes('hosts'));
+        const trimmed = cmd.trim();
+        return (trimmed.startsWith('less ') || trimmed.startsWith('more ')) && (trimmed.includes('/etc/hosts') || trimmed.includes('hosts'));
       });
       return {
         success: ranPager,
@@ -1498,8 +1495,8 @@ verify: (_fs, _session, history) => {
     ],
 verify: (_fs, _session, history) => {
       const ranManGrep = history.some(cmd => {
-        const parts = cmd.trim().split(/\s+/);
-        return parts.includes('man') && parts.includes('grep');
+        const trimmed = cmd.trim();
+        return trimmed.startsWith('man ') && trimmed.includes('grep');
       });
       return {
         success: ranManGrep,
