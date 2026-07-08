@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://bash-quest-ebon.vercel.app/sitemap.xml
