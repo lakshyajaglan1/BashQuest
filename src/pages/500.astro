@@ -1,0 +1,82 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navigation from "../components/Navigation.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<Layout
+    title="500: Server Error — BashQuest"
+    description="An unexpected internal server error has occurred."
+>
+    <div class="flex flex-col min-h-screen">
+        <Navigation />
+
+        <main
+            class="flex-1 w-full bg-canvas-soft mesh-gradient py-16 px-4 md:px-8 flex items-center justify-center select-none"
+        >
+            <div class="max-w-md w-full space-y-8 text-center">
+                <div class="space-y-3">
+                    <span
+                        class="caption-mono uppercase tracking-widest text-violet bg-violet-soft border border-violet-soft px-2.5 py-0.5 rounded-sm"
+                    >
+                        Error Code 500
+                    </span>
+                    <h1 class="display-lg text-ink font-bold tracking-tight">
+                        Internal Server Error.
+                    </h1>
+                    <p class="body-sm text-body">
+                        An unexpected error occurred within our client-side
+                        systems.
+                    </p>
+                </div>
+
+                <!-- Simulated Terminal Card -->
+                <div class="code-editor-mockup text-left p-5 shadow-level-3">
+                    <div
+                        class="flex items-center gap-1.5 pb-3 border-b border-white/5 mb-3"
+                    >
+                        <div class="w-2.5 h-2.5 rounded-full bg-[#ff5f56]">
+                        </div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]">
+                        </div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-[#27c93f]">
+                        </div>
+                    </div>
+                    <div class="font-mono text-xs space-y-1.5">
+                        <p class="text-mute">
+                            # Checking system daemon status...
+                        </p>
+                        <p>
+                            <span class="text-green-400">learner@bashquest</span
+                            >:<span class="text-blue-400">~</span>$ systemctl
+                            status bashquest.service
+                        </p>
+                        <p class="text-red-400 font-semibold">
+                            ● bashquest.service - BashQuest Web Kernel
+                        </p>
+                        <p class="text-mute">
+                            Active: <span class="text-error font-bold"
+                                >failed</span
+                            > (Result: core-dump)
+                        </p>
+                        <p class="text-mute">
+                            Process: 9811 ExecStart=/usr/bin/bashquest
+                            (code=dumped, signal=SEGV)
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex justify-center pt-2">
+                    <a
+                        href="/?view=dashboard"
+                        class="button-primary text-sm font-medium"
+                    >
+                        Reset & Go Home
+                    </a>
+                </div>
+            </div>
+        </main>
+
+        <Footer />
+    </div>
+</Layout>

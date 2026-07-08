@@ -1,16 +1,125 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Navigation from '../components/Navigation.astro';
-import Dashboard from '../components/Dashboard.astro';
-import FileSystemVisualizer from '../components/FileSystemVisualizer.astro';
-import Terminal from '../components/Terminal.astro';
-import LessonPanel from '../components/LessonPanel.astro';
-import Footer from '../components/Footer.astro';
+import Layout from "../layouts/Layout.astro";
+import Navigation from "../components/Navigation.astro";
+import Dashboard from "../components/Dashboard.astro";
+import FileSystemVisualizer from "../components/FileSystemVisualizer.astro";
+import Terminal from "../components/Terminal.astro";
+import LessonPanel from "../components/LessonPanel.astro";
+import Footer from "../components/Footer.astro";
 ---
 
 <Layout>
   <!-- Global Application Shell -->
   <div class="flex flex-col min-h-screen">
+    <!-- SEO: indexable homepage text (server-rendered) -->
+    <section class="w-full max-w-4xl mx-auto px-4 md:px-8 py-10">
+      <h1 class="text-2xl md:text-3xl font-bold text-ink tracking-tight">
+        BashQuest — interactive terminal sandbox for practice linux commands
+      </h1>
+      <p class="mt-3 body-md text-body">
+        BashQuest is a browser-based bash learning platform designed for one
+        goal: help you confidently practice linux commands and bash scripting
+        without breaking your system.
+      </p>
+
+      <h2 class="mt-8 text-xl font-bold text-ink">
+        Practice linux commands online, with instant feedback
+      </h2>
+      <p class="mt-2 body-sm text-body">
+        Learning the command line is easier when you can try things immediately.
+        BashQuest provides an interactive terminal sandbox where you can run
+        real shell-style commands against a simulated Linux filesystem. Instead
+        of watching videos or reading static examples, you build skill by
+        completing short quests that guide you step-by-step—then you verify your
+        output right inside the browser.
+      </p>
+
+      <p class="mt-4 body-sm text-body">
+        Each quest focuses on a practical command-line skill: exploring
+        directories, listing files, searching text, using pipes, understanding
+        permissions, and writing small bash scripts. As you progress, the tasks
+        become more realistic so your learning transfers to your real computer.
+      </p>
+
+      <h2 class="mt-8 text-xl font-bold text-ink">
+        A virtual Linux terminal emulator with gamified bash tutorials
+      </h2>
+      <p class="mt-2 body-sm text-body">
+        BashQuest acts like a linux terminal emulator, but with structured
+        learning built in. The experience is gamified: you unlock quests in a
+        curriculum tree, earn XP, and collect badges. That means every practice
+        session has a clear purpose.
+      </p>
+
+      <p class="mt-4 body-sm text-body">
+        The virtual environment is safe. You can experiment freely because your
+        workspace is simulated. If you run a risky command or make a mistake, it
+        stays within the interactive terminal sandbox and does not affect your
+        machine. This makes it ideal for beginners and also useful for
+        experienced users who want a fast way to refresh topics like
+        redirection, wildcard matching, text processing, and permissions.
+      </p>
+
+      <h2 class="mt-8 text-xl font-bold text-ink">
+        Learn bash in browser: from one-liners to bash scripts
+      </h2>
+      <p class="mt-2 body-sm text-body">
+        BashQuest is made for practice bash scripts online and for understanding
+        how bash command-line tools work together. You will work through tasks
+        that gradually expand your ability:
+      </p>
+
+      <ul class="mt-3 list-disc list-inside body-sm text-body space-y-1">
+        <li>Explore and navigate the filesystem using familiar commands</li>
+        <li>Read and manipulate files with text tools and patterns</li>
+        <li>Use pipes and filters to transform output like a real workflow</li>
+        <li>Practice wildcard matching and command substitution concepts</li>
+        <li>Work with permissions and simulate safer command usage</li>
+        <li>Write and test simple bash scripts in a guided environment</li>
+      </ul>
+
+      <p class="mt-4 body-sm text-body">
+        When you finish a quest, you get confidence that your approach is
+        correct, because the system checks your results. This is similar to an
+        online bash compiler workflow—except your focus is learning and building
+        intuition for everyday terminal work.
+      </p>
+
+      <h2 class="mt-8 text-xl font-bold text-ink">
+        Why an online practice environment helps you improve faster
+      </h2>
+      <p class="mt-2 body-sm text-body">
+        The fastest way to improve at the terminal is repetition with structure.
+        BashQuest gives you both: short practice linux commands challenges and a
+        curriculum that keeps you moving forward. You can focus on learning
+        topics one at a time, while still working within a single consistent
+        environment.
+      </p>
+
+      <p class="mt-4 body-sm text-body">
+        Because the simulator is interactive, you can develop real muscle
+        memory: typing commands, reading output, and iterating until you get the
+        exact result. Over time, these steps become automatic, so you spend less
+        effort on syntax and more effort on problem-solving.
+      </p>
+
+      <p class="mt-4 body-sm text-body">
+        Whether you want to learn bash for school, build skills for Linux
+        administration, or just become more comfortable with a linux terminal
+        emulator, BashQuest is built to make practice feel productive and
+        rewarding.
+      </p>
+
+      <p class="mt-6 body-sm text-body">
+        Start practicing now by opening the interactive terminal sandbox from
+        the dashboard. Choose a quest, run commands, and learn by doing.
+        Bam—each completed step adds skill you can reuse in real-world terminal
+        workflows.
+      </p>
+    </section>
+
+    <!-- Visible dashboard continues below -->
+
     <!-- Navbar -->
     <Navigation />
 
@@ -22,15 +131,22 @@ import Footer from '../components/Footer.astro';
       </section>
 
       <!-- VIEW 2: Interactive Sandbox Workspace -->
-      <section id="view-sandbox" class="hidden lg:h-[calc(100vh-64px)] lg:overflow-hidden overflow-y-auto">
-        <div class="w-full py-4 lg:py-6 px-4 md:px-8 flex flex-col lg:grid lg:grid-cols-12 gap-6 h-auto lg:h-full min-h-0">
+      <section
+        id="view-sandbox"
+        class="hidden lg:h-[calc(100vh-64px)] lg:overflow-hidden overflow-y-auto"
+      >
+        <div
+          class="w-full py-4 lg:py-6 px-4 md:px-8 flex flex-col lg:grid lg:grid-cols-12 gap-6 h-auto lg:h-full min-h-0"
+        >
           <!-- Left Column: Lesson Instructions Panel (5 cols) -->
           <div class="lg:col-span-5 h-auto lg:h-full min-h-0">
             <LessonPanel />
           </div>
 
           <!-- Right Column: Visual Explorer & Terminal (7 cols) -->
-          <div class="lg:col-span-7 flex flex-col gap-6 h-auto lg:h-full min-h-0">
+          <div
+            class="lg:col-span-7 flex flex-col gap-6 h-auto lg:h-full min-h-0"
+          >
             <!-- Filesystem Visual Explorer -->
             <div class="flex-1 min-h-[180px] lg:min-h-0">
               <FileSystemVisualizer />
@@ -49,77 +165,155 @@ import Footer from '../components/Footer.astro';
     <Footer />
 
     <!-- GNU Nano Text Editor Mockup Modal (Vercel-inspired dark overlay) -->
-    <div id="modal-nano-editor" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs hidden select-none">
-      <div class="w-full max-w-3xl h-[85vh] bg-[#121212] text-[#d4d4d4] font-mono text-[13px] rounded-lg border border-white/10 shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        
+    <div
+      id="modal-nano-editor"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs hidden select-none"
+    >
+      <div
+        class="w-full max-w-3xl h-[85vh] bg-[#121212] text-[#d4d4d4] font-mono text-[13px] rounded-lg border border-white/10 shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+      >
         <!-- Nano Header -->
-        <div class="bg-[#1e1e1e] px-4 py-2 text-center text-white border-b border-white/5 relative flex justify-between select-none">
+        <div
+          class="bg-[#1e1e1e] px-4 py-2 text-center text-white border-b border-white/5 relative flex justify-between select-none"
+        >
           <span class="font-bold">GNU nano 7.2 equivalent</span>
-          <span id="nano-filename" class="font-bold text-success">File: server.conf</span>
+          <span id="nano-filename" class="font-bold text-success"
+            >File: server.conf</span
+          >
           <span id="nano-modified" class="text-orange-400 font-semibold"></span>
         </div>
-        
+
         <!-- Textarea Body -->
-        <div class="flex-1 p-4 bg-[#121212] relative overflow-hidden flex flex-col">
-          <textarea 
-            id="nano-textarea" 
+        <div
+          class="flex-1 p-4 bg-[#121212] relative overflow-hidden flex flex-col"
+        >
+          <textarea
+            id="nano-textarea"
             class="flex-1 w-full bg-transparent border-none outline-none resize-none font-mono text-[13px] text-white caret-white focus:ring-0 focus:outline-none p-0 m-0 leading-relaxed overflow-y-auto"
             placeholder="Type file contents here..."
-            spellcheck="false"
-          ></textarea>
+            spellcheck="false"></textarea>
         </div>
-        
+
         <!-- Shortcut Commands Guide (traditional Nano layout) -->
-        <div class="bg-[#1a1a1a] p-3 border-t border-white/5 text-[11px] leading-relaxed text-mute grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-x-4 gap-y-1.5 select-none border-b border-white/5">
-          <div><span class="text-white font-bold bg-[#333] px-1 py-0.5 rounded-xs mr-1">^G</span> Get Help</div>
-          <div><span class="text-white font-bold bg-[#333] px-1 py-0.5 rounded-xs mr-1">^O</span> Write Out</div>
-          <div><span class="text-white font-bold bg-[#333] px-1 py-0.5 rounded-xs mr-1">^W</span> Where Is</div>
-          <div><span class="text-white font-bold bg-[#333] px-1 py-0.5 rounded-xs mr-1">^K</span> Cut Text</div>
-          <div><span class="text-white font-bold bg-[#333] px-1 py-0.5 rounded-xs mr-1">^J</span> Justify</div>
-          <div><span class="text-white font-bold bg-[#333] px-1 py-0.5 rounded-xs mr-1">^C</span> Cur Pos</div>
-          <div><span class="text-white font-bold bg-[#333] px-1 py-0.5 rounded-xs mr-1">^X</span> Exit</div>
-          <div><span class="text-white font-bold bg-[#333] px-1 py-0.5 rounded-xs mr-1">^R</span> Read File</div>
-          <div><span class="text-white font-bold bg-[#333] px-1 py-0.5 rounded-xs mr-1">^\</span> Replace</div>
-          <div><span class="text-white font-bold bg-[#333] px-1 py-0.5 rounded-xs mr-1">^U</span> Paste Text</div>
-          <div><span class="text-white font-bold bg-[#333] px-1 py-0.5 rounded-xs mr-1">^T</span> To Spell</div>
-          <div><span class="text-white font-bold bg-[#333] px-1 py-0.5 rounded-xs mr-1">^_</span> Go To Line</div>
+        <div
+          class="bg-[#1a1a1a] p-3 border-t border-white/5 text-[11px] leading-relaxed text-mute grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-x-4 gap-y-1.5 select-none border-b border-white/5"
+        >
+          <div>
+            <span
+              class="text-white font-bold bg-[#333] px-1 py-0.5 rounded-xs mr-1"
+              >^G</span
+            > Get Help
+          </div>
+          <div>
+            <span
+              class="text-white font-bold bg-[#333] px-1 py-0.5 rounded-xs mr-1"
+              >^O</span
+            > Write Out
+          </div>
+          <div>
+            <span
+              class="text-white font-bold bg-[#333] px-1 py-0.5 rounded-xs mr-1"
+              >^W</span
+            > Where Is
+          </div>
+          <div>
+            <span
+              class="text-white font-bold bg-[#333] px-1 py-0.5 rounded-xs mr-1"
+              >^K</span
+            > Cut Text
+          </div>
+          <div>
+            <span
+              class="text-white font-bold bg-[#333] px-1 py-0.5 rounded-xs mr-1"
+              >^J</span
+            > Justify
+          </div>
+          <div>
+            <span
+              class="text-white font-bold bg-[#333] px-1 py-0.5 rounded-xs mr-1"
+              >^C</span
+            > Cur Pos
+          </div>
+          <div>
+            <span
+              class="text-white font-bold bg-[#333] px-1 py-0.5 rounded-xs mr-1"
+              >^X</span
+            > Exit
+          </div>
+          <div>
+            <span
+              class="text-white font-bold bg-[#333] px-1 py-0.5 rounded-xs mr-1"
+              >^R</span
+            > Read File
+          </div>
+          <div>
+            <span
+              class="text-white font-bold bg-[#333] px-1 py-0.5 rounded-xs mr-1"
+              >^\</span
+            > Replace
+          </div>
+          <div>
+            <span
+              class="text-white font-bold bg-[#333] px-1 py-0.5 rounded-xs mr-1"
+              >^U</span
+            > Paste Text
+          </div>
+          <div>
+            <span
+              class="text-white font-bold bg-[#333] px-1 py-0.5 rounded-xs mr-1"
+              >^T</span
+            > To Spell
+          </div>
+          <div>
+            <span
+              class="text-white font-bold bg-[#333] px-1 py-0.5 rounded-xs mr-1"
+              >^_</span
+            > Go To Line
+          </div>
         </div>
-        
+
         <!-- Save CTAs Bar -->
-        <div class="bg-[#1e1e1e] px-4 py-3 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-2 select-none">
-          <span class="text-[11px] text-[#888]">Tip: Press Ctrl+O to Save, Ctrl+X to Save & Exit</span>
+        <div
+          class="bg-[#1e1e1e] px-4 py-3 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-2 select-none"
+        >
+          <span class="text-[11px] text-[#888]"
+            >Tip: Press Ctrl+O to Save, Ctrl+X to Save & Exit</span
+          >
           <div class="flex gap-2">
-            <button 
-              id="btn-nano-cancel" 
+            <button
+              id="btn-nano-cancel"
               class="h-8 px-4 rounded-sm border border-white/10 text-white hover:bg-white/5 text-xs font-semibold cursor-pointer"
             >
               Cancel
             </button>
-            <button 
-              id="btn-nano-save" 
+            <button
+              id="btn-nano-save"
               class="h-8 px-4 rounded-sm bg-violet text-white hover:opacity-90 text-xs font-semibold cursor-pointer border-none"
             >
               Save Changes
             </button>
-            <button 
-              id="btn-nano-exit" 
+            <button
+              id="btn-nano-exit"
               class="h-8 px-4 rounded-sm bg-[#ffffff] text-[#000000] hover:bg-[#eaeaea] text-xs font-semibold cursor-pointer border-none"
             >
               Save & Exit
             </button>
           </div>
         </div>
-  
       </div>
     </div>
   </div>
 </Layout>
 
 <script>
-  declare global { interface Window { appState: any; } }
+  declare global {
+    interface Window {
+      appState: any;
+    }
+  }
 
-  import { FileSystem, ShellSession } from '../lib/linuxEngine';
-  import { lessons } from '../lib/lessons';
+  import { FileSystem, ShellSession } from "../lib/linuxEngine";
+  import { lessons } from "../lib/lessons";
 
   // Global Client-Side State Manager
   class AppStateManager {
@@ -128,21 +322,77 @@ import Footer from '../components/Footer.astro';
       this.state = {
         xp: 0,
         completedLessons: [],
-        activeView: 'dashboard',
+        activeView: "dashboard",
         activeLessonId: 1,
         streak: 0,
         lastCompletedDate: null,
         fsTree: null,
         lessonStartTrees: {},
         installedPackages: [
-          'pwd', 'whoami', 'clear', 'help', 'cd', 'ls', 'mkdir', 'touch', 'cat', 'echo', 
-          'rm', 'cp', 'mv', 'chmod', 'grep', 'wc', 'uniq', 'sort', 'man', 'apt',
-          'df', 'du', 'free', 'uptime', 'uname', 'ps', 'top', 'htop', 'kill', 'sleep',
-          'jobs', 'fg', 'ping', 'ip', 'curl', 'find', 'history', 'systemctl', 'nano',
-          'bash', 'sed', 'awk', 'cut', 'tr', 'ln', 'tar', 'chown', 'export', 'env', 'xargs',
-          'head', 'tail', 'less', 'more', 'journalctl', 'which', 'alias', 'crontab',
-          'useradd', 'passwd', 'su', 'ssh', 'scp'
-        ]
+          "pwd",
+          "whoami",
+          "clear",
+          "help",
+          "cd",
+          "ls",
+          "mkdir",
+          "touch",
+          "cat",
+          "echo",
+          "rm",
+          "cp",
+          "mv",
+          "chmod",
+          "grep",
+          "wc",
+          "uniq",
+          "sort",
+          "man",
+          "apt",
+          "df",
+          "du",
+          "free",
+          "uptime",
+          "uname",
+          "ps",
+          "top",
+          "htop",
+          "kill",
+          "sleep",
+          "jobs",
+          "fg",
+          "ping",
+          "ip",
+          "curl",
+          "find",
+          "history",
+          "systemctl",
+          "nano",
+          "bash",
+          "sed",
+          "awk",
+          "cut",
+          "tr",
+          "ln",
+          "tar",
+          "chown",
+          "export",
+          "env",
+          "xargs",
+          "head",
+          "tail",
+          "less",
+          "more",
+          "journalctl",
+          "which",
+          "alias",
+          "crontab",
+          "useradd",
+          "passwd",
+          "su",
+          "ssh",
+          "scp",
+        ],
       };
 
       this.init();
@@ -153,10 +403,10 @@ import Footer from '../components/Footer.astro';
       this.loadFromStorage();
 
       // Check query parameter for view override (e.g. ?view=sandbox or ?view=dashboard)
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         const urlParams = new URLSearchParams(window.location.search);
-        const viewParam = urlParams.get('view');
-        if (viewParam === 'dashboard' || viewParam === 'sandbox') {
+        const viewParam = urlParams.get("view");
+        if (viewParam === "dashboard" || viewParam === "sandbox") {
           this.state.activeView = viewParam;
         }
       }
@@ -175,17 +425,17 @@ import Footer from '../components/Footer.astro';
     resetFilesystem() {
       // Create a fresh FS matching the active lesson's environment, or restore from existing tree
       const fs = new FileSystem(this.state.fsTree);
-      
+
       // Perform customizations based on lesson needs
       // Ensure quest-required seeded files exist in the persisted filesystem
       const completed = this.state.completedLessons;
 
       // Quest 10/12: status.txt needed for Writing & Copying quests
       if (completed.includes(10) && !completed.includes(12)) {
-        const statusNode = fs.getNodeByPath('/home/learner', 'status.txt');
+        const statusNode = fs.getNodeByPath("/home/learner", "status.txt");
         if (!statusNode) {
-          fs.createNode('/home/learner', 'status.txt', 'file', {
-            content: 'System Online\nAll Checks Green\n'
+          fs.createNode("/home/learner", "status.txt", "file", {
+            content: "System Online\nAll Checks Green\n",
           });
         }
       }
@@ -193,14 +443,20 @@ import Footer from '../components/Footer.astro';
       // Quest 13: Ensure log_1.txt, log_2.txt, log_3.txt exist for wildcard operations
       if (!completed.includes(13)) {
         const logFiles = [
-          { name: 'log_1.txt', content: 'Log entry 1: System initiated.\n' },
-          { name: 'log_2.txt', content: 'Log entry 2: System update started.\n' },
-          { name: 'log_3.txt', content: 'Log entry 3: Database sync complete.\n' }
+          { name: "log_1.txt", content: "Log entry 1: System initiated.\n" },
+          {
+            name: "log_2.txt",
+            content: "Log entry 2: System update started.\n",
+          },
+          {
+            name: "log_3.txt",
+            content: "Log entry 3: Database sync complete.\n",
+          },
         ];
         for (const logFile of logFiles) {
-          if (!fs.getNodeByPath('/home/learner', logFile.name)) {
-            fs.createNode('/home/learner', logFile.name, 'file', {
-              content: logFile.content
+          if (!fs.getNodeByPath("/home/learner", logFile.name)) {
+            fs.createNode("/home/learner", logFile.name, "file", {
+              content: logFile.content,
             });
           }
         }
@@ -208,86 +464,92 @@ import Footer from '../components/Footer.astro';
 
       // Quest 14: Ensure downloads directory exists for removal quest
       if (!completed.includes(14)) {
-        if (!fs.getNodeByPath('/home/learner', 'downloads')) {
-          fs.createNode('/home/learner', 'downloads', 'dir');
+        if (!fs.getNodeByPath("/home/learner", "downloads")) {
+          fs.createNode("/home/learner", "downloads", "dir");
         }
       }
 
       // Quest 16: Ensure names.txt exists for sort/uniq quest
       if (!completed.includes(16)) {
-        if (!fs.getNodeByPath('/home/learner', 'names.txt')) {
-          fs.createNode('/home/learner', 'names.txt', 'file', {
-            content: 'Alice\nBob\nAlice\nCharlie\nBob\nDavid\nCharlie\n'
+        if (!fs.getNodeByPath("/home/learner", "names.txt")) {
+          fs.createNode("/home/learner", "names.txt", "file", {
+            content: "Alice\nBob\nAlice\nCharlie\nBob\nDavid\nCharlie\n",
           });
         }
       }
 
       // Quest 17: Ensure logs.txt exists for grep quest
       if (!completed.includes(17)) {
-        if (!fs.getNodeByPath('/home/learner', 'logs.txt')) {
-          fs.createNode('/home/learner', 'logs.txt', 'file', {
-            content: '[INFO] Service started.\n[WARNING] High memory usage.\n[ERROR] Database connection failed.\n[INFO] User logged in.\n[ERROR] Failed to start database service.\n'
+        if (!fs.getNodeByPath("/home/learner", "logs.txt")) {
+          fs.createNode("/home/learner", "logs.txt", "file", {
+            content:
+              "[INFO] Service started.\n[WARNING] High memory usage.\n[ERROR] Database connection failed.\n[INFO] User logged in.\n[ERROR] Failed to start database service.\n",
           });
         }
       }
 
       // Quest 18: Ensure deploy.sh exists for chmod quest (with default 644 permissions)
       if (!completed.includes(18)) {
-        if (!fs.getNodeByPath('/home/learner', 'deploy.sh')) {
-          fs.createNode('/home/learner', 'deploy.sh', 'file', {
-            content: '#!/bin/bash\necho "Deploying application..."\necho "Done!"\n',
-            permissions: '644'
+        if (!fs.getNodeByPath("/home/learner", "deploy.sh")) {
+          fs.createNode("/home/learner", "deploy.sh", "file", {
+            content:
+              '#!/bin/bash\necho "Deploying application..."\necho "Done!"\n',
+            permissions: "644",
           });
         }
       }
 
       // Quest 21: Ensure /etc/shadow exists for sudo quest
       if (!completed.includes(21)) {
-        if (!fs.getNodeByPath('/etc', 'shadow')) {
-          fs.createNode('/etc', 'shadow', 'file', {
-            content: 'root:$6$8zLx92xp$H9s2:18200:0:99999:7:::\nlearner:$6$1bYtM2op$P4w1:18200:0:99999:7:::\n',
-            permissions: '000',
-            owner: 'root',
-            group: 'shadow'
+        if (!fs.getNodeByPath("/etc", "shadow")) {
+          fs.createNode("/etc", "shadow", "file", {
+            content:
+              "root:$6$8zLx92xp$H9s2:18200:0:99999:7:::\nlearner:$6$1bYtM2op$P4w1:18200:0:99999:7:::\n",
+            permissions: "000",
+            owner: "root",
+            group: "shadow",
           });
         }
       }
 
       // Seeds for new Quests
       // Quest 24/34: logs directory and logs files
-      if (!fs.getNodeByPath('/home/learner', 'logs')) {
-        fs.createNode('/home/learner', 'logs', 'dir');
-        fs.createNode('/home/learner/logs', 'app.log', 'file', {
-          content: 'Jul 3 12:00:00 [INFO] System boot up completed.\nJul 3 12:05:00 [INFO] Started web server service.\nJul 3 12:10:00 [WARNING] Disk space warning: 80% used.\n'
+      if (!fs.getNodeByPath("/home/learner", "logs")) {
+        fs.createNode("/home/learner", "logs", "dir");
+        fs.createNode("/home/learner/logs", "app.log", "file", {
+          content:
+            "Jul 3 12:00:00 [INFO] System boot up completed.\nJul 3 12:05:00 [INFO] Started web server service.\nJul 3 12:10:00 [WARNING] Disk space warning: 80% used.\n",
         });
-        fs.createNode('/home/learner/logs', 'security.log', 'file', {
-          content: 'Jul 3 12:01:00 [INFO] User root logged in via ssh.\nJul 3 12:02:15 [WARNING] SSH Login failure from 192.168.1.100.\n'
+        fs.createNode("/home/learner/logs", "security.log", "file", {
+          content:
+            "Jul 3 12:01:00 [INFO] User root logged in via ssh.\nJul 3 12:02:15 [WARNING] SSH Login failure from 192.168.1.100.\n",
         });
       }
-      
+
       // Quest 38: server.conf
       if (!completed.includes(38)) {
-        if (!fs.getNodeByPath('/home/learner', 'server.conf')) {
-          fs.createNode('/home/learner', 'server.conf', 'file', {
-            content: 'host=127.0.0.1\nport=80\nmax_connections=100\n'
+        if (!fs.getNodeByPath("/home/learner", "server.conf")) {
+          fs.createNode("/home/learner", "server.conf", "file", {
+            content: "host=127.0.0.1\nport=80\nmax_connections=100\n",
           });
         }
       }
 
       // Quest 45: reports.csv
       if (!completed.includes(45)) {
-        if (!fs.getNodeByPath('/home/learner', 'reports.csv')) {
-          fs.createNode('/home/learner', 'reports.csv', 'file', {
-            content: 'date,sales,visitors\njul 1,1200,450\njul 2,1500,500\njul 3,1800,600\n'
+        if (!fs.getNodeByPath("/home/learner", "reports.csv")) {
+          fs.createNode("/home/learner", "reports.csv", "file", {
+            content:
+              "date,sales,visitors\njul 1,1200,450\njul 2,1500,500\njul 3,1800,600\n",
           });
         }
       }
 
       // Quest 61: logs.tar.gz
       if (!completed.includes(61)) {
-        if (!fs.getNodeByPath('/home/learner', 'logs.tar.gz')) {
-          fs.createNode('/home/learner', 'logs.tar.gz', 'file', {
-            content: 'tarball-archive-content\n'
+        if (!fs.getNodeByPath("/home/learner", "logs.tar.gz")) {
+          fs.createNode("/home/learner", "logs.tar.gz", "file", {
+            content: "tarball-archive-content\n",
           });
         }
       }
@@ -301,10 +563,16 @@ import Footer from '../components/Footer.astro';
       }
       const activeId = this.state.activeLessonId;
       if (!this.state.lessonStartTrees[activeId]) {
-        this.state.lessonStartTrees[activeId] = JSON.parse(JSON.stringify(fs.tree));
+        this.state.lessonStartTrees[activeId] = JSON.parse(
+          JSON.stringify(fs.tree),
+        );
       }
 
-      const session = new ShellSession(fs, '/home/learner', this.state.installedPackages);
+      const session = new ShellSession(
+        fs,
+        "/home/learner",
+        this.state.installedPackages,
+      );
 
       window.appState = {
         ...window.appState,
@@ -315,13 +583,13 @@ import Footer from '../components/Footer.astro';
         completedLessons: this.state.completedLessons,
         activeLessonId: this.state.activeLessonId,
         streak: this.state.streak,
-        lastCompletedDate: this.state.lastCompletedDate
+        lastCompletedDate: this.state.lastCompletedDate,
       };
     }
 
     bindEvents() {
       // Listen for view changes from Navbar
-      window.addEventListener('app:view-change', (e: any) => {
+      window.addEventListener("app:view-change", (e: any) => {
         this.state.activeView = e.detail.view;
         this.applyViewVisibility();
         this.saveToStorage();
@@ -329,50 +597,61 @@ import Footer from '../components/Footer.astro';
       });
 
       // Listen for lesson selection
-      window.addEventListener('app:select-lesson', (e: any) => {
+      window.addEventListener("app:select-lesson", (e: any) => {
         this.state.activeLessonId = e.detail.lessonId;
-        
+
         // Reset filesystem sandbox to restore state or load current state
         this.resetFilesystem();
-        
+
         this.saveToStorage();
         this.broadcastState();
       });
 
       // Listen for quest restore request
-      window.addEventListener('app:restore-lesson', () => {
+      window.addEventListener("app:restore-lesson", () => {
         const activeId = this.state.activeLessonId;
-        
+
         // Restore filesystem tree of the current quest to its cached starting state
-        if (this.state.lessonStartTrees && this.state.lessonStartTrees[activeId]) {
-          this.state.fsTree = JSON.parse(JSON.stringify(this.state.lessonStartTrees[activeId]));
+        if (
+          this.state.lessonStartTrees &&
+          this.state.lessonStartTrees[activeId]
+        ) {
+          this.state.fsTree = JSON.parse(
+            JSON.stringify(this.state.lessonStartTrees[activeId]),
+          );
         } else {
           this.state.fsTree = null;
         }
 
         // Reset completion status and deduct XP for this quest if it was completed
         if (this.state.completedLessons.includes(activeId)) {
-          this.state.completedLessons = this.state.completedLessons.filter((id: number) => id !== activeId);
-          const lesson = lessons.find(l => l.id === activeId);
+          this.state.completedLessons = this.state.completedLessons.filter(
+            (id: number) => id !== activeId,
+          );
+          const lesson = lessons.find((l) => l.id === activeId);
           if (lesson) {
             this.state.xp = Math.max(0, this.state.xp - lesson.xp);
           }
         }
-        
+
         // Re-initialize a fresh filesystem using the restored tree
         this.resetFilesystem();
-        
+
         this.saveToStorage();
         this.broadcastState();
-        
+
         // Dispatch app:select-lesson to let the terminal and visual explorer know to reset
-        window.dispatchEvent(new CustomEvent('app:select-lesson', { detail: { lessonId: activeId } }));
+        window.dispatchEvent(
+          new CustomEvent("app:select-lesson", {
+            detail: { lessonId: activeId },
+          }),
+        );
       });
 
       // Listen for quest completions
-      window.addEventListener('app:complete-lesson', (e: any) => {
+      window.addEventListener("app:complete-lesson", (e: any) => {
         const { lessonId, xp } = e.detail;
-        
+
         if (!this.state.completedLessons.includes(lessonId)) {
           this.state.completedLessons.push(lessonId);
           this.state.xp += xp;
@@ -390,39 +669,99 @@ import Footer from '../components/Footer.astro';
       });
 
       // Listen for state reset request
-      window.addEventListener('app:reset-state', () => {
-        localStorage.removeItem('bashquest_state');
+      window.addEventListener("app:reset-state", () => {
+        localStorage.removeItem("bashquest_state");
         this.state = {
           xp: 0,
           completedLessons: [],
-          activeView: 'dashboard',
+          activeView: "dashboard",
           activeLessonId: 1,
           streak: 0,
           lastCompletedDate: null,
           fsTree: null,
           lessonStartTrees: {},
           installedPackages: [
-            'pwd', 'whoami', 'clear', 'help', 'cd', 'ls', 'mkdir', 'touch', 'cat', 'echo', 
-            'rm', 'cp', 'mv', 'chmod', 'grep', 'wc', 'uniq', 'sort', 'man', 'apt',
-            'df', 'du', 'free', 'uptime', 'uname', 'ps', 'top', 'htop', 'kill', 'sleep',
-            'jobs', 'fg', 'ping', 'ip', 'curl', 'find', 'history', 'systemctl', 'nano',
-            'bash', 'sed', 'awk', 'cut', 'tr', 'ln', 'tar', 'chown', 'export', 'env', 'xargs',
-            'head', 'tail', 'less', 'more', 'journalctl', 'which', 'alias', 'crontab',
-            'useradd', 'passwd', 'su', 'ssh', 'scp'
-          ]
+            "pwd",
+            "whoami",
+            "clear",
+            "help",
+            "cd",
+            "ls",
+            "mkdir",
+            "touch",
+            "cat",
+            "echo",
+            "rm",
+            "cp",
+            "mv",
+            "chmod",
+            "grep",
+            "wc",
+            "uniq",
+            "sort",
+            "man",
+            "apt",
+            "df",
+            "du",
+            "free",
+            "uptime",
+            "uname",
+            "ps",
+            "top",
+            "htop",
+            "kill",
+            "sleep",
+            "jobs",
+            "fg",
+            "ping",
+            "ip",
+            "curl",
+            "find",
+            "history",
+            "systemctl",
+            "nano",
+            "bash",
+            "sed",
+            "awk",
+            "cut",
+            "tr",
+            "ln",
+            "tar",
+            "chown",
+            "export",
+            "env",
+            "xargs",
+            "head",
+            "tail",
+            "less",
+            "more",
+            "journalctl",
+            "which",
+            "alias",
+            "crontab",
+            "useradd",
+            "passwd",
+            "su",
+            "ssh",
+            "scp",
+          ],
         };
         this.resetFilesystem();
         this.applyViewVisibility();
-        
+
         // Return navbar tabs active state
-        window.dispatchEvent(new CustomEvent('app:trigger-view-change', { detail: { view: 'dashboard' } }));
-        
+        window.dispatchEvent(
+          new CustomEvent("app:trigger-view-change", {
+            detail: { view: "dashboard" },
+          }),
+        );
+
         this.saveToStorage();
         this.broadcastState();
       });
 
       // Listen for filesystem updates from the terminal
-      window.addEventListener('app:filesystem-update', () => {
+      window.addEventListener("app:filesystem-update", () => {
         if (window.appState && window.appState.fs) {
           this.state.fsTree = window.appState.fs.tree;
           this.saveToStorage();
@@ -430,7 +769,7 @@ import Footer from '../components/Footer.astro';
       });
 
       // Listen for package installation
-      window.addEventListener('app:package-installed', (e: any) => {
+      window.addEventListener("app:package-installed", (e: any) => {
         if (!this.state.installedPackages.includes(e.detail.package)) {
           this.state.installedPackages.push(e.detail.package);
           this.saveToStorage();
@@ -438,47 +777,58 @@ import Footer from '../components/Footer.astro';
       });
 
       // Listen for save export request
-      window.addEventListener('app:export-save', () => {
+      window.addEventListener("app:export-save", () => {
         try {
           const saveCode = btoa(encodeURIComponent(JSON.stringify(this.state)));
-          window.dispatchEvent(new CustomEvent('app:show-export-modal', { detail: { saveCode } }));
+          window.dispatchEvent(
+            new CustomEvent("app:show-export-modal", { detail: { saveCode } }),
+          );
         } catch (e) {
           console.error("Failed to export state", e);
         }
       });
 
       // Listen for save import request
-      window.addEventListener('app:import-save', (e: any) => {
+      window.addEventListener("app:import-save", (e: any) => {
         const { saveCode } = e.detail;
         try {
           // Decode from base64 and parse JSON
           const decoded = decodeURIComponent(atob(saveCode));
           const parsedState = JSON.parse(decoded);
-          
+
           // Basic validation to check that we have a valid state object
-          if (!parsedState || typeof parsedState !== 'object' || typeof parsedState.xp !== 'number') {
-            throw new Error('Malformed save code schema');
+          if (
+            !parsedState ||
+            typeof parsedState !== "object" ||
+            typeof parsedState.xp !== "number"
+          ) {
+            throw new Error("Malformed save code schema");
           }
-          
+
           // Merge parsed state into current state
           this.state = {
             ...this.state,
-            ...parsedState
+            ...parsedState,
           };
-          
+
           // Save to local storage
           this.saveToStorage();
-          
+
           // Notify dashboard of success
-          window.dispatchEvent(new CustomEvent('app:import-success'));
-          
+          window.dispatchEvent(new CustomEvent("app:import-success"));
+
           // Reload the page to fully reflect state changes
           window.location.reload();
         } catch (err) {
           console.error("Failed to import save code", err);
-          window.dispatchEvent(new CustomEvent('app:import-error', { 
-            detail: { message: "Invalid save code. Please ensure you copied the entire code correctly." } 
-          }));
+          window.dispatchEvent(
+            new CustomEvent("app:import-error", {
+              detail: {
+                message:
+                  "Invalid save code. Please ensure you copied the entire code correctly.",
+              },
+            }),
+          );
         }
       });
     }
@@ -486,8 +836,10 @@ import Footer from '../components/Footer.astro';
     updateStreak() {
       const today = new Date();
       today.setHours(0, 0, 0, 0); // Normalize to midnight
-      
-      const lastDate = this.state.lastCompletedDate ? new Date(this.state.lastCompletedDate) : null;
+
+      const lastDate = this.state.lastCompletedDate
+        ? new Date(this.state.lastCompletedDate)
+        : null;
       if (lastDate) lastDate.setHours(0, 0, 0, 0);
 
       if (!lastDate) {
@@ -495,7 +847,7 @@ import Footer from '../components/Footer.astro';
       } else {
         const diffTime = today.getTime() - lastDate.getTime();
         const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
-        
+
         if (diffDays === 1) {
           this.state.streak += 1;
         } else if (diffDays > 1) {
@@ -506,30 +858,40 @@ import Footer from '../components/Footer.astro';
     }
 
     applyViewVisibility() {
-      const viewDash = document.getElementById('view-dashboard');
-      const viewSand = document.getElementById('view-sandbox');
-      const footer = document.querySelector('footer');
+      const viewDash = document.getElementById("view-dashboard");
+      const viewSand = document.getElementById("view-sandbox");
+      const footer = document.querySelector("footer");
 
-      if (this.state.activeView === 'dashboard') {
-        viewSand?.classList.remove('animate-in', 'fade-in', 'duration-300');
-        
-        viewDash?.classList.remove('hidden');
-        viewDash?.classList.add('block', 'animate-in', 'fade-in', 'duration-300');
-        viewSand?.classList.remove('block', 'grid');
-        viewSand?.classList.add('hidden');
-        footer?.classList.remove('hidden');
+      if (this.state.activeView === "dashboard") {
+        viewSand?.classList.remove("animate-in", "fade-in", "duration-300");
+
+        viewDash?.classList.remove("hidden");
+        viewDash?.classList.add(
+          "block",
+          "animate-in",
+          "fade-in",
+          "duration-300",
+        );
+        viewSand?.classList.remove("block", "grid");
+        viewSand?.classList.add("hidden");
+        footer?.classList.remove("hidden");
       } else {
-        viewDash?.classList.remove('animate-in', 'fade-in', 'duration-300');
-        
-        viewSand?.classList.remove('hidden');
-        viewSand?.classList.add('block', 'animate-in', 'fade-in', 'duration-300');
-        viewDash?.classList.remove('block');
-        viewDash?.classList.add('hidden');
-        footer?.classList.add('hidden');
-        
+        viewDash?.classList.remove("animate-in", "fade-in", "duration-300");
+
+        viewSand?.classList.remove("hidden");
+        viewSand?.classList.add(
+          "block",
+          "animate-in",
+          "fade-in",
+          "duration-300",
+        );
+        viewDash?.classList.remove("block");
+        viewDash?.classList.add("hidden");
+        footer?.classList.add("hidden");
+
         // Autofocus terminal prompt when entering workspace
         setTimeout(() => {
-          document.getElementById('terminal-input')?.focus();
+          document.getElementById("terminal-input")?.focus();
         }, 100);
       }
     }
@@ -543,17 +905,19 @@ import Footer from '../components/Footer.astro';
         window.appState.streak = this.state.streak;
       }
 
-      window.dispatchEvent(new CustomEvent('app:state-updated', {
-        detail: this.state
-      }));
+      window.dispatchEvent(
+        new CustomEvent("app:state-updated", {
+          detail: this.state,
+        }),
+      );
     }
 
     saveToStorage() {
-      localStorage.setItem('bashquest_state', JSON.stringify(this.state));
+      localStorage.setItem("bashquest_state", JSON.stringify(this.state));
     }
 
     loadFromStorage() {
-      const saved = localStorage.getItem('bashquest_state');
+      const saved = localStorage.getItem("bashquest_state");
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
@@ -566,93 +930,105 @@ import Footer from '../components/Footer.astro';
   }
 
   // Initialize State Manager on DOM load
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener("DOMContentLoaded", () => {
     new AppStateManager();
 
     // Nano Text Editor Overlay Management
-    let currentNanoFile = '';
-    let currentNanoPath = '';
+    let currentNanoFile = "";
+    let currentNanoPath = "";
 
-    window.addEventListener('app:open-nano', (e: any) => {
+    window.addEventListener("app:open-nano", (e: any) => {
       const { filename, currentPath, content } = e.detail;
       currentNanoFile = filename;
       currentNanoPath = currentPath;
-      
-      const modal = document.getElementById('modal-nano-editor');
-      const textarea = document.getElementById('nano-textarea') as HTMLTextAreaElement;
-      const title = document.getElementById('nano-filename');
-      const modified = document.getElementById('nano-modified');
-      
+
+      const modal = document.getElementById("modal-nano-editor");
+      const textarea = document.getElementById(
+        "nano-textarea",
+      ) as HTMLTextAreaElement;
+      const title = document.getElementById("nano-filename");
+      const modified = document.getElementById("nano-modified");
+
       if (title) title.textContent = `File: ${filename}`;
-      if (modified) modified.textContent = '';
+      if (modified) modified.textContent = "";
       if (textarea) textarea.value = content;
-      
-      modal?.classList.remove('hidden');
+
+      modal?.classList.remove("hidden");
       setTimeout(() => textarea?.focus(), 100);
     });
 
-    document.getElementById('nano-textarea')?.addEventListener('input', () => {
-      const modified = document.getElementById('nano-modified');
-      if (modified) modified.textContent = '[ Modified ]';
+    document.getElementById("nano-textarea")?.addEventListener("input", () => {
+      const modified = document.getElementById("nano-modified");
+      if (modified) modified.textContent = "[ Modified ]";
     });
 
-    document.getElementById('nano-textarea')?.addEventListener('keydown', (e: any) => {
-      if (e.ctrlKey && e.key === 'o') {
-        e.preventDefault();
-        saveNanoContent(false);
-      } else if (e.ctrlKey && e.key === 'x') {
-        e.preventDefault();
-        saveNanoContent(true);
-      }
-    });
+    document
+      .getElementById("nano-textarea")
+      ?.addEventListener("keydown", (e: any) => {
+        if (e.ctrlKey && e.key === "o") {
+          e.preventDefault();
+          saveNanoContent(false);
+        } else if (e.ctrlKey && e.key === "x") {
+          e.preventDefault();
+          saveNanoContent(true);
+        }
+      });
 
     function saveNanoContent(shouldExit = false) {
-      const textarea = document.getElementById('nano-textarea') as HTMLTextAreaElement;
-      const content = textarea ? textarea.value : '';
-      
+      const textarea = document.getElementById(
+        "nano-textarea",
+      ) as HTMLTextAreaElement;
+      const content = textarea ? textarea.value : "";
+
       if (window.appState && window.appState.fs && currentNanoFile) {
         const fs = window.appState.fs;
-        
+
         // Find existing or create new file
         const existing = fs.getNodeByPath(currentNanoPath, currentNanoFile);
-        if (existing && existing.type === 'file') {
+        if (existing && existing.type === "file") {
           existing.content = content;
         } else {
-          fs.createNode(currentNanoPath, currentNanoFile, 'file', { content });
+          fs.createNode(currentNanoPath, currentNanoFile, "file", { content });
         }
-        
+
         // Dispatch save event to update visual explorer
-        window.dispatchEvent(new CustomEvent('app:filesystem-update'));
-        
+        window.dispatchEvent(new CustomEvent("app:filesystem-update"));
+
         // Notify user in terminal
-        window.dispatchEvent(new CustomEvent('app:print-terminal', {
-          detail: { text: `[ File '${currentNanoFile}' saved successfully ]` }
-        }));
-        
-        const modified = document.getElementById('nano-modified');
-        if (modified) modified.textContent = '';
+        window.dispatchEvent(
+          new CustomEvent("app:print-terminal", {
+            detail: {
+              text: `[ File '${currentNanoFile}' saved successfully ]`,
+            },
+          }),
+        );
+
+        const modified = document.getElementById("nano-modified");
+        if (modified) modified.textContent = "";
       }
-      
+
       if (shouldExit) {
-        document.getElementById('modal-nano-editor')?.classList.add('hidden');
-        
+        document.getElementById("modal-nano-editor")?.classList.add("hidden");
+
         // Autofocus terminal input when exiting nano
         setTimeout(() => {
-          document.getElementById('terminal-input')?.focus();
+          document.getElementById("terminal-input")?.focus();
         }, 50);
       }
     }
 
-    document.getElementById('btn-nano-cancel')?.addEventListener('click', () => {
-      document.getElementById('modal-nano-editor')?.classList.add('hidden');
-      setTimeout(() => {
-        document.getElementById('terminal-input')?.focus();
-      }, 50);
-    });
-    document.getElementById('btn-nano-save')?.addEventListener('click', () => {
+    document
+      .getElementById("btn-nano-cancel")
+      ?.addEventListener("click", () => {
+        document.getElementById("modal-nano-editor")?.classList.add("hidden");
+        setTimeout(() => {
+          document.getElementById("terminal-input")?.focus();
+        }, 50);
+      });
+    document.getElementById("btn-nano-save")?.addEventListener("click", () => {
       saveNanoContent(false);
     });
-    document.getElementById('btn-nano-exit')?.addEventListener('click', () => {
+    document.getElementById("btn-nano-exit")?.addEventListener("click", () => {
       saveNanoContent(true);
     });
   });

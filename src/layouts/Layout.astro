@@ -1,50 +1,59 @@
 ---
-import '../styles/global.css';
+import "../styles/global.css";
 
 interface Props {
 	title?: string;
 	description?: string;
 }
 
-const { 
-	title = "BashQuest — Learn Linux by Actually Using It",
-	description = "A free, interactive Linux terminal simulator with 61+ hands-on quests. No signup, no fluff — just real commands in a real sandbox."
+const {
+	title = "BashQuest — Practice Linux Commands & Bash in Browser",
+	description = "Practice Linux commands online with BashQuest. A free, interactive terminal simulator with gamified quests to learn Bash and command-line tools in your browser.",
 } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en" class="h-full bg-canvas-soft text-ink select-none scroll-smooth">
+<html
+	lang="en"
+	class="h-full bg-canvas-soft text-ink select-none scroll-smooth"
+>
 	<head>
 		<meta charset="utf-8" />
 		<!-- Theme initialization script to prevent flash -->
 		<script is:inline>
 			const theme = (() => {
-				if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-					return localStorage.getItem('theme');
+				if (
+					typeof localStorage !== "undefined" &&
+					localStorage.getItem("theme")
+				) {
+					return localStorage.getItem("theme");
 				}
-				if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-					return 'dark';
+				if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+					return "dark";
 				}
-				return 'light';
+				return "light";
 			})();
-			
-			if (theme === 'dark') {
-				document.documentElement.classList.add('dark');
+
+			if (theme === "dark") {
+				document.documentElement.classList.add("dark");
 			} else {
-				document.documentElement.classList.remove('dark');
+				document.documentElement.classList.remove("dark");
 			}
 		</script>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
-		
+
 		<!-- SEO Optimization -->
 		<title>{title}</title>
 		<meta name="description" content={description} />
 		<meta name="author" content="BashQuest Team" />
-		<meta name="keywords" content="Linux, Command Line, Terminal Simulator, Bash, Learner Tool, Interactive Lessons, boot.dev, Learn Linux, Developer Tools" />
-		
+		<meta
+			name="keywords"
+			content="practice linux commands online, interactive linux terminal simulator, learn bash in browser, online bash compiler, practice bash scripts online, linux terminal emulator, gamified bash tutorial"
+		/>
+
 		<!-- Open Graph -->
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
@@ -52,13 +61,23 @@ const {
 		<meta property="og:image" content="/og-image.png" />
 		<meta property="og:image:width" content="1200" />
 		<meta property="og:image:height" content="630" />
-		
+		<meta
+			property="og:image:alt"
+			content="BashQuest interactive terminal sandbox"
+		/>
+		<meta property="og:site_name" content="BashQuest" />
+		<meta property="og:locale" content="en_US" />
+		<!-- OG URL: runtime-safe fallback for static builds -->
+		<meta property="og:url" content="/" />
+
 		<!-- Twitter Cards -->
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="twitter:title" content={title} />
 		<meta name="twitter:description" content={description} />
 		<meta name="twitter:image" content="/og-image.png" />
-		
+		<meta name="twitter:site" content="@bashquest" />
+		<meta name="twitter:creator" content="@bashquest" />
+
 		<!-- Font preloads for better speed -->
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

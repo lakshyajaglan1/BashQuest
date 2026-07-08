@@ -1,0 +1,91 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navigation from "../components/Navigation.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<Layout
+    title="Terms of Service — BashQuest"
+    description="Terms of service and usage guidelines for BashQuest."
+>
+    <div class="flex flex-col min-h-screen">
+        <Navigation />
+
+        <main
+            class="flex-1 w-full bg-canvas-soft mesh-gradient py-12 px-4 md:px-8 select-text"
+        >
+            <div class="max-w-3xl mx-auto space-y-8">
+                <div class="space-y-4">
+                    <span
+                        class="caption-mono uppercase tracking-widest text-mute bg-canvas-soft-2 px-3 py-1 rounded border border-hairline"
+                        >Legal</span
+                    >
+                    <h1 class="display-lg text-ink font-bold tracking-tight">
+                        Terms of Service.
+                    </h1>
+                    <p class="body-md text-mute font-mono">
+                        Last updated: July 2026
+                    </p>
+                </div>
+
+                <div
+                    class="card-marketing border border-hairline bg-canvas p-8 shadow-level-3 space-y-6"
+                >
+                    <div class="space-y-2">
+                        <h2 class="text-lg font-sans font-bold text-ink">
+                            1. Acceptance of Terms
+                        </h2>
+                        <p class="body-sm text-body leading-relaxed">
+                            By accessing and using BashQuest, you agree to
+                            comply with and be bound by these Terms of Service.
+                            If you do not agree to these terms, please do not
+                            use the application.
+                        </p>
+                    </div>
+
+                    <hr class="border-hairline" />
+
+                    <div class="space-y-2">
+                        <h2 class="text-lg font-sans font-bold text-ink">
+                            2. Permitted Use
+                        </h2>
+                        <p class="body-sm text-body leading-relaxed">
+                            BashQuest is an educational simulator designed to
+                            teach basic command line skills. You may use this
+                            tool for personal, non-commercial learning purposes.
+                            Any attempt to abuse the web platform or exploit
+                            simulated terminal behaviors to disrupt services is
+                            prohibited.
+                        </p>
+                    </div>
+
+                    <hr class="border-hairline" />
+
+                    <div class="space-y-2">
+                        <h2 class="text-lg font-sans font-bold text-ink">
+                            3. Disclaimer of Warranties
+                        </h2>
+                        <p class="body-sm text-body leading-relaxed">
+                            The application is provided "as is" without
+                            warranties of any kind, either express or implied.
+                            Since the terminal environment is a simulation
+                            running in client-side memory, the behavior of
+                            certain commands may differ from real Linux kernels.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex justify-center">
+                    <a
+                        href="/?view=dashboard"
+                        class="button-primary text-sm font-medium"
+                    >
+                        Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </main>
+
+        <Footer />
+    </div>
+</Layout>

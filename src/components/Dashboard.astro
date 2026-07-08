@@ -1,20 +1,40 @@
 ---
-import { modules, lessons } from '../lib/lessons';
+import { modules, lessons } from "../lib/lessons";
 ---
-<div class="bg-canvas-soft mesh-gradient min-h-[calc(100vh-64px)] w-full py-12 px-4 md:px-8 select-none">
+
+<div
+  class="bg-canvas-soft mesh-gradient min-h-[calc(100vh-64px)] w-full py-12 px-4 md:px-8 select-none"
+>
   <div class="w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
-    
-    <!-- User Profile & Stats (Left Column) -->
+    <!-- User Profile, Stats & Quick Links (Left Column) -->
     <div class="lg:col-span-1 space-y-6">
-      <div class="card-marketing border border-hairline bg-canvas p-6 flex flex-col justify-between h-auto shadow-level-3">
+      <!-- Profile Card -->
+      <div
+        class="card-marketing border border-hairline bg-canvas p-6 flex flex-col justify-between h-auto shadow-level-3"
+      >
         <div>
           <div class="flex items-center gap-4 mb-6">
-            <div class="w-14 h-14 rounded-full bg-primary text-on-primary flex items-center justify-center font-mono text-2xl font-bold border border-hairline shadow-level-2 relative group/avatar overflow-hidden">
-              <span class="relative z-10 transition-transform duration-300 group-hover/avatar:scale-110 block">L</span>
+            <div
+              class="w-14 h-14 rounded-full bg-primary text-on-primary flex items-center justify-center font-mono text-2xl font-bold border border-hairline shadow-level-2 relative group/avatar overflow-hidden"
+            >
+              <span
+                class="relative z-10 transition-transform duration-300 group-hover/avatar:scale-110 block"
+                >L</span
+              >
             </div>
             <div>
-              <h2 id="profile-title" class="text-xl font-sans font-extrabold text-ink tracking-tight">Linux Novice.</h2>
-              <p id="profile-level" class="text-[11px] text-mute font-mono uppercase tracking-wider font-semibold mt-0.5">Level 1 User</p>
+              <h2
+                id="profile-title"
+                class="text-xl font-sans font-extrabold text-ink tracking-tight"
+              >
+                Linux Novice.
+              </h2>
+              <p
+                id="profile-level"
+                class="text-[11px] text-mute font-mono uppercase tracking-wider font-semibold mt-0.5"
+              >
+                Level 1 User
+              </p>
             </div>
           </div>
 
@@ -22,65 +42,121 @@ import { modules, lessons } from '../lib/lessons';
           <div class="space-y-2 mb-6">
             <div class="flex justify-between text-xs font-mono">
               <span class="text-mute">XP Progress</span>
-              <span id="profile-xp-ratio" class="text-ink font-bold">0 / 300</span>
+              <span id="profile-xp-ratio" class="text-ink font-bold"
+                >0 / 300</span
+              >
             </div>
-            <div class="w-full h-2.5 bg-canvas-soft-2 rounded-full overflow-hidden border border-hairline shadow-inner">
-              <div id="profile-xp-progress" class="h-full xp-bar-fill transition-all duration-1000 ease-out" style="width: 0%"></div>
+            <div
+              class="w-full h-2.5 bg-canvas-soft-2 rounded-full overflow-hidden border border-hairline shadow-inner"
+            >
+              <div
+                id="profile-xp-progress"
+                class="h-full xp-bar-fill transition-all duration-1000 ease-out"
+                style="width: 0%"
+              >
+              </div>
             </div>
           </div>
 
           <!-- Stats Grid -->
-          <div class="grid grid-cols-2 gap-4 py-4 border-t border-b border-hairline mb-6 font-mono text-xs">
+          <div
+            class="grid grid-cols-2 gap-4 py-4 border-t border-b border-hairline mb-6 font-mono text-xs"
+          >
             <div>
               <span class="text-mute block">Completed</span>
-              <span id="profile-completed-count" class="text-base font-bold text-ink">0 / 10</span>
+              <span
+                id="profile-completed-count"
+                class="text-base font-bold text-ink">0 / 10</span
+              >
             </div>
             <div>
               <span class="text-mute block">Unlocked Badges</span>
-              <span id="profile-badge-count" class="text-base font-bold text-ink">0</span>
+              <span
+                id="profile-badge-count"
+                class="text-base font-bold text-ink">0</span
+              >
             </div>
           </div>
         </div>
 
         <div>
-          <p class="text-[10px] text-mute font-mono mb-3 leading-relaxed">No signup required. Progress is saved locally. Export your save code to play on another device.</p>
+          <p class="text-[10px] text-mute font-mono mb-3 leading-relaxed">
+            No signup required. Progress is saved locally. Export your save code
+            to play on another device.
+          </p>
           <div class="grid grid-cols-3 gap-2">
-            <button 
-              id="btn-export-save" 
+            <button
+              id="btn-export-save"
               class="h-9 px-1.5 rounded-sm bg-canvas-soft-2 text-ink hover:bg-white dark:hover:bg-[#1a1a1a] border border-hairline text-[11px] font-semibold transition-all cursor-pointer shadow-sm hover:shadow-xs flex items-center justify-center whitespace-nowrap"
             >
               Export Save
             </button>
-            <button 
-              id="btn-import-save" 
+            <button
+              id="btn-import-save"
               class="h-9 px-1.5 rounded-sm bg-canvas-soft-2 text-ink hover:bg-white dark:hover:bg-[#1a1a1a] border border-hairline text-[11px] font-semibold transition-all cursor-pointer shadow-sm hover:shadow-xs flex items-center justify-center whitespace-nowrap"
             >
               Import Save
             </button>
-            <button 
-              id="btn-reset-progress" 
-              class="h-9 px-1.5 rounded-sm border border-red-200 text-error bg-red-50 text-[11px] font-semibold hover:bg-error-soft hover:text-error-deep hover:border-red-300 dark:bg-red-950/10 dark:border-red-900/30 dark:text-red-400 dark:hover:bg-red-900/20 dark:hover:text-red-300 transition-all cursor-pointer shadow-sm hover:shadow-xs flex items-center justify-center whitespace-nowrap"
+            <button
+              id="btn-reset-progress"
+              class="h-9 px-1.5 rounded-sm border border-red-200 text-error bg-red-50 text-[11px] font-semibold hover:bg-error-soft hover:text-error-deep hover:border-red-300 dark:bg-red-950/10 dark:border-red-900/30 dark:text-red-400 flex items-center justify-center whitespace-nowrap cursor-pointer"
             >
               Reset
             </button>
           </div>
-          <a 
-            href="https://ko-fi.com/bashquest_dev" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            class="mt-3 w-full h-9 rounded-sm border border-hairline bg-canvas text-ink text-[11px] font-semibold hover:bg-canvas-soft-2 dark:hover:bg-[#1a1a1a] transition-all shadow-sm hover:shadow-xs flex items-center justify-center gap-2 decoration-none"
-          >
-            <span class="text-sm">☕</span>
-            <span>Support the Developer</span>
-          </a>
         </div>
       </div>
 
       <!-- Badges Card -->
       <div class="card-marketing bg-canvas p-6 shadow-level-3">
-        <h3 class="text-xs font-bold tracking-widest text-mute uppercase font-mono mb-4 border-l-2 border-primary pl-2">Earned Badges</h3>
+        <h3
+          class="text-xs font-bold tracking-widest text-mute uppercase font-mono mb-4 border-l-2 border-primary pl-2"
+        >
+          Earned Badges
+        </h3>
         <div id="dashboard-badges-rack" class="flex flex-wrap gap-2">
           <!-- Dynamically filled with badges -->
+        </div>
+      </div>
+
+      <!-- Quick Navigation & Legal Links (Added here for instant visibility!) -->
+      <div class="card-marketing bg-canvas p-6 shadow-level-3 space-y-4">
+        <h3
+          class="text-xs font-bold tracking-widest text-mute uppercase font-mono border-l-2 border-primary pl-2"
+        >
+          Help & Legal
+        </h3>
+        <div class="grid grid-cols-1 gap-3 font-sans text-xs">
+          <a
+            href="/about"
+            class="text-body hover:text-ink transition-colors flex items-center gap-2.5"
+          >
+            <span class="text-sm">📖</span> About Us
+          </a>
+          <a
+            href="/faq"
+            class="text-body hover:text-ink transition-colors flex items-center gap-2.5"
+          >
+            <span class="text-sm">❓</span> Frequently Asked Questions (FAQ)
+          </a>
+          <a
+            href="/privacy"
+            class="text-body hover:text-ink transition-colors flex items-center gap-2.5"
+          >
+            <span class="text-sm">🛡️</span> Privacy Policy
+          </a>
+          <a
+            href="/terms"
+            class="text-body hover:text-ink transition-colors flex items-center gap-2.5"
+          >
+            <span class="text-sm">⚖️</span> Terms & Conditions
+          </a>
+          <a
+            href="/contact"
+            class="text-body hover:text-ink transition-colors flex items-center gap-2.5"
+          >
+            <span class="text-sm">✉️</span> Contact Us
+          </a>
         </div>
       </div>
     </div>
@@ -88,48 +164,105 @@ import { modules, lessons } from '../lib/lessons';
     <!-- Curriculum Skill Tree (Right Column) -->
     <div class="lg:col-span-2 space-y-8">
       <!-- Intro Banner -->
-      <div class="mesh-gradient bg-primary text-on-primary p-5 md:p-6 flex flex-col gap-4 relative overflow-hidden shadow-level-4 rounded-md">
-        <!-- Subtle mesh gradient glow in the top right corner -->
-        <div class="absolute -right-16 -top-16 w-48 h-48 rounded-full bg-gradient-to-br from-violet/25 via-link/15 to-transparent blur-3xl pointer-events-none"></div>
-        
+      <div
+        class="mesh-gradient bg-primary text-on-primary p-5 md:p-6 flex flex-col gap-4 relative overflow-hidden shadow-level-4 rounded-md"
+      >
+        <div
+          class="absolute -right-16 -top-16 w-48 h-48 rounded-full bg-gradient-to-br from-violet/25 via-link/15 to-transparent blur-3xl pointer-events-none"
+        >
+        </div>
+
         <div class="relative z-10">
-          <h2 class="text-base md:text-lg font-bold text-on-primary tracking-tight font-sans">
+          <h2
+            class="text-base md:text-lg font-bold text-on-primary tracking-tight font-sans"
+          >
             Learn Linux by actually using it.
           </h2>
-          <p class="text-xs md:text-sm text-on-primary/70 mt-1.5 leading-relaxed max-w-xl">
-            Real terminal commands, real filesystem simulation — no videos, no fluff.
+          <p
+            class="text-xs md:text-sm text-on-primary/70 mt-1.5 leading-relaxed max-w-xl"
+          >
+            Real terminal commands, real filesystem simulation — no videos, no
+            fluff.
           </p>
         </div>
-        
+
         <div class="flex flex-wrap gap-2.5 relative z-10">
-          <!-- Real Terminal Sandbox -->
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-on-primary/10 bg-on-primary/5 text-[10px] md:text-xs font-mono font-medium text-on-primary/80 hover:bg-on-primary/10 transition-colors">
-            <svg class="w-3.5 h-3.5 text-violet shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          <span
+            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-on-primary/10 bg-on-primary/5 text-[10px] md:text-xs font-mono font-medium text-on-primary/80 hover:bg-on-primary/10 transition-colors"
+          >
+            <svg
+              class="w-3.5 h-3.5 text-violet shrink-0"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+              ></path>
             </svg>
             Real Terminal Sandbox
           </span>
 
-          <!-- 60+ Hands-On Quests -->
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-on-primary/10 bg-on-primary/5 text-[10px] md:text-xs font-mono font-medium text-on-primary/80 hover:bg-on-primary/10 transition-colors">
-            <svg class="w-3.5 h-3.5 text-success shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+          <span
+            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-on-primary/10 bg-on-primary/5 text-[10px] md:text-xs font-mono font-medium text-on-primary/80 hover:bg-on-primary/10 transition-colors"
+          >
+            <svg
+              class="w-3.5 h-3.5 text-success shrink-0"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+              ></path>
             </svg>
-            60+ Hands-On Quests
+            60+ Quests
           </span>
 
-          <!-- Instant Verification -->
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-on-primary/10 bg-on-primary/5 text-[10px] md:text-xs font-mono font-medium text-on-primary/80 hover:bg-on-primary/10 transition-colors">
-            <svg class="w-3.5 h-3.5 text-cyan shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          <span
+            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-on-primary/10 bg-on-primary/5 text-[10px] md:text-xs font-mono font-medium text-on-primary/80 hover:bg-on-primary/10 transition-colors"
+          >
+            <svg
+              class="w-3.5 h-3.5 text-cyan shrink-0"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+              ></path>
             </svg>
             Instant Verification
           </span>
 
-          <!-- No Signup Required -->
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-on-primary/10 bg-on-primary/5 text-[10px] md:text-xs font-mono font-medium text-on-primary/80 hover:bg-on-primary/10 transition-colors">
-            <svg class="w-3.5 h-3.5 text-warning shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+          <span
+            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-on-primary/10 bg-on-primary/5 text-[10px] md:text-xs font-mono font-medium text-on-primary/80 hover:bg-on-primary/10 transition-colors"
+          >
+            <svg
+              class="w-3.5 h-3.5 text-warning shrink-0"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+              ></path>
             </svg>
             No Signup Required
           </span>
@@ -137,102 +270,146 @@ import { modules, lessons } from '../lib/lessons';
       </div>
 
       <div class="mb-4">
-        <h1 class="display-lg text-ink font-bold tracking-tight">Interactive Learning Path.</h1>
-        <p class="body-md text-body mt-2">Follow the path of command quests. Click any unlocked challenge node to open your interactive Linux shell workspace.</p>
+        <h1 class="display-lg text-ink font-bold tracking-tight">
+          Interactive Learning Path.
+        </h1>
+        <p class="body-md text-body mt-2">
+          Follow the path of command quests. Click any unlocked challenge node
+          to open your interactive Linux shell workspace.
+        </p>
       </div>
 
-      {modules.map((mod) => {
-        const moduleLessons = lessons.filter(l => l.moduleId === mod.id);
-        return (
-          <div class="space-y-4">
-            <h2 class="text-xs font-mono font-bold tracking-widest text-mute uppercase px-1 border-l-2 border-primary">{mod.title}</h2>
-            
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {moduleLessons.map((lesson) => (
-                <div 
-                  data-lesson-id={lesson.id}
-                  class="lesson-node-card cursor-pointer border border-hairline rounded-md p-5 bg-canvas flex flex-col justify-between hover:shadow-md transition-all duration-200 relative group opacity-60 pointer-events-none"
-                >
-                  <div class="flex justify-between items-start mb-2">
-                    <span class="font-mono text-xs font-bold text-mute bg-canvas-soft-2 px-2 py-0.5 rounded border border-hairline">
-                      Quest {lesson.id}
-                    </span>
-                    <span class="node-status-badge text-[10px] font-mono font-bold text-mute bg-canvas-soft border border-hairline px-2 py-0.5 rounded">
-                      Locked
-                    </span>
-                  </div>
+      {
+        modules.map((mod) => {
+          const moduleLessons = lessons.filter((l) => l.moduleId === mod.id);
+          return (
+            <div class="space-y-4">
+              <h2 class="text-xs font-mono font-bold tracking-widest text-mute uppercase px-1 border-l-2 border-primary">
+                {mod.title}
+              </h2>
 
-                  <div>
-                    <h3 class="font-sans text-base font-bold text-ink group-hover:text-link transition-colors">
-                      {lesson.title}
-                    </h3>
-                    <p class="text-xs text-body line-clamp-2 mt-1">
-                      {lesson.description}
-                    </p>
-                  </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {moduleLessons.map((lesson) => (
+                  <div
+                    data-lesson-id={lesson.id}
+                    class="lesson-node-card cursor-pointer border border-hairline rounded-md p-5 bg-canvas flex flex-col justify-between hover:shadow-md transition-all duration-200 relative group opacity-60 pointer-events-none"
+                  >
+                    <div class="flex justify-between items-start mb-2">
+                      <span class="font-mono text-xs font-bold text-mute bg-canvas-soft-2 px-2 py-0.5 rounded border border-hairline">
+                        Quest {lesson.id}
+                      </span>
+                      <span class="node-status-badge text-[10px] font-mono font-bold text-mute bg-canvas-soft border border-hairline px-2 py-0.5 rounded">
+                        Locked
+                      </span>
+                    </div>
 
-                  <div class="flex justify-between items-center mt-4 pt-3 border-t border-hairline/50">
-                    <span class="text-[11px] font-mono text-mute">
-                      +{lesson.xp} XP
-                    </span>
-                    
-                    <span class="start-btn-text text-xs font-sans font-medium text-mute group-hover:translate-x-0.5 transition-transform flex items-center gap-1">
-                      Start <span class="font-mono">→</span>
-                    </span>
-                  </div>
+                    <div>
+                      <h3 class="font-sans text-base font-bold text-ink group-hover:text-link transition-colors">
+                        {lesson.title}
+                      </h3>
+                      <p class="text-xs text-body line-clamp-2 mt-1">
+                        {lesson.description}
+                      </p>
+                    </div>
 
-                  <!-- Visual Locked Overlay -->
-                  <div class="absolute inset-0 bg-canvas/30 backdrop-blur-[0.5px] rounded-md pointer-events-none block node-lock-overlay"></div>
-                </div>
-              ))}
+                    <div class="flex justify-between items-center mt-4 pt-4 border-t border-hairline/50">
+                      <span class="text-xs font-mono text-success font-semibold shrink-0">
+                        +{lesson.xp} XP
+                      </span>
+                      <span class="start-text text-xs text-mute font-medium flex items-center gap-1 group-hover:text-ink transition-colors">
+                        Start <span class="font-mono">→</span>
+                      </span>
+                    </div>
+
+                    <div class="absolute inset-0 bg-canvas-soft/30 backdrop-blur-[0.5px] rounded-md pointer-events-none hidden node-lock-overlay" />
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })
+      }
     </div>
-
   </div>
 </div>
 
 <!-- Custom Confirmation Modal for Resetting Progress -->
-<div id="modal-reset-confirm" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs hidden select-none">
-  <div class="w-full max-w-md bg-canvas rounded-lg border border-hairline shadow-2xl p-6 relative animate-in fade-in zoom-in-95 duration-200">
-    <button id="btn-close-reset-modal" class="absolute top-4 right-4 text-mute hover:text-ink cursor-pointer bg-transparent border-none">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+<div
+  id="modal-reset-confirm"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs hidden select-none"
+>
+  <div
+    class="w-full max-w-md bg-canvas rounded-lg border border-hairline shadow-2xl p-6 relative animate-in fade-in zoom-in-95 duration-200"
+  >
+    <button
+      id="btn-close-reset-modal"
+      class="absolute top-4 right-4 text-mute hover:text-ink cursor-pointer bg-transparent border-none"
+    >
+      <svg
+        class="w-5 h-5"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M6 18L18 6M6 6l12 12"></path>
       </svg>
     </button>
-    
+
     <div class="flex items-start gap-4 mb-6">
-      <div class="flex items-center justify-center w-10 h-10 rounded-full bg-error-soft text-error shrink-0 border border-red-200 dark:bg-red-950/20 dark:border-red-900/30">
-        <svg class="w-5 h-5 text-error-deep dark:text-red-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+      <div
+        class="flex items-center justify-center w-10 h-10 rounded-full bg-error-soft text-error shrink-0 border border-red-200 dark:bg-red-950/20 dark:border-red-900/30"
+      >
+        <svg
+          class="w-5 h-5 text-error-deep dark:text-red-400"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+          ></path>
         </svg>
       </div>
       <div>
-        <h3 class="text-base font-bold text-ink tracking-tight">Reset All Progress?</h3>
-        <p class="text-xs text-mute font-mono mt-1">This action is irreversible</p>
+        <h3 class="text-base font-bold text-ink tracking-tight">
+          Reset All Progress?
+        </h3>
+        <p class="text-xs text-mute font-mono mt-1">
+          This action is irreversible
+        </p>
       </div>
     </div>
-    
+
     <div class="text-sm text-body leading-relaxed mb-6 space-y-2">
-      <p>Are you sure you want to reset all progress? This will permanently wipe your:</p>
-      <ul class="list-disc list-inside text-xs space-y-1 font-mono text-mute pl-2">
+      <p>
+        Are you sure you want to reset all progress? This will permanently wipe
+        your:
+      </p>
+      <ul
+        class="list-disc list-inside text-xs space-y-1 font-mono text-mute pl-2"
+      >
         <li>Completed quests history</li>
         <li>Earned XP levels and badges</li>
-        <li>Simulated Linux filesystem sandbox state</li>
+        <li>Simulated Linux filesystem configuration</li>
       </ul>
     </div>
-    
+
     <div class="flex justify-end gap-3">
-      <button 
-        id="btn-cancel-reset" 
+      <button
+        id="btn-cancel-reset"
         class="h-9 px-4 rounded-sm border border-hairline bg-canvas text-ink text-xs font-semibold hover:bg-canvas-soft-2 transition-all cursor-pointer"
       >
         Cancel
       </button>
-      <button 
-        id="btn-confirm-reset" 
+      <button
+        id="btn-confirm-reset"
         class="h-9 px-4 rounded-sm bg-error text-on-primary text-xs font-semibold hover:bg-error-deep transition-all cursor-pointer border-none"
       >
         Yes, Reset Progress
@@ -242,51 +419,97 @@ import { modules, lessons } from '../lib/lessons';
 </div>
 
 <!-- Custom Modal for Exporting Progress -->
-<div id="modal-export-save" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs hidden select-none">
-  <div class="w-full max-w-md bg-canvas rounded-lg border border-hairline shadow-2xl p-6 relative animate-in fade-in zoom-in-95 duration-200">
-    <button id="btn-close-export-modal" class="absolute top-4 right-4 text-mute hover:text-ink cursor-pointer bg-transparent border-none">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+<div
+  id="modal-export-save"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs hidden select-none"
+>
+  <div
+    class="w-full max-w-md bg-canvas rounded-lg border border-hairline shadow-2xl p-6 relative animate-in fade-in zoom-in-95 duration-200"
+  >
+    <button
+      id="btn-close-export-modal"
+      class="absolute top-4 right-4 text-mute hover:text-ink cursor-pointer bg-transparent border-none"
+    >
+      <svg
+        class="w-5 h-5"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M6 18L18 6M6 6l12 12"></path>
       </svg>
     </button>
-    
+
     <div class="flex items-start gap-4 mb-6">
-      <div class="flex items-center justify-center w-10 h-10 rounded-full bg-canvas-soft-2 text-ink shrink-0 border border-hairline">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
+      <div
+        class="flex items-center justify-center w-10 h-10 rounded-full bg-canvas-soft-2 text-ink shrink-0 border border-hairline"
+      >
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 21m0 0l-4.5-4.5M12 21V7.5"
+          ></path>
         </svg>
       </div>
       <div>
-        <h3 class="text-base font-bold text-ink tracking-tight">Export Progress</h3>
-        <p class="text-xs text-mute font-mono mt-1">Copy code to transfer progress</p>
+        <h3 class="text-base font-bold text-ink tracking-tight">
+          Export Progress
+        </h3>
+        <p class="text-xs text-mute font-mono mt-1">
+          Copy code to transfer progress
+        </p>
       </div>
     </div>
-    
+
     <div class="text-sm text-body leading-relaxed mb-4">
-      <p class="mb-2">Your simulated local profile state has been compiled into a secure Base64 key:</p>
-      <div class="w-full bg-[#171717] rounded-md p-3 border border-white/10 relative">
-        <textarea 
-          id="export-textarea" 
-          readonly 
-          class="w-full h-28 bg-transparent text-white font-mono text-[11px] leading-relaxed resize-none outline-none focus:ring-0 select-all border-none p-0"
-          spellcheck="false"
-        ></textarea>
+      <p class="mb-2">
+        Your simulated local profile state has been compiled into a secure
+        Base64 key:
+      </p>
+      <div
+        class="w-full bg-[#171717] rounded-md p-3 border border-white/10 relative"
+      >
+        <textarea
+          id="export-textarea"
+          readonly
+          class="w-full h-28 bg-transparent text-white font-mono text-[11px] leading-relaxed resize-none outline-none focus:ring-0 focus:outline-none p-0 m-0 leading-relaxed overflow-y-auto"
+          spellcheck="false"></textarea>
       </div>
     </div>
-    
+
     <div class="flex justify-end gap-3">
-      <button 
-        id="btn-close-export" 
+      <button
+        id="btn-close-export"
         class="h-9 px-4 rounded-sm border border-hairline bg-canvas text-ink text-xs font-semibold hover:bg-canvas-soft-2 transition-all cursor-pointer"
       >
         Close
       </button>
-      <button 
-        id="btn-copy-export" 
+      <button
+        id="btn-copy-export"
         class="h-9 px-4 rounded-sm bg-primary text-on-primary text-xs font-semibold hover:opacity-90 transition-all cursor-pointer border-none flex items-center justify-center gap-1.5"
       >
-        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m-6 9h6m-6 3h6"/>
+        <svg
+          class="w-4 h-4 shrink-0"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18"></path>
         </svg>
         <span id="btn-copy-text">Copy to Clipboard</span>
       </button>
@@ -295,48 +518,85 @@ import { modules, lessons } from '../lib/lessons';
 </div>
 
 <!-- Custom Modal for Importing Progress -->
-<div id="modal-import-save" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs hidden select-none">
-  <div class="w-full max-w-md bg-canvas rounded-lg border border-hairline shadow-2xl p-6 relative animate-in fade-in zoom-in-95 duration-200">
-    <button id="btn-close-import-modal" class="absolute top-4 right-4 text-mute hover:text-ink cursor-pointer bg-transparent border-none">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+<div
+  id="modal-import-save"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs hidden select-none"
+>
+  <div
+    class="w-full max-w-md bg-canvas rounded-lg border border-hairline shadow-2xl p-6 relative animate-in fade-in zoom-in-95 duration-200"
+  >
+    <button
+      id="btn-close-import-modal"
+      class="absolute top-4 right-4 text-mute hover:text-ink cursor-pointer bg-transparent border-none"
+    >
+      <svg
+        class="w-5 h-5"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M6 18L18 6M6 6l12 12"></path>
       </svg>
     </button>
-    
+
     <div class="flex items-start gap-4 mb-6">
-      <div class="flex items-center justify-center w-10 h-10 rounded-full bg-canvas-soft-2 text-ink shrink-0 border border-hairline">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 21m0 0l-4.5-4.5M12 21V7.5"/>
+      <div
+        class="flex items-center justify-center w-10 h-10 rounded-full bg-canvas-soft-2 text-ink shrink-0 border border-hairline"
+      >
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 21m0 0l-4.5-4.5M12 21V7.5"
+          ></path>
         </svg>
       </div>
       <div>
-        <h3 class="text-base font-bold text-ink tracking-tight">Import Progress</h3>
-        <p class="text-xs text-mute font-mono mt-1">Paste code to restore progress</p>
+        <h3 class="text-base font-bold text-ink tracking-tight">
+          Import Progress
+        </h3>
+        <p class="text-xs text-mute font-mono mt-1">
+          Paste code to restore progress
+        </p>
       </div>
     </div>
-    
+
     <div class="text-sm text-body leading-relaxed mb-4">
-      <p class="mb-2">Paste your Base64 save code below. Note that this will completely overwrite your current progress.</p>
+      <p class="mb-2">
+        Paste your Base64 save code below. Note that this will completely
+        overwrite your current progress.
+      </p>
       <div class="w-full bg-canvas rounded-md p-3 border border-hairline">
-        <textarea 
-          id="import-textarea" 
+        <textarea
+          id="import-textarea"
           placeholder="Paste save code..."
           class="w-full h-28 bg-transparent text-ink font-mono text-[11px] leading-relaxed resize-none outline-none focus:ring-0 border-none p-0"
-          spellcheck="false"
-        ></textarea>
+          spellcheck="false"></textarea>
       </div>
-      <p id="import-error" class="text-xs text-error font-mono mt-2 hidden">Invalid save code</p>
+      <p id="import-error" class="text-xs text-error font-mono mt-2 hidden">
+        Invalid save code
+      </p>
     </div>
-    
+
     <div class="flex justify-end gap-3">
-      <button 
-        id="btn-cancel-import" 
+      <button
+        id="btn-cancel-import"
         class="h-9 px-4 rounded-sm border border-hairline bg-canvas text-ink text-xs font-semibold hover:bg-canvas-soft-2 transition-all cursor-pointer"
       >
         Cancel
       </button>
-      <button 
-        id="btn-confirm-import" 
+      <button
+        id="btn-confirm-import"
         class="h-9 px-4 rounded-sm bg-primary text-on-primary text-xs font-semibold hover:opacity-90 transition-all cursor-pointer border-none"
       >
         Restore Progress
@@ -346,44 +606,38 @@ import { modules, lessons } from '../lib/lessons';
 </div>
 
 <script>
-  declare global { interface Window { appState: any; } }
+  import { lessons } from "../lib/lessons";
 
-  import { lessons } from '../lib/lessons';
-
-  // Level Names Mapping
   const levelNames = [
-    'Guest',
-    'Linux Novice',
-    'Filesystem Explorer',
-    'Shell Apprentice',
-    'Console Wrangler',
-    'Command Initiate',
-    'Script Cadet',
-    'Bash Squire',
-    'Permissions Paladin',
-    'Sysadmin',
-    'Network Warden',
-    'Kernel Wizard',
-    'Root Superuser',
-    'Linux Archmage',
-    'Linux Demigod'
+    "Guest",
+    "Linux Novice",
+    "Filesystem Explorer",
+    "Shell Apprentice",
+    "Console Wrangler",
+    "Command Initiate",
+    "Script Cadet",
+    "Bash Squire",
+    "Permissions Paladin",
+    "Sysadmin",
+    "Network Warden",
+    "Kernel Wizard",
+    "Root Superuser",
+    "Linux Archmage",
+    "Linux Demigod",
   ];
 
-  // Refresh Stats
   function updateDashboardUI() {
-    if (!window.appState) return;
+    const globalWindow = window as any;
+    if (!globalWindow.appState) return;
 
-    // Return early if the Dashboard view is hidden to save performance
-    const dashboardView = document.getElementById('view-dashboard');
-    if (dashboardView && dashboardView.classList.contains('hidden')) {
+    const dashboardView = document.getElementById("view-dashboard");
+    if (dashboardView && dashboardView.classList.contains("hidden")) {
       return;
     }
 
-    const state = window.appState;
+    const state = globalWindow.appState;
     const completed = state.completedLessons || [];
-    
-    // Progressive leveling curve:
-    // Level 2 requires 100 XP, Level 3 requires an additional 200 XP, etc.
+
     let level = 1;
     let totalXpNeededForNext = 100;
     let accumulatedXp = 0;
@@ -396,30 +650,32 @@ import { modules, lessons } from '../lib/lessons';
     const xpPerLevel = totalXpNeededForNext;
     const levelName = levelNames[Math.min(level - 1, levelNames.length - 1)];
 
-    // Prestige title: if Level > 10, append Lv. number
     let displayedTitle = levelName;
     if (level > 10) {
       displayedTitle = `${levelName} (Lv. ${level})`;
     }
 
-    // Profile Card UI
-    const profileTitle = document.getElementById('profile-title');
-    const profileLevel = document.getElementById('profile-level');
-    const profileXpRatio = document.getElementById('profile-xp-ratio');
-    const profileXpProgress = document.getElementById('profile-xp-progress');
-    const profileCompletedCount = document.getElementById('profile-completed-count');
-    const profileBadgeCount = document.getElementById('profile-badge-count');
+    const profileTitle = document.getElementById("profile-title");
+    const profileLevel = document.getElementById("profile-level");
+    const profileXpRatio = document.getElementById("profile-xp-ratio");
+    const profileXpProgress = document.getElementById("profile-xp-progress");
+    const profileCompletedCount = document.getElementById(
+      "profile-completed-count",
+    );
+    const profileBadgeCount = document.getElementById("profile-badge-count");
 
     if (profileTitle) {
-      profileTitle.textContent = /[.?!]$/.test(displayedTitle) ? displayedTitle : displayedTitle + '.';
+      profileTitle.textContent = /[.?!]$/.test(displayedTitle)
+        ? displayedTitle
+        : displayedTitle + ".";
     }
     if (profileLevel) profileLevel.textContent = `Level ${level} User`;
-    if (profileXpRatio) profileXpRatio.textContent = `${xpInLevel} / ${xpPerLevel}`;
+    if (profileXpRatio)
+      profileXpRatio.textContent = `${xpInLevel} / ${xpPerLevel}`;
     if (profileXpProgress) {
       const percentage = (xpInLevel / xpPerLevel) * 100;
-      // Start with 0% width first if not set to ensure transition plays
-      if (profileXpProgress.style.width === '') {
-        profileXpProgress.style.width = '0%';
+      if (profileXpProgress.style.width === "") {
+        profileXpProgress.style.width = "0%";
       }
       setTimeout(() => {
         profileXpProgress.style.width = `${percentage}%`;
@@ -429,10 +685,8 @@ import { modules, lessons } from '../lib/lessons';
       profileCompletedCount.textContent = `${completed.length} / ${lessons.length}`;
     }
 
-    // Unlocked Badges Rack
-    const badgesRack = document.getElementById('dashboard-badges-rack');
+    const badgesRack = document.getElementById("dashboard-badges-rack");
     if (badgesRack) {
-      // Find badges from completed lessons
       const earnedBadges: any[] = [];
       lessons.forEach((l: any) => {
         if (completed.includes(l.id) && l.badge) {
@@ -440,7 +694,8 @@ import { modules, lessons } from '../lib/lessons';
         }
       });
 
-      if (profileBadgeCount) profileBadgeCount.textContent = earnedBadges.length.toString();
+      if (profileBadgeCount)
+        profileBadgeCount.textContent = earnedBadges.length.toString();
 
       if (earnedBadges.length === 0) {
         badgesRack.innerHTML = `
@@ -449,310 +704,370 @@ import { modules, lessons } from '../lib/lessons';
           </div>
         `;
       } else {
-        badgesRack.innerHTML = earnedBadges.map((item, index) => {
-          // Color palettes matching Vercel premium collectible chip style
-          const colors = [
-            {
-              bg: 'bg-violet-50 dark:bg-violet-950/30',
-              text: 'text-violet-700 dark:text-violet-300',
-              border: 'border-violet-100 dark:border-violet-900/40 hover:bg-violet-100/50 dark:hover:bg-violet-900/30'
-            },
-            {
-              bg: 'bg-blue-50 dark:bg-blue-950/30',
-              text: 'text-blue-700 dark:text-blue-300',
-              border: 'border-blue-100 dark:border-blue-900/40 hover:bg-blue-100/50 dark:hover:bg-blue-900/30'
-            },
-            {
-              bg: 'bg-amber-50 dark:bg-amber-950/30',
-              text: 'text-amber-700 dark:text-amber-300',
-              border: 'border-amber-100 dark:border-amber-900/40 hover:bg-amber-100/50 dark:hover:bg-amber-900/30'
-            }
-          ];
-          const color = colors[index % colors.length];
-          
-          // Emojis mapping based on badge name
-          let emoji = '🏆';
-          const badgeLower = item.badge.toLowerCase();
-          if (badgeLower.includes('explorer')) emoji = '🧭';
-          else if (badgeLower.includes('navigator')) emoji = '🗺️';
-          else if (badgeLower.includes('builder')) emoji = '🛠️';
-          else if (badgeLower.includes('architect')) emoji = '📐';
-          else if (badgeLower.includes('neat')) emoji = '🧹';
-          else if (badgeLower.includes('helpful')) emoji = '❓';
-          else if (badgeLower.includes('creator')) emoji = '✨';
-          else if (badgeLower.includes('reader')) emoji = '📖';
-          else if (badgeLower.includes('peeker')) emoji = '👁️';
-          else if (badgeLower.includes('pager')) emoji = '📄';
-          else if (badgeLower.includes('quoter')) emoji = '💬';
-          else if (badgeLower.includes('writer')) emoji = '✍️';
-          else if (badgeLower.includes('journal')) emoji = '📓';
-          else if (badgeLower.includes('archivist')) emoji = '📦';
-          else if (badgeLower.includes('wildcard')) emoji = '🃏';
-          else if (badgeLower.includes('cleaner')) emoji = '🗑️';
-          else if (badgeLower.includes('plumber')) emoji = '🔧';
-          else if (badgeLower.includes('organizer')) emoji = '🗂️';
-          else if (badgeLower.includes('filterer')) emoji = '🔍';
+        badgesRack.innerHTML = earnedBadges
+          .map((item, index) => {
+            const colors = [
+              {
+                bg: "bg-violet-50 dark:bg-violet-950/30",
+                text: "text-violet-700 dark:text-violet-300",
+                border:
+                  "border-violet-100 dark:border-violet-900/40 hover:bg-violet-100/50 dark:hover:bg-violet-900/30",
+              },
+              {
+                bg: "bg-blue-50 dark:bg-blue-950/30",
+                text: "text-blue-700 dark:text-blue-300",
+                border:
+                  "border-blue-100 dark:border-blue-900/40 hover:bg-blue-100/50 dark:hover:bg-blue-900/30",
+              },
+              {
+                bg: "bg-emerald-50 dark:bg-emerald-950/30",
+                text: "text-emerald-700 dark:text-emerald-300",
+                border:
+                  "border-emerald-100 dark:border-emerald-900/40 hover:bg-emerald-100/50 dark:hover:bg-emerald-900/30",
+              },
+            ];
+            const color = colors[index % colors.length];
 
-          return `
+            let emoji = "🏆";
+            const badgeLower = item.badge.toLowerCase();
+            if (badgeLower.includes("explorer")) emoji = "🧭";
+            else if (badgeLower.includes("navigator")) emoji = "🗺️";
+            else if (badgeLower.includes("builder")) emoji = "🛠️";
+            else if (badgeLower.includes("architect")) emoji = "📐";
+            else if (badgeLower.includes("neat")) emoji = "🧹";
+            else if (badgeLower.includes("helpful")) emoji = "❓";
+            else if (badgeLower.includes("creator")) emoji = "✨";
+            else if (badgeLower.includes("reader")) emoji = "📖";
+            else if (badgeLower.includes("peeker")) emoji = "👁️";
+            else if (badgeLower.includes("pager")) emoji = "📄";
+            else if (badgeLower.includes("quoter")) emoji = "💬";
+            else if (badgeLower.includes("writer")) emoji = "✍️";
+            else if (badgeLower.includes("journal")) emoji = "📓";
+            else if (badgeLower.includes("archivist")) emoji = "📦";
+            else if (badgeLower.includes("wildcard")) emoji = "🃏";
+            else if (badgeLower.includes("cleaner")) emoji = "🗑️";
+            else if (badgeLower.includes("plumber")) emoji = "🔧";
+            else if (badgeLower.includes("organizer")) emoji = "🗂️";
+            else if (badgeLower.includes("filterer")) emoji = "🔍";
+
+            return `
             <div class="flex items-center gap-2 px-3 py-1.5 ${color.bg} ${color.border} border rounded-full transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm cursor-default select-none group/badge relative">
               <span class="text-sm shrink-0">${emoji}</span>
               <span class="text-[11px] font-mono font-bold ${color.text} truncate max-w-[100px]">${item.badge}</span>
-              <!-- Tooltip -->
               <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 opacity-0 scale-95 pointer-events-none group-hover/badge:opacity-100 group-hover/badge:scale-100 bg-primary text-on-primary text-[9px] font-mono py-1 px-2 rounded shadow-level-3 border border-hairline z-10 transition-all duration-200 whitespace-nowrap">
                 Quest ${item.title}
               </div>
             </div>
           `;
-        }).join('');
+          })
+          .join("");
       }
     }
 
-    // Refresh Nodes list
-    const nodes = document.querySelectorAll('.lesson-node-card');
-    nodes.forEach(node => {
-      const lessonIdAttr = node.getAttribute('data-lesson-id');
+    const nodes = document.querySelectorAll(".lesson-node-card");
+    nodes.forEach((node) => {
+      const lessonIdAttr = node.getAttribute("data-lesson-id");
       if (!lessonIdAttr) return;
       const lessonId = parseInt(lessonIdAttr);
-      
+
       const isCompleted = completed.includes(lessonId);
-      
-      // A lesson is unlocked if it is the first lesson in the array, OR the preceding lesson in the lessons array is completed
       const lessonIndex = lessons.findIndex((l: any) => l.id === lessonId);
-      const isUnlocked = lessonIndex === 0 || completed.includes(lessons[lessonIndex - 1].id);
-      
-      const statusBadge = node.querySelector('.node-status-badge');
-      const lockOverlay = node.querySelector('.node-lock-overlay');
-      const startText = node.querySelector('.start-btn-text');
-      const titleEl = node.querySelector('h3');
-      const descEl = node.querySelector('p');
+      const isUnlocked =
+        lessonIndex === 0 || completed.includes(lessons[lessonIndex - 1].id);
+
+      const statusBadge = node.querySelector(".node-status-badge");
+      const lockOverlay = node.querySelector(".node-lock-overlay");
+      const startText = node.querySelector(".start-text");
+      const titleEl = node.querySelector("h3");
+      const descEl = node.querySelector("p");
 
       node.classList.remove(
-        'opacity-60', 'pointer-events-none', 
-        'border-success', 'border-violet', 'border-violet/50', 'border-primary',
-        'shadow-level-4', 'shadow-level-3', 'shadow-level-2',
-        'shadow-[0_0_20px_rgba(121,40,202,0.15)]', 'shadow-[0_8px_30px_rgba(0,0,0,0.08)]',
-        'bg-emerald-50/5', 'bg-emerald-50/20', 'bg-emerald-50/50', 'dark:bg-emerald-950/5', 'dark:bg-emerald-950/10', 'opacity-40', 'opacity-50', 'opacity-90', 'opacity-100', 'bg-canvas-soft-2', 
-        'border-hairline', 'border-hairline-strong', 'border-emerald-100', 'border-emerald-500/20', 'border-emerald-200/50', 'dark:border-emerald-800/40', 'dark:border-emerald-900/20', 'dark:border-emerald-900/30',
-        'bg-emerald-500/[0.02]', 'dark:bg-emerald-500/[0.01]', 
-        'bg-canvas', 'bg-transparent', 'opacity-75', 'opacity-70'
+        "opacity-60",
+        "pointer-events-none",
+        "border-success",
+        "border-violet",
+        "border-violet/50",
+        "border-primary",
+        "shadow-level-4",
+        "shadow-level-3",
+        "shadow-level-2",
+        "shadow-[0_0_20px_rgba(121,40,202,0.15)]",
+        "shadow-[0_8px_30px_rgba(0,0,0,0.08)]",
+        "bg-emerald-50/5",
+        "bg-emerald-50/20",
+        "bg-emerald-50/50",
+        "dark:bg-emerald-950/5",
+        "dark:bg-emerald-950/10",
+        "opacity-40",
+        "opacity-50",
+        "opacity-90",
+        "opacity-100",
+        "bg-canvas-soft-2",
+        "border-hairline",
+        "border-hairline-strong",
+        "border-emerald-100",
+        "border-emerald-500/20",
+        "border-emerald-200/50",
+        "dark:border-emerald-800/40",
+        "dark:border-emerald-900/20",
+        "dark:border-emerald-900/30",
+        "bg-emerald-500/[0.02]",
+        "dark:bg-emerald-500/[0.01]",
+        "bg-canvas",
+        "bg-transparent",
+        "opacity-75",
+        "opacity-70",
       );
-      lockOverlay?.classList.add('hidden');
-      startText?.classList.remove('animate-pulse-subtle', 'text-violet', 'text-link', 'font-bold', 'group-hover:text-ink', 'transition-colors');
-      startText?.classList.add('text-mute');
+      lockOverlay?.classList.add("hidden");
+      startText?.classList.remove(
+        "animate-pulse-subtle",
+        "text-violet",
+        "text-link",
+        "font-bold",
+        "group-hover:text-ink",
+        "transition-colors",
+      );
+      startText?.classList.add("text-mute");
       if (startText) {
         startText.innerHTML = 'Start <span class="font-mono">→</span>';
       }
       if (titleEl) {
-        titleEl.className = 'font-sans text-base font-bold text-ink group-hover:text-link transition-colors';
+        titleEl.className =
+          "font-sans text-base font-bold text-ink group-hover:text-link transition-colors";
       }
       if (descEl) {
-        descEl.className = 'text-xs text-body line-clamp-2 mt-1';
+        descEl.className = "text-xs text-body line-clamp-2 mt-1";
       }
 
       if (isCompleted) {
-        node.classList.remove('opacity-60', 'pointer-events-none');
-        node.classList.add('bg-canvas', 'border-hairline-strong');
+        node.classList.remove("opacity-60", "pointer-events-none");
+        node.classList.add("bg-canvas", "border-hairline-strong");
         if (titleEl) {
-          titleEl.className = 'font-sans text-base font-bold text-ink';
+          titleEl.className = "font-sans text-base font-bold text-ink";
         }
         if (descEl) {
-          descEl.className = 'text-xs text-body line-clamp-2 mt-1';
+          descEl.className = "text-xs text-body line-clamp-2 mt-1";
         }
         if (statusBadge) {
-          statusBadge.textContent = 'Passed';
-          statusBadge.className = 'node-status-badge text-[10px] font-mono font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 dark:text-emerald-400 dark:bg-emerald-950/20 dark:border-emerald-800/40 px-2 py-0.5 rounded';
+          statusBadge.textContent = "Passed";
+          statusBadge.className =
+            "node-status-badge text-[10px] font-mono font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 dark:text-emerald-400 dark:bg-emerald-950/20 dark:border-emerald-800/40 px-2 py-0.5 rounded";
         }
         if (startText) {
           startText.innerHTML = 'Review <span class="font-mono">→</span>';
-          startText.classList.remove('text-mute');
-          startText.classList.add('text-mute', 'group-hover:text-ink', 'transition-colors');
+          startText.classList.remove("text-mute");
+          startText.classList.add(
+            "text-mute",
+            "group-hover:text-ink",
+            "transition-colors",
+          );
         }
       } else if (isUnlocked) {
-        node.classList.remove('opacity-60', 'pointer-events-none');
-        node.classList.add('border-primary', 'dark:border-violet/50', 'bg-canvas', 'shadow-[0_8px_30px_rgba(0,0,0,0.08)]', 'dark:shadow-[0_0_20px_rgba(121,40,202,0.15)]');
+        node.classList.remove("opacity-60", "pointer-events-none");
+        node.classList.add(
+          "border-primary",
+          "dark:border-violet/50",
+          "bg-canvas",
+          "shadow-[0_8px_30px_rgba(0,0,0,0.08)]",
+          "dark:shadow-[0_0_20px_rgba(121,40,202,0.15)]",
+        );
         if (startText) {
-          startText.classList.remove('text-mute');
-          startText.classList.add('animate-pulse-subtle', 'text-link', 'font-bold');
+          startText.classList.remove("text-mute");
+          startText.classList.add(
+            "animate-pulse-subtle",
+            "text-link",
+            "font-bold",
+          );
         }
         if (statusBadge) {
-          statusBadge.textContent = 'Active';
-          statusBadge.className = 'node-status-badge text-[10px] font-mono font-bold text-violet-deep bg-violet-soft border border-violet-soft px-2.5 py-0.5 rounded';
+          statusBadge.textContent = "Active";
+          statusBadge.className =
+            "node-status-badge text-[10px] font-mono font-bold text-violet-deep bg-violet-soft border border-violet-soft px-2.5 py-0.5 rounded";
         }
       } else {
-        node.classList.add('opacity-60', 'pointer-events-none', 'bg-canvas-soft-2', 'border-hairline');
-        lockOverlay?.classList.remove('hidden');
+        node.classList.add(
+          "opacity-60",
+          "pointer-events-none",
+          "bg-canvas-soft-2",
+          "border-hairline",
+        );
+        lockOverlay?.classList.remove("hidden");
         if (statusBadge) {
-          statusBadge.textContent = 'Locked';
-          statusBadge.className = 'node-status-badge text-[10px] font-mono font-bold text-mute bg-canvas-soft border border-hairline px-2 py-0.5 rounded';
+          statusBadge.textContent = "Locked";
+          statusBadge.className =
+            "node-status-badge text-[10px] font-mono font-bold text-mute bg-canvas-soft border-hairline px-2 py-0.5 rounded";
         }
       }
 
-      // Hook click event
       if (isUnlocked || isCompleted) {
-        node.classList.remove('pointer-events-none');
-        // Bind click listener only once using a data attribute flag
-        if (node.getAttribute('data-bound') !== 'true') {
-          node.setAttribute('data-bound', 'true');
-          node.addEventListener('click', () => {
-            window.dispatchEvent(new CustomEvent('app:select-lesson', { detail: { lessonId } }));
-            window.dispatchEvent(new CustomEvent('app:trigger-view-change', { detail: { view: 'sandbox' } }));
+        node.classList.remove("pointer-events-none");
+        if (node.getAttribute("data-bound") !== "true") {
+          node.setAttribute("data-bound", "true");
+          node.addEventListener("click", () => {
+            window.dispatchEvent(
+              new CustomEvent("app:select-lesson", { detail: { lessonId } }),
+            );
+            window.dispatchEvent(
+              new CustomEvent("app:trigger-view-change", {
+                detail: { view: "sandbox" },
+              }),
+            );
           });
         }
       }
     });
   }
 
-  // Bind Reset button and Confirmation Modal
-  const resetBtn = document.getElementById('btn-reset-progress');
-  const resetModal = document.getElementById('modal-reset-confirm');
-  const closeResetModalBtn = document.getElementById('btn-close-reset-modal');
-  const cancelResetBtn = document.getElementById('btn-cancel-reset');
-  const confirmResetBtn = document.getElementById('btn-confirm-reset');
+  const resetBtn = document.getElementById("btn-reset-progress");
+  const resetModal = document.getElementById("modal-reset-confirm");
+  const closeResetModalBtn = document.getElementById("btn-close-reset-modal");
+  const cancelResetBtn = document.getElementById("btn-cancel-reset");
+  const confirmResetBtn = document.getElementById("btn-confirm-reset");
 
   if (resetBtn && resetModal) {
-    resetBtn.addEventListener('click', () => {
-      resetModal.classList.remove('hidden');
+    resetBtn.addEventListener("click", () => {
+      resetModal.classList.remove("hidden");
     });
 
     const hideResetModal = () => {
-      resetModal.classList.add('hidden');
+      resetModal.classList.add("hidden");
     };
 
-    closeResetModalBtn?.addEventListener('click', hideResetModal);
-    cancelResetBtn?.addEventListener('click', hideResetModal);
+    closeResetModalBtn?.addEventListener("click", hideResetModal);
+    cancelResetBtn?.addEventListener("click", hideResetModal);
 
-    // Hide if clicking outside the modal content card
-    resetModal.addEventListener('click', (e: any) => {
+    resetModal.addEventListener("click", (e: any) => {
       if (e.target === resetModal) {
         hideResetModal();
       }
     });
 
-    confirmResetBtn?.addEventListener('click', () => {
+    confirmResetBtn?.addEventListener("click", () => {
       hideResetModal();
-      window.dispatchEvent(new CustomEvent('app:reset-state'));
+      window.dispatchEvent(new CustomEvent("app:reset-state"));
     });
   }
 
-  // Bind Export button and Modal
-  const exportBtn = document.getElementById('btn-export-save');
-  const exportModal = document.getElementById('modal-export-save');
-  const closeExportModalBtn = document.getElementById('btn-close-export-modal');
-  const closeExportBtn = document.getElementById('btn-close-export');
-  const copyExportBtn = document.getElementById('btn-copy-export');
-  const exportTextarea = document.getElementById('export-textarea') as HTMLTextAreaElement;
+  const exportBtn = document.getElementById("btn-export-save");
+  const exportModal = document.getElementById("modal-export-save");
+  const closeExportModalBtn = document.getElementById("btn-close-export-modal");
+  const closeExportBtn = document.getElementById("btn-close-export");
+  const copyExportBtn = document.getElementById("btn-copy-export");
+  const exportTextarea = document.getElementById(
+    "export-textarea",
+  ) as HTMLTextAreaElement;
 
   if (exportBtn && exportModal) {
-    exportBtn.addEventListener('click', () => {
-      // Trigger AppStateManager to generate code
-      window.dispatchEvent(new CustomEvent('app:export-save'));
+    exportBtn.addEventListener("click", () => {
+      window.dispatchEvent(new CustomEvent("app:export-save"));
     });
 
     const hideExportModal = () => {
-      exportModal.classList.add('hidden');
+      exportModal.classList.add("hidden");
     };
 
-    closeExportModalBtn?.addEventListener('click', hideExportModal);
-    closeExportBtn?.addEventListener('click', hideExportModal);
+    closeExportModalBtn?.addEventListener("click", hideExportModal);
+    closeExportBtn?.addEventListener("click", hideExportModal);
 
-    exportModal.addEventListener('click', (e: any) => {
+    exportModal.addEventListener("click", (e: any) => {
       if (e.target === exportModal) {
         hideExportModal();
       }
     });
 
-    // Copy to clipboard with visual feedback
-    copyExportBtn?.addEventListener('click', () => {
+    copyExportBtn?.addEventListener("click", () => {
       if (exportTextarea) {
         exportTextarea.select();
-        navigator.clipboard.writeText(exportTextarea.value).then(() => {
-          const btnText = document.getElementById('btn-copy-text');
-          if (btnText) {
-            const originalText = btnText.textContent;
-            btnText.textContent = 'Copied!';
-            copyExportBtn.classList.add('bg-emerald-600', 'text-white');
-            setTimeout(() => {
-              btnText.textContent = originalText;
-              copyExportBtn.classList.remove('bg-emerald-600', 'text-white');
-            }, 1500);
-          }
-        }).catch(err => {
-          console.error('Failed to copy text: ', err);
-        });
+        navigator.clipboard
+          .writeText(exportTextarea.value)
+          .then(() => {
+            const btnText = document.getElementById("btn-copy-text");
+            if (btnText) {
+              const originalText = btnText.textContent;
+              btnText.textContent = "Copied!";
+              copyExportBtn.classList.add("bg-emerald-600", "text-white");
+              setTimeout(() => {
+                btnText.textContent = originalText;
+                copyExportBtn.classList.remove("bg-emerald-600", "text-white");
+              }, 1500);
+            }
+          })
+          .catch((err) => {
+            console.error("Failed to copy text: ", err);
+          });
       }
     });
   }
 
-  // Bind Import button and Modal
-  const importBtn = document.getElementById('btn-import-save');
-  const importModal = document.getElementById('modal-import-save');
-  const closeImportModalBtn = document.getElementById('btn-close-import-modal');
-  const cancelImportBtn = document.getElementById('btn-cancel-import');
-  const confirmImportBtn = document.getElementById('btn-confirm-import');
-  const importTextarea = document.getElementById('import-textarea') as HTMLTextAreaElement;
-  const importError = document.getElementById('import-error');
+  const importBtn = document.getElementById("btn-import-save");
+  const importModal = document.getElementById("modal-import-save");
+  const closeImportModalBtn = document.getElementById("btn-close-import-modal");
+  const cancelImportBtn = document.getElementById("btn-cancel-import");
+  const confirmImportBtn = document.getElementById("btn-confirm-import");
+  const importTextarea = document.getElementById(
+    "import-textarea",
+  ) as HTMLTextAreaElement;
+  const importError = document.getElementById("import-error");
 
   if (importBtn && importModal) {
-    importBtn.addEventListener('click', () => {
-      if (importTextarea) importTextarea.value = '';
-      if (importError) importError.classList.add('hidden');
-      importModal.classList.remove('hidden');
+    importBtn.addEventListener("click", () => {
+      if (importTextarea) importTextarea.value = "";
+      if (importError) importError.classList.add("hidden");
+      importModal.classList.remove("hidden");
     });
 
     const hideImportModal = () => {
-      importModal.classList.add('hidden');
+      importModal.classList.add("hidden");
     };
 
-    closeImportModalBtn?.addEventListener('click', hideImportModal);
-    cancelImportBtn?.addEventListener('click', hideImportModal);
+    closeImportModalBtn?.addEventListener("click", hideImportModal);
+    cancelImportBtn?.addEventListener("click", hideImportModal);
 
-    importModal.addEventListener('click', (e: any) => {
+    importModal.addEventListener("click", (e: any) => {
       if (e.target === importModal) {
         hideImportModal();
       }
     });
 
-    confirmImportBtn?.addEventListener('click', () => {
-      const code = importTextarea ? importTextarea.value.trim() : '';
+    confirmImportBtn?.addEventListener("click", () => {
+      const code = importTextarea ? importTextarea.value.trim() : "";
       if (!code) {
         if (importError) {
-          importError.textContent = 'Please enter a save code';
-          importError.classList.remove('hidden');
+          importError.textContent = "Please enter a save code";
+          importError.classList.remove("hidden");
         }
         return;
       }
-      window.dispatchEvent(new CustomEvent('app:import-save', { detail: { saveCode: code } }));
+      window.dispatchEvent(
+        new CustomEvent("app:import-save", { detail: { saveCode: code } }),
+      );
     });
   }
 
-  // Listen to export response event from AppStateManager
-  window.addEventListener('app:show-export-modal', (e: any) => {
+  window.addEventListener("app:show-export-modal", (e: any) => {
     if (exportTextarea && exportModal) {
       exportTextarea.value = e.detail.saveCode;
-      exportModal.classList.remove('hidden');
+      exportModal.classList.remove("hidden");
     }
   });
 
-  // Listen to import error response from AppStateManager
-  window.addEventListener('app:import-error', (e: any) => {
+  window.addEventListener("app:import-error", (e: any) => {
     if (importError) {
-      importError.textContent = e.detail.message || 'Invalid save code';
-      importError.classList.remove('hidden');
+      importError.textContent = e.detail.message || "Invalid save code";
+      importError.classList.remove("hidden");
     }
   });
 
-  // Listen to import success to hide import modal (in case reload takes time)
-  window.addEventListener('app:import-success', () => {
+  window.addEventListener("app:import-success", () => {
     if (importModal) {
-      importModal.classList.add('hidden');
+      importModal.classList.add("hidden");
     }
   });
 
-  // Listen for updates
-  window.addEventListener('app:state-updated', () => {
+  window.addEventListener("app:state-updated", () => {
     updateDashboardUI();
   });
-  window.addEventListener('app:filesystem-update', () => {
+  window.addEventListener("app:filesystem-update", () => {
     updateDashboardUI();
   });
 </script>
