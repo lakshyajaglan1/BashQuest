@@ -1138,7 +1138,7 @@ import { modules } from "../lib/lessons.js";
       const text = feedbackTextarea ? feedbackTextarea.value.trim() : "";
       if (!text) return;
 
-      const mailtoUrl = `mailto:support@bashquest.dev?subject=BashQuest Feedback&body=${encodeURIComponent(text)}`;
+      const mailtoUrl = `mailto:support@bashquest.com?subject=BashQuest Feedback&body=${encodeURIComponent(text)}`;
       window.location.href = mailtoUrl;
       hideFeedbackModal();
     });
