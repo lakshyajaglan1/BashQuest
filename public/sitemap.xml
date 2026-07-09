@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Homepage / Dashboard -->
   <url>
-    <loc>https://bash-quest-ebon.vercel.app/</loc>
+    <loc>https://bashquest.com/</loc>
     <lastmod>2026-07-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
@@ -10,7 +10,7 @@
   
   <!-- About Us -->
   <url>
-    <loc>https://bash-quest-ebon.vercel.app/about</loc>
+    <loc>https://bashquest.com/about</loc>
     <lastmod>2026-07-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -18,7 +18,7 @@
   
   <!-- FAQ -->
   <url>
-    <loc>https://bash-quest-ebon.vercel.app/faq</loc>
+    <loc>https://bashquest.com/faq</loc>
     <lastmod>2026-07-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -26,7 +26,7 @@
   
   <!-- Contact Us -->
   <url>
-    <loc>https://bash-quest-ebon.vercel.app/contact</loc>
+    <loc>https://bashquest.com/contact</loc>
     <lastmod>2026-07-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -34,7 +34,7 @@
 
   <!-- Privacy Policy -->
   <url>
-    <loc>https://bash-quest-ebon.vercel.app/privacy</loc>
+    <loc>https://bashquest.com/privacy</loc>
     <lastmod>2026-07-15</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
@@ -42,7 +42,7 @@
 
   <!-- Terms of Service -->
   <url>
-    <loc>https://bash-quest-ebon.vercel.app/terms</loc>
+    <loc>https://bashquest.com/terms</loc>
     <lastmod>2026-07-15</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>

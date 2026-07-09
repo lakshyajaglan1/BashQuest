@@ -18,6 +18,22 @@ const {
 	class="h-full bg-canvas-soft text-ink select-none scroll-smooth"
 >
 	<head>
+		<!-- Google tag (gtag.js) - Tracks visitor counts -->
+		<script
+			is:inline
+			async
+			src="https://www.googletagmanager.com/gtag/js?id=G-TLLVP20ZTT"
+		></script>
+		<script is:inline>
+			window.dataLayer = window.dataLayer || [];
+			function gtag() {
+				dataLayer.push(arguments);
+			}
+			gtag("js", new Date());
+
+			gtag("config", "G-TLLVP20ZTT");
+		</script>
+
 		<meta charset="utf-8" />
 		<!-- Theme initialization script to prevent flash -->
 		<script is:inline>
@@ -67,7 +83,6 @@ const {
 		/>
 		<meta property="og:site_name" content="BashQuest" />
 		<meta property="og:locale" content="en_US" />
-		<!-- OG URL: runtime-safe fallback for static builds -->
 		<meta property="og:url" content="/" />
 
 		<!-- Twitter Cards -->
