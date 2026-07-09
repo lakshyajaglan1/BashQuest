@@ -2244,8 +2244,17 @@ export const lessons = [
         return parts.includes('ln') && (parts.includes('-s') || parts.includes('--symbolic') || parts.some(p => p.startsWith('-') && p.includes('s')));
       });
       const node = fs.getNodeByPath('/home/learner', 'app_link.log');
+
+      const targetCorrect = (() => {
+        if (!node || node.type !== 'link') return false;
+        // Accept either the relative or absolute target representation
+        return (
+          node.target === 'logs/app.log' ||
+          node.target === '/home/learner/logs/app.log'
+        );
+      })();
+
       const isLink = node && node.type === 'link';
-      const targetCorrect = isLink && (node.target === '/home/learner/logs/app.log' || node.target === 'logs/app.log');
 
       return {
         success: usedLnS && isLink && targetCorrect,
