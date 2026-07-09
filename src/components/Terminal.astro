@@ -1,33 +1,52 @@
 ---
+
 ---
-<div class="code-editor-mockup w-full h-[400px] lg:h-full flex flex-col font-mono text-[13px] text-white bg-[#0c0c0c] border border-white/10 rounded-md shadow-[0_24px_40px_rgba(0,0,0,0.15),_inset_0_1px_0_rgba(255,255,255,0.12)] select-text overflow-hidden">
-  
+
+<div
+  class="code-editor-mockup w-full h-[400px] lg:h-full flex flex-col font-mono text-[13px] text-white bg-[#0c0c0c] border border-white/10 rounded-md shadow-[0_24px_40px_rgba(0,0,0,0.15),_inset_0_1px_0_rgba(255,255,255,0.12)] select-text overflow-hidden"
+>
   <!-- Terminal Title Bar -->
-  <div class="flex items-center justify-between pb-3 mb-2 border-b border-white/10 select-none">
+  <div
+    class="flex items-center justify-between pb-3 mb-2 border-b border-white/10 select-none"
+  >
     <div class="flex items-center gap-1.5">
       <div class="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
       <div class="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
       <div class="w-3 h-3 rounded-full bg-[#27c93f]"></div>
-      <span class="text-xs text-gray-300 font-mono ml-3">learner@bashquest: <span id="term-title-path" class="text-gray-300">~</span></span>
+      <span class="text-xs text-gray-300 font-mono ml-3"
+        >learner@bashquest: <span id="term-title-path" class="text-gray-300"
+          >~</span
+        ></span
+      >
     </div>
-    <span class="text-[10px] text-gray-400 uppercase font-bold tracking-wider mr-1">Bash Shell</span>
+    <span
+      class="text-[10px] text-gray-400 uppercase font-bold tracking-wider mr-1"
+      >Bash Shell</span
+    >
   </div>
 
   <!-- Terminal Output Screen -->
-  <div id="terminal-history" class="flex-1 overflow-y-auto space-y-1.5 pr-2 mb-2">
+  <div
+    id="terminal-history"
+    class="flex-1 overflow-y-auto space-y-1.5 pr-2 mb-2"
+  >
   </div>
 
   <!-- Terminal Prompt Input Line -->
-  <div class="flex items-center gap-1.5 pt-1.5 border-t border-white/5 select-none font-mono">
+  <div
+    class="flex items-center gap-1.5 pt-1.5 border-t border-white/5 select-none font-mono"
+  >
     <span class="text-green-400 font-bold shrink-0">learner@bashquest</span>
     <span class="text-gray-400 shrink-0">:</span>
-    <span id="term-prompt-path" class="text-blue-400 font-semibold shrink-0">~</span>
+    <span id="term-prompt-path" class="text-blue-400 font-semibold shrink-0"
+      >~</span
+    >
     <span class="text-white font-bold shrink-0">$</span>
-    
+
     <div class="relative flex-1 flex items-center">
-      <input 
+      <input
         id="terminal-input"
-        type="text" 
+        type="text"
         class="w-full min-w-[100px] bg-transparent border-none outline-none text-white font-mono caret-white focus:ring-0 focus:outline-none p-0 m-0 z-10"
         autofocus
         autocomplete="off"
@@ -36,32 +55,40 @@
         spellcheck="false"
       />
       <!-- Ghost text for autocomplete preview -->
-      <span id="terminal-ghost" class="absolute left-0 top-0 text-mute opacity-50 pointer-events-none select-none font-mono"></span>
+      <span
+        id="terminal-ghost"
+        class="absolute left-0 top-0 text-mute opacity-50 pointer-events-none select-none font-mono"
+      ></span>
     </div>
   </div>
 </div>
 
 <script>
-  declare global { interface Window { appState: any; } }
-
   // DOM selectors
-  const termHistory = document.getElementById('terminal-history');
-  const termInput = document.getElementById('terminal-input') as HTMLInputElement;
-  const termGhost = document.getElementById('terminal-ghost');
-  const termTitlePath = document.getElementById('term-title-path');
-  const termPromptPath = document.getElementById('term-prompt-path');
+  const termHistory = document.getElementById("terminal-history");
+  const termInput = document.getElementById(
+    "terminal-input",
+  ) as HTMLInputElement;
+  const termGhost = document.getElementById("terminal-ghost");
+  const termTitlePath = document.getElementById("term-title-path");
+  const termPromptPath = document.getElementById("term-prompt-path");
 
   let historyIdx = -1;
-  let tempCommand = '';
+  let tempCommand = "";
 
   let bootSequenceStarted = false;
 
-  function typeHtml(element: HTMLElement, htmlText: string, speed: number, onComplete?: () => void) {
+  function typeHtml(
+    element: HTMLElement,
+    htmlText: string,
+    speed: number,
+    onComplete?: () => void,
+  ) {
     let i = 0;
     function step() {
       if (i < htmlText.length) {
-        if (htmlText[i] === '<') {
-          const tagEnd = htmlText.indexOf('>', i);
+        if (htmlText[i] === "<") {
+          const tagEnd = htmlText.indexOf(">", i);
           if (tagEnd !== -1) {
             element.innerHTML = htmlText.substring(0, tagEnd + 1);
             i = tagEnd + 1;
@@ -69,8 +96,8 @@
             element.innerHTML = htmlText.substring(0, i + 1);
             i++;
           }
-        } else if (htmlText[i] === '&') {
-          const entityEnd = htmlText.indexOf(';', i);
+        } else if (htmlText[i] === "&") {
+          const entityEnd = htmlText.indexOf(";", i);
           if (entityEnd !== -1 && entityEnd - i < 8) {
             element.innerHTML = htmlText.substring(0, entityEnd + 1);
             i = entityEnd + 1;
@@ -96,54 +123,63 @@
   function runBootSequence() {
     if (bootSequenceStarted || !termHistory) return;
     bootSequenceStarted = true;
-    
-    termHistory.innerHTML = '';
-    const container = document.createElement('div');
-    container.className = 'text-[#888] font-mono leading-relaxed';
+
+    termHistory.innerHTML = "";
+    const container = document.createElement("div");
+    container.className = "text-[#888] font-mono leading-relaxed";
     termHistory.appendChild(container);
-    
+
     const fullHtmlText = `Welcome to BashQuest Terminal v1.0.0<br>Type <span class="text-success font-semibold">help</span> to list available commands. Redirection (&gt;, &gt;&gt;) is supported.<br>Type your command and press Enter. Tab key autocompletes file paths.`;
-    
+
     typeHtml(container, fullHtmlText, 12);
   }
 
   // Focus input on clicking anywhere in terminal
-  document.querySelector('.code-editor-mockup')?.addEventListener('click', (e: any) => {
-    // If user is highlighting text, do not force focus
-    const selection = window.getSelection();
-    if (selection && selection.toString().length === 0) {
-      termInput?.focus();
-    }
-  });
+  document
+    .querySelector(".code-editor-mockup")
+    ?.addEventListener("click", () => {
+      const selection = window.getSelection();
+      if (selection && selection.toString().length === 0) {
+        termInput?.focus();
+      }
+    });
 
   // Shorten paths for shell prompt
   function getShortPath(path: string) {
-    if (path === '/home/learner') return '~';
-    if (path.startsWith('/home/learner')) {
-      return '~' + path.substring(13);
+    if (path === "/home/learner") return "~";
+    if (path.startsWith("/home/learner")) {
+      return "~" + path.substring(13);
     }
     return path;
   }
 
   // Render prompt changes
   function updatePrompt() {
-    if (!window.appState || !window.appState.session) return;
-    const currentPath = window.appState.session.currentPath;
+    const globalWindow = window as any;
+    if (!globalWindow.appState || !globalWindow.appState.session) return;
+    const currentPath = globalWindow.appState.session.currentPath;
     const shortPath = getShortPath(currentPath);
-    
+
     if (termTitlePath) termTitlePath.textContent = shortPath;
     if (termPromptPath) termPromptPath.textContent = shortPath;
   }
 
   // Write a row to the terminal log
-  function writeRow(htmlContent: string, isCommand: boolean = false, cmdString: string = '') {
+  function writeRow(
+    htmlContent: string,
+    isCommand: boolean = false,
+    cmdString: string = "",
+  ) {
     if (!termHistory) return;
 
-    const row = document.createElement('div');
-    row.className = 'leading-relaxed font-mono';
-    
+    const row = document.createElement("div");
+    row.className = "leading-relaxed font-mono";
+
     if (isCommand) {
-      const shortPath = getShortPath(window.appState.session.currentPath);
+      const globalWindow = window as any;
+      const currentPath =
+        globalWindow.appState?.session?.currentPath || "/home/learner";
+      const shortPath = getShortPath(currentPath);
       row.innerHTML = `
         <span class="text-green-400 font-bold">learner@bashquest</span>:<span class="text-blue-400 font-semibold">${shortPath}</span><span class="text-white">$</span> 
         <span class="text-white">${cmdString}</span>
@@ -151,7 +187,7 @@
     } else {
       row.innerHTML = htmlContent;
     }
-    
+
     termHistory.appendChild(row);
     // Scroll to bottom
     termHistory.scrollTop = termHistory.scrollHeight;
@@ -160,24 +196,25 @@
   // Execute a command
   function submitCommand(commandText: string) {
     const trimmed = commandText.trim();
-    writeRow('', true, commandText); // echo command to screen
+    writeRow("", true, commandText); // echo command to screen
 
-    if (termInput) termInput.value = '';
-    if (termGhost) termGhost.textContent = '';
+    if (termInput) termInput.value = "";
+    if (termGhost) termGhost.textContent = "";
 
     if (!trimmed) return;
 
-    if (!window.appState || !window.appState.session) return;
-    
-    const session = window.appState.session;
+    const globalWindow = window as any;
+    if (!globalWindow.appState || !globalWindow.appState.session) return;
+
+    const session = globalWindow.appState.session;
     const result = session.execute(trimmed);
 
     // Save history index
     historyIdx = -1;
-    tempCommand = '';
+    tempCommand = "";
 
     if (result.clear) {
-      if (termHistory) termHistory.innerHTML = '';
+      if (termHistory) termHistory.innerHTML = "";
     } else {
       if (result.stdout) {
         // Escape HTML tags to prevent cross-site script rendering, but replace newlines
@@ -185,7 +222,7 @@
           .replace(/&/g, "&amp;")
           .replace(/</g, "&lt;")
           .replace(/>/g, "&gt;")
-          .replace(/\n/g, '<br>');
+          .replace(/\n/g, "<br>");
         writeRow(`<div class="text-white">${escaped}</div>`);
       }
       if (result.stderr) {
@@ -193,71 +230,89 @@
           .replace(/&/g, "&amp;")
           .replace(/</g, "&lt;")
           .replace(/>/g, "&gt;")
-          .replace(/\n/g, '<br>');
+          .replace(/\n/g, "<br>");
         writeRow(`<div class="text-error font-semibold">${escaped}</div>`);
       }
     }
 
     updatePrompt();
-    
+
     // Broadcast event that shell has changed states
-    window.dispatchEvent(new CustomEvent('app:filesystem-update'));
-    window.dispatchEvent(new CustomEvent('app:terminal-command', { detail: { command: trimmed } }));
+    window.dispatchEvent(new CustomEvent("app:filesystem-update"));
+    window.dispatchEvent(
+      new CustomEvent("app:terminal-command", { detail: { command: trimmed } }),
+    );
   }
 
   // Handle Tab Autocomplete
   function handleAutocomplete() {
-    if (!termInput || !window.appState || !window.appState.session) return;
-    
+    const globalWindow = window as any;
+    if (!termInput || !globalWindow.appState || !globalWindow.appState.session)
+      return;
+
     const value = termInput.value;
     const parts = value.split(/\s+/);
-    const cmd = parts[0];
-    
+
     // Autocomplete files and folders in current directory
-    const lastWord = parts[parts.length - 1] || '';
-    
+    const lastWord = parts[parts.length - 1] || "";
+
     // We split directories and file prefix
-    let targetDir = '.';
+    let targetDir = ".";
     let filePrefix = lastWord;
-    
-    if (lastWord.includes('/')) {
-      const idx = lastWord.lastIndexOf('/');
-      targetDir = lastWord.substring(0, idx) || '/';
+
+    if (lastWord.includes("/")) {
+      const idx = lastWord.lastIndexOf("/");
+      targetDir = lastWord.substring(0, idx) || "/";
       filePrefix = lastWord.substring(idx + 1);
     }
-    
-    const fs = window.appState.fs;
-    const session = window.appState.session;
+
+    const fs = globalWindow.appState.fs;
+    const session = globalWindow.appState.session;
     const node = fs.getNodeByPath(session.currentPath, targetDir);
-    
-    if (node && node.type === 'dir' && node.children) {
-      const matches = node.children.filter((child: any) => child.name.startsWith(filePrefix));
-      
+
+    if (node && node.type === "dir" && node.children) {
+      const matches = node.children.filter((child: any) =>
+        child.name.startsWith(filePrefix),
+      );
+
       if (matches.length === 1) {
         // Complete the word
         const match = matches[0];
-        const suffix = match.type === 'dir' ? '/' : '';
-        const completedWord = ((targetDir !== '.' && targetDir !== '/' ? targetDir + '/' : (targetDir === '/' ? '/' : '')) + match.name + suffix).replace(/\/{2,}/g, '/');
-        
+        const suffix = match.type === "dir" ? "/" : "";
+        const completedWord = (
+          (targetDir !== "." && targetDir !== "/"
+            ? targetDir + "/"
+            : targetDir === "/"
+              ? "/"
+              : "") +
+          match.name +
+          suffix
+        ).replace(/\/{2,}/g, "/");
+
         parts[parts.length - 1] = completedWord;
-        termInput.value = parts.join(' ');
+        termInput.value = parts.join(" ");
       } else if (matches.length > 1) {
         // Multiple matches, output them to screen
-        const matchNames = matches.map((m: any) => m.name + (m.type === 'dir' ? '/' : ''));
-        writeRow('', true, value);
-        writeRow(`<div class="text-[#888] font-semibold">${matchNames.join('  ')}</div>`);
+        const matchNames = matches.map(
+          (m: any) => m.name + (m.type === "dir" ? "/" : ""),
+        );
+        writeRow("", true, value);
+        writeRow(
+          `<div class="text-[#888] font-semibold">${matchNames.join("  ")}</div>`,
+        );
       }
     }
   }
 
   // Key Event Listeners
-  termInput?.addEventListener('keydown', (e: any) => {
-    if (!window.appState || !window.appState.session) return;
-    const history = window.appState.session.history || [];
+  termInput?.addEventListener("keydown", (e: any) => {
+    const globalWindow = window as any;
+    if (!globalWindow.appState || !globalWindow.appState.session) return;
+    const history = globalWindow.appState.session.history || [];
 
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       submitCommand(termInput.value);
-    } else if (e.key === 'ArrowUp') {
+    } else if (e.key === "ArrowUp") {
       e.preventDefault();
       if (history.length === 0) return;
 
@@ -267,9 +322,9 @@
       } else if (historyIdx > 0) {
         historyIdx--;
       }
-      
+
       termInput.value = history[historyIdx];
-    } else if (e.key === 'ArrowDown') {
+    } else if (e.key === "ArrowDown") {
       e.preventDefault();
       if (historyIdx === -1) return;
 
@@ -280,7 +335,7 @@
         historyIdx = -1;
         termInput.value = tempCommand;
       }
-    } else if (e.key === 'Tab') {
+    } else if (e.key === "Tab") {
       e.preventDefault();
       handleAutocomplete();
     }
@@ -297,23 +352,27 @@
       </div>
     `;
     historyIdx = -1;
-    tempCommand = '';
+    tempCommand = "";
   }
 
   // Listen for lesson-load event to update terminal paths
-  window.addEventListener('app:state-updated', () => {
+  window.addEventListener("app:state-updated", () => {
     updatePrompt();
-    if (window.appState && window.appState.activeView === 'sandbox') {
+    const globalWindow = window as any;
+    if (
+      globalWindow.appState &&
+      globalWindow.appState.activeView === "sandbox"
+    ) {
       runBootSequence();
     }
   });
-  window.addEventListener('app:select-lesson', () => {
+  window.addEventListener("app:select-lesson", () => {
     updatePrompt();
     clearTerminal();
   });
 
   // Listen for custom prints to terminal (e.g. from Nano editor saving)
-  window.addEventListener('app:print-terminal', (e: any) => {
+  window.addEventListener("app:print-terminal", (e: any) => {
     if (e.detail && e.detail.text) {
       writeRow(`<div class="text-white">${e.detail.text}</div>`);
     }

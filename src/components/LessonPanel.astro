@@ -1,47 +1,89 @@
 ---
+
 ---
-<div class="bg-white dark:bg-[#0a0a0a] border border-gray-300 dark:border-white/10 shadow-sm rounded-md p-4 sm:p-6 flex flex-col min-h-[400px] lg:h-full overflow-y-auto select-none">
-  
+
+<div
+  class="bg-white dark:bg-[#0a0a0a] border border-gray-300 dark:border-white/10 shadow-sm rounded-md p-4 sm:p-6 flex flex-col min-h-[400px] lg:h-full overflow-y-auto select-none"
+>
   <!-- Lesson Header -->
   <div class="pb-4 border-b border-hairline mb-5">
     <div class="flex items-center justify-between mb-2">
-      <span id="lesson-eyebrow" class="font-mono text-xs font-bold text-violet-deep bg-violet-soft border border-violet-soft px-2.5 py-0.5 rounded-sm">
+      <span
+        id="lesson-eyebrow"
+        class="font-mono text-xs font-bold text-violet-deep bg-violet-soft border border-violet-soft px-2.5 py-0.5 rounded-sm"
+      >
         QUEST 1
       </span>
       <span class="text-xs font-mono text-mute font-bold" id="lesson-xp-reward">
         +100 XP
       </span>
     </div>
-    <h2 id="lesson-title" class="display-sm text-ink font-bold tracking-tight">Who Am I and Where Am I?.</h2>
+    <h2 id="lesson-title" class="display-sm text-ink font-bold tracking-tight">
+      Who Am I and Where Am I?.
+    </h2>
   </div>
 
   <!-- Lesson Description & Markdown Scroll -->
-  <div class="flex-1 space-y-5 overflow-y-auto text-sm leading-relaxed pr-1 mb-5">
-    <div id="lesson-desc" class="text-gray-900 dark:text-gray-100 font-medium space-y-3">
+  <div
+    class="flex-1 space-y-5 overflow-y-auto text-sm leading-relaxed pr-1 mb-5"
+  >
+    <div
+      id="lesson-desc"
+      class="text-gray-900 dark:text-gray-100 font-medium space-y-3"
+    >
       <!-- Injected dynamically -->
     </div>
 
     <!-- Commands Table Reference -->
     <div class="space-y-2 pt-2">
-      <h4 class="text-xs font-mono font-bold uppercase text-body tracking-wider">Command Reference</h4>
-      <div id="lesson-commands" class="border border-gray-300 dark:border-white/10 rounded-sm divide-y divide-gray-200 dark:divide-white/10 bg-gray-50 dark:bg-[#121212] font-mono text-xs text-gray-900 dark:text-gray-100">
+      <h4
+        class="text-xs font-mono font-bold uppercase text-body tracking-wider"
+      >
+        Command Reference
+      </h4>
+      <div
+        id="lesson-commands"
+        class="border border-gray-300 dark:border-white/10 rounded-sm divide-y divide-gray-200 dark:divide-white/10 bg-gray-50 dark:bg-[#121212] font-mono text-xs text-gray-900 dark:text-gray-100"
+      >
         <!-- Injected dynamically -->
       </div>
     </div>
 
     <!-- Objectives List -->
     <div class="space-y-3 pt-3 border-t border-hairline/60">
-      <h4 class="text-xs font-mono font-bold uppercase text-body tracking-wider">Verification Checklist</h4>
-      <div id="lesson-objectives" class="space-y-2 text-gray-900 dark:text-gray-100 font-medium">
+      <h4
+        class="text-xs font-mono font-bold uppercase text-body tracking-wider"
+      >
+        Verification Checklist
+      </h4>
+      <div
+        id="lesson-objectives"
+        class="space-y-2 text-gray-900 dark:text-gray-100 font-medium"
+      >
         <!-- Injected dynamically -->
       </div>
     </div>
 
     <!-- Hints Section -->
-    <div id="lesson-hints-section" class="hidden space-y-3 pt-3 border-t border-hairline/60 animate-in fade-in duration-200">
-      <h4 class="text-xs font-mono font-bold uppercase text-amber-600 dark:text-amber-500 tracking-wider flex items-center gap-1.5">
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 .364l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 01-2 2h0a2 2 0 01-2-2v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+    <div
+      id="lesson-hints-section"
+      class="hidden space-y-3 pt-3 border-t border-hairline/60 animate-in fade-in duration-200"
+    >
+      <h4
+        class="text-xs font-mono font-bold uppercase text-amber-600 dark:text-amber-500 tracking-wider flex items-center gap-1.5"
+      >
+        <svg
+          class="w-3.5 h-3.5"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M9.663 17h4.673M12 3v1m6.364 .364l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 01-2 2h0a2 2 0 01-2-2v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+          ></path>
         </svg>
         Revealed Hints
       </h4>
@@ -54,42 +96,68 @@
   <!-- Action CTAs -->
   <div class="pt-4 border-t border-hairline/80 space-y-3">
     <!-- Success Banner -->
-    <div id="success-banner" class="hidden p-3.5 bg-emerald-50/70 border border-emerald-300 dark:bg-emerald-950/20 dark:border-emerald-800/40 rounded-sm flex items-center gap-3 animate-in zoom-in-95 fade-in slide-in-from-bottom-2 duration-300 ease-out shadow-[0_0_20px_rgba(16,185,129,0.15)]">
-      <div class="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-base shrink-0 shadow-sm">
+    <div
+      id="success-banner"
+      class="hidden p-3.5 bg-emerald-50/70 border border-emerald-300 dark:bg-emerald-950/20 dark:border-emerald-800/40 rounded-sm flex items-center gap-3 animate-in zoom-in-95 fade-in slide-in-from-bottom-2 duration-300 ease-out shadow-[0_0_20px_rgba(16,185,129,0.15)]"
+    >
+      <div
+        class="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-base shrink-0 shadow-sm"
+      >
         ✓
       </div>
       <div>
-        <h4 class="text-sm font-bold text-green-950 dark:text-green-50">Quest Completed!</h4>
-        <p id="success-badge-award" class="text-xs text-green-800 dark:text-green-200 font-mono font-bold">Unlocked badge: Explorer</p>
+        <h4 class="text-sm font-bold text-green-950 dark:text-green-50">
+          Quest Completed!
+        </h4>
+        <p
+          id="success-badge-award"
+          class="text-xs text-green-800 dark:text-green-200 font-mono font-bold"
+        >
+          Unlocked badge: Explorer
+        </p>
       </div>
     </div>
 
     <!-- Error Banner -->
-    <div id="error-banner" class="hidden p-3.5 bg-error-soft border border-red-200 dark:bg-red-950/20 dark:border-red-900/30 rounded-sm flex items-center gap-3 text-error dark:text-red-400 font-sans text-xs transition-opacity duration-300 ease-out">
-      <span>❌ Verification failed. Check your terminal output and try again.</span>
+    <div
+      id="error-banner"
+      class="hidden p-3.5 bg-error-soft border border-red-200 dark:bg-red-950/20 dark:border-red-900/30 rounded-sm flex items-center gap-3 text-error dark:text-red-400 font-sans text-xs transition-opacity duration-300 ease-out"
+    >
+      <span
+        >❌ Verification failed. Check your terminal output and try again.</span
+      >
     </div>
 
     <div class="flex gap-3">
-      <button 
-        id="btn-restore-lesson" 
+      <button
+        id="btn-restore-lesson"
         class="h-12 px-4 rounded-sm border border-hairline bg-canvas text-ink text-sm font-medium hover:bg-canvas-soft-2 transition-all cursor-pointer flex items-center justify-center gap-2"
         title="Restore quest to default starting state"
       >
-        <svg class="w-4 h-4 text-mute" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18"/>
+        <svg
+          class="w-4 h-4 text-mute"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18"></path>
         </svg>
         <span>Restore</span>
       </button>
 
-      <button 
-        id="btn-verify-lesson" 
+      <button
+        id="btn-verify-lesson"
         class="flex-1 h-12 bg-primary text-on-primary rounded-sm font-medium text-sm hover:opacity-90 transition-all cursor-pointer flex items-center justify-center gap-2"
       >
         <span>Verify Challenge</span>
       </button>
-      
-      <button 
-        id="btn-next-lesson" 
+
+      <button
+        id="btn-next-lesson"
         class="hidden flex-1 h-12 bg-emerald-600 text-white hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 rounded-sm font-semibold text-sm transition-all cursor-pointer flex items-center justify-center gap-2 animate-pulse-slow shadow-md shadow-emerald-600/10 dark:shadow-emerald-500/10 border-none"
       >
         <span>Next Quest</span>
@@ -100,11 +168,8 @@
 </div>
 
 <script>
-  declare global { interface Window { appState: any; } }
+  import { lessons } from "../lib/lessons";
 
-  import { lessons } from '../lib/lessons';
-
-  // Configurable thresholds for progressive hints
   const HINT_1_THRESHOLD = 3;
   const HINT_2_THRESHOLD = 5;
   const HINT_3_THRESHOLD = 8;
@@ -114,51 +179,59 @@
   let failedAttempts = 0;
   const dismissedHints = new Set<number>();
 
-  const lessonEyebrow = document.getElementById('lesson-eyebrow');
-  const lessonTitle = document.getElementById('lesson-title');
-  const lessonXpReward = document.getElementById('lesson-xp-reward');
-  const lessonDesc = document.getElementById('lesson-desc');
-  const lessonCommands = document.getElementById('lesson-commands');
-  const lessonObjectives = document.getElementById('lesson-objectives');
-  const hintsContainer = document.getElementById('lesson-hints-container');
-  
-  const successBanner = document.getElementById('success-banner');
-  const successBadge = document.getElementById('success-badge-award');
-  const btnVerify = document.getElementById('btn-verify-lesson');
-  const btnNext = document.getElementById('btn-next-lesson');
-  const btnRestore = document.getElementById('btn-restore-lesson');
+  const lessonEyebrow = document.getElementById("lesson-eyebrow");
+  const lessonTitle = document.getElementById("lesson-title");
+  const lessonXpReward = document.getElementById("lesson-xp-reward");
+  const lessonDesc = document.getElementById("lesson-desc");
+  const lessonCommands = document.getElementById("lesson-commands");
+  const lessonObjectives = document.getElementById("lesson-objectives");
+  const hintsContainer = document.getElementById("lesson-hints-container");
 
-  // Load lesson
+  const successBanner = document.getElementById("success-banner");
+  const successBadge = document.getElementById("success-badge-award");
+  const btnVerify = document.getElementById("btn-verify-lesson");
+  const btnNext = document.getElementById("btn-next-lesson");
+  const btnRestore = document.getElementById("btn-restore-lesson");
+
   function loadActiveLesson(forcedLessonId: any = null) {
-    if (!window.appState) return;
-    
-    const lessonId = forcedLessonId || window.appState.activeLessonId;
-    const lesson = lessons.find(l => l.id === lessonId);
+    const globalWindow = window as any;
+    if (!globalWindow.appState) return;
+
+    const lessonId = forcedLessonId || globalWindow.appState.activeLessonId;
+    const lesson = lessons.find((l: any) => l.id === lessonId);
     if (!lesson) return;
 
     activeLesson = lesson;
-    window.appState.activeLesson = lesson; // expose details to Nav Ask AI
+    globalWindow.appState.activeLesson = lesson;
 
-    // Reset verification states
-    validationResult = { success: false, checks: lesson.objectives.map(o => ({ id: o.id, passed: false })) };
+    validationResult = {
+      success: false,
+      checks: lesson.objectives.map((o: any) => ({ id: o.id, passed: false })),
+    };
 
     failedAttempts = 0;
     dismissedHints.clear();
     renderHints();
 
-    // Draw fields
     if (lessonEyebrow) lessonEyebrow.textContent = `QUEST ${lesson.id}`;
     if (lessonTitle) {
-      lessonTitle.textContent = /[.?!]$/.test(lesson.title) ? lesson.title : lesson.title + '.';
+      lessonTitle.textContent = /[.?!]$/.test(lesson.title)
+        ? lesson.title
+        : lesson.title + ".";
     }
     if (lessonXpReward) lessonXpReward.textContent = `+${lesson.xp} XP`;
     if (lessonDesc) {
-      // Split formatting and wrap bold tags and code blocks
       let formattedText = lesson.description
-        .replace(/\n/g, '<br>')
-        .replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-ink">$1</strong>')
-        .replace(/`([^`]+)`/g, '<code class="px-1.5 py-0.5 bg-canvas-soft-2 border border-hairline rounded font-mono text-xs text-primary">$1</code>');
-      
+        .replace(/\n/g, "<br>")
+        .replace(
+          /\*\*([^*]+)\*\*/g,
+          '<strong class="font-bold text-ink">$1</strong>',
+        )
+        .replace(
+          /`([^`]+)`/g,
+          '<code class="px-1.5 py-0.5 bg-canvas-soft-2 border border-hairline rounded font-mono text-xs text-primary">$1</code>',
+        );
+
       formattedText += `
         <div class="mt-4 p-3 bg-link-bg-soft/20 border border-link/20 rounded text-xs text-link-deep font-sans">
           <strong>Objective:</strong> ${lesson.instructions}
@@ -167,34 +240,35 @@
       lessonDesc.innerHTML = formattedText;
     }
 
-    // Commands List
     if (lessonCommands) {
       if (!lesson.commandHelp || lesson.commandHelp.length === 0) {
-        lessonCommands.innerHTML = '<div class="p-3 text-mute italic">No commands for this lesson.</div>';
+        lessonCommands.innerHTML =
+          '<div class="p-3 text-mute italic">No commands for this lesson.</div>';
       } else {
-        lessonCommands.innerHTML = lesson.commandHelp.map(item => `
+        lessonCommands.innerHTML = lesson.commandHelp
+          .map(
+            (item: any) => `
           <div class="p-3 flex items-start gap-4">
             <span class="text-gray-900 dark:text-white font-bold shrink-0">${item.cmd}</span>
             <span class="text-gray-700 dark:text-gray-300 text-[11px]">${item.desc}</span>
           </div>
-        `).join('');
+        `,
+          )
+          .join("");
       }
     }
 
-    // Objectives UI
     renderObjectives();
 
-    // Reset button states
-    btnVerify?.classList.remove('hidden');
-    if (btnVerify) btnVerify.innerHTML = '<span>Verify Challenge</span>';
-    btnNext?.classList.add('hidden');
-    successBanner?.classList.add('hidden');
-    const errorBanner = document.getElementById('error-banner');
-    errorBanner?.classList.add('hidden');
-    errorBanner?.classList.remove('opacity-0');
+    btnVerify?.classList.remove("hidden");
+    if (btnVerify) btnVerify.innerHTML = "<span>Verify Challenge</span>";
+    btnNext?.classList.add("hidden");
+    successBanner?.classList.add("hidden");
+    const errorBanner = document.getElementById("error-banner");
+    errorBanner?.classList.add("hidden");
+    errorBanner?.classList.remove("opacity-0");
 
-    // If already completed previously, show success state immediately but allow re-testing
-    if (window.appState.completedLessons.includes(lessonId)) {
+    if (globalWindow.appState.completedLessons.includes(lessonId)) {
       showCompletionUI();
     }
   }
@@ -202,62 +276,89 @@
   function renderObjectives() {
     if (!activeLesson || !lessonObjectives) return;
 
-    lessonObjectives.innerHTML = activeLesson.objectives.map((obj: any) => {
-      const checkState = validationResult.checks.find((c: any) => c.id === obj.id);
-      const passed = checkState ? checkState.passed : false;
-      
-      const checkIcon = passed 
-        ? `<div class="w-5 h-5 rounded-full bg-success/15 border border-success text-success flex items-center justify-center font-bold text-xs shrink-0">✓</div>`
-        : `<div class="w-5 h-5 rounded-full border border-hairline-strong flex items-center justify-center shrink-0"></div>`;
-      
-      const textColorClass = passed ? 'text-emerald-700 dark:text-emerald-400 font-semibold' : 'text-gray-900 dark:text-gray-200 font-medium';
+    lessonObjectives.innerHTML = activeLesson.objectives
+      .map((obj: any) => {
+        const checkState = validationResult.checks.find(
+          (c: any) => c.id === obj.id,
+        );
+        const passed = checkState ? checkState.passed : false;
 
-      return `
+        const checkIcon = passed
+          ? `<div class="w-5 h-5 rounded-full bg-success/15 border border-success text-success flex items-center justify-center font-bold text-xs shrink-0">✓</div>`
+          : `<div class="w-5 h-5 rounded-full border border-hairline-strong flex items-center justify-center shrink-0"></div>`;
+
+        const textColorClass = passed
+          ? "text-emerald-700 dark:text-emerald-400 font-semibold"
+          : "text-gray-900 dark:text-gray-200 font-medium";
+
+        return `
         <div class="flex items-center gap-3 p-2 bg-canvas-soft border border-hairline rounded-sm">
           ${checkIcon}
           <span class="${textColorClass} text-xs font-mono">${obj.text}</span>
         </div>
       `;
-    }).join('');
+      })
+      .join("");
   }
 
   function renderHints() {
-    const hintsSection = document.getElementById('lesson-hints-section');
+    const hintsSection = document.getElementById("lesson-hints-section");
     if (!hintsSection || !hintsContainer || !activeLesson) return;
 
     if (!activeLesson.hints || activeLesson.hints.length === 0) {
-      hintsSection.classList.add('hidden');
+      hintsSection.classList.add("hidden");
       return;
     }
 
     const revealedHints = [];
-    if (failedAttempts >= HINT_1_THRESHOLD && activeLesson.hints[0] && !dismissedHints.has(0)) {
-      revealedHints.push({ index: 1, text: activeLesson.hints[0], type: 'info' });
+    if (
+      failedAttempts >= HINT_1_THRESHOLD &&
+      activeLesson.hints[0] &&
+      !dismissedHints.has(0)
+    ) {
+      revealedHints.push({
+        index: 1,
+        text: activeLesson.hints[0],
+        type: "info",
+      });
     }
-    if (failedAttempts >= HINT_2_THRESHOLD && activeLesson.hints[1] && !dismissedHints.has(1)) {
-      revealedHints.push({ index: 2, text: activeLesson.hints[1], type: 'info' });
+    if (
+      failedAttempts >= HINT_2_THRESHOLD &&
+      activeLesson.hints[1] &&
+      !dismissedHints.has(1)
+    ) {
+      revealedHints.push({
+        index: 2,
+        text: activeLesson.hints[1],
+        type: "info",
+      });
     }
     if (failedAttempts >= HINT_3_THRESHOLD && activeLesson.hints[2]) {
-      revealedHints.push({ index: 3, text: activeLesson.hints[2], type: 'answer' });
+      revealedHints.push({
+        index: 3,
+        text: activeLesson.hints[2],
+        type: "answer",
+      });
     }
 
     if (revealedHints.length === 0) {
-      hintsSection.classList.add('hidden');
+      hintsSection.classList.add("hidden");
       return;
     }
 
-    hintsSection.classList.remove('hidden');
-    hintsContainer.innerHTML = revealedHints.map((hint: any) => {
-      const idx = hint.index - 1;
-      if (hint.type === 'answer') {
-        return `
+    hintsSection.classList.remove("hidden");
+    hintsContainer.innerHTML = revealedHints
+      .map((hint: any) => {
+        const idx = hint.index - 1;
+        if (hint.type === "answer") {
+          return `
           <div class="p-3 bg-violet-50 border border-violet-200 dark:bg-violet-950/20 dark:border-violet-800/40 rounded-sm text-xs leading-relaxed text-violet-800 dark:text-violet-300 font-sans flex items-start gap-2.5 animate-in fade-in duration-200">
             <span class="font-mono font-bold text-violet-600 dark:text-violet-400 shrink-0">DIRECT ANSWER:</span>
             <span class="flex-1 font-semibold">${hint.text}</span>
           </div>
         `;
-      } else {
-        return `
+        } else {
+          return `
           <div class="p-3 bg-amber-50 border border-amber-200 dark:bg-amber-950/20 dark:border-amber-900/40 rounded-sm text-xs leading-relaxed text-amber-800 dark:text-amber-300 font-sans flex items-start gap-2.5 animate-in fade-in duration-200">
             <span class="font-mono font-bold text-amber-600 dark:text-amber-500 shrink-0">HINT ${hint.index}:</span>
             <span class="flex-1">${hint.text}</span>
@@ -268,38 +369,46 @@
             </button>
           </div>
         `;
-      }
-    }).join('');
+        }
+      })
+      .join("");
   }
 
   function showCompletionUI() {
-    successBanner?.classList.remove('hidden');
+    successBanner?.classList.remove("hidden");
     if (successBadge && activeLesson) {
-      successBadge.textContent = activeLesson.badge ? `Unlocked badge: ${activeLesson.badge}` : 'Earned Bonus XP!';
+      successBadge.textContent = activeLesson.badge
+        ? `Unlocked badge: ${activeLesson.badge}`
+        : "Earned Bonus XP!";
     }
-    btnVerify?.classList.add('hidden');
-    
+    btnVerify?.classList.add("hidden");
+
     // Hide hints section upon completion
-    const hintsSection = document.getElementById('lesson-hints-section');
-    hintsSection?.classList.add('hidden');
+    const hintsSection = document.getElementById("lesson-hints-section");
+    hintsSection?.classList.add("hidden");
 
     // Hide error banner upon completion
-    const errorBanner = document.getElementById('error-banner');
-    errorBanner?.classList.add('hidden');
-    
+    const errorBanner = document.getElementById("error-banner");
+    errorBanner?.classList.add("hidden");
+
     // Check if there is a next lesson
-    const currentIndex = lessons.findIndex((l: any) => l.id === activeLesson.id);
+    const currentIndex = lessons.findIndex(
+      (l: any) => l.id === activeLesson.id,
+    );
     const nextLesson = lessons[currentIndex + 1];
     if (nextLesson) {
-      btnNext?.classList.remove('hidden');
+      btnNext?.classList.remove("hidden");
     }
   }
 
   // Verification process
-  btnVerify?.addEventListener('click', () => {
-    if (!activeLesson || !window.appState) return;
+  btnVerify?.addEventListener("click", () => {
+    if (!activeLesson) return;
+    const globalWindow = window as any;
+    if (!globalWindow.appState) return;
 
-    if (btnVerify) btnVerify.innerHTML = `
+    if (btnVerify)
+      btnVerify.innerHTML = `
       <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -309,9 +418,9 @@
 
     // Simulate 600ms validation check delay for realistic premium visual feel
     setTimeout(() => {
-      const fs = window.appState.fs;
-      const session = window.appState.session;
-      const history = window.appState.terminalCommands || [];
+      const fs = globalWindow.appState.fs;
+      const session = globalWindow.appState.session;
+      const history = globalWindow.appState.terminalCommands || [];
 
       // Run check hook
       const checkRes = activeLesson.verify(fs, session, history);
@@ -323,27 +432,32 @@
         // Complete Lesson!
         failedAttempts = 0;
         dismissedHints.clear();
-        window.dispatchEvent(new CustomEvent('app:complete-lesson', { detail: { lessonId: activeLesson.id, xp: activeLesson.xp } }));
+        window.dispatchEvent(
+          new CustomEvent("app:complete-lesson", {
+            detail: { lessonId: activeLesson.id, xp: activeLesson.xp },
+          }),
+        );
         showCompletionUI();
       } else {
         // Failed
         failedAttempts++;
         renderHints();
-        if (btnVerify) btnVerify.innerHTML = '<span>Verify Challenge</span>';
-        
+        if (btnVerify) btnVerify.innerHTML = "<span>Verify Challenge</span>";
+
         // Show inline error banner with shake and fade out after 4 seconds
-        const errorBanner = document.getElementById('error-banner');
+        const errorBanner = document.getElementById("error-banner");
         if (errorBanner) {
-          errorBanner.classList.remove('hidden', 'opacity-0', 'animate-shake');
+          errorBanner.classList.remove("hidden", "opacity-0", "animate-shake");
           void errorBanner.offsetWidth; // trigger reflow
-          errorBanner.classList.add('animate-shake');
-          
-          if ((window as any).errorTimeout) clearTimeout((window as any).errorTimeout);
+          errorBanner.classList.add("animate-shake");
+
+          if ((window as any).errorTimeout)
+            clearTimeout((window as any).errorTimeout);
           (window as any).errorTimeout = setTimeout(() => {
-            errorBanner.classList.add('opacity-0');
+            errorBanner.classList.add("opacity-0");
             setTimeout(() => {
-              errorBanner.classList.add('hidden');
-              errorBanner.classList.remove('opacity-0');
+              errorBanner.classList.add("hidden");
+              errorBanner.classList.remove("opacity-0");
             }, 300); // match duration-300
           }, 4000);
         }
@@ -352,54 +466,75 @@
   });
 
   // Next Lesson button
-  btnNext?.addEventListener('click', () => {
+  btnNext?.addEventListener("click", () => {
     if (!activeLesson) return;
-    const currentIndex = lessons.findIndex((l: any) => l.id === activeLesson.id);
+    const currentIndex = lessons.findIndex(
+      (l: any) => l.id === activeLesson.id,
+    );
     const nextLesson = lessons[currentIndex + 1];
     const nextId = nextLesson ? nextLesson.id : activeLesson.id;
-    window.dispatchEvent(new CustomEvent('app:select-lesson', { detail: { lessonId: nextId } }));
+    window.dispatchEvent(
+      new CustomEvent("app:select-lesson", { detail: { lessonId: nextId } }),
+    );
   });
 
   // Restore Lesson button
-  btnRestore?.addEventListener('click', () => {
-    if (!activeLesson || !window.appState) return;
-    if (confirm('Are you sure you want to reset the filesystem and start this quest over? This will wipe your progress for this quest.')) {
-      window.dispatchEvent(new CustomEvent('app:restore-lesson'));
+  btnRestore?.addEventListener("click", () => {
+    const globalWindow = window as any;
+    if (!activeLesson || !globalWindow.appState) return;
+    if (
+      confirm(
+        "Are you sure you want to reset the filesystem and start this quest over? This will wipe your progress for this quest.",
+      )
+    ) {
+      window.dispatchEvent(new CustomEvent("app:restore-lesson"));
     }
   });
 
   // Listeners
-  window.addEventListener('app:select-lesson', (e: any) => {
+  window.addEventListener("app:select-lesson", (e: any) => {
     // Save current commands for state loading
     const detail = (e as CustomEvent).detail;
     const lessonId = detail ? detail.lessonId : null;
     loadActiveLesson(lessonId);
   });
 
-  window.addEventListener('app:state-updated', () => {
+  window.addEventListener("app:state-updated", () => {
+    const globalWindow = window as any;
     // Sync state
-    if (!activeLesson && window.appState) {
+    if (!activeLesson && globalWindow.appState) {
       loadActiveLesson();
-    } else if (activeLesson && window.appState && window.appState.completedLessons.includes(activeLesson.id)) {
+    } else if (
+      activeLesson &&
+      globalWindow.appState &&
+      globalWindow.appState.completedLessons.includes(activeLesson.id)
+    ) {
       showCompletionUI();
     }
   });
 
   // Check commands as user types to dynamically tick off simple objectives if they pass
-  window.addEventListener('app:terminal-command', (e: any) => {
+  window.addEventListener("app:terminal-command", (e: any) => {
     // Append command to state
-    if (window.appState) {
-      if (!window.appState.terminalCommands) window.appState.terminalCommands = [];
-      window.appState.terminalCommands.push((e as CustomEvent).detail.command);
+    const globalWindow = window as any;
+    if (globalWindow.appState) {
+      if (!globalWindow.appState.terminalCommands)
+        globalWindow.appState.terminalCommands = [];
+      globalWindow.appState.terminalCommands.push(
+        (e as CustomEvent).detail.command,
+      );
     }
   });
 
   // Dismiss hint listener using event delegation
-  hintsContainer?.addEventListener('click', (e: any) => {
+  hintsContainer?.addEventListener("click", (e: any) => {
     const target = e.target as HTMLElement;
-    const dismissBtn = target.closest('.btn-dismiss-hint');
+    const dismissBtn = target.closest(".btn-dismiss-hint");
     if (dismissBtn) {
-      const hintIdx = parseInt(dismissBtn.getAttribute('data-hint-idx') || '0', 10);
+      const hintIdx = parseInt(
+        dismissBtn.getAttribute("data-hint-idx") || "0",
+        10,
+      );
       dismissedHints.add(hintIdx);
       renderHints();
     }
@@ -408,9 +543,18 @@
 
 <style>
   @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    20%, 60% { transform: translateX(-4px); }
-    40%, 80% { transform: translateX(4px); }
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    20%,
+    60% {
+      transform: translateX(-4px);
+    }
+    40%,
+    80% {
+      transform: translateX(4px);
+    }
   }
   .animate-shake {
     animation: shake 0.3s ease-in-out;

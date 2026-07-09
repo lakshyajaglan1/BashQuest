@@ -1,36 +1,61 @@
 ---
+
 ---
-<div class="bg-white dark:bg-[#0a0a0a] border border-gray-300 dark:border-white/10 shadow-sm rounded-md p-4 sm:p-6 flex flex-col h-full select-none">
-  <div class="flex items-center justify-between pb-3 border-b border-hairline mb-4">
+
+<div
+  class="bg-white dark:bg-[#0a0a0a] border border-gray-300 dark:border-white/10 shadow-sm rounded-md p-4 sm:p-6 flex flex-col h-full select-none"
+>
+  <div
+    class="flex items-center justify-between pb-3 border-b border-hairline mb-4"
+  >
     <div class="flex items-center gap-2">
-      <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+      <svg
+        class="w-4 h-4 text-primary"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+        ></path>
       </svg>
-      <h3 class="text-sm font-bold text-ink tracking-tight font-sans uppercase">File Explorer</h3>
+      <h3 class="text-sm font-bold text-ink tracking-tight font-sans uppercase">
+        File Explorer
+      </h3>
     </div>
-    <span class="text-[10px] font-mono font-bold text-success bg-link-bg-soft border border-blue-200 px-2 py-0.5 rounded-sm">
+    <span
+      class="text-[10px] font-mono font-bold text-success bg-link-bg-soft border border-blue-200 px-2 py-0.5 rounded-sm"
+    >
       Live Sync
     </span>
   </div>
 
   <!-- Scrollable visualizer -->
-  <div class="flex-1 overflow-auto bg-canvas-soft border border-hairline rounded-sm p-4 min-h-[160px] max-h-[300px] lg:max-h-none">
-    <div id="file-tree-root" class="font-mono text-xs text-black dark:text-white font-medium leading-relaxed">
+  <div
+    class="flex-1 overflow-auto bg-canvas-soft border border-hairline rounded-sm p-4 min-h-[160px] max-h-[300px] lg:max-h-none"
+  >
+    <div
+      id="file-tree-root"
+      class="font-mono text-xs text-black dark:text-white font-medium leading-relaxed"
+    >
       <!-- Injected dynamically -->
     </div>
   </div>
-  
-  <div class="text-[10px] font-mono text-gray-600 dark:text-gray-400 font-medium mt-3 flex justify-between items-center px-1">
+
+  <div
+    class="text-[10px] font-mono text-gray-600 dark:text-gray-400 font-medium mt-3 flex justify-between items-center px-1"
+  >
     <span>User: learner</span>
     <span id="explorer-current-path">/home/learner</span>
   </div>
 </div>
 
 <script>
-  declare global { interface Window { appState: any; } }
-
   function escapeHtml(str: string): string {
-    if (!str) return '';
+    if (!str) return "";
     return str
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
@@ -39,17 +64,20 @@
       .replace(/'/g, "&#039;");
   }
 
-  const treeRoot = document.getElementById('file-tree-root');
-  const pathLabel = document.getElementById('explorer-current-path');
+  const treeRoot = document.getElementById("file-tree-root");
+  const pathLabel = document.getElementById("explorer-current-path");
 
   function renderTree() {
-    if (!window.appState || !window.appState.fs) {
-      if (treeRoot) treeRoot.innerHTML = '<span class="text-mute font-mono">Initializing Filesystem...</span>';
+    const globalWindow = window as any;
+    if (!globalWindow.appState || !globalWindow.appState.fs) {
+      if (treeRoot)
+        treeRoot.innerHTML =
+          '<span class="text-mute font-mono">Initializing Filesystem...</span>';
       return;
     }
 
-    const fs = window.appState.fs;
-    const session = window.appState.session;
+    const fs = globalWindow.appState.fs;
+    const session = globalWindow.appState.session;
 
     if (pathLabel && session) {
       pathLabel.textContent = session.currentPath;
@@ -60,35 +88,46 @@
     }
   }
 
-  function buildTreeHtml(node: any, prefix: string = '') {
-    let html = '';
-    
-    if (node.name === '/') {
+  function buildTreeHtml(node: any, prefix: string = "") {
+    let html = "";
+    const globalWindow = window as any;
+
+    if (node.name === "/") {
       html += `<div class="flex items-center gap-1.5 py-0.5 text-primary font-bold"><span class="text-sm">💻</span> / <span class="text-[9px] font-mono font-normal text-mute">root</span></div>`;
     }
 
-    if (node.type === 'dir' && node.children) {
-      const children = [...node.children].sort((a, b) => a.name.localeCompare(b.name));
-      
-      children.forEach((child: any, idx: number) => {
-        const isLast = idx === children.length - 1;
-        const connector = isLast ? '└── ' : '├── ';
-        const childPrefix = isLast ? '    ' : '│   ';
+    if (node.type === "dir" && node.children) {
+      const children = [...node.children].sort((a: any, b: any) =>
+        a.name.localeCompare(b.name),
+      );
 
-        const icon = child.type === 'dir' ? '📁' : (child.type === 'link' ? '🔗' : '📄');
-        
+      children.forEach((child: any) => {
+        const isLast = child === children[children.length - 1];
+        const connector = isLast ? "└── " : "├── ";
+        const childPrefix = isLast ? "    " : "│   ";
+
+        const icon =
+          child.type === "dir" ? "📁" : child.type === "link" ? "🔗" : "📄";
+
         // Highlight active directory
-        let activeBgClass = '';
-        const childAbsPath = window.appState.fs.resolvePathStr(prefix ? '' : '/', (prefix ? prefix.replace(/[│├─└\s]/g, '') : '') + '/' + child.name);
-        const isActive = window.appState && window.appState.session && window.appState.session.currentPath === childAbsPath;
-        
+        let activeBgClass = "";
+        const childAbsPath = globalWindow.appState.fs.resolvePathStr(
+          prefix ? "" : "/",
+          (prefix ? prefix.replace(/[│├─└\s]/g, "") : "") + "/" + child.name,
+        );
+        const isActive =
+          globalWindow.appState &&
+          globalWindow.appState.session &&
+          globalWindow.appState.session.currentPath === childAbsPath;
+
         if (isActive) {
-          activeBgClass = 'bg-link-bg-soft/70 dark:bg-link-bg-soft/30 px-2 py-0.5 rounded-sm border border-link/10 dark:border-link/25';
+          activeBgClass =
+            "bg-link-bg-soft/70 dark:bg-link-bg-soft/30 px-2 py-0.5 rounded-sm border border-link/10 dark:border-link/25";
         }
-        
-        const colorClass = isActive 
-          ? 'text-link-deep dark:text-link font-semibold' 
-          : 'text-black dark:text-white font-medium';
+
+        const colorClass = isActive
+          ? "text-link-deep dark:text-link font-semibold"
+          : "text-black dark:text-white font-medium";
 
         html += `
           <div class="flex items-center py-0.5 group/node hover:bg-canvas-soft-2/50 rounded px-0.5">
@@ -101,7 +140,7 @@
           </div>
         `;
 
-        if (child.type === 'dir') {
+        if (child.type === "dir") {
           html += buildTreeHtml(child, prefix + childPrefix);
         }
       });
@@ -111,6 +150,6 @@
   }
 
   // Listen for terminal executions or path changes
-  window.addEventListener('app:filesystem-update', renderTree);
-  window.addEventListener('app:state-updated', renderTree);
+  window.addEventListener("app:filesystem-update", renderTree);
+  window.addEventListener("app:state-updated", renderTree);
 </script>
