@@ -2238,29 +2238,31 @@ export const lessons = [
       "Use 'ln -s' with the target path followed by the link name.",
       "Try running: ln -s logs/app.log app_link.log"
     ],
-    verify: (fs, _session, history) => {
-      const usedLnS = history.some(cmd => {
-        const parts = cmd.trim().split(/\s+/);
-        return parts.includes('ln') && (parts.includes('-s') || parts.includes('--symbolic') || parts.some(p => p.startsWith('-') && p.includes('s')));
+    verify: (fs, session, history) => {
+      // 1. Get the symlink file from the virtual directory
+      const linkNode = fs.getNodeByPath('/home/learner', 'app_link.log') || fs.getNodeByPath('/home/learner/app_link.log');
+
+      // 2. Check if they used the symbolic flag in their command
+      const usedSymbolic = history.some(cmd => {
+        const clean = cmd.replace(/\s+/g, ' ').trim();
+        return clean.includes('ln -s') || clean.includes('-s');
       });
-      const node = fs.getNodeByPath('/home/learner', 'app_link.log');
 
-      const targetCorrect = (() => {
-        if (!node || node.type !== 'link') return false;
-        // Accept either the relative or absolute target representation
-        return (
-          node.target === 'logs/app.log' ||
-          node.target === '/home/learner/logs/app.log'
-        );
-      })();
+      // 3. Support both relative ('logs/app.log') and absolute ('/home/learner/logs/app.log') targets
+      const targetIsCorrect = linkNode && (
+        linkNode.target === 'logs/app.log' ||
+        linkNode.target === './logs/app.log' ||
+        linkNode.target === '/home/learner/logs/app.log'
+      );
 
-      const isLink = node && node.type === 'link';
-
+      // Support fallback IDs to match whichever name your objective uses
       return {
-        success: usedLnS && isLink && targetCorrect,
+        success: !!(usedSymbolic && targetIsCorrect),
         checks: [
-          { id: 'used_ln_s', passed: usedLnS },
-          { id: 'link_created', passed: !!(isLink && targetCorrect) }
+          { id: 'use_s_flag', passed: !!usedSymbolic },
+          { id: 'use_s', passed: !!usedSymbolic },
+          { id: 'create_link', passed: !!targetIsCorrect },
+          { id: 'points_to', passed: !!targetIsCorrect }
         ]
       };
     }
