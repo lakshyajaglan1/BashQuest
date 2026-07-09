@@ -298,7 +298,8 @@ export class FileSystem {
       permissions: options.permissions || (type === 'dir' ? '755' : '644'),
       owner: options.owner || 'learner',
       group: options.group || 'learner',
-      ...(type === 'dir' ? { children: [] } : { content: options.content || '' })
+      ...(type === 'dir' ? { children: [] } : { content: options.content || '' }),
+      ...(type === 'link' ? { target: options.target || '' } : {})
     };
 
     parentNode.children.push(newNode);
