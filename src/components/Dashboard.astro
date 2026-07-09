@@ -296,7 +296,8 @@ import { modules, lessons } from "../lib/lessons";
                   >
                     <div class="flex justify-between items-start mb-2">
                       <span class="font-mono text-xs font-bold text-mute bg-canvas-soft-2 px-2 py-0.5 rounded border border-hairline">
-                        Quest {lesson.id}
+                        Quest{" "}
+                        {lessons.findIndex((l: any) => l.id === lesson.id) + 1}
                       </span>
                       <span class="node-status-badge text-[10px] font-mono font-bold text-mute bg-canvas-soft border border-hairline px-2 py-0.5 rounded">
                         Locked

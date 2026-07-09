@@ -213,7 +213,11 @@
     dismissedHints.clear();
     renderHints();
 
-    if (lessonEyebrow) lessonEyebrow.textContent = `QUEST ${lesson.id}`;
+    if (lessonEyebrow) {
+      const index = lessons.findIndex((l: any) => l.id === lesson.id);
+      const questNumber = index >= 0 ? index + 1 : lesson.id;
+      lessonEyebrow.textContent = `QUEST ${questNumber}`;
+    }
     if (lessonTitle) {
       lessonTitle.textContent = /[.?!]$/.test(lesson.title)
         ? lesson.title
