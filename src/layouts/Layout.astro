@@ -4,12 +4,23 @@ import "../styles/global.css";
 interface Props {
 	title?: string;
 	description?: string;
+	structuredData?: Record<string, any> | Record<string, any>[];
 }
 
 const {
 	title = "BashQuest — Practice Linux Commands & Bash in Browser",
 	description = "Practice Linux commands online with BashQuest. A free, interactive terminal simulator with gamified quests to learn Bash and command-line tools in your browser.",
+	structuredData,
 } = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const ogImageURL = new URL("/og-image.png", Astro.site);
+
+const structuredDataList = structuredData
+	? Array.isArray(structuredData)
+		? structuredData
+		: [structuredData]
+	: [];
 ---
 
 <!doctype html>
@@ -69,12 +80,13 @@ const {
 			name="keywords"
 			content="practice linux commands online, interactive linux terminal simulator, learn bash in browser, online bash compiler, practice bash scripts online, linux terminal emulator, gamified bash tutorial"
 		/>
+		<link rel="canonical" href={canonicalURL} />
 
 		<!-- Open Graph -->
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
 		<meta property="og:type" content="website" />
-		<meta property="og:image" content="/og-image.png" />
+		<meta property="og:image" content={ogImageURL} />
 		<meta property="og:image:width" content="1200" />
 		<meta property="og:image:height" content="630" />
 		<meta
@@ -83,19 +95,28 @@ const {
 		/>
 		<meta property="og:site_name" content="BashQuest" />
 		<meta property="og:locale" content="en_US" />
-		<meta property="og:url" content="/" />
+		<meta property="og:url" content={canonicalURL} />
 
 		<!-- Twitter Cards -->
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="twitter:title" content={title} />
 		<meta name="twitter:description" content={description} />
-		<meta name="twitter:image" content="/og-image.png" />
+		<meta name="twitter:image" content={ogImageURL} />
 		<meta name="twitter:site" content="@bashquest" />
 		<meta name="twitter:creator" content="@bashquest" />
 
 		<!-- Font preloads for better speed -->
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+		{
+			structuredDataList.map((data) => (
+				<script
+					type="application/ld+json"
+					set:html={JSON.stringify(data)}
+				/>
+			))
+		}
 	</head>
 	<body class="h-full font-sans antialiased text-body">
 		<slot />

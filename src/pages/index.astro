@@ -7,9 +7,25 @@ import Terminal from "../components/Terminal.astro";
 import LessonPanel from "../components/LessonPanel.astro";
 import Footer from "../components/Footer.astro";
 import { modules } from "../lib/lessons.js";
+
+const softwareAppSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "BashQuest",
+  applicationCategory: "EducationalApplication",
+  operatingSystem: "Any (Web Browser)",
+  url: "https://bashquest.com/",
+  description:
+    "A free, interactive terminal simulator with gamified quests to learn Linux and Bash commands directly in your browser. No signup required.",
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD",
+  },
+};
 ---
 
-<Layout>
+<Layout structuredData={softwareAppSchema}>
   <!-- Global Application Shell -->
   <div class="flex flex-col min-h-screen">
     <!-- Navbar -->
