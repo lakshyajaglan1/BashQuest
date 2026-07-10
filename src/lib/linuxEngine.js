@@ -247,7 +247,7 @@ export class FileSystem {
 
     const nodeName = targetSegments[targetSegments.length - 1];
     const parentSegments = targetSegments.slice(0, -1);
-    
+
     // Find parent directory
     const parentNode = this.getNodeByPathSegments(parentSegments);
     if (!parentNode) {
@@ -298,7 +298,11 @@ export class FileSystem {
       permissions: options.permissions || (type === 'dir' ? '755' : '644'),
       owner: options.owner || 'learner',
       group: options.group || 'learner',
-      ...(type === 'dir' ? { children: [] } : { content: options.content || '' })
+      ...(type === 'dir'
+        ? { children: [] }
+        : type === 'link'
+          ? { target: options.target || '' }
+          : { content: options.content || '' })
     };
 
     parentNode.children.push(newNode);
@@ -314,7 +318,7 @@ export class FileSystem {
 
     const nodeName = targetSegments[targetSegments.length - 1];
     const parentSegments = targetSegments.slice(0, -1);
-    
+
     const parentNode = this.getNodeByPathSegments(parentSegments);
     if (!parentNode || parentNode.type !== 'dir') {
       return { success: false, error: 'No such file or directory' };
@@ -344,9 +348,9 @@ export class ShellSession {
     this.rogueProcessAlive = true;
     this.services = { apache2: 'inactive' };
     this.bgJobs = [];
-    
+
     const defaultPkgs = [
-      'pwd', 'whoami', 'clear', 'help', 'cd', 'ls', 'mkdir', 'touch', 'cat', 'echo', 
+      'pwd', 'whoami', 'clear', 'help', 'cd', 'ls', 'mkdir', 'touch', 'cat', 'echo',
       'rm', 'cp', 'mv', 'chmod', 'grep', 'wc', 'uniq', 'sort', 'man', 'apt',
       'df', 'du', 'free', 'uptime', 'uname', 'ps', 'top', 'htop', 'kill', 'sleep',
       'jobs', 'fg', 'ping', 'ip', 'curl', 'find', 'history', 'systemctl', 'nano',
@@ -581,12 +585,12 @@ export class ShellSession {
         // Execute it as bash script
         const runRes = this.runBash([command, ...cmdArgs]);
         lastResult = runRes;
-        
+
         // Also ensure any FS changes in script update parent window if in browser
         if (typeof window !== 'undefined') {
           window.dispatchEvent(new CustomEvent('app:filesystem-update'));
         }
-        
+
         stdin = lastResult.stdout;
         continue;
       }
@@ -720,7 +724,7 @@ export class ShellSession {
         case 'uname':
           {
             const showAll = cmdArgs.includes('-a') || cmdArgs.includes('--all');
-            result.stdout = showAll 
+            result.stdout = showAll
               ? `Linux bashquest 6.8.0-35-generic #35-Ubuntu SMP PREEMPT_DYNAMIC Mon May 20 15:51:52 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux`
               : `Linux`;
           }
@@ -803,7 +807,7 @@ export class ShellSession {
             const duration = cmdArgs[0] || '1';
             const isBackground = cmdArgs.includes('&') || duration.endsWith('&');
             const cleanDur = duration.replace('&', '');
-            
+
             if (isBackground) {
               const jobNum = this.bgJobs.length + 1;
               this.bgJobs.push({ id: jobNum, cmd: `sleep ${cleanDur}`, status: 'Running' });
@@ -1513,7 +1517,7 @@ export class ShellSession {
       return lookup[digits[0] || 0] + lookup[digits[1] || 0] + lookup[digits[2] || 0];
     };
     const permsString = mapPerms(node.permissions);
-    
+
     // File size mockup
     let size = 4096;
     if (node.type === 'file') {
@@ -1521,7 +1525,7 @@ export class ShellSession {
     } else if (node.type === 'link') {
       size = node.target ? node.target.length : 0;
     }
-    
+
     return `${typeChar}${permsString} 1 ${node.owner} ${node.group} ${size} Jul 3 13:37 ${node.name}`;
   }
 
@@ -2643,7 +2647,7 @@ export class ShellSession {
       return { stdout: '', stderr: 'useradd: missing username operand', currentPath: this.currentPath };
     }
     const username = args[args.length - 1];
-    
+
     let passwdNode = this.fs.getNodeByPath('/etc', 'passwd');
     if (!passwdNode) {
       passwdNode = this.fs.createNode('/etc', 'passwd', 'file', {
@@ -2653,13 +2657,13 @@ export class ShellSession {
         group: 'root'
       });
     }
-    
+
     if (passwdNode.content.includes(`${username}:`)) {
       return { stdout: '', stderr: `useradd: user '${username}' already exists`, currentPath: this.currentPath };
     }
 
     passwdNode.content += `${username}:x:1001:1001::/home/${username}:/bin/bash\n`;
-    
+
     if (!this.fs.getNodeByPath('/home', username)) {
       this.fs.createNode('/home', username, 'dir', {
         permissions: '755',
