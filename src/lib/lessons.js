@@ -2259,10 +2259,8 @@ export const lessons = [
       return {
         success: !!(usedSymbolic && targetIsCorrect),
         checks: [
-          { id: 'used_ln_s', passed: !!usedSymbolic },
           { id: 'use_s_flag', passed: !!usedSymbolic },
           { id: 'use_s', passed: !!usedSymbolic },
-          { id: 'link_created', passed: !!targetIsCorrect },
           { id: 'create_link', passed: !!targetIsCorrect },
           { id: 'points_to', passed: !!targetIsCorrect }
         ]
