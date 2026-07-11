@@ -608,6 +608,35 @@ const softwareAppSchema = {
           "su",
           "ssh",
           "scp",
+          "gzip",
+          "gunzip",
+          "groupadd",
+          "groups",
+          "lscpu",
+          "lsof",
+          "zip",
+          "unzip",
+          "bzip2",
+          "xz",
+          "dpkg",
+          "dnf",
+          "yum",
+          "adduser",
+          "userdel",
+          "id",
+          "groupdel",
+          "ifconfig",
+          "nmcli",
+          "netstat",
+          "ss",
+          "traceroute",
+          "ufw",
+          "iptables",
+          "nice",
+          "renice",
+          "bg",
+          "iostat",
+          "exit",
         ],
       };
 
@@ -749,6 +778,20 @@ const softwareAppSchema = {
             content: "tarball-archive-content\n",
           });
         }
+      }
+
+      if (!completed.includes(62)) {
+        if (!fs.getNodeByPath("/home/learner", "note.txt")) {
+          fs.createNode("/home/learner", "note.txt", "file", {
+            content: "This is a configuration note that needs compression.\n",
+          });
+        }
+      }
+
+      if (!fs.getNodeByPath("/etc", "group")) {
+        fs.createNode("/etc", "group", "file", {
+          content: "root:x:0:\nlearner:x:1000:\nsudo:x:27:learner\n",
+        });
       }
 
       this.state.fsTree = fs.tree;
@@ -924,6 +967,35 @@ const softwareAppSchema = {
             "su",
             "ssh",
             "scp",
+            "gzip",
+            "gunzip",
+            "groupadd",
+            "groups",
+            "lscpu",
+            "lsof",
+            "zip",
+            "unzip",
+            "bzip2",
+            "xz",
+            "dpkg",
+            "dnf",
+            "yum",
+            "adduser",
+            "userdel",
+            "id",
+            "groupdel",
+            "ifconfig",
+            "nmcli",
+            "netstat",
+            "ss",
+            "traceroute",
+            "ufw",
+            "iptables",
+            "nice",
+            "renice",
+            "bg",
+            "iostat",
+            "exit",
           ],
         };
         this.resetFilesystem();

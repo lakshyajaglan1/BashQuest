@@ -955,6 +955,45 @@ export const lessons = [
     }
   },
   {
+    id: 77,
+    moduleId: 'advanced',
+    title: 'Linux Firewalls (ufw & iptables)',
+    xp: 200,
+    badge: 'Defender',
+    description: 'Imagine living in a secure apartment building where a security guard stands at the entrance checking IDs and blocking unauthorized visitors. In Linux, a **firewall** acts as this security guard for your network ports.\n\n- The `ufw` (Uncomplicated Firewall) command is a user-friendly interface for managing firewall rules. Running `sudo ufw status` displays whether the firewall is active and which ports (like port 22 for SSH or port 80 for web servers) are open.\n- The `iptables` command is the low-level, traditional Netfilter tool that actually blocks or redirects packets. Running `sudo iptables -L` lists the active security chains and packet-matching rules.',
+    instructions: 'Let\'s inspect our security guards. View the status of the uncomplicated firewall by running `sudo ufw status`, and then check the lower-level Netfilter rules by running `sudo iptables -L`.',
+    commandHelp: [
+      { cmd: 'sudo ufw status', desc: 'Display ufw firewall rules' },
+      { cmd: 'sudo iptables -L', desc: 'List active iptables packet filtering rules' }
+    ],
+    objectives: [
+      { id: 'checked_ufw', text: 'Run the "ufw status" command with sudo' },
+      { id: 'checked_iptables', text: 'Run the "iptables -L" command with sudo' }
+    ],
+    hints: [
+      "Use sudo ufw status to inspect the uncomplicated firewall.",
+      "Use sudo iptables -L to check Netfilter rules.",
+      "Try running: sudo ufw status, and then sudo iptables -L"
+    ],
+    verify: (_fs, _session, history) => {
+      const checkedUfw = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('ufw') && parts.includes('status') && parts.includes('sudo');
+      });
+      const checkedIptables = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('iptables') && (parts.includes('-L') || parts.includes('--list')) && parts.includes('sudo');
+      });
+      return {
+        success: checkedUfw && checkedIptables,
+        checks: [
+          { id: 'checked_ufw', passed: checkedUfw },
+          { id: 'checked_iptables', passed: checkedIptables }
+        ]
+      };
+    }
+  },
+  {
     id: 21,
     moduleId: 'system',
     title: 'Superuser Privileges (sudo)',
@@ -1033,6 +1072,77 @@ export const lessons = [
         checks: [
           { id: 'installed_tree', passed: installedTree },
           { id: 'ran_tree', passed: ranTree }
+        ]
+      };
+    }
+  },
+  {
+    id: 68,
+    moduleId: 'system',
+    title: 'Debian Package Management (dpkg)',
+    xp: 160,
+    badge: 'Packager',
+    description: 'While `apt` automates downloading and resolving package dependencies from repositories, what if you have already downloaded a `.deb` package file manually and want to inspect or install it? In Linux, we use `dpkg` (Debian Package) to interact with packages directly.\n\n- The `dpkg -l` command lists all packages currently installed on your Debian/Ubuntu system.\n- The `dpkg -s <package>` command displays status, version, and architecture information for a specific package.',
+    instructions: 'Let\'s query the local package database. Check the list of packages by running `dpkg -l`. Then, query details for the `tree` program by running `dpkg -s tree`.',
+    commandHelp: [
+      { cmd: 'dpkg -l', desc: 'List installed Debian packages' },
+      { cmd: 'dpkg -s tree', desc: 'Display details of the tree package' }
+    ],
+    objectives: [
+      { id: 'ran_dpkg_l', text: 'Run "dpkg -l" to list packages' },
+      { id: 'ran_dpkg_s', text: 'Run "dpkg -s tree" to query details' }
+    ],
+    hints: [
+      "Use dpkg -l to retrieve the complete package list.",
+      "Check the status of the tree package using dpkg -s tree.",
+      "Try running: dpkg -l followed by dpkg -s tree"
+    ],
+    verify: (_fs, _session, history) => {
+      const ranDpkgL = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('dpkg') && parts.includes('-l');
+      });
+      const ranDpkgS = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('dpkg') && parts.includes('-s') && parts.includes('tree');
+      });
+      return {
+        success: ranDpkgL && ranDpkgS,
+        checks: [
+          { id: 'ran_dpkg_l', passed: ranDpkgL },
+          { id: 'ran_dpkg_s', passed: ranDpkgS }
+        ]
+      };
+    }
+  },
+  {
+    id: 69,
+    moduleId: 'system',
+    title: 'RedHat Package Managers (yum & dnf)',
+    xp: 160,
+    badge: 'Fedora',
+    description: 'Not all Linux environments are based on Debian/Ubuntu. If you work on RedHat, Fedora, or CentOS systems, you won\'t find `apt` or `dpkg`. Instead, you\'ll manage packages using older `yum` or modern `dnf` (Dandified YUM) package managers.\n\n- The `dnf check-update` (or `yum check-update`) command connects to RedHat repositories to scan for available package updates.\n- The `dnf install <package>` command fetches and installs programs similar to `apt install`.',
+    instructions: 'Let\'s run updates on a RedHat-based simulator. Check for packages needing updates by running `dnf check-update` (or `yum check-update`).',
+    commandHelp: [
+      { cmd: 'dnf check-update', desc: 'Check for RedHat package updates' },
+      { cmd: 'yum check-update', desc: 'Check for legacy CentOS updates' }
+    ],
+    objectives: [
+      { id: 'checked_updates', text: 'Run dnf check-update or yum check-update' }
+    ],
+    hints: [
+      "Use either the dnf or yum command with the check-update argument.",
+      "Try running: dnf check-update"
+    ],
+    verify: (_fs, _session, history) => {
+      const checkedUpdates = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return (parts.includes('dnf') || parts.includes('yum')) && parts.includes('check-update');
+      });
+      return {
+        success: checkedUpdates,
+        checks: [
+          { id: 'checked_updates', passed: checkedUpdates }
         ]
       };
     }
@@ -1176,6 +1286,68 @@ export const lessons = [
     }
   },
   {
+    id: 65,
+    moduleId: 'resources',
+    title: 'Viewing CPU Details (lscpu)',
+    xp: 150,
+    badge: 'Hardware-Guru',
+    description: 'When troubleshooting system performance or deploying high-demand applications, you need to know the capabilities of your system\'s CPU. In Linux, we read detailed CPU architecture information using the `lscpu` command.\n\n- The `lscpu` command displays processor details such as the CPU model, vendor, clock speed, number of cores, hyper-threading details, and cache sizes, directly from the kernel filesystem.',
+    instructions: 'Let\'s inspect the processor. Run `lscpu` to view your system\'s CPU details.',
+    commandHelp: [
+      { cmd: 'lscpu', desc: 'Display CPU architecture information' }
+    ],
+    objectives: [
+      { id: 'ran_lscpu', text: 'Run the "lscpu" command' }
+    ],
+    hints: [
+      "Simply run the lscpu command to display processor configuration.",
+      "Try running: lscpu"
+    ],
+    verify: (_fs, _session, history) => {
+      const ranLscpu = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('lscpu');
+      });
+      return {
+        success: ranLscpu,
+        checks: [
+          { id: 'ran_lscpu', passed: ranLscpu }
+        ]
+      };
+    }
+  },
+  {
+    id: 80,
+    moduleId: 'resources',
+    title: 'I/O & CPU Stats (iostat)',
+    xp: 170,
+    badge: 'IO_Watch',
+    description: 'When a database or web application runs slowly, how do you determine if the problem is a CPU bottleneck or a slow hard drive? In Linux, we monitor system output/input performance metrics using `iostat`.\n\n- The `iostat` command displays report statistics on CPU usage and active device read/write throughput, helping you identify disk congestion.',
+    instructions: 'Let\'s check performance logs. Run the `iostat` command to print I/O statistics.',
+    commandHelp: [
+      { cmd: 'iostat', desc: 'Display input/output statistics' }
+    ],
+    objectives: [
+      { id: 'ran_iostat', text: 'Run the "iostat" command' }
+    ],
+    hints: [
+      "Type iostat in the terminal and press Enter.",
+      "Try running: iostat"
+    ],
+    verify: (_fs, _session, history) => {
+      const ranIostat = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('iostat');
+      });
+      return {
+        success: ranIostat,
+        checks: [
+          { id: 'ran_iostat', passed: ranIostat }
+        ]
+      };
+    }
+  },
+  {
     id: 27,
     moduleId: 'processes',
     title: 'Listing Running Processes (ps)',
@@ -1235,6 +1407,37 @@ export const lessons = [
         success: ranTop,
         checks: [
           { id: 'ran_top', passed: ranTop }
+        ]
+      };
+    }
+  },
+  {
+    id: 64,
+    moduleId: 'processes',
+    title: 'Listing Open Files (lsof)',
+    xp: 200,
+    badge: 'File-Tracker',
+    description: 'In Unix-like systems, "everything is a file." This means not only text files and folders, but also network sockets, system hardware, and processes are treated as files. To find out which files are being accessed by which running programs, we use `lsof` (List Open Files).\n\n- Running `lsof` displays a comprehensive list of all open files, along with the Process ID (PID) and command that opened them.\n- E.g., running `lsof -i` lists all network files/sockets, which is extremely useful for discovering which process is listening on a specific network port (like port 80).',
+    instructions: 'Let\'s inspect our active connections and files. Run `lsof` to see all open files in the system.',
+    commandHelp: [
+      { cmd: 'lsof', desc: 'List all open files on the system' }
+    ],
+    objectives: [
+      { id: 'ran_lsof', text: 'Run the "lsof" command' }
+    ],
+    hints: [
+      "Use the 'lsof' command with no arguments to list all open files.",
+      "Try running: lsof"
+    ],
+    verify: (_fs, _session, history) => {
+      const ranLsof = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('lsof');
+      });
+      return {
+        success: ranLsof,
+        checks: [
+          { id: 'ran_lsof', passed: ranLsof }
         ]
       };
     }
@@ -1312,6 +1515,80 @@ export const lessons = [
     }
   },
   {
+    id: 78,
+    moduleId: 'processes',
+    title: 'Process Niceness (nice & renice)',
+    xp: 180,
+    badge: 'Polite',
+    description: 'In a busy office, some low-priority tasks (like filing receipts) can wait, while high-priority requests must be handled immediately. Linux manages process priority using **niceness** values ranging from -20 (highest priority) to 19 (lowest priority).\n\n- The `nice` command launches a process with a customized priority. E.g. `nice -n 10 sleep 5` starts a sleep command with a polite priority of 10.\n- The `renice` command alters the scheduling priority of an already-running process. E.g., `sudo renice +5 9999` lowers the priority of process 9999.',
+    instructions: 'Let\'s adjust priorities. Run a low-priority command using `nice -n 10 sleep 5`. Then, lower the priority of the running rogue process 9999 by running `sudo renice +5 9999`.',
+    commandHelp: [
+      { cmd: 'nice -n 10 sleep 5', desc: 'Start sleep with a niceness value of 10' },
+      { cmd: 'sudo renice +5 9999', desc: 'Lower priority of PID 9999' }
+    ],
+    objectives: [
+      { id: 'used_nice', text: 'Run the "nice" command with -n 10' },
+      { id: 'used_renice', text: 'Run the "renice" command with sudo' }
+    ],
+    hints: [
+      "Use nice -n 10 sleep 5 to initiate a nice process.",
+      "Alter the active PID priority using sudo renice +5 9999.",
+      "Try running: nice -n 10 sleep 5 and sudo renice +5 9999"
+    ],
+    verify: (_fs, _session, history) => {
+      const usedNice = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('nice') && parts.includes('-n') && parts.includes('10');
+      });
+      const usedRenice = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('renice') && parts.includes('+5') && parts.includes('9999') && parts.includes('sudo');
+      });
+      return {
+        success: usedNice && usedRenice,
+        checks: [
+          { id: 'used_nice', passed: usedNice },
+          { id: 'used_renice', passed: usedRenice }
+        ]
+      };
+    }
+  },
+  {
+    id: 79,
+    moduleId: 'processes',
+    title: 'Resuming Background Jobs (bg)',
+    xp: 170,
+    badge: 'Backgrounder',
+    description: 'We already saw how to start a task in the background using `&` and bring it back using `fg`. But what if you started a command without `&`, or suspended it with `Ctrl+Z`? You can resume it in the background using `bg`!\n\n- The `bg` command resumes suspended jobs, allowing them to run in the background without blocking your terminal prompt.',
+    instructions: 'Let\'s run a background job. Start `sleep 200 &` in the background, run `jobs` to list active jobs, and then run `bg` to ensure it resumes running.',
+    commandHelp: [
+      { cmd: 'sleep 200 &', desc: 'Start background process' },
+      { cmd: 'jobs', desc: 'List active background jobs' },
+      { cmd: 'bg', desc: 'Resume background jobs' }
+    ],
+    objectives: [
+      { id: 'ran_sleep_bg', text: 'Start a sleep command with &' },
+      { id: 'ran_jobs', text: 'Run the "jobs" command' },
+      { id: 'ran_bg', text: 'Run the "bg" command' }
+    ],
+    hints: [
+      "Run sleep 200 & followed by jobs and finally bg."
+    ],
+    verify: (_fs, _session, history) => {
+      const ranSleepBg = history.some(cmd => /sleep\s+\d+\s*&/.test(cmd));
+      const ranJobs = history.some(cmd => cmd.trim().split(/\s+/).includes('jobs'));
+      const ranBg = history.some(cmd => cmd.trim().split(/\s+/).includes('bg'));
+      return {
+        success: ranSleepBg && ranJobs && ranBg,
+        checks: [
+          { id: 'ran_sleep_bg', passed: ranSleepBg },
+          { id: 'ran_jobs', passed: ranJobs },
+          { id: 'ran_bg', passed: ranBg }
+        ]
+      };
+    }
+  },
+  {
     id: 31,
     moduleId: 'networking',
     title: 'Testing Connectivity (ping)',
@@ -1373,6 +1650,137 @@ export const lessons = [
         success: ranIp,
         checks: [
           { id: 'ran_ip_addr', passed: ranIp }
+        ]
+      };
+    }
+  },
+  {
+    id: 73,
+    moduleId: 'networking',
+    title: 'Checking Interfaces (ifconfig)',
+    xp: 150,
+    badge: 'Configurator',
+    description: 'Before the modern `ip` command suite became standard, Linux system administrators relied on `ifconfig` (interface configurator) to view and manage network interfaces.\n\n- The `ifconfig` command displays active network interfaces, local IP configuration, netmask details, and MAC hardware addresses. Although deprecated on some newer distributions, it remains widely used on legacy servers.',
+    instructions: 'Let\'s run the classic configuration tool. Run `ifconfig` to inspect active network interfaces.',
+    commandHelp: [
+      { cmd: 'ifconfig', desc: 'Display network interface configurations' }
+    ],
+    objectives: [
+      { id: 'ran_ifconfig', text: 'Run the "ifconfig" command' }
+    ],
+    hints: [
+      "Run the command ifconfig in the terminal.",
+      "Try running: ifconfig"
+    ],
+    verify: (_fs, _session, history) => {
+      const ranIfconfig = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('ifconfig');
+      });
+      return {
+        success: ranIfconfig,
+        checks: [
+          { id: 'ran_ifconfig', passed: ranIfconfig }
+        ]
+      };
+    }
+  },
+  {
+    id: 74,
+    moduleId: 'networking',
+    title: 'Network Connections (nmcli)',
+    xp: 160,
+    badge: 'Connector',
+    description: 'On modern Linux workstations and servers, network interfaces are managed by a system daemon called NetworkManager. Rather than manually editing config files, we configure network details using `nmcli`.\n\n- The `nmcli` (NetworkManager CLI) command allows you to inspect hardware connections, device states, and active Wi-Fi networks.',
+    instructions: 'Let\'s check network hardware state. Run `nmcli device` to query connections and state.',
+    commandHelp: [
+      { cmd: 'nmcli device', desc: 'List network interface devices and states' }
+    ],
+    objectives: [
+      { id: 'ran_nmcli_device', text: 'Run the "nmcli device" or "nmcli dev" command' }
+    ],
+    hints: [
+      "Use nmcli device to list interface statuses.",
+      "Try running: nmcli device"
+    ],
+    verify: (_fs, _session, history) => {
+      const ranNmcli = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('nmcli') && (parts.includes('device') || parts.includes('dev'));
+      });
+      return {
+        success: ranNmcli,
+        checks: [
+          { id: 'ran_nmcli_device', passed: ranNmcli }
+        ]
+      };
+    }
+  },
+  {
+    id: 75,
+    moduleId: 'networking',
+    title: 'Socket & Connection Stats (netstat & ss)',
+    xp: 180,
+    badge: 'Listener',
+    description: 'When setting up a database or web server, you must verify that the service is running and listening on the correct port, and check if any unauthorized connections are established. We do this using `netstat` or `ss`.\n\n- The `netstat` (network statistics) command is a classic tool for showing TCP connections and listening ports. E.g. `netstat -tuln` lists TCP/UDP listening ports.\n- The `ss` (socket statistics) command is the modern, faster alternative to `netstat` that displays socket connection details directly from the kernel namespace.',
+    instructions: 'Let\'s audit ports. Check listening TCP/UDP sockets by running `netstat -tuln`, and then check them using the modern socket statistics command `ss -tuln`.',
+    commandHelp: [
+      { cmd: 'netstat -tuln', desc: 'Show listening TCP/UDP ports using netstat' },
+      { cmd: 'ss -tuln', desc: 'Show listening sockets using ss' }
+    ],
+    objectives: [
+      { id: 'ran_netstat', text: 'Run "netstat -tuln"' },
+      { id: 'ran_ss', text: 'Run "ss -tuln"' }
+    ],
+    hints: [
+      "Run netstat -tuln first, followed by ss -tuln.",
+      "Try running: netstat -tuln and then ss -tuln"
+    ],
+    verify: (_fs, _session, history) => {
+      const ranNetstat = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('netstat') && (parts.includes('-tuln') || parts.includes('-tln') || parts.includes('-un') || parts.includes('-l'));
+      });
+      const ranSs = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('ss') && (parts.includes('-tuln') || parts.includes('-tln') || parts.includes('-un') || parts.includes('-l'));
+      });
+      return {
+        success: ranNetstat && ranSs,
+        checks: [
+          { id: 'ran_netstat', passed: ranNetstat },
+          { id: 'ran_ss', passed: ranSs }
+        ]
+      };
+    }
+  },
+  {
+    id: 76,
+    moduleId: 'networking',
+    title: 'Tracing Packet Routes (traceroute)',
+    xp: 160,
+    badge: 'Tracer',
+    description: 'When a web page fails to load, how do you identify if the issue is with your home router, your Internet Service Provider (ISP), or the destination server? In Linux, we trace packets using `traceroute`.\n\n- The `traceroute` command lists every router gateway (hop) a packet traverses on its way to a remote server, along with response latency for each hop.',
+    instructions: 'Let\'s trace the pathway to a web server. Run `traceroute google.com` to see the hops.',
+    commandHelp: [
+      { cmd: 'traceroute google.com', desc: 'Trace network hops to google.com' }
+    ],
+    objectives: [
+      { id: 'ran_traceroute', text: 'Run the "traceroute" command' }
+    ],
+    hints: [
+      "Use traceroute followed by a domain name like google.com.",
+      "Try running: traceroute google.com"
+    ],
+    verify: (_fs, _session, history) => {
+      const ranTraceroute = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('traceroute');
+      });
+      return {
+        success: ranTraceroute,
+        checks: [
+          { id: 'ran_traceroute', passed: ranTraceroute }
         ]
       };
     }
@@ -2110,6 +2518,123 @@ export const lessons = [
     }
   },
   {
+    id: 62,
+    moduleId: 'env_admin',
+    title: 'File Compression (gzip & gunzip)',
+    xp: 200,
+    badge: 'Compressor',
+    description: 'Imagine you have a single text file containing a massive dataset, and you want to reduce its size to save disk space or speed up sharing. In Linux, we compress individual files using `gzip` and restore them using `gunzip`.\n\n- The `gzip <filename>` command compresses a file, replacing it with a compressed version ending in `.gz` (e.g. `backup.txt` becomes `backup.txt.gz`).\n- The `gunzip <filename.gz>` command decompresses the file, restoring the original version.',
+    instructions: 'Let\'s compress a file to save space. Run `gzip note.txt` in your home folder. Then, decompress the resulting `note.txt.gz` file back to its original state by running `gunzip note.txt.gz`.',
+    commandHelp: [
+      { cmd: 'gzip note.txt', desc: 'Compress note.txt to note.txt.gz' },
+      { cmd: 'gunzip note.txt.gz', desc: 'Decompress note.txt.gz back to note.txt' }
+    ],
+    objectives: [
+      { id: 'used_gzip', text: 'Run the "gzip" command to compress note.txt' },
+      { id: 'used_gunzip', text: 'Run the "gunzip" command to restore note.txt' }
+    ],
+    hints: [
+      "Use gzip note.txt to compress the file.",
+      "Use gunzip note.txt.gz to decompress it back.",
+      "Try running: gzip note.txt followed by gunzip note.txt.gz"
+    ],
+    verify: (fs, _session, history) => {
+      const usedGzip = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('gzip') && parts.includes('note.txt');
+      });
+      const usedGunzip = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('gunzip') && (parts.includes('note.txt.gz') || parts.includes('note.txt'));
+      });
+      const node = fs.getNodeByPath('/home/learner', 'note.txt');
+      const fileExists = node && node.type === 'file';
+      return {
+        success: usedGzip && usedGunzip && fileExists,
+        checks: [
+          { id: 'used_gzip', passed: usedGzip },
+          { id: 'used_gunzip', passed: usedGunzip }
+        ]
+      };
+    }
+  },
+  {
+    id: 66,
+    moduleId: 'env_admin',
+    title: 'Archiving with zip & unzip',
+    xp: 180,
+    badge: 'Packer',
+    description: 'While `tar` and `gzip` are standard on Linux, `zip` is the most common archive format in the cross-platform world (Windows/macOS). In Linux, we package and compress files into zip files using `zip`, and extract them using `unzip`.\n\n- The `zip <archive.zip> <files>` command creates a zip archive.\n- The `unzip <archive.zip>` command extracts the files from the archive.',
+    instructions: 'Let\'s package our notes. Create a zip archive named `note.zip` containing the file `note.txt` in your home folder. Then, test extraction by running `unzip note.zip`.',
+    commandHelp: [
+      { cmd: 'zip note.zip note.txt', desc: 'Create note.zip containing note.txt' },
+      { cmd: 'unzip note.zip', desc: 'Extract contents of note.zip' }
+    ],
+    objectives: [
+      { id: 'used_zip', text: 'Run the "zip" command' },
+      { id: 'used_unzip', text: 'Run the "unzip" command' }
+    ],
+    hints: [
+      "Use zip note.zip note.txt first, followed by unzip note.zip.",
+      "Try running: zip note.zip note.txt and then unzip note.zip"
+    ],
+    verify: (_fs, _session, history) => {
+      const usedZip = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('zip') && parts.includes('note.zip') && parts.includes('note.txt');
+      });
+      const usedUnzip = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('unzip') && parts.includes('note.zip');
+      });
+      return {
+        success: usedZip && usedUnzip,
+        checks: [
+          { id: 'used_zip', passed: usedZip },
+          { id: 'used_unzip', passed: usedUnzip }
+        ]
+      };
+    }
+  },
+  {
+    id: 67,
+    moduleId: 'env_admin',
+    title: 'Alternative Compression (bzip2 & xz)',
+    xp: 180,
+    badge: 'Squeezer',
+    description: 'Beyond `gzip` and `zip`, Linux supports other compression formats optimized for higher compression ratios at the expense of CPU speed. These are `bzip2` (bz2) and `xz` (xz).\n\n- The `bzip2 <file>` command compresses a file, outputting `<file>.bz2`.\n- The `xz <file>` command uses lossless LZMA compression to create `<file>.xz`, which yields exceptionally small file sizes, making it ideal for Linux kernel releases.',
+    instructions: 'Let\'s compare formats. Compress `note.txt` using `bzip2 note.txt`. Then, compress the resulting files using `xz note.txt` (to simulate both).',
+    commandHelp: [
+      { cmd: 'bzip2 note.txt', desc: 'Compress note.txt using bzip2' },
+      { cmd: 'xz note.txt', desc: 'Compress note.txt using xz' }
+    ],
+    objectives: [
+      { id: 'used_bzip2', text: 'Run bzip2 note.txt' },
+      { id: 'used_xz', text: 'Run xz note.txt' }
+    ],
+    hints: [
+      "Run bzip2 note.txt to test bzip2 compression.",
+      "Run xz note.txt to test xz compression."
+    ],
+    verify: (_fs, _session, history) => {
+      const usedBzip2 = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('bzip2') && parts.includes('note.txt');
+      });
+      const usedXz = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('xz') && parts.includes('note.txt');
+      });
+      return {
+        success: usedBzip2 && usedXz,
+        checks: [
+          { id: 'used_bzip2', passed: usedBzip2 },
+          { id: 'used_xz', passed: usedXz }
+        ]
+      };
+    }
+  },
+  {
     id: 48,
     moduleId: 'env_admin',
     title: 'Inspecting the Environment',
@@ -2343,6 +2868,153 @@ export const lessons = [
     }
   },
   {
+    id: 70,
+    moduleId: 'remote_users',
+    title: 'Managing Users (adduser & userdel)',
+    xp: 180,
+    badge: 'Supervisor',
+    description: 'While `useradd` is a low-level utility that merely registers user details in system config files, Debian/Ubuntu systems provide a high-level interactive script called `adduser` that automates creating home folders, setting passwords, and initializing shell environments. Conversely, `userdel` cleanly deletes user accounts.\n\n- Running `sudo adduser tester` guides you through user configuration interactively.\n- Running `sudo userdel tester` deletes the user account.',
+    instructions: 'Let\'s handle user lifecycles. Create a user using `sudo adduser tester`. After that, delete the user by running `sudo userdel tester`.',
+    commandHelp: [
+      { cmd: 'sudo adduser tester', desc: 'Create user tester interactively' },
+      { cmd: 'sudo userdel tester', desc: 'Delete user tester account' }
+    ],
+    objectives: [
+      { id: 'ran_adduser', text: 'Run the "adduser" command with sudo' },
+      { id: 'ran_userdel', text: 'Run the "userdel" command with sudo' }
+    ],
+    hints: [
+      "Use sudo adduser tester followed by sudo userdel tester.",
+      "Try running: sudo adduser tester, and then: sudo userdel tester"
+    ],
+    verify: (_fs, _session, history) => {
+      const ranAdduser = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('adduser') && parts.includes('tester') && parts.includes('sudo');
+      });
+      const ranUserdel = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('userdel') && parts.includes('tester') && parts.includes('sudo');
+      });
+      return {
+        success: ranAdduser && ranUserdel,
+        checks: [
+          { id: 'ran_adduser', passed: ranAdduser },
+          { id: 'ran_userdel', passed: ranUserdel }
+        ]
+      };
+    }
+  },
+  {
+    id: 71,
+    moduleId: 'remote_users',
+    title: 'Viewing User Identities (id)',
+    xp: 150,
+    badge: 'Identifier',
+    description: 'When troubleshooting permission errors, you must verify the exact user and group identifier context you are running under. We do this using `id`.\n\n- Running `id` prints the current user\'s User ID (UID), primary Group ID (GID), and all supplementary group lists.\n- Running `id <username>` queries information for a specific user.',
+    instructions: 'Let\'s check active identities. Run `id` to see your details, and then run `id root` to inspect the superuser\'s account identifiers.',
+    commandHelp: [
+      { cmd: 'id', desc: 'Display active user identification details' },
+      { cmd: 'id root', desc: 'Query root identification details' }
+    ],
+    objectives: [
+      { id: 'ran_id_learner', text: 'Run the "id" command for learner' },
+      { id: 'ran_id_root', text: 'Run the "id root" command' }
+    ],
+    hints: [
+      "Run id followed by id root.",
+      "Try running: id and id root"
+    ],
+    verify: (_fs, _session, history) => {
+      const ranIdLearner = history.some(cmd => cmd.trim() === 'id');
+      const ranIdRoot = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('id') && parts.includes('root');
+      });
+      return {
+        success: ranIdLearner && ranIdRoot,
+        checks: [
+          { id: 'ran_id_learner', passed: ranIdLearner },
+          { id: 'ran_id_root', passed: ranIdRoot }
+        ]
+      };
+    }
+  },
+  {
+    id: 63,
+    moduleId: 'remote_users',
+    title: 'Group Administration (groupadd & groups)',
+    xp: 220,
+    badge: 'Group-Master',
+    description: 'In Linux, users are organized into **groups** to share permissions easily. For example, all developers might belong to a group named `developers`. This allows us to share files with the entire team at once.\n\n- The `groupadd` command creates a new group. Since this is a system configuration, it requires superuser privileges (e.g. `sudo groupadd developers`).\n- The `groups [username]` command lists all the groups a user belongs to. Run without arguments, it displays groups for the current user.',
+    instructions: 'Let\'s manage groups. Create a new group named `developers` by running `sudo groupadd developers`. Then, check your own active groups by running the `groups` command.',
+    commandHelp: [
+      { cmd: 'sudo groupadd developers', desc: 'Create a new group named developers' },
+      { cmd: 'groups', desc: 'Display active groups for current user' }
+    ],
+    objectives: [
+      { id: 'group_created', text: 'Create group "developers" using groupadd' },
+      { id: 'checked_groups', text: 'Run the "groups" command' }
+    ],
+    hints: [
+      "Use sudo groupadd developers to create the group.",
+      "Simply run the groups command to list groups.",
+      "Try running: sudo groupadd developers followed by groups"
+    ],
+    verify: (fs, _session, history) => {
+      const ranGroupadd = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('groupadd') && parts.includes('developers') && parts.includes('sudo');
+      });
+      const ranGroups = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('groups');
+      });
+      const groupNode = fs.getNodeByPath('/etc', 'group');
+      const groupExists = groupNode && groupNode.content.includes('developers:');
+      return {
+        success: ranGroupadd && ranGroups && groupExists,
+        checks: [
+          { id: 'group_created', passed: !!(ranGroupadd && groupExists) },
+          { id: 'checked_groups', passed: ranGroups }
+        ]
+      };
+    }
+  },
+  {
+    id: 72,
+    moduleId: 'remote_users',
+    title: 'Deleting Groups (groupdel)',
+    xp: 150,
+    badge: 'Deleter',
+    description: 'When project teams reorganize or decommission services, the corresponding security groups must be cleaned up. In Linux, we delete groups using `groupdel`.\n\n- The `groupdel <group_name>` command permanently deletes a group from the system configuration files, requiring superuser privileges.',
+    instructions: 'Let\'s clean up our groups. Delete the `developers` group by running `sudo groupdel developers`.',
+    commandHelp: [
+      { cmd: 'sudo groupdel developers', desc: 'Delete the developers group' }
+    ],
+    objectives: [
+      { id: 'group_deleted', text: 'Delete group "developers" using groupdel' }
+    ],
+    hints: [
+      "Use sudo groupdel developers to remove the group from /etc/group.",
+      "Try running: sudo groupdel developers"
+    ],
+    verify: (fs, _session, history) => {
+      const ranGroupdel = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('groupdel') && parts.includes('developers') && parts.includes('sudo');
+      });
+      const groupNode = fs.getNodeByPath('/etc', 'group');
+      const groupExists = groupNode && groupNode.content.includes('developers:');
+      return {
+        success: ranGroupdel && !groupExists,
+        checks: [
+          { id: 'group_deleted', passed: !!(ranGroupdel && !groupExists) }
+        ]
+      };
+    }
+  },
+  {
     id: 59,
     moduleId: 'remote_users',
     title: 'Switching Security Contexts (su)',
@@ -2373,11 +3045,11 @@ export const lessons = [
         const parts = cmd.trim().split(/\s+/);
         return parts.includes('whoami');
       });
-      const switched = session.env.USER === 'deployer';
+      const switched = session.env.USER === 'deployer' || history.some(cmd => cmd.trim().split(/\s+/)[0] === 'exit');
       return {
         success: ranSu && ranWhoami && switched,
         checks: [
-          { id: 'switched_user', passed: ranSu && switched },
+          { id: 'switched_user', passed: !!(ranSu && switched) },
           { id: 'verified_whoami', passed: ranWhoami }
         ]
       };

@@ -356,7 +356,10 @@ export class ShellSession {
       'jobs', 'fg', 'ping', 'ip', 'curl', 'find', 'history', 'systemctl', 'nano',
       'bash', 'sed', 'awk', 'cut', 'tr', 'ln', 'tar', 'chown', 'export', 'env', 'xargs',
       'head', 'tail', 'less', 'more', 'journalctl', 'which', 'alias', 'crontab',
-      'useradd', 'passwd', 'su', 'ssh', 'scp'
+      'useradd', 'passwd', 'su', 'ssh', 'scp', 'gzip', 'gunzip', 'groupadd', 'groups',
+      'lscpu', 'lsof', 'zip', 'unzip', 'bzip2', 'xz', 'dpkg', 'dnf', 'yum', 'adduser',
+      'userdel', 'id', 'groupdel', 'ifconfig', 'nmcli', 'netstat', 'ss', 'traceroute',
+      'ufw', 'iptables', 'nice', 'renice', 'bg', 'iostat', 'exit'
     ];
     this.installedPackages = new Set(defaultPkgs);
     if (installedPackages) {
@@ -623,8 +626,19 @@ export class ShellSession {
           result.clear = true;
           break;
 
+        case 'exit':
+          if (this.env.USER !== 'learner') {
+            this.env.USER = 'learner';
+            this.env.HOME = '/home/learner';
+            this.currentPath = '/home/learner';
+            result.stdout = 'logout\nConnection to local session closed. Returned to learner.';
+          } else {
+            result.stdout = 'exit\n[Session cannot be exited: already in default learner shell]';
+          }
+          break;
+
         case 'help':
-          result.stdout = 'Available commands: cd, ls, pwd, mkdir, touch, cat, echo, rm, cp, mv, chmod, grep, wc, uniq, sort, man, tree, sudo, apt, whoami, clear, help, df, du, free, uptime, uname, ps, top, htop, kill, sleep, jobs, fg, ping, ip, curl, find, history, systemctl, nano, bash, sed, awk, cut, tr, ln, tar, chown, export, env, xargs\nRedirections > (overwrite) and >> (append), and pipes | are supported.';
+          result.stdout = 'Available commands: cd, ls, pwd, mkdir, touch, cat, echo, rm, cp, mv, chmod, grep, wc, uniq, sort, man, tree, sudo, apt, whoami, clear, help, df, du, free, uptime, uname, ps, top, htop, kill, sleep, jobs, fg, ping, ip, curl, find, history, systemctl, nano, bash, sed, awk, cut, tr, ln, tar, chown, export, env, xargs, gzip, gunzip, groupadd, groups, lscpu, lsof\nRedirections > (overwrite) and >> (append), and pipes | are supported.';
           break;
 
         case 'cd':
@@ -999,6 +1013,115 @@ export class ShellSession {
 
         case 'scp':
           result = this.runScp(cmdArgs);
+          break;
+
+        case 'gzip':
+          result = this.runGzip(cmdArgs);
+          break;
+
+        case 'gunzip':
+          result = this.runGunzip(cmdArgs);
+          break;
+
+        case 'groupadd':
+          result = this.runGroupadd(cmdArgs, isSudo);
+          break;
+
+        case 'groups':
+          result = this.runGroups(cmdArgs);
+          break;
+
+        case 'lscpu':
+          result = this.runLscpu(cmdArgs);
+          break;
+
+        case 'lsof':
+          result = this.runLsof(cmdArgs);
+          break;
+
+        case 'zip':
+          result = this.runZip(cmdArgs);
+          break;
+
+        case 'unzip':
+          result = this.runUnzip(cmdArgs);
+          break;
+
+        case 'bzip2':
+          result = this.runBzip2(cmdArgs);
+          break;
+
+        case 'xz':
+          result = this.runXz(cmdArgs);
+          break;
+
+        case 'dpkg':
+          result = this.runDpkg(cmdArgs);
+          break;
+
+        case 'dnf':
+        case 'yum':
+          result = this.runDnfYum(command, cmdArgs);
+          break;
+
+        case 'adduser':
+          result = this.runAdduser(cmdArgs, isSudo);
+          break;
+
+        case 'userdel':
+          result = this.runUserdel(cmdArgs, isSudo);
+          break;
+
+        case 'id':
+          result = this.runId(cmdArgs);
+          break;
+
+        case 'groupdel':
+          result = this.runGroupdel(cmdArgs, isSudo);
+          break;
+
+        case 'ifconfig':
+          result = this.runIfconfig(cmdArgs);
+          break;
+
+        case 'nmcli':
+          result = this.runNmcli(cmdArgs);
+          break;
+
+        case 'netstat':
+          result = this.runNetstat(cmdArgs);
+          break;
+
+        case 'ss':
+          result = this.runSs(cmdArgs);
+          break;
+
+        case 'traceroute':
+          result = this.runTraceroute(cmdArgs);
+          break;
+
+        case 'ufw':
+          result = this.runUfw(cmdArgs, isSudo);
+          break;
+
+        case 'iptables':
+          result = this.runIptables(cmdArgs, isSudo);
+          break;
+
+        case 'nice':
+          result = this.runNice(cmdArgs);
+          break;
+
+        case 'renice':
+          result = this.runRenice(cmdArgs, isSudo);
+          break;
+
+        case 'bg':
+          result = this.runBg(cmdArgs);
+          break;
+
+        case 'iostat':
+          result = this.runIostat(cmdArgs);
           break;
 
         default:
@@ -2650,12 +2773,13 @@ export class ShellSession {
 
     let passwdNode = this.fs.getNodeByPath('/etc', 'passwd');
     if (!passwdNode) {
-      passwdNode = this.fs.createNode('/etc', 'passwd', 'file', {
+      const res = this.fs.createNode('/etc', 'passwd', 'file', {
         content: 'root:x:0:0:root:/root:/bin/bash\nlearner:x:1000:1000:learner:/home/learner:/bin/bash\n',
         permissions: '644',
         owner: 'root',
         group: 'root'
       });
+      passwdNode = res.node;
     }
 
     if (passwdNode.content.includes(`${username}:`)) {
@@ -2760,5 +2884,482 @@ export class ShellSession {
       stderr: '',
       currentPath: this.currentPath
     };
+  }
+
+  runGzip(args) {
+    if (args.length === 0) {
+      return { stdout: '', stderr: 'gzip: compressed data not written to a terminal. Use -f to force compression.', currentPath: this.currentPath };
+    }
+    const file = args[0];
+    const node = this.fs.getNodeByPath(this.currentPath, file);
+    if (!node) {
+      return { stdout: '', stderr: `gzip: ${file}: No such file or directory`, currentPath: this.currentPath };
+    }
+    if (node.type === 'dir') {
+      return { stdout: '', stderr: `gzip: ${file}: Is a directory -- ignored`, currentPath: this.currentPath };
+    }
+    const parentPath = this.fs.resolvePathStr(this.currentPath, file);
+    const parentSegs = parentPath.split('/').filter(Boolean);
+    const name = parentSegs.pop();
+    const parentDir = '/' + parentSegs.join('/');
+    this.fs.deleteNode(parentDir, name);
+    this.fs.createNode(parentDir, `${name}.gz`, 'file', { content: `gzip-compressed-content-of-${name}\n` });
+    return { stdout: '', stderr: '', currentPath: this.currentPath };
+  }
+
+  runGunzip(args) {
+    if (args.length === 0) {
+      return { stdout: '', stderr: 'gunzip: missing file operand', currentPath: this.currentPath };
+    }
+    const file = args[0];
+    const node = this.fs.getNodeByPath(this.currentPath, file);
+    if (!node) {
+      return { stdout: '', stderr: `gunzip: ${file}: No such file or directory`, currentPath: this.currentPath };
+    }
+    if (node.type === 'dir') {
+      return { stdout: '', stderr: `gunzip: ${file}: Is a directory -- ignored`, currentPath: this.currentPath };
+    }
+    if (!file.endsWith('.gz')) {
+      return { stdout: '', stderr: `gunzip: ${file}: unknown suffix -- ignored`, currentPath: this.currentPath };
+    }
+    const parentPath = this.fs.resolvePathStr(this.currentPath, file);
+    const parentSegs = parentPath.split('/').filter(Boolean);
+    const name = parentSegs.pop();
+    const parentDir = '/' + parentSegs.join('/');
+    this.fs.deleteNode(parentDir, name);
+    const newName = name.substring(0, name.length - 3);
+    this.fs.createNode(parentDir, newName, 'file', { content: `Decompressed content of ${newName}\n` });
+    return { stdout: '', stderr: '', currentPath: this.currentPath };
+  }
+
+  runGroupadd(args, isSudo) {
+    if (!isSudo) {
+      return { stdout: '', stderr: 'groupadd: Permission denied.', currentPath: this.currentPath };
+    }
+    if (args.length === 0) {
+      return { stdout: '', stderr: 'groupadd: missing group name', currentPath: this.currentPath };
+    }
+    const groupName = args[0];
+    const groupNode = this.fs.getNodeByPath('/etc', 'group');
+    if (groupNode) {
+      if (groupNode.content.includes(`${groupName}:`)) {
+        return { stdout: '', stderr: `groupadd: group '${groupName}' already exists`, currentPath: this.currentPath };
+      }
+      groupNode.content += `${groupName}:x:1001:\n`;
+    }
+    return { stdout: `Group '${groupName}' added successfully.`, stderr: '', currentPath: this.currentPath };
+  }
+
+  runGroups(args) {
+    const user = args[0] || (this.env.USER || 'learner');
+    if (user === 'root') {
+      return { stdout: 'root sudo shadow adm cdrom dip plugdev lxd', stderr: '', currentPath: this.currentPath };
+    } else if (user === 'learner') {
+      const groupNode = this.fs.getNodeByPath('/etc', 'group');
+      let extraGroups = '';
+      if (groupNode) {
+        const lines = groupNode.content.split('\n');
+        for (const line of lines) {
+          const parts = line.split(':');
+          if (parts[0] && parts[0] !== 'learner' && parts[0] !== 'root' && parts[3] && parts[3].includes('learner')) {
+            extraGroups += ' ' + parts[0];
+          }
+        }
+      }
+      return { stdout: `learner cdrom sudo dip plugdev lxd${extraGroups}`, stderr: '', currentPath: this.currentPath };
+    } else if (user === 'deployer') {
+      return { stdout: 'deployer', stderr: '', currentPath: this.currentPath };
+    }
+    return { stdout: '', stderr: `groups: '${user}': no such user`, currentPath: this.currentPath };
+  }
+
+  runLscpu(args) {
+    const out = [
+      'Architecture:            x86_64',
+      'CPU op-mode(s):          32-bit, 64-bit',
+      'Address sizes:           39 bits physical, 48 bits virtual',
+      'Byte Order:              Little Endian',
+      'CPU(s):                  4',
+      'On-line CPU(s) list:     0-3',
+      'Vendor ID:               AuthenticAMD',
+      'Model name:              AMD Ryzen 5 5600X 6-Core Processor',
+      'CPU family:              25',
+      'Model:                   33',
+      'Thread(s) per core:      1',
+      'Core(s) per socket:      4',
+      'Socket(s):               1',
+      'Virtualization:          AMD-V',
+      'L1d cache:               128 KiB (4 instances)',
+      'L1i cache:               128 KiB (4 instances)',
+      'L2 cache:                2 MiB (4 instances)',
+      'L3 cache:                32 MiB (1 instance)'
+    ].join('\n');
+    return { stdout: out, stderr: '', currentPath: this.currentPath };
+  }
+
+  runLsof(args) {
+    const out = [
+      'COMMAND    PID   USER   FD      TYPE     DEVICE SIZE/OFF       NODE NAME',
+      'systemd      1   root  cwd       DIR       8,16     4096          2 /',
+      'systemd      1   root  rtd       DIR       8,16     4096          2 /',
+      'systemd      1   root  txt      REG       8,16  1684320     125432 /sbin/init',
+      'bash      1245 learner cwd       DIR       8,16     4096     548320 /home/learner',
+      'bash      1245 learner rtd       DIR       8,16     4096          2 /',
+      'bash      1245 learner txt      REG       8,16  1124512      12456 /bin/bash',
+      'apache2   1042   root  cwd       DIR       8,16     4096          2 /',
+      'apache2   1042   root  txt      REG       8,16   542890      52145 /usr/sbin/apache2',
+      'apache2   1042   root    3u     IPv4      34125      0t0        TCP *:80 (LISTEN)'
+    ].join('\n');
+    return { stdout: out, stderr: '', currentPath: this.currentPath };
+  }
+
+  runZip(args) {
+    if (args.length < 2) {
+      return { stdout: '', stderr: 'zip: error: missing archive or file targets', currentPath: this.currentPath };
+    }
+    const archive = args[0];
+    const files = args.slice(1);
+    
+    // Check if files exist
+    for (const f of files) {
+      const node = this.fs.getNodeByPath(this.currentPath, f);
+      if (!node) {
+        return { stdout: '', stderr: `zip: error: file not found: ${f}`, currentPath: this.currentPath };
+      }
+    }
+    
+    // Create archive file
+    this.fs.createNode(this.currentPath, archive, 'file', { content: 'zip-archive-content\n' });
+    
+    // Trigger update event if in browser
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('app:filesystem-update'));
+    }
+    
+    const out = files.map(f => `  adding: ${f} (deflated 64%)`).join('\n');
+    return { stdout: out, stderr: '', currentPath: this.currentPath };
+  }
+
+  runUnzip(args) {
+    if (args.length === 0) {
+      return { stdout: '', stderr: 'unzip: error: missing zip archive file', currentPath: this.currentPath };
+    }
+    const archive = args[0];
+    const node = this.fs.getNodeByPath(this.currentPath, archive);
+    if (!node || node.type !== 'file') {
+      return { stdout: '', stderr: `unzip: error: cannot find or open ${archive}`, currentPath: this.currentPath };
+    }
+    
+    // Simulate extraction
+    const out = [
+      `Archive:  ${archive}`,
+      `  inflating: note.txt`
+    ].join('\n');
+    return { stdout: out, stderr: '', currentPath: this.currentPath };
+  }
+
+  runBzip2(args) {
+    if (args.length === 0) {
+      return { stdout: '', stderr: 'bzip2: error: missing file operand', currentPath: this.currentPath };
+    }
+    const file = args[0];
+    const node = this.fs.getNodeByPath(this.currentPath, file);
+    if (!node || node.type !== 'file') {
+      return { stdout: '', stderr: `bzip2: Can't open input file ${file}: No such file or directory.`, currentPath: this.currentPath };
+    }
+    
+    // Create compressed version
+    this.fs.createNode(this.currentPath, `${file}.bz2`, 'file', { content: 'bzip2-compressed-content\n' });
+    
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('app:filesystem-update'));
+    }
+    return { stdout: '', stderr: '', currentPath: this.currentPath };
+  }
+
+  runXz(args) {
+    if (args.length === 0) {
+      return { stdout: '', stderr: 'xz: error: missing file operand', currentPath: this.currentPath };
+    }
+    const file = args[0];
+    const node = this.fs.getNodeByPath(this.currentPath, file);
+    if (!node || node.type !== 'file') {
+      return { stdout: '', stderr: `xz: ${file}: No such file or directory`, currentPath: this.currentPath };
+    }
+    
+    // Create compressed version
+    this.fs.createNode(this.currentPath, `${file}.xz`, 'file', { content: 'xz-compressed-content\n' });
+    
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('app:filesystem-update'));
+    }
+    return { stdout: '', stderr: '', currentPath: this.currentPath };
+  }
+
+  runDpkg(args) {
+    const list = args.includes('-l');
+    const status = args.includes('-s');
+    if (list) {
+      const out = [
+        'Desired=Unknown/Install/Remove/Purge/Hold',
+        '| Status=Not/Inst/Conf-files/Unpacked/halF-conf/Half-inst/trig-aWait/Trig-pend',
+        '|/ Err?=(none)/Reinst-required (Status,Err: uppercase=bad)',
+        '||/ Name           Version      Description',
+        '+++-==============-============-====================================',
+        'ii  bash           5.2.21-1     GNU Bourne Again SHell',
+        'ii  coreutils      9.4-3ubuntu2 GNU core utilities',
+        'ii  grep           3.11-1       GNU grep, egrep and fgrep',
+        'ii  tar            1.35+dfsg-3  GNU version of the tar archiving utility'
+      ].join('\n');
+      return { stdout: out, stderr: '', currentPath: this.currentPath };
+    }
+    if (status) {
+      const pkg = args[args.indexOf('-s') + 1] || '';
+      if (pkg === 'tree') {
+        const isInstalled = this.installedPackages.has('tree');
+        const out = [
+          `Package: tree`,
+          `Status: ${isInstalled ? 'install ok installed' : 'deinstall ok config-files'}`,
+          `Priority: optional`,
+          `Section: utils`,
+          `Installed-Size: 115`,
+          `Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>`,
+          `Architecture: amd64`,
+          `Version: 2.1.1-2`,
+          `Description: displays directory tree, in color`
+        ].join('\n');
+        return { stdout: out, stderr: '', currentPath: this.currentPath };
+      }
+    }
+    return { stdout: '', stderr: 'dpkg: error: a status or listing option (-s, -l) is required', currentPath: this.currentPath };
+  }
+
+  runDnfYum(cmdName, args) {
+    if (args.includes('check-update')) {
+      const out = [
+        `Loaded plugins: fastestmirror`,
+        `Loading mirror speeds from cached hostfile`,
+        `Security: 0 package updates available`,
+        `No packages marked for update`
+      ].join('\n');
+      return { stdout: out, stderr: '', currentPath: this.currentPath };
+    }
+    if (args.includes('install')) {
+      const pkg = args[args.indexOf('install') + 1] || '';
+      if (pkg) {
+        return {
+          stdout: `Resolving Dependencies\n--> Running transaction check\n---> Package ${pkg}.x86_64 0:1.0.0-1.el8 will be installed\n--> Finished Dependency Resolution\n\nInstalled:\n  ${pkg}.x86_64 1.0.0-1.el8\n\nComplete!`,
+          stderr: '',
+          currentPath: this.currentPath
+        };
+      }
+    }
+    return { stdout: '', stderr: `${cmdName}: usage: ${cmdName} [install|check-update] [package]`, currentPath: this.currentPath };
+  }
+
+  runAdduser(args, isSudo) {
+    if (!isSudo) {
+      return { stdout: '', stderr: 'adduser: Only root may add a user or group to the system.', currentPath: this.currentPath };
+    }
+    const user = args[0];
+    if (!user) {
+      return { stdout: '', stderr: 'adduser: Only one or two names allowed.', currentPath: this.currentPath };
+    }
+    // Simulate user creation log
+    const out = [
+      `Adding user \`${user}' ...`,
+      `Adding new group \`${user}' (1001) ...`,
+      `Adding new user \`${user}' (1001) with group \`${user}' ...`,
+      `Creating home directory \`/home/${user}' ...`,
+      `Copying files from \`/etc/skel' ...`,
+      `passwd: password updated successfully`
+    ].join('\n');
+    return { stdout: out, stderr: '', currentPath: this.currentPath };
+  }
+
+  runUserdel(args, isSudo) {
+    if (!isSudo) {
+      return { stdout: '', stderr: 'userdel: Permission denied.', currentPath: this.currentPath };
+    }
+    const user = args[0];
+    if (!user) {
+      return { stdout: '', stderr: 'userdel: user name missing', currentPath: this.currentPath };
+    }
+    return { stdout: `userdel: user '${user}' deleted successfully`, stderr: '', currentPath: this.currentPath };
+  }
+
+  runId(args) {
+    const target = args[0] || 'learner';
+    if (target === 'root') {
+      return { stdout: 'uid=0(root) gid=0(root) groups=0(root)', stderr: '', currentPath: this.currentPath };
+    }
+    if (target === 'learner') {
+      return { stdout: 'uid=1000(learner) gid=1000(learner) groups=1000(learner),27(sudo)', stderr: '', currentPath: this.currentPath };
+    }
+    return { stdout: '', stderr: `id: '${target}': no such user`, currentPath: this.currentPath };
+  }
+
+  runGroupdel(args, isSudo) {
+    if (!isSudo) {
+      return { stdout: '', stderr: 'groupdel: Permission denied.', currentPath: this.currentPath };
+    }
+    const group = args[0];
+    if (!group) {
+      return { stdout: '', stderr: 'groupdel: group name missing', currentPath: this.currentPath };
+    }
+    return { stdout: `groupdel: group '${group}' deleted successfully`, stderr: '', currentPath: this.currentPath };
+  }
+
+  runIfconfig(args) {
+    const out = [
+      'eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500',
+      '        inet 192.168.1.15  netmask 255.255.255.0  broadcast 192.168.1.255',
+      '        ether 52:54:00:12:34:56  txqueuelen 1000  (Ethernet)',
+      '        RX packets 12450  bytes 12845320 (12.8 MB)',
+      '        TX packets 8540  bytes 542890 (542.8 KB)',
+      '',
+      'lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536',
+      '        inet 127.0.0.1  netmask 255.0.0.0',
+      '        loop  txqueuelen 1000  (Local Loopback)',
+      '        RX packets 240  bytes 18400 (18.4 KB)',
+      '        TX packets 240  bytes 18400 (18.4 KB)'
+    ].join('\n');
+    return { stdout: out, stderr: '', currentPath: this.currentPath };
+  }
+
+  runNmcli(args) {
+    if (args.includes('device') || args.includes('dev')) {
+      const out = [
+        'DEVICE  TYPE      STATE      CONNECTION',
+        'eth0    ethernet  connected  Wired connection 1',
+        'lo      loopback  unmanaged  --',
+        'wlan0   wifi      disconnected --'
+      ].join('\n');
+      return { stdout: out, stderr: '', currentPath: this.currentPath };
+    }
+    const out = [
+      'networks manager cli tool',
+      'Usage: nmcli [OPTIONS] OBJECT { COMMAND | help }',
+      'OBJECT := { general | networking | radio | connection | device | agent }'
+    ].join('\n');
+    return { stdout: out, stderr: '', currentPath: this.currentPath };
+  }
+
+  runNetstat(args) {
+    const out = [
+      'Active Internet connections (only servers)',
+      'Proto Recv-Q Send-Q Local Address           Foreign Address         State      ',
+      'tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN     ',
+      'tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN     ',
+      'tcp6       0      0 :::80                   :::*                    LISTEN     ',
+      'tcp6       0      0 :::22                   :::*                    LISTEN     '
+    ].join('\n');
+    return { stdout: out, stderr: '', currentPath: this.currentPath };
+  }
+
+  runSs(args) {
+    const out = [
+      'Netid State      Recv-Q Send-Q Local Address:Port               Peer Address:Port',
+      'tcp   LISTEN     0      128          0.0.0.0:80                      0.0.0.0:*',
+      'tcp   LISTEN     0      128          0.0.0.0:22                      0.0.0.0:*',
+      'tcp   LISTEN     0      128             [::]:80                         [::]:*',
+      'tcp   LISTEN     0      128             [::]:22                         [::]:*'
+    ].join('\n');
+    return { stdout: out, stderr: '', currentPath: this.currentPath };
+  }
+
+  runTraceroute(args) {
+    if (args.length === 0) {
+      return { stdout: '', stderr: 'traceroute: specify host to traceroute', currentPath: this.currentPath };
+    }
+    const host = args[0];
+    const out = [
+      `traceroute to ${host} (142.250.190.46), 30 hops max, 60 byte packets`,
+      ` 1  gateway (192.168.1.1)  1.234 ms  1.025 ms  0.985 ms`,
+      ` 2  10.0.0.1 (10.0.0.1)  5.120 ms  4.890 ms  5.230 ms`,
+      ` 3  142.250.190.46 (142.250.190.46)  14.210 ms  13.985 ms  14.050 ms`
+    ].join('\n');
+    return { stdout: out, stderr: '', currentPath: this.currentPath };
+  }
+
+  runUfw(args, isSudo) {
+    if (!isSudo) {
+      return { stdout: '', stderr: 'ufw: error: must be root to run ufw', currentPath: this.currentPath };
+    }
+    if (args.includes('status')) {
+      return { stdout: 'Status: active\n\nTo                         Action      From\n--                         ------      ----\n22/tcp                     ALLOW       Anywhere\n80/tcp                     ALLOW       Anywhere', stderr: '', currentPath: this.currentPath };
+    }
+    return { stdout: 'Firewall rules updated', stderr: '', currentPath: this.currentPath };
+  }
+
+  runIptables(args, isSudo) {
+    if (!isSudo) {
+      return { stdout: '', stderr: 'iptables v1.8.10: can\'t initialize iptables table `filter\': Permission denied (you must be root)', currentPath: this.currentPath };
+    }
+    if (args.includes('-L')) {
+      const out = [
+        'Chain INPUT (policy ACCEPT)',
+        'target     prot opt source               destination         ',
+        'ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:ssh',
+        'ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:http',
+        '',
+        'Chain FORWARD (policy ACCEPT)',
+        'target     prot opt source               destination         ',
+        '',
+        'Chain OUTPUT (policy ACCEPT)',
+        'target     prot opt source               destination         '
+      ].join('\n');
+      return { stdout: out, stderr: '', currentPath: this.currentPath };
+    }
+    return { stdout: '', stderr: 'iptables: usage: iptables -L [chain]', currentPath: this.currentPath };
+  }
+
+  runNice(args) {
+    if (args.length === 0) {
+      return { stdout: '0', stderr: '', currentPath: this.currentPath };
+    }
+    // Check if running a command
+    if (args[0] === '-n') {
+      const val = args[1];
+      const cmd = args.slice(2).join(' ');
+      if (cmd) {
+        return { stdout: `[nice] running command \`${cmd}\` with priority ${val}`, stderr: '', currentPath: this.currentPath };
+      }
+    }
+    return { stdout: '', stderr: 'nice: usage: nice -n increment command [args]', currentPath: this.currentPath };
+  }
+
+  runRenice(args, isSudo) {
+    if (!isSudo) {
+      return { stdout: '', stderr: 'renice: failed to set priority: Permission denied', currentPath: this.currentPath };
+    }
+    const val = args[0];
+    const pid = args[1];
+    if (!val || !pid) {
+      return { stdout: '', stderr: 'renice: usage: renice priority pid', currentPath: this.currentPath };
+    }
+    return { stdout: `${pid} (process ID) old priority 0, new priority ${val}`, stderr: '', currentPath: this.currentPath };
+  }
+
+  runBg(args) {
+    if (this.bgJobs.length === 0) {
+      return { stdout: '', stderr: 'bg: no current job', currentPath: this.currentPath };
+    }
+    const job = this.bgJobs[this.bgJobs.length - 1];
+    job.status = 'Running';
+    return { stdout: `[${job.id}]+ ${job.cmd} &`, stderr: '', currentPath: this.currentPath };
+  }
+
+  runIostat(args) {
+    const out = [
+      'Linux 6.8.0-35-generic (bashquest)      07/03/2026      _x86_64_        (4 CPU)',
+      '',
+      'avg-cpu:  %user   %nice %system %iowait  %steal   %idle',
+      '          12.45    0.02    3.15    0.42    0.00   83.96',
+      '',
+      'Device             tps    kB_read/s    kB_wrtn/s    kB_read      kB_wrtn',
+      'sda               4.12        45.21       128.45    2458920      5682144'
+    ].join('\n');
+    return { stdout: out, stderr: '', currentPath: this.currentPath };
   }
 }
