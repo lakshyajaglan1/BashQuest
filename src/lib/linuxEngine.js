@@ -3207,6 +3207,20 @@ export class ShellSession {
     if (!group) {
       return { stdout: '', stderr: 'groupdel: group name missing', currentPath: this.currentPath };
     }
+    const groupNode = this.fs.getNodeByPath('/etc', 'group');
+    if (groupNode) {
+      const lines = groupNode.content.split('\n');
+      const filtered = lines.filter(line => {
+        const name = line.split(':')[0];
+        return name !== group;
+      });
+      if (filtered.length === lines.length) {
+        return { stdout: '', stderr: `groupdel: group '${group}' does not exist`, currentPath: this.currentPath };
+      }
+      groupNode.content = filtered.join('\n');
+    } else {
+      return { stdout: '', stderr: `groupdel: group '${group}' does not exist`, currentPath: this.currentPath };
+    }
     return { stdout: `groupdel: group '${group}' deleted successfully`, stderr: '', currentPath: this.currentPath };
   }
 
