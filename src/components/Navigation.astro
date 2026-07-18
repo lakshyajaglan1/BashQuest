@@ -39,6 +39,13 @@ const { activePage = "home" } = Astro.props;
       Workspace
     </a>
     <a
+      id="btn-nav-tools"
+      href="/?view=tools"
+      class="h-9 px-4 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-center decoration-none text-body hover:text-ink hover:bg-canvas-soft-2"
+    >
+      Tools
+    </a>
+    <a
       id="btn-nav-about"
       href="/?view=about"
       class="h-9 px-4 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-center decoration-none text-body hover:text-ink hover:bg-canvas-soft-2"
@@ -220,6 +227,7 @@ const { activePage = "home" } = Astro.props;
   const btnDashboard = document.getElementById("btn-nav-dashboard");
   const btnSandbox = document.getElementById("btn-nav-sandbox");
   const btnAbout = document.getElementById("btn-nav-about");
+  const btnTools = document.getElementById("btn-nav-tools");
   const btnAskAI = document.getElementById("btn-ask-ai");
   const btnCloseAI = document.getElementById("btn-close-ai");
   const btnAIGotIt = document.getElementById("btn-ai-got-it");
@@ -266,8 +274,9 @@ const { activePage = "home" } = Astro.props;
     const dashboardBtn = document.getElementById("btn-nav-dashboard");
     const sandboxBtn = document.getElementById("btn-nav-sandbox");
     const aboutBtn = document.getElementById("btn-nav-about");
+    const toolsBtn = document.getElementById("btn-nav-tools");
 
-    [dashboardBtn, sandboxBtn, aboutBtn].forEach((btn) => {
+    [dashboardBtn, sandboxBtn, aboutBtn, toolsBtn].forEach((btn) => {
       btn?.classList.remove("bg-primary", "text-on-primary", "shadow-sm");
       btn?.classList.add(
         "text-body",
@@ -276,23 +285,15 @@ const { activePage = "home" } = Astro.props;
       );
     });
 
-    if (view === "dashboard") {
-      dashboardBtn?.classList.add("bg-primary", "text-on-primary", "shadow-sm");
-      dashboardBtn?.classList.remove(
-        "text-body",
-        "hover:text-ink",
-        "hover:bg-canvas-soft-2",
-      );
-    } else if (view === "sandbox") {
-      sandboxBtn?.classList.add("bg-primary", "text-on-primary", "shadow-sm");
-      sandboxBtn?.classList.remove(
-        "text-body",
-        "hover:text-ink",
-        "hover:bg-canvas-soft-2",
-      );
-    } else if (view === "about") {
-      aboutBtn?.classList.add("bg-primary", "text-on-primary", "shadow-sm");
-      aboutBtn?.classList.remove(
+    let activeBtn: HTMLElement | null = null;
+    if (view === "dashboard") activeBtn = dashboardBtn;
+    else if (view === "sandbox") activeBtn = sandboxBtn;
+    else if (view === "about") activeBtn = aboutBtn;
+    else if (view === "tools") activeBtn = toolsBtn;
+
+    if (activeBtn) {
+      activeBtn.classList.add("bg-primary", "text-on-primary", "shadow-sm");
+      activeBtn.classList.remove(
         "text-body",
         "hover:text-ink",
         "hover:bg-canvas-soft-2",
@@ -326,6 +327,13 @@ const { activePage = "home" } = Astro.props;
     if (isHomePage()) {
       e.preventDefault();
       setView("about");
+    }
+  });
+
+  btnTools?.addEventListener("click", (e) => {
+    if (isHomePage()) {
+      e.preventDefault();
+      setView("tools");
     }
   });
 

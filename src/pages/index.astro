@@ -6,6 +6,7 @@ import FileSystemVisualizer from "../components/FileSystemVisualizer.astro";
 import Terminal from "../components/Terminal.astro";
 import LessonPanel from "../components/LessonPanel.astro";
 import Footer from "../components/Footer.astro";
+import WebTools from "../components/WebTools.astro";
 import { modules } from "../lib/lessons.js";
 
 const softwareAppSchema = {
@@ -13,19 +14,45 @@ const softwareAppSchema = {
   "@type": "SoftwareApplication",
   name: "BashQuest",
   applicationCategory: "EducationalApplication",
+  applicationSubCategory: "Linux Terminal Simulator",
   operatingSystem: "Any (Web Browser)",
   url: "https://bashquest.com/",
   description:
-    "A free, interactive terminal simulator with gamified quests to learn Linux and Bash commands directly in your browser. No signup required.",
+    "A free, interactive browser-based terminal simulator with 60+ gamified quests to learn Linux commands, Bash scripting, and command-line basics. No installation or signup required.",
+  featureList: [
+    "Interactive browser-based Linux terminal",
+    "60+ progressive learning quests",
+    "Gamified XP and badge system",
+    "Virtual filesystem simulation",
+    "GNU Nano text editor practice",
+    "Grep, awk, sed, and pipeline exercises",
+    "File permissions and chmod tutorials",
+    "Shell scripting practice environment",
+    "No signup or installation required",
+    "100% client-side — fully private",
+  ],
+  screenshot: "https://bashquest.com/og-image.png",
   offers: {
     "@type": "Offer",
     price: "0",
     priceCurrency: "USD",
   },
 };
+
+const orgSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "BashQuest",
+  url: "https://bashquest.com",
+  logo: "https://bashquest.com/favicon.svg",
+  sameAs: [
+    "https://github.com/lakshyajaglan1/BashQuest",
+  ],
+  description: "Free, interactive Linux command-line learning platform with browser-based terminal simulator and gamified quests.",
+};
 ---
 
-<Layout structuredData={softwareAppSchema}>
+<Layout structuredData={[softwareAppSchema, orgSchema]}>
   <!-- Global Application Shell -->
   <div class="flex flex-col min-h-screen">
     <!-- Navbar -->
@@ -296,6 +323,15 @@ const softwareAppSchema = {
                 Go to Curriculum Tree
               </button>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 4: Interactive Web Tools -->
+      <section id="view-tools" class="hidden">
+        <div class="w-full bg-canvas-soft py-12 px-4 md:px-8 select-text">
+          <div class="max-w-5xl mx-auto">
+            <WebTools />
           </div>
         </div>
       </section>
@@ -652,7 +688,8 @@ const softwareAppSchema = {
         if (
           viewParam === "dashboard" ||
           viewParam === "sandbox" ||
-          viewParam === "about"
+          viewParam === "about" ||
+          viewParam === "tools"
         ) {
           this.state.activeView = viewParam;
         }
@@ -1112,6 +1149,7 @@ const softwareAppSchema = {
       const viewDash = document.getElementById("view-dashboard");
       const viewSand = document.getElementById("view-sandbox");
       const viewAbout = document.getElementById("view-about");
+      const viewTools = document.getElementById("view-tools");
       const footer = document.querySelector("footer");
 
       // Hide all views first
@@ -1121,6 +1159,8 @@ const softwareAppSchema = {
       viewSand?.classList.remove("block", "grid");
       viewAbout?.classList.add("hidden");
       viewAbout?.classList.remove("block");
+      viewTools?.classList.add("hidden");
+      viewTools?.classList.remove("block");
 
       if (this.state.activeView === "dashboard") {
         viewDash?.classList.remove("hidden");
@@ -1148,6 +1188,15 @@ const softwareAppSchema = {
       } else if (this.state.activeView === "about") {
         viewAbout?.classList.remove("hidden");
         viewAbout?.classList.add(
+          "block",
+          "animate-in",
+          "fade-in",
+          "duration-300",
+        );
+        footer?.classList.remove("hidden");
+      } else if (this.state.activeView === "tools") {
+        viewTools?.classList.remove("hidden");
+        viewTools?.classList.add(
           "block",
           "animate-in",
           "fade-in",

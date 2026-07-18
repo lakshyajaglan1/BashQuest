@@ -1,0 +1,598 @@
+---
+// WebTools.astro — Three interactive Linux utilities
+// Chmod Calculator · Cron Job Explainer · Command Synthesizer
+---
+
+<!-- Section wrapper: canvas-soft background per DESIGN.md showcase-band-light -->
+<section
+  id="web-tools-section"
+  class="w-full bg-canvas-soft py-16 md:py-24 px-4 md:px-8 select-text"
+>
+  <div class="max-w-[1400px] mx-auto space-y-10">
+    <!-- Section header -->
+    <div class="text-center space-y-3">
+      <span
+        class="caption-mono uppercase tracking-widest text-mute bg-canvas-soft-2 px-3 py-1 rounded-md border border-hairline inline-block"
+        >Interactive tools</span
+      >
+      <h2 class="display-lg text-ink tracking-tight">
+        Handy Linux utilities.
+      </h2>
+      <p class="body-lg text-body max-w-2xl mx-auto">
+        Quickly compute permissions, decode cron schedules, and generate common
+        shell commands — all from your browser.
+      </p>
+    </div>
+
+    <!-- 3-column grid: 1-col mobile, 3-col desktop -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- ─────────────────────────────────────────── -->
+      <!-- Card 1: Chmod Calculator                     -->
+      <!-- ─────────────────────────────────────────── -->
+      <div
+        class="bg-canvas border border-hairline rounded-md p-6 shadow-level-3 flex flex-col gap-5"
+      >
+        <!-- Card header -->
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 rounded-full bg-violet-soft text-violet flex items-center justify-center font-mono text-lg font-bold shrink-0"
+          >
+            #
+          </div>
+          <div>
+            <h3 class="body-md-strong text-ink tracking-tight">
+              Chmod calculator
+            </h3>
+            <p class="caption-mono text-mute">Octal &amp; symbolic output</p>
+          </div>
+        </div>
+
+        <!-- Permission groups -->
+        <div class="space-y-3">
+          {["User", "Group", "Others"].map((label, groupIdx) => (
+            <div class="space-y-1.5">
+              <span class="caption-mono text-mute uppercase font-semibold">
+                {label}
+              </span>
+              <div class="flex gap-3">
+                {[
+                  { perm: "Read", bit: 4, char: "r" },
+                  { perm: "Write", bit: 2, char: "w" },
+                  { perm: "Execute", bit: 1, char: "x" },
+                ].map(({ perm, bit, char }) => (
+                  <label class="flex items-center gap-1.5 cursor-pointer body-sm text-body select-none">
+                    <input
+                      type="checkbox"
+                      class="chmod-checkbox accent-violet w-4 h-4 rounded-xs cursor-pointer"
+                      data-group={groupIdx}
+                      data-bit={bit}
+                      data-char={char}
+                    />
+                    <span>
+                      {perm}{" "}
+                      <span class="caption-mono text-mute">({bit})</span>
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <!-- Octal & symbolic output -->
+        <div class="mt-auto space-y-3">
+          <div class="flex items-center gap-4">
+            <div class="flex-1 space-y-1">
+              <span class="caption-mono text-mute uppercase">Octal</span>
+              <div
+                id="chmod-octal"
+                class="code-style text-ink bg-canvas-soft-2 border border-hairline rounded-sm px-3 py-2 text-center text-lg font-bold tracking-wider"
+              >
+                000
+              </div>
+            </div>
+            <div class="flex-1 space-y-1">
+              <span class="caption-mono text-mute uppercase">Symbolic</span>
+              <div
+                id="chmod-symbolic"
+                class="code-style text-ink bg-canvas-soft-2 border border-hairline rounded-sm px-3 py-2 text-center tracking-wider"
+              >
+                ----------
+              </div>
+            </div>
+          </div>
+
+          <!-- Command preview + copy -->
+          <div
+            class="flex items-center gap-2 bg-[#171717] dark:bg-canvas-soft-2 rounded-sm px-3 py-2"
+          >
+            <code
+              id="chmod-command"
+              class="flex-1 text-white dark:text-ink font-mono text-[13px] leading-5 truncate"
+              >chmod 000 [file]</code
+            >
+            <button
+              id="btn-copy-chmod"
+              class="shrink-0 text-[11px] font-mono font-semibold text-mute hover:text-white dark:hover:text-ink bg-white/10 dark:bg-hairline hover:bg-white/20 dark:hover:bg-hairline-strong rounded-xs px-2 py-1 cursor-pointer transition-colors border-none"
+              type="button"
+              >Copy</button
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- ─────────────────────────────────────────── -->
+      <!-- Card 2: Cron Job Explainer                   -->
+      <!-- ─────────────────────────────────────────── -->
+      <div
+        class="bg-canvas border border-hairline rounded-md p-6 shadow-level-3 flex flex-col gap-5"
+      >
+        <!-- Card header -->
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 rounded-full bg-cyan-soft text-cyan-deep flex items-center justify-center font-mono text-lg font-bold shrink-0"
+          >
+            ⏱
+          </div>
+          <div>
+            <h3 class="body-md-strong text-ink tracking-tight">
+              Cron job explainer
+            </h3>
+            <p class="caption-mono text-mute">
+              Plain-English translation
+            </p>
+          </div>
+        </div>
+
+        <!-- Preset selector -->
+        <div class="space-y-1.5">
+          <label
+            for="cron-preset"
+            class="caption-mono text-mute uppercase font-semibold"
+            >Quick preset</label
+          >
+          <select
+            id="cron-preset"
+            class="w-full bg-canvas border border-hairline rounded-sm px-3 py-2 body-sm text-ink cursor-pointer outline-none focus:border-link transition-colors appearance-none"
+          >
+            <option value="">— Select a preset —</option>
+            <option value="* * * * *">Every minute</option>
+            <option value="0 * * * *">Every hour</option>
+            <option value="0 0 * * *">Every day at midnight</option>
+            <option value="0 0 * * 0">Every Sunday at midnight</option>
+            <option value="0 0 1 * *">First day of every month</option>
+            <option value="*/5 * * * *">Every 5 minutes</option>
+            <option value="*/15 * * * *">Every 15 minutes</option>
+            <option value="0 */6 * * *">Every 6 hours</option>
+            <option value="0 9 * * 1-5">Weekdays at 9:00 AM</option>
+            <option value="0 0 * * 6,0">Every weekend at midnight</option>
+          </select>
+        </div>
+
+        <!-- Manual cron input -->
+        <div class="space-y-1.5">
+          <label
+            for="cron-input"
+            class="caption-mono text-mute uppercase font-semibold"
+            >Or type a cron expression</label
+          >
+          <input
+            id="cron-input"
+            type="text"
+            placeholder="* * * * *"
+            spellcheck="false"
+            autocomplete="off"
+            class="w-full bg-canvas border border-hairline rounded-sm px-3 py-2 code-style text-ink outline-none focus:border-link transition-colors placeholder:text-mute"
+          />
+        </div>
+
+        <!-- Field labels -->
+        <div class="grid grid-cols-5 gap-1 text-center">
+          {["min", "hour", "day", "mon", "dow"].map((f) => (
+            <span class="caption-mono text-mute uppercase">{f}</span>
+          ))}
+        </div>
+
+        <!-- Explanation output -->
+        <div class="mt-auto space-y-1.5">
+          <span class="caption-mono text-mute uppercase">Explanation</span>
+          <div
+            id="cron-explanation"
+            class="body-sm text-ink bg-canvas-soft-2 border border-hairline rounded-sm px-3 py-3 min-h-[52px] flex items-center"
+          >
+            Select a preset or type a cron expression above.
+          </div>
+        </div>
+      </div>
+
+      <!-- ─────────────────────────────────────────── -->
+      <!-- Card 3: Command Synthesizer                  -->
+      <!-- ─────────────────────────────────────────── -->
+      <div
+        class="bg-canvas border border-hairline rounded-md p-6 shadow-level-3 flex flex-col gap-5"
+      >
+        <!-- Card header -->
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 rounded-full bg-link-bg-soft text-link flex items-center justify-center font-mono text-lg font-bold shrink-0"
+          >
+            $
+          </div>
+          <div>
+            <h3 class="body-md-strong text-ink tracking-tight">
+              Command synthesizer
+            </h3>
+            <p class="caption-mono text-mute">Pick a task, get the command</p>
+          </div>
+        </div>
+
+        <!-- Task dropdown -->
+        <div class="space-y-1.5">
+          <label
+            for="cmd-task"
+            class="caption-mono text-mute uppercase font-semibold"
+            >Choose a task</label
+          >
+          <select
+            id="cmd-task"
+            class="w-full bg-canvas border border-hairline rounded-sm px-3 py-2 body-sm text-ink cursor-pointer outline-none focus:border-link transition-colors appearance-none"
+          >
+            <option value="">— Select a task —</option>
+            <optgroup label="File operations">
+              <option value="find-large">Find files larger than 100 MB</option>
+              <option value="find-modified">Files modified in last 24h</option>
+              <option value="find-empty">Find empty directories</option>
+              <option value="disk-usage">Show directory disk usage</option>
+            </optgroup>
+            <optgroup label="Text search">
+              <option value="grep-recursive">Search text recursively</option>
+              <option value="grep-count">Count pattern occurrences</option>
+              <option value="find-in-logs">Search for errors in logs</option>
+            </optgroup>
+            <optgroup label="Permissions &amp; ownership">
+              <option value="chown-recursive">
+                Change owner of directory recursively
+              </option>
+              <option value="chmod-recursive">
+                Make scripts executable recursively
+              </option>
+              <option value="find-suid">Find SUID files</option>
+            </optgroup>
+            <optgroup label="System &amp; networking">
+              <option value="list-ports">List open ports</option>
+              <option value="kill-by-name">Kill process by name</option>
+              <option value="memory-usage">Show memory usage</option>
+              <option value="tar-compress">
+                Create compressed tar archive
+              </option>
+            </optgroup>
+          </select>
+        </div>
+
+        <!-- Description -->
+        <div class="space-y-1.5">
+          <span class="caption-mono text-mute uppercase">Description</span>
+          <p
+            id="cmd-description"
+            class="body-sm text-body bg-canvas-soft-2 border border-hairline rounded-sm px-3 py-2 min-h-[44px] flex items-center"
+          >
+            Select a task above to see the command.
+          </p>
+        </div>
+
+        <!-- Command output + copy -->
+        <div class="mt-auto space-y-1.5">
+          <span class="caption-mono text-mute uppercase">Command</span>
+          <div
+            class="flex items-center gap-2 bg-[#171717] dark:bg-canvas-soft-2 rounded-sm px-3 py-2"
+          >
+            <code
+              id="cmd-output"
+              class="flex-1 text-white dark:text-ink font-mono text-[13px] leading-5 break-all"
+              >—</code
+            >
+            <button
+              id="btn-copy-cmd"
+              class="shrink-0 text-[11px] font-mono font-semibold text-mute hover:text-white dark:hover:text-ink bg-white/10 dark:bg-hairline hover:bg-white/20 dark:hover:bg-hairline-strong rounded-xs px-2 py-1 cursor-pointer transition-colors border-none"
+              type="button"
+              >Copy</button
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // ────────────────────────────────────────────────────────────
+  //  WebTools — client-side interactive logic
+  // ────────────────────────────────────────────────────────────
+
+  function initWebTools(): void {
+    // ── Chmod Calculator ──────────────────────────────────────
+    const chmodCheckboxes = document.querySelectorAll<HTMLInputElement>(
+      ".chmod-checkbox",
+    );
+    const chmodOctal = document.getElementById("chmod-octal");
+    const chmodSymbolic = document.getElementById("chmod-symbolic");
+    const chmodCommand = document.getElementById("chmod-command");
+    const btnCopyChmod = document.getElementById("btn-copy-chmod");
+
+    function computeChmod(): void {
+      if (!chmodOctal || !chmodSymbolic || !chmodCommand) return;
+
+      const groups = [0, 0, 0]; // user, group, others
+      chmodCheckboxes.forEach((cb) => {
+        const groupIdx = parseInt(cb.dataset.group ?? "0", 10);
+        const bit = parseInt(cb.dataset.bit ?? "0", 10);
+        if (cb.checked) {
+          groups[groupIdx] |= bit;
+        }
+      });
+
+      const octalStr = groups.join("");
+      chmodOctal.textContent = octalStr;
+
+      // Build symbolic string: -rwxrwxrwx
+      const chars = ["-"];
+      for (const val of groups) {
+        chars.push(val & 4 ? "r" : "-");
+        chars.push(val & 2 ? "w" : "-");
+        chars.push(val & 1 ? "x" : "-");
+      }
+      chmodSymbolic.textContent = chars.join("");
+      chmodCommand.textContent = `chmod ${octalStr} [file]`;
+    }
+
+    chmodCheckboxes.forEach((cb) => {
+      cb.addEventListener("change", computeChmod);
+    });
+
+    if (btnCopyChmod) {
+      btnCopyChmod.addEventListener("click", () => {
+        const cmd = chmodCommand?.textContent ?? "";
+        navigator.clipboard.writeText(cmd).then(() => {
+          const original = btnCopyChmod.textContent;
+          btnCopyChmod.textContent = "Copied!";
+          setTimeout(() => {
+            btnCopyChmod.textContent = original;
+          }, 1500);
+        });
+      });
+    }
+
+    // ── Cron Job Explainer ────────────────────────────────────
+    const cronPreset = document.getElementById(
+      "cron-preset",
+    ) as HTMLSelectElement | null;
+    const cronInput = document.getElementById(
+      "cron-input",
+    ) as HTMLInputElement | null;
+    const cronExplanation = document.getElementById("cron-explanation");
+
+    function explainCron(expr: string): string {
+      const trimmed = expr.trim();
+      if (!trimmed) return "Select a preset or type a cron expression above.";
+
+      const parts = trimmed.split(/\s+/);
+      if (parts.length !== 5) return "⚠ A cron expression needs exactly 5 fields: min hour day month day-of-week.";
+
+      const [minute, hour, day, month, dow] = parts;
+      const segments: string[] = [];
+
+      // ── Minute ──
+      if (minute === "*") {
+        segments.push("every minute");
+      } else if (minute.startsWith("*/")) {
+        segments.push(`every ${minute.slice(2)} minutes`);
+      } else {
+        segments.push(`at minute ${minute}`);
+      }
+
+      // ── Hour ──
+      if (hour === "*") {
+        // no qualifier needed — already every minute
+      } else if (hour.startsWith("*/")) {
+        segments.push(`every ${hour.slice(2)} hours`);
+      } else {
+        const h = parseInt(hour, 10);
+        const ampm = h >= 12 ? "PM" : "AM";
+        const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+        segments.push(`at ${h12}:${minute === "*" ? "00" : minute.padStart(2, "0")} ${ampm}`);
+      }
+
+      // ── Day of month ──
+      if (day !== "*") {
+        if (day.startsWith("*/")) {
+          segments.push(`every ${day.slice(2)} days`);
+        } else {
+          segments.push(`on day ${day} of the month`);
+        }
+      }
+
+      // ── Month ──
+      const monthNames: Record<string, string> = {
+        "1": "January", "2": "February", "3": "March", "4": "April",
+        "5": "May", "6": "June", "7": "July", "8": "August",
+        "9": "September", "10": "October", "11": "November", "12": "December",
+      };
+      if (month !== "*") {
+        if (month.startsWith("*/")) {
+          segments.push(`every ${month.slice(2)} months`);
+        } else {
+          const names = month.split(",").map((m) => monthNames[m] ?? `month ${m}`).join(", ");
+          segments.push(`in ${names}`);
+        }
+      }
+
+      // ── Day of week ──
+      const dowNames: Record<string, string> = {
+        "0": "Sunday", "1": "Monday", "2": "Tuesday", "3": "Wednesday",
+        "4": "Thursday", "5": "Friday", "6": "Saturday", "7": "Sunday",
+      };
+      if (dow !== "*") {
+        if (dow.includes("-")) {
+          const [start, end] = dow.split("-");
+          segments.push(`${dowNames[start] ?? start} through ${dowNames[end] ?? end}`);
+        } else if (dow.includes(",")) {
+          const names = dow.split(",").map((d) => dowNames[d] ?? `day ${d}`).join(" and ");
+          segments.push(`on ${names}`);
+        } else {
+          segments.push(`on ${dowNames[dow] ?? `day-of-week ${dow}`}`);
+        }
+      }
+
+      // Synthesise natural sentence
+      const raw = segments.join(", ");
+      return `Runs ${raw}.`;
+    }
+
+    function updateCronExplanation(): void {
+      if (!cronExplanation || !cronInput) return;
+      cronExplanation.textContent = explainCron(cronInput.value);
+    }
+
+    if (cronPreset) {
+      cronPreset.addEventListener("change", () => {
+        if (cronInput && cronPreset.value) {
+          cronInput.value = cronPreset.value;
+        }
+        updateCronExplanation();
+      });
+    }
+
+    if (cronInput) {
+      cronInput.addEventListener("input", () => {
+        // If the user manually edits, reset the preset selector
+        if (cronPreset) cronPreset.value = "";
+        updateCronExplanation();
+      });
+    }
+
+    // ── Command Synthesizer ───────────────────────────────────
+    const cmdTask = document.getElementById(
+      "cmd-task",
+    ) as HTMLSelectElement | null;
+    const cmdDescription = document.getElementById("cmd-description");
+    const cmdOutput = document.getElementById("cmd-output");
+    const btnCopyCmd = document.getElementById("btn-copy-cmd");
+
+    interface CommandEntry {
+      command: string;
+      description: string;
+    }
+
+    const commands: Record<string, CommandEntry> = {
+      "find-large": {
+        command: "find . -type f -size +100M",
+        description:
+          "Recursively find all regular files larger than 100 megabytes starting from the current directory.",
+      },
+      "find-modified": {
+        command: "find . -type f -mtime -1",
+        description:
+          "Find all files modified within the last 24 hours in the current directory tree.",
+      },
+      "find-empty": {
+        command: "find . -type d -empty",
+        description:
+          "Locate all empty directories recursively from the current path.",
+      },
+      "disk-usage": {
+        command: "du -sh */ | sort -rh | head -20",
+        description:
+          "Show disk usage of top-level directories, sorted by size (largest first), limited to top 20.",
+      },
+      "grep-recursive": {
+        command: 'grep -rn "search_term" .',
+        description:
+          'Recursively search for "search_term" in all files, showing line numbers and filenames.',
+      },
+      "grep-count": {
+        command: 'grep -rc "pattern" . | grep -v ":0$"',
+        description:
+          'Count occurrences of "pattern" in each file, filtering out files with zero matches.',
+      },
+      "find-in-logs": {
+        command: 'grep -rni "error\\|fail\\|critical" /var/log/',
+        description:
+          "Search for error-related keywords case-insensitively across all log files.",
+      },
+      "chown-recursive": {
+        command: "sudo chown -R user:group /path/to/dir",
+        description:
+          "Recursively change the owner and group of a directory and all its contents.",
+      },
+      "chmod-recursive": {
+        command: 'find . -name "*.sh" -exec chmod +x {} \\;',
+        description:
+          "Find all .sh files recursively and make them executable.",
+      },
+      "find-suid": {
+        command: "find / -perm -4000 -type f 2>/dev/null",
+        description:
+          "Find all files with the SUID bit set, suppressing permission errors.",
+      },
+      "list-ports": {
+        command: "ss -tulnp",
+        description:
+          "List all TCP/UDP listening ports with process names and numeric addresses.",
+      },
+      "kill-by-name": {
+        command: "pkill -f process_name",
+        description:
+          "Kill all processes matching the given name pattern (full command-line match).",
+      },
+      "memory-usage": {
+        command: "free -h && echo '---' && ps aux --sort=-%mem | head -10",
+        description:
+          "Show system memory in human-readable format, followed by the top 10 memory-consuming processes.",
+      },
+      "tar-compress": {
+        command: "tar -czvf archive.tar.gz /path/to/dir",
+        description:
+          "Create a gzip-compressed tar archive of a directory, showing files being added.",
+      },
+    };
+
+    function updateCommand(): void {
+      if (!cmdTask || !cmdDescription || !cmdOutput) return;
+      const key = cmdTask.value;
+      const entry = commands[key];
+      if (entry) {
+        cmdOutput.textContent = entry.command;
+        cmdDescription.textContent = entry.description;
+      } else {
+        cmdOutput.textContent = "—";
+        cmdDescription.textContent =
+          "Select a task above to see the command.";
+      }
+    }
+
+    if (cmdTask) {
+      cmdTask.addEventListener("change", updateCommand);
+    }
+
+    if (btnCopyCmd) {
+      btnCopyCmd.addEventListener("click", () => {
+        const cmd = cmdOutput?.textContent ?? "";
+        if (cmd === "—") return;
+        navigator.clipboard.writeText(cmd).then(() => {
+          const original = btnCopyCmd.textContent;
+          btnCopyCmd.textContent = "Copied!";
+          setTimeout(() => {
+            btnCopyCmd.textContent = original;
+          }, 1500);
+        });
+      });
+    }
+  }
+
+  // Run on DOMContentLoaded for standard Astro page loads
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initWebTools);
+  } else {
+    initWebTools();
+  }
+</script>
