@@ -381,25 +381,81 @@ const { activePage = "home" } = Astro.props;
   // Load stats initially on DOM load / script execution
   loadStatsFromStorage();
 
-  // AI Modal Handlers
+  // AI Modal Handlers — progressive hint reveal
+  let hintRevealLevel = 0;
+  let lastHintLessonId: number | null = null;
+
   btnAskAI?.addEventListener("click", () => {
-    // Fetch AI hints from window state
-    if (window.appState && window.appState.activeLesson) {
-      const lesson = window.appState.activeLesson;
+    // Check if user is on the dashboard (not in the workspace)
+    const currentView = window.appState?.activeView;
+    if (!currentView || currentView === "dashboard" || currentView === "about" || currentView === "tools") {
       if (aiHintContent) {
         aiHintContent.innerHTML = `
-          <p class="font-medium text-ink">Stuck on "${lesson.title}"?</p>
-          <p>Here's a hint to guide you:</p>
-          <div class="p-3 bg-canvas-soft-2 border border-hairline rounded-sm font-mono text-xs text-ink">
-            ${lesson.instructions}
-          </div>
-          <p class="text-xs text-mute mt-2">💡 Tip: Make sure you are in the correct directory. You can type <code class="px-1.5 py-0.5 bg-canvas-soft-2 border border-hairline rounded text-violet-deep font-mono text-xs">pwd</code> to verify your location.</p>
+          <p>I can help you build commands and complete challenges! Please open the <strong>Workspace</strong> and select a quest first.</p>
+          <p class="text-xs text-mute mt-2">💡 Click the <strong>Workspace</strong> tab in the navigation bar, then choose a quest to get started.</p>
         `;
+      }
+      modalAI?.classList.remove("hidden");
+      return;
+    }
+
+    // Check if there's an active lesson with hints
+    if (window.appState && window.appState.activeLesson) {
+      const lesson = window.appState.activeLesson;
+      const hints: string[] = lesson.hints || [];
+
+      // Reset hint level if switching to a different lesson
+      if (lastHintLessonId !== lesson.id) {
+        hintRevealLevel = 0;
+        lastHintLessonId = lesson.id;
+      }
+
+      if (hints.length === 0) {
+        if (aiHintContent) {
+          aiHintContent.innerHTML = `
+            <p class="font-medium text-ink">Working on "${lesson.title}"</p>
+            <p>No specific hints are available for this quest. Try re-reading the instructions in the lesson panel!</p>
+          `;
+        }
+      } else {
+        // Reveal one more hint each time the button is clicked
+        hintRevealLevel = Math.min(hintRevealLevel + 1, hints.length);
+
+        const hintsHtml = hints.slice(0, hintRevealLevel).map((hint: string, i: number) => {
+          const isLatest = i === hintRevealLevel - 1;
+          const labelColors = [
+            'text-cyan bg-cyan-50 dark:bg-cyan-950/30 border-cyan-200 dark:border-cyan-800/40',
+            'text-warning bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800/40',
+            'text-success bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800/40',
+          ];
+          const colorClass = labelColors[i] || labelColors[labelColors.length - 1];
+          return `
+            <div class="p-3 bg-canvas-soft-2 border border-hairline rounded-sm ${isLatest ? 'ring-1 ring-primary/20' : 'opacity-80'}">
+              <span class="inline-block text-[10px] font-mono font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border mb-1.5 ${colorClass}">Hint ${i + 1}</span>
+              <p class="font-mono text-xs text-ink leading-relaxed">${hint}</p>
+            </div>
+          `;
+        }).join('');
+
+        const moreHintsAvailable = hintRevealLevel < hints.length;
+        const footerText = moreHintsAvailable
+          ? `<p class="text-xs text-mute mt-2">💡 Click <strong>"Get a Hint"</strong> again to reveal the next hint (${hintRevealLevel}/${hints.length} shown).</p>`
+          : `<p class="text-xs text-mute mt-2">✅ All ${hints.length} hints revealed for this quest.</p>`;
+
+        if (aiHintContent) {
+          aiHintContent.innerHTML = `
+            <p class="font-medium text-ink mb-1">Stuck on "${lesson.title}"?</p>
+            <div class="space-y-2">
+              ${hintsHtml}
+            </div>
+            ${footerText}
+          `;
+        }
       }
     } else {
       if (aiHintContent) {
         aiHintContent.innerHTML = `
-          <p>I can help you build commands and complete challenges! Please open the Workspace and choose a lesson first.</p>
+          <p>I can help you build commands and complete challenges! Please select a quest in the Workspace first.</p>
         `;
       }
     }
