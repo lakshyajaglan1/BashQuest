@@ -126,6 +126,81 @@ export const lessons = [
     }
   },
   {
+    id: 83,
+    moduleId: 'basics',
+    title: 'Linux Directory Structure & FHS',
+    xp: 130,
+    badge: 'Architect',
+    description: 'Every Linux system follows a standard filesystem hierarchy starting from the root directory `/`. Unlike Windows (which uses drive letters like `C:` or `D:`), Linux unifies all files and storage under `/`.\n\nHere are key system directories every Linux user should know:\n- `/` (Root): The top-level parent folder of the entire system.\n- `/etc`: Holds system configurations (e.g. `/etc/hosts`, `/etc/passwd`).\n- `/var`: Holds variable data that changes over time (logs, spool, caches like `/var/log`).\n- `/home`: User personal folders (e.g. `/home/learner`).\n- `/tmp`: Temporary storage area for transient files.\n- `/usr`: User utilities, applications, and system libraries.',
+    instructions: 'Let\'s explore the system layout! First, navigate to the root directory by running `cd /`. Then run `ls /etc` to view system configuration files stored inside `/etc`.',
+    commandHelp: [
+      { cmd: 'cd /', desc: 'Navigate to root directory' },
+      { cmd: 'ls /etc', desc: 'List configuration files in /etc' }
+    ],
+    objectives: [
+      { id: 'visited_root', text: 'Navigate to the root directory (/)' },
+      { id: 'listed_etc', text: 'List contents of /etc directory' }
+    ],
+    hints: [
+      "Use 'cd /' to jump to the root directory.",
+      "Use 'ls /etc' to view configuration files inside /etc.",
+      "Try running: cd / and then: ls /etc"
+    ],
+    verify: (_fs, session, history) => {
+      let visitedRoot = false;
+      let listedEtc = false;
+      let path = '/home/learner';
+
+      for (const cmd of history) {
+        const parts = cmd.trim().split(/\s+/);
+        if (parts[0] === 'cd') {
+          const target = parts[1] || '~';
+          if (target === '~' || target === '/home/learner') {
+            path = '/home/learner';
+          } else if (target === '/') {
+            path = '/';
+          } else if (target === '/etc' || (target === 'etc' && path === '/')) {
+            path = '/etc';
+          } else if (target === '/var/log' || (target === 'log' && path === '/var')) {
+            path = '/var/log';
+          } else if (target === '..') {
+            const segs = path.split('/').filter(Boolean);
+            segs.pop();
+            path = '/' + segs.join('/');
+          } else if (target.startsWith('/')) {
+            path = target;
+          } else {
+            path = path + (path === '/' ? '' : '/') + target;
+          }
+        }
+
+        if (path === '/') {
+          visitedRoot = true;
+        }
+
+        if (parts.includes('ls')) {
+          if (parts.includes('/etc') || (parts.includes('etc') && path === '/') || path === '/etc') {
+            listedEtc = true;
+          }
+        }
+      }
+
+      const inRoot = visitedRoot || session.currentPath === '/';
+      const ranLsEtc = listedEtc || history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        return parts.includes('ls') && (parts.includes('/etc') || (parts.includes('etc') && session.currentPath === '/'));
+      });
+
+      return {
+        success: inRoot && ranLsEtc,
+        checks: [
+          { id: 'visited_root', passed: inRoot },
+          { id: 'listed_etc', passed: ranLsEtc }
+        ]
+      };
+    }
+  },
+  {
     id: 3,
     moduleId: 'basics',
     title: 'Creating Directories',
