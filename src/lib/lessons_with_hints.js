@@ -949,6 +949,41 @@ verify: (_fs, session, history) => {
     }
   },
   {
+    id: 81,
+    moduleId: 'system',
+    title: 'Searching Packages (apt search)',
+    xp: 180,
+    badge: 'Cataloger',
+    description: 'Before installing software on Linux, how do you discover what packages are available in the repository? In Linux, we use `apt search` to query the software catalog by keyword.\n\n- The `apt search <keyword>` command scans the repository descriptions and lists matching software packages along with their versions.\n- Unlike `apt install`, searching package repositories only reads local catalog index files and does **not** require superuser (`sudo`) privileges.',
+    instructions: 'Let\'s search the package repository! Run `apt search tree` to find packages related to directory visualization in the software catalog.',
+    commandHelp: [
+      { cmd: 'apt search tree', desc: 'Search package repositories for packages matching "tree"' }
+    ],
+    objectives: [
+      { id: 'ran_apt_search', text: 'Run "apt search tree" to query the package catalog' }
+    ],
+    hints: [
+      "Use the apt search command followed by the name or keyword of the package you want to look up.",
+      "Run apt search tree to view available packages in the repository.",
+      "Try running: apt search tree"
+    ],
+    verify: (_fs, _session, history) => {
+      const ranAptSearch = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        const aptIdx = parts.indexOf('apt');
+        if (aptIdx === -1) return false;
+        return parts[aptIdx + 1] === 'search' && parts.length > aptIdx + 2;
+      });
+
+      return {
+        success: ranAptSearch,
+        checks: [
+          { id: 'ran_apt_search', passed: ranAptSearch }
+        ]
+      };
+    }
+  },
+  {
     id: 23,
     moduleId: 'resources',
     title: 'Checking Disk Space (df)',

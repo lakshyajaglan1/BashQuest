@@ -1077,6 +1077,81 @@ export const lessons = [
     }
   },
   {
+    id: 81,
+    moduleId: 'system',
+    title: 'Searching Packages (apt search)',
+    xp: 180,
+    badge: 'Cataloger',
+    description: 'Before installing software on Linux, how do you discover what packages are available in the repository? In Linux, we use `apt search` to query the software catalog by keyword.\n\n- The `apt search <keyword>` command scans the repository descriptions and lists matching software packages along with their versions.\n- Unlike `apt install`, searching package repositories only reads local catalog index files and does **not** require superuser (`sudo`) privileges.',
+    instructions: 'Let\'s search the package repository! Run `apt search tree` to find packages related to directory visualization in the software catalog.',
+    commandHelp: [
+      { cmd: 'apt search tree', desc: 'Search package repositories for packages matching "tree"' }
+    ],
+    objectives: [
+      { id: 'ran_apt_search', text: 'Run "apt search tree" to query the package catalog' }
+    ],
+    hints: [
+      "Use the apt search command followed by the name or keyword of the package you want to look up.",
+      "Run apt search tree to view available packages in the repository.",
+      "Try running: apt search tree"
+    ],
+    verify: (_fs, _session, history) => {
+      const ranAptSearch = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        const aptIdx = parts.indexOf('apt');
+        if (aptIdx === -1) return false;
+        return parts[aptIdx + 1] === 'search' && parts.length > aptIdx + 2;
+      });
+
+      return {
+        success: ranAptSearch,
+        checks: [
+          { id: 'ran_apt_search', passed: ranAptSearch }
+        ]
+      };
+    }
+  },
+  {
+    id: 82,
+    moduleId: 'system',
+    title: 'Purging Packages (apt purge)',
+    xp: 180,
+    badge: 'Purger',
+    description: 'When uninstalling software on Linux, standard `apt remove` uninstalls application binaries but leaves system configuration files behind in case you reinstall later. To completely eliminate a software package AND erase all associated configuration files, we use `apt purge` (or `apt remove --purge`).\n\n- The `sudo apt purge <package>` command removes the application and wipes out all remaining configuration files.\n- Because purging modifies system-wide folders and configuration files, it requires superuser (`sudo`) privileges.',
+    instructions: 'Let\'s completely remove a package and its configuration files. Run `sudo apt purge tree` to purge the `tree` program from the system.',
+    commandHelp: [
+      { cmd: 'sudo apt purge tree', desc: 'Purge package and wipe its configuration files' }
+    ],
+    objectives: [
+      { id: 'purged_tree', text: 'Purge package "tree" using "sudo apt purge tree"' }
+    ],
+    hints: [
+      "Use apt purge with superuser privileges to completely remove a package along with its configuration files.",
+      "Run sudo apt purge tree to purge the tree package.",
+      "Try running: sudo apt purge tree"
+    ],
+    verify: (_fs, _session, history) => {
+      const ranAptPurge = history.some(cmd => {
+        const parts = cmd.trim().split(/\s+/);
+        const hasSudo = parts.includes('sudo');
+        const aptIdx = parts.indexOf('apt');
+        if (aptIdx === -1 || !hasSudo) return false;
+        const subCmd = parts[aptIdx + 1];
+        const pkg = parts[aptIdx + 2];
+        if (subCmd === 'purge' && pkg === 'tree') return true;
+        if (subCmd === 'remove' && parts.includes('--purge') && (pkg === 'tree' || parts.includes('tree'))) return true;
+        return false;
+      });
+
+      return {
+        success: ranAptPurge,
+        checks: [
+          { id: 'purged_tree', passed: ranAptPurge }
+        ]
+      };
+    }
+  },
+  {
     id: 68,
     moduleId: 'system',
     title: 'Debian Package Management (dpkg)',

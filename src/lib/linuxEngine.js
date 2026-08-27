@@ -1512,6 +1512,25 @@ export class ShellSession {
   }
 
   runApt(args, isSudo) {
+    if (args[0] === 'search') {
+      const pkg = args[1];
+      if (!pkg) {
+        return { stdout: 'Sorting... Done\nFull Text Search... Done', stderr: '', currentPath: this.currentPath };
+      }
+      if (pkg === 'tree' || pkg === 'tree/noble') {
+        return {
+          stdout: `Sorting... Done\nFull Text Search... Done\ntree/noble 2.1.1-2 amd64\n  displays directory tree in color\n\npython3-treelib/noble 1.6.1-2 all\n  efficient tree data structure implementation`,
+          stderr: '',
+          currentPath: this.currentPath
+        };
+      }
+      return {
+        stdout: `Sorting... Done\nFull Text Search... Done\n${pkg}/noble 1.0.0-1 amd64\n  software package for ${pkg}`,
+        stderr: '',
+        currentPath: this.currentPath
+      };
+    }
+
     if (!isSudo) {
       return { stdout: '', stderr: 'E: Could not open lock file /var/lib/dpkg/lock-frontend - open (13: Permission denied)\nE: Unable to acquire the dpkg frontend lock (/var/lib/dpkg/lock-frontend), are you root?', currentPath: this.currentPath };
     }
@@ -1533,7 +1552,34 @@ export class ShellSession {
       }
       return { stdout: '', stderr: `E: Unable to locate package ${pkg}`, currentPath: this.currentPath };
     }
-    return { stdout: '', stderr: 'apt: usage: apt install [package]', currentPath: this.currentPath };
+    if (args[0] === 'purge' || (args[0] === 'remove' && args.includes('--purge'))) {
+      const pkg = args.find(a => a !== 'purge' && a !== 'remove' && a !== '--purge');
+      if (!pkg) {
+        return { stdout: '', stderr: 'apt purge: missing package name', currentPath: this.currentPath };
+      }
+      this.installedPackages.delete(pkg);
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('app:package-purged', { detail: { package: pkg } }));
+      }
+      return {
+        stdout: `Reading package lists... Done\nBuilding dependency tree... Done\nReading state information... Done\nThe following packages will be PURGED:\n  ${pkg}*\n0 upgraded, 0 newly installed, 1 to remove and 0 not upgraded.\nAfter this operation, 115 kB disk space will be freed.\n(Reading database ... 12845 files and directories currently installed.)\nRemoving ${pkg} (2.1.1-2) ...\nPurging configuration files for ${pkg} (2.1.1-2) ...\nProcessing triggers for man-db (2.12.0-1) ...`,
+        stderr: '',
+        currentPath: this.currentPath
+      };
+    }
+    if (args[0] === 'remove') {
+      const pkg = args.find(a => a !== 'remove');
+      if (!pkg) {
+        return { stdout: '', stderr: 'apt remove: missing package name', currentPath: this.currentPath };
+      }
+      this.installedPackages.delete(pkg);
+      return {
+        stdout: `Reading package lists... Done\nBuilding dependency tree... Done\nReading state information... Done\nThe following packages will be REMOVED:\n  ${pkg}\n0 upgraded, 0 newly installed, 1 to remove and 0 not upgraded.\nAfter this operation, 115 kB disk space will be freed.\n(Reading database ... 12845 files and directories currently installed.)\nRemoving ${pkg} (2.1.1-2) ...\nProcessing triggers for man-db (2.12.0-1) ...`,
+        stderr: '',
+        currentPath: this.currentPath
+      };
+    }
+    return { stdout: '', stderr: 'apt: usage: apt install [package] | apt search [term] | apt purge [package]', currentPath: this.currentPath };
   }
 
   // Redirection logic
