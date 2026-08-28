@@ -1343,9 +1343,9 @@ verify: (_fs, _session, history) => {
       "Use curl to download the file and redirection '>' to save it as update.sh.",
       "Try running: curl http://api.bashquest.com/update.sh > update.sh"
     ],
-verify: (fs, _session, history) => {
+    verify: (fs, session, history) => {
       const usedCurl = history.some(cmd => cmd.includes('curl'));
-      const fileNode = fs.getNodeByPath('/home/learner', 'update.sh');
+      const fileNode = fs.getNodeByPath('/home/learner', 'update.sh') || (session && session.currentPath && fs.getNodeByPath(session.currentPath, 'update.sh'));
       const downloadSaved = fileNode && fileNode.type === 'file' && fileNode.content.includes('echo "Updating BashQuest"');
       return {
         success: usedCurl && downloadSaved,

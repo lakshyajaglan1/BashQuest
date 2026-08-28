@@ -877,13 +877,58 @@ export class ShellSession {
 
         case 'curl':
           {
-            const url = cmdArgs.filter(a => !a.startsWith('-')).pop();
+            let url = null;
+            let outputFile = null;
+            let remoteName = false;
+
+            for (let i = 0; i < cmdArgs.length; i++) {
+              const arg = cmdArgs[i];
+              if (arg === '-o' || arg === '--output') {
+                if (i + 1 < cmdArgs.length) {
+                  outputFile = cmdArgs[++i];
+                }
+              } else if (arg.startsWith('-o')) {
+                outputFile = arg.slice(2);
+              } else if (arg === '-O' || arg === '--remote-name') {
+                remoteName = true;
+              } else if (arg.startsWith('-')) {
+                // Ignore other flags like -s, -L, -v, -k, etc.
+                continue;
+              } else if (!url) {
+                url = arg;
+              }
+            }
+
+            if (url) {
+              url = url.replace(/^['"]|['"]$/g, '');
+            }
+
             if (!url) {
               result.stderr = `curl: no URL specified!`;
-            } else if (url === 'http://api.bashquest.com/update.sh' || url === 'api.bashquest.com/update.sh') {
-              result.stdout = `#!/bin/bash\necho "Updating BashQuest"\necho "All packages current!"`;
             } else {
-              result.stdout = `<html><body>Welcome to ${url}</body></html>`;
+              let content = '';
+              const cleanUrl = url.toLowerCase();
+              if (cleanUrl.includes('api.bashquest.com/update.sh')) {
+                content = `#!/bin/bash\necho "Updating BashQuest"\necho "All packages current!"`;
+              } else {
+                content = `<html><body>Welcome to ${url}</body></html>`;
+              }
+
+              if (remoteName && !outputFile) {
+                const parts = url.split('/');
+                outputFile = parts.pop() || 'index.html';
+                if (!outputFile) outputFile = 'index.html';
+              }
+
+              if (outputFile) {
+                outputFile = outputFile.replace(/^['"]|['"]$/g, '');
+                const fileResult = this.handleRedirection(outputFile, content, 'write');
+                if (!fileResult.success) {
+                  result.stderr = `curl: (23) Failed writing received data to disk/application: ${fileResult.error}`;
+                }
+              } else {
+                result.stdout = content;
+              }
             }
           }
           break;
