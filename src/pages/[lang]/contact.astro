@@ -1,0 +1,112 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Navigation from "../../components/Navigation.astro";
+import Footer from "../../components/Footer.astro";
+import { nonDefaultLangs, type SupportedLanguage } from "../../i18n/languages";
+import { useTranslations, useTranslatedPath } from "../../i18n/utils";
+
+export function getStaticPaths() {
+  return nonDefaultLangs.map((lang) => ({
+    params: { lang },
+  }));
+}
+
+const { lang } = Astro.params as { lang: SupportedLanguage };
+const t = useTranslations(lang);
+const translatePath = useTranslatedPath(lang);
+---
+
+<Layout
+  title={t("meta.contactTitle")}
+  description={t("meta.contactDescription")}
+  lang={lang}
+>
+  <div class="flex flex-col min-h-screen">
+    <Navigation activePage="about" lang={lang} />
+
+    <main
+      class="flex-1 w-full bg-canvas-soft mesh-gradient py-12 px-4 md:px-8 select-text"
+    >
+      <div class="max-w-3xl mx-auto space-y-8">
+        <div class="space-y-4">
+          <span
+            class="caption-mono uppercase tracking-widest text-mute bg-canvas-soft-2 px-3 py-1 rounded border border-hairline"
+            >Get In Touch</span
+          >
+          <h1 class="display-lg text-ink font-bold tracking-tight">
+            {t("footer.contact")}.
+          </h1>
+          <p class="body-md text-body">
+            {t("meta.contactDescription")}
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Contact Methods -->
+          <div
+            class="card-marketing border border-hairline bg-canvas p-6 shadow-level-2 space-y-4"
+          >
+            <h2 class="text-base font-bold text-ink">Direct Channels</h2>
+            <div class="space-y-3 font-mono text-xs">
+              <div>
+                <span class="text-mute block">Email Support</span>
+                <a
+                  href="mailto:support@bashquest.com"
+                  class="text-link hover:underline"
+                  >support@bashquest.com</a
+                >
+              </div>
+              <div>
+                <span class="text-mute block">Join Community</span>
+                <a
+                  href="https://discord.gg/yDtBWBrHS"
+                  target="_blank"
+                  class="text-link hover:underline"
+                  >Discord Server</a
+                >
+              </div>
+              <div>
+                <span class="text-mute block">Project Repository</span>
+                <a
+                  href="https://github.com/lakshyajaglan1/BashQuest"
+                  target="_blank"
+                  class="text-link hover:underline"
+                  >GitHub Issues</a
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Community Support -->
+          <div
+            class="card-marketing border border-hairline bg-canvas p-6 shadow-level-2 space-y-4"
+          >
+            <h2 class="text-base font-bold text-ink">Support Development</h2>
+            <p class="text-xs text-body leading-relaxed">
+              BashQuest is free and open source. If you find it helpful, consider
+              supporting the continuous development of more quests.
+            </p>
+            <a
+              href="https://ko-fi.com/bashquest_dev"
+              target="_blank"
+              class="button-secondary h-9 rounded-sm text-xs font-semibold hover:bg-canvas-soft-2 transition-all w-full flex justify-center items-center gap-2 decoration-none"
+            >
+              <span>☕ Buy Me a Coffee</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="flex justify-center">
+          <a
+            href={`${translatePath("/")}?view=dashboard`}
+            class="button-primary text-sm font-medium decoration-none"
+          >
+            {t("hero.backToDashboard")}
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <Footer lang={lang} />
+  </div>
+</Layout>

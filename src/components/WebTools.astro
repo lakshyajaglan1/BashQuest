@@ -1,6 +1,15 @@
 ---
 // WebTools.astro — Three interactive Linux utilities
 // Chmod Calculator · Cron Job Explainer · Command Synthesizer
+import { type SupportedLanguage } from "../i18n/languages";
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
+
+interface Props {
+  lang?: SupportedLanguage;
+}
+
+const currentLang = Astro.props.lang || getLangFromUrl(Astro.url);
+const t = useTranslations(currentLang);
 ---
 
 <!-- Section wrapper: canvas-soft background per DESIGN.md showcase-band-light -->
@@ -16,13 +25,13 @@
         >Interactive tools</span
       >
       <h2 class="display-lg text-ink tracking-tight">
-        Handy Linux utilities.
+        {t("tools.title")}
       </h2>
       <p class="body-lg text-body max-w-2xl mx-auto">
-        Quickly compute permissions, decode cron schedules, and generate common
-        shell commands — all from your browser.
+        {t("tools.subtitle")}
       </p>
     </div>
+
 
     <!-- 3-column grid: 1-col mobile, 3-col desktop -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">

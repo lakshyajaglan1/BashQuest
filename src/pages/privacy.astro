@@ -2,12 +2,22 @@
 import Layout from '../layouts/Layout.astro';
 import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
+import { useTranslations, useTranslatedPath } from '../i18n/utils';
+
+const lang = "en";
+const t = useTranslations(lang);
+const translatePath = useTranslatedPath(lang);
 ---
 
-<Layout title="Privacy Policy — BashQuest | No Tracking, No Signup Linux Learning Tool" description="BashQuest privacy policy. Learn Linux and Bash with zero data collection — all progress stored locally in your browser. No accounts, no cookies, no tracking.">
+<Layout
+  title={t("meta.privacyTitle")}
+  description={t("meta.privacyDescription")}
+  lang={lang}
+>
   <div class="flex flex-col min-h-screen">
     <!-- Navbar -->
-    <Navigation activePage="privacy" />
+    <Navigation activePage="privacy" lang={lang} />
+
 
     <!-- Main Content -->
     <main class="flex-1 w-full bg-canvas-soft mesh-gradient py-12 px-4 md:px-8 select-text">

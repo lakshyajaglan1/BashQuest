@@ -2,151 +2,89 @@
 import Layout from "../layouts/Layout.astro";
 import Navigation from "../components/Navigation.astro";
 import Footer from "../components/Footer.astro";
+import { localizedFaqs } from "../i18n/faqData";
+import { useTranslations, useTranslatedPath } from "../i18n/utils";
 
-// These questions match real search phrases typed into Google by students and beginners
-const faqs = [
-    {
-        q: "How can I do free online Linux terminal practice without installing anything?",
-        a: "You can do free online Linux terminal practice directly on BashQuest. Our interactive online Linux terminal runs completely inside your browser with a virtual simulated filesystem, so you can practice Linux terminal commands without dual-booting, installing Linux, or configuring virtual machines.",
-    },
-    {
-        q: "What makes BashQuest one of the best Linux learning resources and websites?",
-        a: "BashQuest stands out among Linux learning websites because it is an interactive bash learning game rather than passive text or video. With 60+ progressive quests, instant command validation, XP tracking, and visual directory exploration, students achieve practical Linux terminal learning in a fun, frictionless environment.",
-    },
-    {
-        q: "What are the core terminal learning objectives covered in this bash learning game?",
-        a: "Every quest in BashQuest is built around concrete terminal learning objectives: mastering filesystem navigation, creating and modifying files, managing user permissions (chmod/chown), searching with grep and regex, chaining commands with pipes, running processes, editing files with GNU Nano, and writing automated bash scripts.",
-    },
-    {
-        q: "What Linux terminal commands can I practice in this online Linux terminal?",
-        a: "You can practice all essential Linux terminal commands including pwd, cd, ls, mkdir, touch, cat, echo, cp, mv, rm, chmod, chown, grep, awk, sed, find, ps, top, kill, systemctl, curl, ping, ip, and interactive GNU Nano text editing, as well as pipes and redirection.",
-    },
-    {
-        q: "How can I practice Linux commands online without installing anything?",
-        a: "You can practice Linux commands safely using BashQuest's built-in web terminal simulator. It provides a complete, simulated filesystem directly in your browser, meaning you can learn without setting up virtual machines, dual-booting, or installing software.",
-    },
-    {
-        q: "Is there a safe online Linux terminal simulator for beginners?",
-        a: "Yes. BashQuest is a simulated sandbox running entirely in client-side JavaScript. It behaves like a real Linux shell, but because it is a simulation, there is no risk of running destructive commands or damaging your computer.",
-    },
-    {
-        q: "Where can I find free, hands-on Linux command-line quests?",
-        a: "BashQuest offers a completely free, gamified curriculum of over 60 progressive quests. You can learn navigation, file creation, permissions (chmod), text editing with GNU Nano, search (grep), and pipelines directly through hands-on challenges.",
-    },
-    {
-        q: "Do I need to sign up or create an account to learn Bash online?",
-        a: "No registration, email, or account creation is required to use BashQuest. Anyone can access the interactive terminal sandbox immediately and start completing challenges with zero friction.",
-    },
-    {
-        q: "Does this online Bash terminal practice save my progress?",
-        a: "Yes. Your progress, XP, collected badges, and simulated directory state are saved locally on your device inside your browser's local storage. Your data remains completely private on your system.",
-    },
-    {
-        q: "Is BashQuest good for learning Linux command line for DevOps?",
-        a: "Absolutely. BashQuest covers essential DevOps-relevant topics including file system navigation, process management (ps, top, kill), service management (systemctl), networking basics (ping, curl, ip), log analysis with grep/awk/sed, and shell scripting — all skills DevOps engineers use daily.",
-    },
-    {
-        q: "Can I practice Bash scripting for coding interviews here?",
-        a: "Yes. BashQuest includes quests on shell scripting fundamentals, text processing with grep, awk, sed, and cut, piping and redirection, file manipulation, and command chaining — all common topics in Linux-focused technical interviews.",
-    },
-    {
-        q: "How is BashQuest different from other online Linux terminals like Webminal or JSLinux?",
-        a: "Unlike remote-server terminals, BashQuest runs 100% client-side in your browser with zero latency. It pairs every command with structured, gamified lessons and instant validation, so you don't just type commands — you learn why they work through guided quests.",
-    },
-    {
-        q: "Can I learn Linux file permissions and chmod in BashQuest?",
-        a: "Yes. BashQuest has dedicated quests for understanding Linux file permissions including chmod with octal and symbolic notation, chown for ownership changes, and practical scenarios like making scripts executable or securing sensitive files.",
-    },
-    {
-        q: "Does BashQuest teach grep, awk, sed, and text processing?",
-        a: "Yes. Multiple quest modules are dedicated to text processing and search utilities. You'll practice using grep for pattern matching, awk for column extraction, sed for in-place text substitution, and combining them with pipes for powerful one-liners.",
-    },
-    {
-        q: "Can students use BashQuest to prepare for Linux certification exams?",
-        a: "BashQuest covers foundational command-line skills required by certifications like CompTIA Linux+, LPIC-1, and RHCSA. While it doesn't replace exam-specific prep, the hands-on practice with filesystem navigation, permissions, user management, and shell scripting builds the muscle memory needed for exam scenarios.",
-    },
-];
+const lang = "en";
+const t = useTranslations(lang);
+const translatePath = useTranslatedPath(lang);
+const faqs = localizedFaqs.en;
 
 const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((faq) => ({
-        "@type": "Question",
-        name: faq.q,
-        acceptedAnswer: {
-            "@type": "Answer",
-            text: faq.a,
-        },
-    })),
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((faq) => ({
+    "@type": "Question",
+    name: faq.q,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.a,
+    },
+  })),
 };
 ---
 
 <Layout
-    title="FAQ — Free Online Linux Terminal Practice & Linux Learning Website | BashQuest"
-    description="Answers to frequently asked questions about practicing Linux terminal commands online, free online Linux terminal practice, bash learning games, and achieving clear terminal learning objectives."
+  title={t("meta.faqTitle")}
+  description={t("meta.faqDescription")}
+  lang={lang}
+  structuredData={faqSchema}
 >
-    <!-- Google Structured Data Script -->
-    <script
-        type="application/ld+json"
-        is:inline
-        set:html={JSON.stringify(faqSchema)}
-    />
+  <div class="flex flex-col min-h-screen">
+    <!-- Navbar -->
+    <Navigation activePage="about" lang={lang} />
 
-    <div class="flex flex-col min-h-screen">
-        <!-- Navbar -->
-        <Navigation activePage="about" />
+    <!-- Main Content -->
+    <main
+      class="flex-1 w-full bg-canvas-soft mesh-gradient py-12 px-4 md:px-8 select-text"
+    >
+      <div class="max-w-3xl mx-auto space-y-10">
+        <!-- Header -->
+        <div class="text-center space-y-4">
+          <span
+            class="caption-mono uppercase tracking-widest text-mute bg-canvas-soft-2 px-3 py-1 rounded border border-hairline"
+            >Help &amp; Support</span
+          >
+          <h1 class="display-lg text-ink font-bold tracking-tight">
+            Frequently Asked Questions.
+          </h1>
+          <p class="body-md text-body max-w-lg mx-auto">
+            Everything you need to know about practicing Linux terminal commands online, terminal learning objectives, and free interactive bash learning games.
+          </p>
+        </div>
 
-        <!-- Main Content -->
-        <main
-            class="flex-1 w-full bg-canvas-soft mesh-gradient py-12 px-4 md:px-8 select-text"
-        >
-            <div class="max-w-3xl mx-auto space-y-10">
-                <!-- Header -->
-                <div class="text-center space-y-4">
-                    <span
-                        class="caption-mono uppercase tracking-widest text-mute bg-canvas-soft-2 px-3 py-1 rounded border border-hairline"
-                        >Help & Support</span
-                    >
-                    <h1 class="display-lg text-ink font-bold tracking-tight">
-                        Frequently Asked Questions.
-                    </h1>
-                    <p class="body-md text-body max-w-lg mx-auto">
-                        Everything you need to know about practicing Linux terminal commands online, terminal learning objectives, and free interactive bash learning games.
-                    </p>
-                </div>
+        <!-- FAQ List -->
+        <div class="space-y-6">
+          {
+            faqs.map((faq) => (
+              <div class="card-marketing border border-hairline bg-canvas p-6 shadow-level-2">
+                <h3 class="text-base font-bold text-ink flex items-start gap-2">
+                  <span class="text-violet font-mono font-bold shrink-0">
+                    Q:
+                  </span>
+                  <span>{faq.q}</span>
+                </h3>
+                <p class="body-sm text-body leading-relaxed mt-3 pl-5 border-l border-hairline">
+                  {faq.a}
+                </p>
+              </div>
+            ))
+          }
+        </div>
 
-                <!-- FAQ List -->
-                <div class="space-y-6">
-                    {
-                        faqs.map((faq) => (
-                            <div class="card-marketing border border-hairline bg-canvas p-6 shadow-level-2">
-                                <h3 class="text-base font-bold text-ink flex items-start gap-2">
-                                    <span class="text-violet font-mono font-bold shrink-0">
-                                        Q:
-                                    </span>
-                                    <span>{faq.q}</span>
-                                </h3>
-                                <p class="body-sm text-body leading-relaxed mt-3 pl-5 border-l border-hairline">
-                                    {faq.a}
-                                </p>
-                            </div>
-                        ))
-                    }
-                </div>
+        <!-- CTA Back to Dashboard -->
+        <div class="flex justify-center pt-4">
+          <a
+            href={`${translatePath("/")}?view=dashboard`}
+            class="button-primary text-sm font-medium decoration-none"
+          >
+            {t("hero.backToDashboard")}
+          </a>
+        </div>
+      </div>
+    </main>
 
-                <!-- CTA Back to Dashboard -->
-                <div class="flex justify-center pt-4">
-                    <a
-                        href="/?view=dashboard"
-                        class="button-primary text-sm font-medium"
-                    >
-                        Back to Learning Path
-                    </a>
-                </div>
-            </div>
-        </main>
-
-        <!-- Footer -->
-        <Footer />
-    </div>
+    <!-- Footer -->
+    <Footer lang={lang} />
+  </div>
 </Layout>

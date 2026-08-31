@@ -1,0 +1,94 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Navigation from "../../components/Navigation.astro";
+import Footer from "../../components/Footer.astro";
+import { nonDefaultLangs, type SupportedLanguage } from "../../i18n/languages";
+import { useTranslations, useTranslatedPath } from "../../i18n/utils";
+
+export function getStaticPaths() {
+  return nonDefaultLangs.map((lang) => ({
+    params: { lang },
+  }));
+}
+
+const { lang } = Astro.params as { lang: SupportedLanguage };
+const t = useTranslations(lang);
+const translatePath = useTranslatedPath(lang);
+---
+
+<Layout
+  title={t("meta.termsTitle")}
+  description={t("meta.termsDescription")}
+  lang={lang}
+>
+  <div class="flex flex-col min-h-screen">
+    <Navigation activePage="about" lang={lang} />
+
+    <main
+      class="flex-1 w-full bg-canvas-soft mesh-gradient py-12 px-4 md:px-8 select-text"
+    >
+      <div class="max-w-3xl mx-auto space-y-8">
+        <div class="space-y-4">
+          <span
+            class="caption-mono uppercase tracking-widest text-mute bg-canvas-soft-2 px-3 py-1 rounded border border-hairline"
+            >Legal</span
+          >
+          <h1 class="display-lg text-ink font-bold tracking-tight">
+            {t("footer.terms")}.
+          </h1>
+          <p class="body-md text-mute font-mono">Last updated: 2026</p>
+        </div>
+
+        <div
+          class="card-marketing border border-hairline bg-canvas p-8 shadow-level-3 space-y-6"
+        >
+          <div class="space-y-2">
+            <h2 class="text-lg font-sans font-bold text-ink">
+              1. Acceptance of Terms
+            </h2>
+            <p class="body-sm text-body leading-relaxed">
+              By accessing and using BashQuest, you agree to comply with and be
+              bound by these Terms of Service.
+            </p>
+          </div>
+
+          <hr class="border-hairline" />
+
+          <div class="space-y-2">
+            <h2 class="text-lg font-sans font-bold text-ink">
+              2. Permitted Use
+            </h2>
+            <p class="body-sm text-body leading-relaxed">
+              BashQuest is an educational simulator designed to teach basic
+              command line skills for personal, non-commercial learning.
+            </p>
+          </div>
+
+          <hr class="border-hairline" />
+
+          <div class="space-y-2">
+            <h2 class="text-lg font-sans font-bold text-ink">
+              3. Disclaimer of Warranties
+            </h2>
+            <p class="body-sm text-body leading-relaxed">
+              The application is provided "as is" without warranties of any
+              kind. The terminal environment is a simulation running in
+              client-side memory.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex justify-center">
+          <a
+            href={`${translatePath("/")}?view=dashboard`}
+            class="button-primary text-sm font-medium decoration-none"
+          >
+            {t("hero.backToDashboard")}
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <Footer lang={lang} />
+  </div>
+</Layout>

@@ -1,26 +1,45 @@
 ---
+import LanguagePicker from "./LanguagePicker.astro";
+import { type SupportedLanguage } from "../i18n/languages";
+import { getLangFromUrl, useTranslations, useTranslatedPath } from "../i18n/utils";
 
+interface Props {
+  lang?: SupportedLanguage;
+}
+
+const currentLang = Astro.props.lang || getLangFromUrl(Astro.url);
+const t = useTranslations(currentLang);
+const translatePath = useTranslatedPath(currentLang);
 ---
 
 <footer class="border-t border-hairline bg-canvas py-8 px-4 select-none">
   <div
     class="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono text-mute"
   >
-    <span>© 2026 BashQuest. Learn commands, gain power.</span>
-    <div class="flex flex-wrap justify-center gap-x-4 gap-y-2">
-      <a href="/about" class="hover:text-ink transition-colors">About Us</a>
+    <span>{t("footer.copyright")}</span>
+    <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+      <a href={translatePath("/about")} class="hover:text-ink transition-colors decoration-none">
+        {t("footer.about")}
+      </a>
       <span>•</span>
-      <a href="/faq" class="hover:text-ink transition-colors">FAQ</a>
+      <a href={translatePath("/faq")} class="hover:text-ink transition-colors decoration-none">
+        {t("footer.faq")}
+      </a>
       <span>•</span>
-      <a href="/privacy" class="hover:text-ink transition-colors"
-        >Privacy Policy</a
-      >
+      <a href={translatePath("/privacy")} class="hover:text-ink transition-colors decoration-none">
+        {t("footer.privacy")}
+      </a>
       <span>•</span>
-      <a href="/terms" class="hover:text-ink transition-colors"
-        >Terms of Service</a
-      >
+      <a href={translatePath("/terms")} class="hover:text-ink transition-colors decoration-none">
+        {t("footer.terms")}
+      </a>
       <span>•</span>
-      <a href="/contact" class="hover:text-ink transition-colors">Contact Us</a>
+      <a href={translatePath("/contact")} class="hover:text-ink transition-colors decoration-none">
+        {t("footer.contact")}
+      </a>
+      <span>•</span>
+      <LanguagePicker currentLang={currentLang} variant="footer" />
     </div>
   </div>
 </footer>
+

@@ -1,16 +1,25 @@
 ---
+import LanguagePicker from "./LanguagePicker.astro";
+import { defaultLang, type SupportedLanguage } from "../i18n/languages";
+import { getLangFromUrl, useTranslations, useTranslatedPath } from "../i18n/utils";
+
 interface Props {
   activePage?: "home" | "about" | "privacy";
+  lang?: SupportedLanguage;
 }
 
+const currentLang = Astro.props.lang || getLangFromUrl(Astro.url);
 const { activePage = "home" } = Astro.props;
+const t = useTranslations(currentLang);
+const translatePath = useTranslatedPath(currentLang);
+const homePath = translatePath("/");
 ---
 
 <header
-  class="sticky top-0 z-50 flex items-center justify-between h-[64px] border-b border-hairline bg-canvas px-4 md:px-8 select-none overflow-x-auto [&::-webkit-scrollbar]:hidden"
+  class="sticky top-0 z-50 flex items-center justify-between h-[64px] border-b border-hairline bg-canvas px-4 md:px-8 select-none"
 >
   <!-- Brand Logo -->
-  <div class="flex items-center gap-3">
+  <a href={homePath} class="flex items-center gap-3 decoration-none shrink-0">
     <div
       class="flex items-center justify-center w-8 h-8 rounded-sm bg-primary text-on-primary font-mono text-lg font-bold"
     >
@@ -20,42 +29,46 @@ const { activePage = "home" } = Astro.props;
       class="hidden sm:inline-block font-sans text-lg font-semibold tracking-tight text-ink"
       >BashQuest<span class="text-link">.</span></span
     >
-  </div>
+  </a>
 
   <!-- Central Tab Toggles -->
-  <nav class="flex items-center gap-2">
+  <nav class="flex items-center gap-2 overflow-x-auto [&::-webkit-scrollbar]:hidden px-1">
+
     <a
       id="btn-nav-dashboard"
-      href="/?view=dashboard"
+      href={`${homePath}?view=dashboard`}
       class={`h-9 px-4 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-center decoration-none ${activePage === "home" ? "bg-primary text-on-primary shadow-sm" : "text-body hover:text-ink hover:bg-canvas-soft-2"}`}
     >
-      Dashboard
+      {t("nav.dashboard")}
     </a>
     <a
       id="btn-nav-sandbox"
-      href="/?view=sandbox"
+      href={`${homePath}?view=sandbox`}
       class="h-9 px-4 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-center decoration-none text-body hover:text-ink hover:bg-canvas-soft-2"
     >
-      Workspace
+      {t("nav.workspace")}
     </a>
     <a
       id="btn-nav-tools"
-      href="/?view=tools"
+      href={`${homePath}?view=tools`}
       class="h-9 px-4 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-center decoration-none text-body hover:text-ink hover:bg-canvas-soft-2"
     >
-      Tools
+      {t("nav.tools")}
     </a>
     <a
       id="btn-nav-about"
-      href="/?view=about"
+      href={`${homePath}?view=about`}
       class="h-9 px-4 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-center decoration-none text-body hover:text-ink hover:bg-canvas-soft-2"
     >
-      About
+      {t("nav.about")}
     </a>
   </nav>
 
   <!-- Profile & Stats Cluster -->
-  <div class="flex items-center gap-4">
+  <div class="flex items-center gap-3 md:gap-4">
+    <!-- Language Picker -->
+    <LanguagePicker currentLang={currentLang} variant="nav" />
+
     <!-- Streak -->
     <div
       id="nav-streak-badge"
@@ -69,14 +82,14 @@ const { activePage = "home" } = Astro.props;
             clip-rule="evenodd"></path>
         </svg>
       </span>
-      <span id="nav-streak-count">0</span> Day Streak
+      <span id="nav-streak-count">0</span> {t("nav.streak")}
     </div>
 
     <!-- XP Stats -->
     <div
       class="flex items-center gap-2 text-sm font-mono bg-canvas-soft-2 px-3 py-1 rounded-sm border border-hairline text-ink"
     >
-      <span class="text-mute font-sans">XP:</span>
+      <span class="text-mute font-sans">{t("nav.xp")}</span>
       <span id="nav-xp-count" class="font-bold text-success">0</span>
     </div>
 
@@ -84,8 +97,8 @@ const { activePage = "home" } = Astro.props;
     <button
       id="btn-theme-toggle"
       class="flex items-center justify-center w-8 h-8 rounded-sm border border-hairline bg-canvas text-ink hover:bg-canvas-soft-2 transition-all cursor-pointer"
-      title="Toggle Dark Mode"
-      aria-label="Toggle Dark Mode"
+      title={t("nav.toggleTheme")}
+      aria-label={t("nav.toggleTheme")}
     >
       <!-- Sun Icon (shown in dark mode) -->
       <svg
@@ -141,7 +154,7 @@ const { activePage = "home" } = Astro.props;
           stroke-linejoin="round"
           d="M9 10H4a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-5"></path>
       </svg>
-      <span class="hidden sm:inline-block">Get a Hint</span>
+      <span class="hidden sm:inline-block">{t("nav.getHint")}</span>
     </button>
   </div>
 </header>
@@ -191,7 +204,7 @@ const { activePage = "home" } = Astro.props;
         </svg>
       </div>
       <div>
-        <h3 class="text-base font-semibold text-ink">Hint Helper</h3>
+        <h3 class="text-base font-semibold text-ink">{t("nav.hintHelper")}</h3>
       </div>
     </div>
 
@@ -210,7 +223,7 @@ const { activePage = "home" } = Astro.props;
         id="btn-ai-got-it"
         class="h-9 px-4 bg-primary text-on-primary rounded-sm font-medium text-sm hover:opacity-90 transition-all cursor-pointer border-none"
       >
-        Got it, thanks!
+        {t("nav.hintGotIt")}
       </button>
     </div>
   </div>
@@ -302,12 +315,15 @@ const { activePage = "home" } = Astro.props;
   }
 
   const isHomePage = () => {
+    const p = window.location.pathname.replace(/\/$/, "");
     return (
-      window.location.pathname === "/" ||
-      window.location.pathname === "" ||
-      window.location.pathname.endsWith("/index.html")
+      p === "" ||
+      p === "/" ||
+      p.endsWith("/index.html") ||
+      /^\/(es|ja|fr|de|pt|ko|it)$/.test(p)
     );
   };
+
 
   btnDashboard?.addEventListener("click", (e) => {
     if (isHomePage()) {

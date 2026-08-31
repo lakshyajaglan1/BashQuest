@@ -1,0 +1,179 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Navigation from "../../components/Navigation.astro";
+import Footer from "../../components/Footer.astro";
+import { modules } from "../../lib/lessons.js";
+import { nonDefaultLangs, type SupportedLanguage } from "../../i18n/languages";
+import { useTranslations, useTranslatedPath } from "../../i18n/utils";
+
+export function getStaticPaths() {
+  return nonDefaultLangs.map((lang) => ({
+    params: { lang },
+  }));
+}
+
+const { lang } = Astro.params as { lang: SupportedLanguage };
+const t = useTranslations(lang);
+const translatePath = useTranslatedPath(lang);
+---
+
+<Layout
+  title={t("meta.aboutTitle")}
+  description={t("meta.aboutDescription")}
+  lang={lang}
+>
+  <div class="flex flex-col min-h-screen">
+    <!-- Navbar -->
+    <Navigation activePage="about" lang={lang} />
+
+    <!-- Main Content -->
+    <main
+      class="flex-1 w-full bg-canvas-soft mesh-gradient py-12 px-4 md:px-8 select-text"
+    >
+      <div class="max-w-4xl mx-auto space-y-12">
+        <!-- Header -->
+        <div class="text-center md:text-left space-y-4">
+          <span
+            class="caption-mono uppercase tracking-widest text-mute bg-canvas-soft-2 px-3 py-1 rounded border border-hairline"
+            >{t("hero.badge")}</span
+          >
+          <h1 class="display-lg text-ink font-bold tracking-tight">
+            {t("meta.aboutTitle")}.
+          </h1>
+          <p class="body-lg text-body max-w-2xl">
+            {t("hero.subtitle")}
+          </p>
+        </div>
+
+        <!-- Details Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <!-- What is BashQuest Card -->
+          <div
+            class="card-marketing border border-hairline bg-canvas p-6 flex flex-col justify-between shadow-level-3"
+          >
+            <div>
+              <div class="flex items-center gap-3 mb-4">
+                <div
+                  class="w-10 h-10 rounded-full bg-violet-soft text-violet flex items-center justify-center font-mono text-lg font-bold"
+                >
+                  $
+                </div>
+                <h2
+                  class="text-xl font-sans font-extrabold text-ink tracking-tight"
+                >
+                  {t("marketing.whatIsTitle")}
+                </h2>
+              </div>
+              <p class="body-sm text-body leading-relaxed mt-2">
+                {t("marketing.whatIsDesc")}
+              </p>
+              <p class="body-sm text-body leading-relaxed mt-4">
+                {t("marketing.virtualTerminalDesc")}
+              </p>
+            </div>
+          </div>
+
+          <!-- Why I Built This Card -->
+          <div
+            class="card-marketing border border-hairline bg-canvas p-6 flex flex-col justify-between shadow-level-3"
+          >
+            <div>
+              <div class="flex items-center gap-3 mb-4">
+                <div
+                  class="w-10 h-10 rounded-full bg-cyan-soft text-cyan-deep flex items-center justify-center font-sans text-lg font-bold"
+                >
+                  💡
+                </div>
+                <h2
+                  class="text-xl font-sans font-extrabold text-ink tracking-tight"
+                >
+                  {t("marketing.whyBuiltTitle")}
+                </h2>
+              </div>
+              <p class="text-sm text-body leading-relaxed mb-4">
+                {t("marketing.whyBuiltDesc")}
+              </p>
+              <p class="text-sm text-body leading-relaxed">
+                {t("marketing.retentionDesc")}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rich Marketing/SEO Details Section -->
+        <div class="space-y-8 pt-6 border-t border-hairline">
+          <div class="space-y-4">
+            <h2 class="text-2xl font-bold text-ink tracking-tight">
+              {t("marketing.instantFeedbackTitle")}
+            </h2>
+            <p class="body-sm text-body leading-relaxed">
+              {t("marketing.instantFeedbackDesc")}
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+            <div class="space-y-3">
+              <h3 class="text-lg font-bold text-ink">
+                {t("marketing.virtualTerminalTitle")}
+              </h3>
+              <p class="body-sm text-body leading-relaxed">
+                {t("marketing.virtualTerminalDesc")}
+              </p>
+            </div>
+
+            <div class="space-y-3">
+              <h3 class="text-lg font-bold text-ink">
+                {t("marketing.retentionTitle")}
+              </h3>
+              <p class="body-sm text-body leading-relaxed">
+                {t("marketing.retentionDesc")}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Curriculum Module Outline -->
+        <div class="space-y-6 pt-6 border-t border-hairline">
+          <div class="border-l-2 border-primary pl-4">
+            <h2
+              class="text-xl font-sans font-extrabold text-ink tracking-tight"
+            >
+              {t("marketing.curriculumOverviewTitle")}
+            </h2>
+            <p class="body-sm text-body mt-1">
+              {t("marketing.curriculumOverviewDesc")}
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            {
+              modules.map((mod) => (
+                <div class="p-4 bg-canvas border border-hairline rounded-md shadow-level-2 hover:shadow-level-3 transition-all duration-200">
+                  <div class="caption-mono text-mute uppercase font-semibold mb-1">
+                    {t("dashboard.module")} {mod.id}
+                  </div>
+                  <h3 class="font-sans text-sm font-bold text-ink leading-tight">
+                    {mod.title.replace(/^\d+\.\s*/, "")}
+                  </h3>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
+        <!-- CTA Back to learning -->
+        <div class="flex justify-center pt-4">
+          <a
+            href={`${translatePath("/")}?view=dashboard`}
+            class="button-primary text-sm font-medium animate-pulse-slow decoration-none"
+          >
+            {t("hero.curriculumTree")}
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <Footer lang={lang} />
+  </div>
+</Layout>

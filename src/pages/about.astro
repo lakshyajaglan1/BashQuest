@@ -3,15 +3,22 @@ import Layout from "../layouts/Layout.astro";
 import Navigation from "../components/Navigation.astro";
 import Footer from "../components/Footer.astro";
 import { modules } from "../lib/lessons.js";
+import { useTranslations, useTranslatedPath } from "../i18n/utils";
+
+const lang = "en";
+const t = useTranslations(lang);
+const translatePath = useTranslatedPath(lang);
 ---
 
 <Layout
-  title="About BashQuest — Free Online Linux Terminal Practice & Linux Learning Website"
-  description="Discover BashQuest, one of the best Linux learning resources and an interactive bash learning game designed for free online Linux terminal practice and mastering Linux terminal commands."
+  title={t("meta.aboutTitle")}
+  description={t("meta.aboutDescription")}
+  lang={lang}
 >
   <div class="flex flex-col min-h-screen">
     <!-- Navbar -->
-    <Navigation activePage="about" />
+    <Navigation activePage="about" lang={lang} />
+
 
     <!-- Main Content -->
     <main

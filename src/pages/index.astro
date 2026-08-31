@@ -8,6 +8,11 @@ import LessonPanel from "../components/LessonPanel.astro";
 import Footer from "../components/Footer.astro";
 import WebTools from "../components/WebTools.astro";
 import { modules } from "../lib/lessons.js";
+import { useTranslations, useTranslatedPath } from "../i18n/utils";
+
+const lang = "en";
+const t = useTranslations(lang);
+const translatePath = useTranslatedPath(lang);
 
 const softwareAppSchema = {
   "@context": "https://schema.org",
@@ -52,18 +57,19 @@ const orgSchema = {
 };
 ---
 
-<Layout structuredData={[softwareAppSchema, orgSchema]}>
+<Layout lang={lang} structuredData={[softwareAppSchema, orgSchema]}>
   <!-- Global Application Shell -->
   <div class="flex flex-col min-h-screen">
     <!-- Navbar -->
-    <Navigation />
+    <Navigation lang={lang} />
 
     <!-- Views Container -->
     <main class="flex-1 w-full relative">
       <!-- VIEW 1: Dashboard -->
       <section id="view-dashboard" class="block">
-        <Dashboard />
+        <Dashboard lang={lang} />
       </section>
+
 
       <!-- VIEW 2: Interactive Sandbox Workspace -->
       <section
@@ -331,7 +337,7 @@ const orgSchema = {
       <section id="view-tools" class="hidden">
         <div class="w-full bg-canvas-soft py-12 px-4 md:px-8 select-text">
           <div class="max-w-5xl mx-auto">
-            <WebTools />
+            <WebTools lang={lang} />
           </div>
         </div>
       </section>
@@ -348,12 +354,11 @@ const orgSchema = {
     <!-- Feedback Popover Dialog Modal -->
     <div
       id="modal-feedback"
-      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs hidden select-none"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs hidden"
     >
       <div
-        class="w-full max-w-md bg-canvas rounded-lg border border-hairline shadow-2xl p-6 relative animate-in fade-in zoom-in-95 duration-200 text-ink"
+        class="w-full max-w-md bg-canvas rounded-lg border border-hairline shadow-2xl p-6 relative animate-in fade-in zoom-in-95 duration-200"
       >
-        <!-- Close Button -->
         <button
           id="btn-close-feedback"
           class="absolute top-4 right-4 text-mute hover:text-ink cursor-pointer bg-transparent border-none"
@@ -372,7 +377,6 @@ const orgSchema = {
           </svg>
         </button>
 
-        <!-- Header -->
         <div class="flex items-center gap-3 mb-4">
           <div
             class="flex items-center justify-center w-10 h-10 rounded-full bg-violet-soft text-violet"
@@ -421,7 +425,8 @@ const orgSchema = {
     </div>
 
     <!-- Reusable Bottom Footer Component -->
-    <Footer />
+    <Footer lang={lang} />
+
 
     <!-- GNU Nano Text Editor Mockup Modal (Vercel-inspired dark overlay) -->
     <div

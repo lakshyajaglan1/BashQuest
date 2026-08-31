@@ -1,6 +1,17 @@
 ---
 import { modules, lessons } from "../lib/lessons";
+import { type SupportedLanguage } from "../i18n/languages";
+import { getLangFromUrl, useTranslations, useTranslatedPath } from "../i18n/utils";
+
+interface Props {
+  lang?: SupportedLanguage;
+}
+
+const currentLang = Astro.props.lang || getLangFromUrl(Astro.url);
+const t = useTranslations(currentLang);
+const translatePath = useTranslatedPath(currentLang);
 ---
+
 
 <div
   class="bg-canvas-soft mesh-gradient min-h-[calc(100vh-64px)] w-full py-12 px-4 md:px-8 select-none"
@@ -128,34 +139,34 @@ import { modules, lessons } from "../lib/lessons";
         </h3>
         <div class="grid grid-cols-1 gap-3 font-sans text-xs">
           <a
-            href="/about"
-            class="text-body hover:text-ink transition-colors flex items-center gap-2.5"
+            href={translatePath("/about")}
+            class="text-body hover:text-ink transition-colors flex items-center gap-2.5 decoration-none"
           >
-            <span class="text-sm">📖</span> About Us
+            <span class="text-sm">📖</span> {t("footer.about")}
           </a>
           <a
-            href="/faq"
-            class="text-body hover:text-ink transition-colors flex items-center gap-2.5"
+            href={translatePath("/faq")}
+            class="text-body hover:text-ink transition-colors flex items-center gap-2.5 decoration-none"
           >
-            <span class="text-sm">❓</span> Frequently Asked Questions (FAQ)
+            <span class="text-sm">❓</span> {t("footer.faq")}
           </a>
           <a
-            href="/privacy"
-            class="text-body hover:text-ink transition-colors flex items-center gap-2.5"
+            href={translatePath("/privacy")}
+            class="text-body hover:text-ink transition-colors flex items-center gap-2.5 decoration-none"
           >
-            <span class="text-sm">🛡️</span> Privacy Policy
+            <span class="text-sm">🛡️</span> {t("footer.privacy")}
           </a>
           <a
-            href="/terms"
-            class="text-body hover:text-ink transition-colors flex items-center gap-2.5"
+            href={translatePath("/terms")}
+            class="text-body hover:text-ink transition-colors flex items-center gap-2.5 decoration-none"
           >
-            <span class="text-sm">⚖️</span> Terms & Conditions
+            <span class="text-sm">⚖️</span> {t("footer.terms")}
           </a>
           <a
-            href="/contact"
-            class="text-body hover:text-ink transition-colors flex items-center gap-2.5"
+            href={translatePath("/contact")}
+            class="text-body hover:text-ink transition-colors flex items-center gap-2.5 decoration-none"
           >
-            <span class="text-sm">✉️</span> Contact Us
+            <span class="text-sm">✉️</span> {t("footer.contact")}
           </a>
         </div>
       </div>

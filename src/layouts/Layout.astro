@@ -1,20 +1,31 @@
 ---
 import "../styles/global.css";
+import { languages, defaultLang, type SupportedLanguage } from "../i18n/languages";
+import { getLangFromUrl, getAlternateLinks } from "../i18n/utils";
 
 interface Props {
 	title?: string;
 	description?: string;
+	keywords?: string;
+	lang?: SupportedLanguage;
 	structuredData?: Record<string, any> | Record<string, any>[];
 }
+
+const detectedLang = getLangFromUrl(Astro.url);
+const currentLang = Astro.props.lang || detectedLang;
+const currentLangConfig = languages[currentLang] || languages[defaultLang];
 
 const {
 	title = "BashQuest - Online Linux Terminal & Interactive Linux Learning Website",
 	description = "Master Linux terminal commands with BashQuest: a free online Linux terminal practice platform and bash learning game with 60+ interactive terminal learning objectives.",
+	keywords = "linux terminal, linux terminal commands, online linux terminal, linux terminal online, linux terminal practice, online linux terminal practice, free online linux terminal practice, best linux learning resources, linux learning free, linux learning website, linux learning, linux terminal learning, terminal learning objective, bash learning, bash learning game, practice linux commands online, interactive linux terminal simulator, learn bash in browser, online bash compiler, practice bash scripts online, linux terminal emulator, gamified bash tutorial, learn linux online free, linux command line tutorial for beginners, browser based bash shell, virtual linux terminal for beginners, bash scripting practice website, practice linux commands in browser, interactive bash shell tutorial, how to practice linux without installing, shell scripting practice online, linux command line basics, learn shell scripting free, linux for beginners, command line practice exercises, linux terminal online no install, sandboxed bash environment, browser based linux environment for students, linux commands cheat sheet practice, free linux learning platform, learn bash scripting online, linux administration tutorial, GNU coreutils practice, CLI first workflow, terminal based automation, devops linux basics, linux file permissions tutorial, grep awk sed practice",
 	structuredData,
 } = Astro.props;
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const ogImageURL = new URL("/og-image.png", Astro.site);
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://bashquest.com");
+const ogImageURL = new URL("/og-image.png", Astro.site || "https://bashquest.com");
+
+const alternateLinks = getAlternateLinks(Astro.url, Astro.site ? Astro.site.toString() : "https://bashquest.com");
 
 const structuredDataList = structuredData
 	? Array.isArray(structuredData)
@@ -25,7 +36,7 @@ const structuredDataList = structuredData
 
 <!doctype html>
 <html
-	lang="en"
+	lang={currentLang}
 	class="h-full bg-canvas-soft text-ink select-none scroll-smooth"
 >
 	<head>
@@ -93,11 +104,15 @@ const structuredDataList = structuredData
 			name="robots"
 			content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
 		/>
-		<meta
-			name="keywords"
-			content="linux terminal, linux terminal commands, online linux terminal, linux terminal online, linux terminal practice, online linux terminal practice, free online linux terminal practice, best linux learning resources, linux learning free, linux learning website, linux learning, linux terminal learning, terminal learning objective, bash learning, bash learning game, practice linux commands online, interactive linux terminal simulator, learn bash in browser, online bash compiler, practice bash scripts online, linux terminal emulator, gamified bash tutorial, learn linux online free, linux command line tutorial for beginners, browser based bash shell, virtual linux terminal for beginners, bash scripting practice website, practice linux commands in browser, interactive bash shell tutorial, how to practice linux without installing, shell scripting practice online, linux command line basics, learn shell scripting free, linux for beginners, command line practice exercises, linux terminal online no install, sandboxed bash environment, browser based linux environment for students, linux commands cheat sheet practice, free linux learning platform, learn bash scripting online, linux administration tutorial, GNU coreutils practice, CLI first workflow, terminal based automation, devops linux basics, linux file permissions tutorial, grep awk sed practice"
-		/>
+		<meta name="keywords" content={keywords} />
 		<link rel="canonical" href={canonicalURL} />
+
+		<!-- Multi-Language Hreflang Markup for Search Engines -->
+		{
+			alternateLinks.map((alt) => (
+				<link rel="alternate" hreflang={alt.hreflang} href={alt.href} />
+			))
+		}
 
 		<!-- Open Graph -->
 		<meta property="og:title" content={title} />
@@ -111,7 +126,17 @@ const structuredDataList = structuredData
 			content="BashQuest interactive terminal sandbox"
 		/>
 		<meta property="og:site_name" content="BashQuest" />
-		<meta property="og:locale" content="en_US" />
+		<meta property="og:locale" content={currentLangConfig.ogLocale} />
+		{
+			(Object.keys(languages) as SupportedLanguage[])
+				.filter((l) => l !== currentLang)
+				.map((otherLang) => (
+					<meta
+						property="og:locale:alternate"
+						content={languages[otherLang].ogLocale}
+					/>
+				))
+		}
 		<meta property="og:url" content={canonicalURL} />
 
 		<!-- Twitter Cards -->
@@ -139,3 +164,4 @@ const structuredDataList = structuredData
 		<slot />
 	</body>
 </html>
+

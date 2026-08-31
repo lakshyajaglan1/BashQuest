@@ -1,0 +1,618 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Navigation from "../../components/Navigation.astro";
+import Dashboard from "../../components/Dashboard.astro";
+import FileSystemVisualizer from "../../components/FileSystemVisualizer.astro";
+import Terminal from "../../components/Terminal.astro";
+import LessonPanel from "../../components/LessonPanel.astro";
+import Footer from "../../components/Footer.astro";
+import WebTools from "../../components/WebTools.astro";
+import { modules } from "../../lib/lessons.js";
+import { nonDefaultLangs, type SupportedLanguage } from "../../i18n/languages";
+import { useTranslations, useTranslatedPath } from "../../i18n/utils";
+
+export function getStaticPaths() {
+  return nonDefaultLangs.map((lang) => ({
+    params: { lang },
+  }));
+}
+
+const { lang } = Astro.params as { lang: SupportedLanguage };
+const t = useTranslations(lang);
+const translatePath = useTranslatedPath(lang);
+
+const softwareAppSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "BashQuest",
+  applicationCategory: "EducationalApplication",
+  applicationSubCategory: "Online Linux Terminal & Interactive Linux Learning Website",
+  operatingSystem: "Any (Web Browser)",
+  url: `https://bashquest.com/${lang}`,
+  description: t("meta.homeDescription"),
+  featureList: [
+    "Online Linux terminal practice sandbox with zero install",
+    "Free online Linux terminal practice with 60+ hands-on quests",
+    "Interactive bash learning game with XP and badge system",
+    "Master essential Linux terminal commands and text manipulation",
+    "Clear terminal learning objectives across 16 curriculum modules",
+    "Top-tier Linux learning website and beginner-friendly resource",
+    "GNU Nano text editor practice in browser",
+    "Grep, awk, sed, and command pipeline exercises",
+    "File permissions and chmod tutorials",
+    "100% client-side — fully private and free",
+  ],
+  screenshot: "https://bashquest.com/og-image.png",
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD",
+  },
+};
+
+const orgSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "BashQuest",
+  url: "https://bashquest.com",
+  logo: "https://bashquest.com/favicon.svg",
+  sameAs: [
+    "https://github.com/lakshyajaglan1/BashQuest",
+  ],
+  description: t("meta.homeDescription"),
+};
+---
+
+<Layout
+  title={t("meta.homeTitle")}
+  description={t("meta.homeDescription")}
+  keywords={t("meta.homeKeywords")}
+  lang={lang}
+  structuredData={[softwareAppSchema, orgSchema]}
+>
+  <!-- Global Application Shell -->
+  <div class="flex flex-col min-h-screen">
+    <!-- Navbar -->
+    <Navigation lang={lang} />
+
+    <!-- Views Container -->
+    <main class="flex-1 w-full relative">
+      <!-- VIEW 1: Dashboard -->
+      <section id="view-dashboard" class="block">
+        <Dashboard lang={lang} />
+      </section>
+
+      <!-- VIEW 2: Interactive Sandbox Workspace -->
+      <section
+        id="view-sandbox"
+        class="hidden lg:h-[calc(100vh-64px)] lg:overflow-hidden overflow-y-auto"
+      >
+        <div
+          class="w-full py-4 lg:py-6 px-4 md:px-8 flex flex-col lg:grid lg:grid-cols-12 gap-6 h-auto lg:h-full min-h-0"
+        >
+          <!-- Left Column: Lesson Instructions Panel (5 cols) -->
+          <div class="lg:col-span-5 h-auto lg:h-full min-h-0">
+            <LessonPanel />
+          </div>
+
+          <!-- Right Column: Visual Explorer & Terminal (7 cols) -->
+          <div
+            class="lg:col-span-7 flex flex-col gap-6 h-auto lg:h-full min-h-0"
+          >
+            <!-- Filesystem Visual Explorer -->
+            <div class="flex-1 min-h-[180px] lg:min-h-0">
+              <FileSystemVisualizer />
+            </div>
+
+            <!-- Terminal Simulator Box -->
+            <div class="flex-1 min-h-0">
+              <Terminal />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 3: Instant-Load About Page View -->
+      <section id="view-about" class="hidden">
+        <div class="w-full bg-canvas-soft py-12 px-4 md:px-8 select-text">
+          <div class="max-w-4xl mx-auto space-y-12">
+            <!-- Header -->
+            <div class="text-center md:text-left space-y-4">
+              <span
+                class="caption-mono uppercase tracking-widest text-mute bg-canvas-soft-2 px-3 py-1 rounded border border-hairline"
+                >{t("hero.badge")}</span
+              >
+              <h2 class="display-lg text-ink font-bold tracking-tight">
+                {t("marketing.whatIsTitle")}
+              </h2>
+              <p class="body-lg text-body max-w-2xl">
+                {t("hero.subtitle")}
+              </p>
+            </div>
+
+            <!-- Details Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <!-- What is BashQuest Card -->
+              <div
+                class="card-marketing border border-hairline bg-canvas p-6 flex flex-col justify-between shadow-level-3"
+              >
+                <div>
+                  <div class="flex items-center gap-3 mb-4">
+                    <div
+                      class="w-10 h-10 rounded-full bg-violet-soft text-violet flex items-center justify-center font-mono text-lg font-bold"
+                    >
+                      $
+                    </div>
+                    <h3
+                      class="text-xl font-sans font-extrabold text-ink tracking-tight"
+                    >
+                      {t("marketing.whatIsTitle")}
+                    </h3>
+                  </div>
+                  <p class="body-sm text-body leading-relaxed mt-2">
+                    {t("marketing.whatIsDesc")}
+                  </p>
+                  <p class="body-sm text-body leading-relaxed mt-4">
+                    {t("marketing.virtualTerminalDesc")}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Why I Built This Card -->
+              <div
+                class="card-marketing border border-hairline bg-canvas p-6 flex flex-col justify-between shadow-level-3"
+              >
+                <div>
+                  <div class="flex items-center gap-3 mb-4">
+                    <div
+                      class="w-10 h-10 rounded-full bg-cyan-soft text-cyan-deep flex items-center justify-center font-sans text-lg font-bold"
+                    >
+                      💡
+                    </div>
+                    <h3
+                      class="text-xl font-sans font-extrabold text-ink tracking-tight"
+                    >
+                      {t("marketing.whyBuiltTitle")}
+                    </h3>
+                  </div>
+                  <p class="text-sm text-body leading-relaxed mb-4">
+                    {t("marketing.whyBuiltDesc")}
+                  </p>
+                  <p class="text-sm text-body leading-relaxed">
+                    {t("marketing.retentionDesc")}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Rich Marketing/SEO Details Section -->
+            <div class="space-y-8 pt-6 border-t border-hairline">
+              <div class="space-y-4">
+                <h3 class="text-2xl font-bold text-ink tracking-tight">
+                  {t("marketing.instantFeedbackTitle")}
+                </h3>
+                <p class="body-sm text-body leading-relaxed">
+                  {t("marketing.instantFeedbackDesc")}
+                </p>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+                <div class="space-y-3">
+                  <h4 class="text-lg font-bold text-ink">
+                    {t("marketing.virtualTerminalTitle")}
+                  </h4>
+                  <p class="body-sm text-body leading-relaxed">
+                    {t("marketing.virtualTerminalDesc")}
+                  </p>
+                </div>
+
+                <div class="space-y-3">
+                  <h4 class="text-lg font-bold text-ink">
+                    {t("marketing.retentionTitle")}
+                  </h4>
+                  <p class="body-sm text-body leading-relaxed">
+                    {t("marketing.retentionDesc")}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Curriculum Module Outline -->
+            <div class="space-y-6 pt-6 border-t border-hairline">
+              <div class="border-l-2 border-primary pl-4">
+                <h3
+                  class="text-xl font-sans font-extrabold text-ink tracking-tight"
+                >
+                  {t("marketing.curriculumOverviewTitle")}
+                </h3>
+                <p class="body-sm text-body mt-1">
+                  {t("marketing.curriculumOverviewDesc")}
+                </p>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                {
+                  modules.map((mod) => (
+                    <div class="p-4 bg-canvas border border-hairline rounded-md shadow-level-2 hover:shadow-level-3 transition-all duration-200">
+                      <div class="caption-mono text-mute uppercase font-semibold mb-1">
+                        {t("dashboard.module")} {mod.id}
+                      </div>
+                      <h4 class="font-sans text-sm font-bold text-ink leading-tight">
+                        {mod.title.replace(/^\d+\.\s*/, "")}
+                      </h4>
+                    </div>
+                  ))
+                }
+              </div>
+            </div>
+
+            <!-- CTA Back to learning -->
+            <div class="flex justify-center pt-4">
+              <button
+                id="btn-back-to-dashboard-from-about"
+                class="button-primary text-sm font-medium animate-pulse-slow cursor-pointer"
+              >
+                {t("hero.curriculumTree")}
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 4: Interactive Web Tools -->
+      <section id="view-tools" class="hidden">
+        <div class="w-full bg-canvas-soft py-12 px-4 md:px-8 select-text">
+          <div class="max-w-5xl mx-auto">
+            <WebTools lang={lang} />
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Floating Feedback Trigger Button -->
+    <button
+      id="btn-feedback"
+      class="fixed bottom-6 right-6 z-40 flex items-center gap-2 h-10 px-4 rounded-full bg-[#171717] hover:bg-[#000000] text-white dark:bg-white dark:text-[#171717] dark:hover:bg-[#eaeaea] text-xs font-semibold shadow-level-3 cursor-pointer select-none transition-all border-none"
+    >
+      <span>💬</span> Feedback
+    </button>
+
+    <!-- Feedback Popover Dialog Modal -->
+    <div
+      id="modal-feedback"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs hidden"
+    >
+      <div
+        class="w-full max-w-md bg-canvas rounded-lg border border-hairline shadow-2xl p-6 relative animate-in fade-in zoom-in-95 duration-200"
+      >
+        <button
+          id="btn-close-feedback"
+          class="absolute top-4 right-4 text-mute hover:text-ink cursor-pointer bg-transparent border-none"
+        >
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+
+        <div class="flex items-center gap-3 mb-4">
+          <div
+            class="flex items-center justify-center w-10 h-10 rounded-full bg-violet-soft text-violet-deep"
+          >
+            💬
+          </div>
+          <div>
+            <h3 class="text-base font-semibold text-ink">Send Feedback</h3>
+            <p class="text-xs text-mute">
+              Found a bug or have an idea to improve BashQuest?
+            </p>
+          </div>
+        </div>
+
+        <div class="space-y-4 mb-6">
+          <textarea
+            id="feedback-textarea"
+            rows="4"
+            class="w-full p-3 rounded-md bg-canvas-soft-2 border border-hairline text-sm text-ink focus:outline-none focus:border-link font-sans resize-none"
+            placeholder="Tell us what you think or describe the issue you encountered..."
+          ></textarea>
+        </div>
+
+        <div class="flex justify-end gap-2">
+          <button
+            id="btn-cancel-feedback"
+            class="h-9 px-4 rounded-sm text-sm font-medium text-body hover:bg-canvas-soft-2 transition-all cursor-pointer border-none bg-transparent"
+          >
+            Cancel
+          </button>
+          <button
+            id="btn-submit-feedback"
+            class="h-9 px-4 bg-primary text-on-primary rounded-sm font-medium text-sm hover:opacity-90 transition-all cursor-pointer border-none"
+          >
+            Send Feedback
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- GNU Nano Simulated Editor Modal -->
+    <div
+      id="modal-nano-editor"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs hidden"
+    >
+      <div
+        class="w-full max-w-2xl bg-[#171717] border border-white/10 rounded-lg shadow-2xl overflow-hidden flex flex-col h-[480px]"
+      >
+        <!-- Nano Header -->
+        <div
+          class="bg-white text-black px-4 py-1 flex items-center justify-between text-xs font-mono font-bold"
+        >
+          <span>GNU nano 7.2</span>
+          <span id="nano-filename">File: newfile.txt</span>
+          <span id="nano-modified"></span>
+        </div>
+
+        <!-- Nano Textarea Canvas -->
+        <div class="flex-1 p-3 bg-black flex flex-col">
+          <textarea
+            id="nano-textarea"
+            class="w-full flex-1 bg-transparent text-gray-200 font-mono text-sm resize-none focus:outline-none leading-relaxed select-text"
+            placeholder="Type file contents here..."></textarea>
+        </div>
+
+        <!-- Nano Footer Bar -->
+        <div
+          class="bg-[#222] border-t border-white/10 px-4 py-2 text-xs font-mono text-gray-300 flex items-center justify-between"
+        >
+          <div class="flex items-center gap-4">
+            <span class="flex items-center gap-1">
+              <kbd class="px-1.5 py-0.5 bg-white/10 rounded text-[10px] text-white"
+                >^O</kbd
+              > WriteOut
+            </span>
+            <span class="flex items-center gap-1">
+              <kbd class="px-1.5 py-0.5 bg-white/10 rounded text-[10px] text-white"
+                >^X</kbd
+              > Exit
+            </span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button
+              id="btn-nano-cancel"
+              class="px-2.5 py-1 text-xs text-gray-400 hover:text-white transition-all bg-transparent border-none cursor-pointer"
+              >Cancel</button
+            >
+            <button
+              id="btn-nano-save"
+              class="px-3 py-1 bg-white/10 hover:bg-white/20 text-white rounded text-xs transition-all border-none cursor-pointer"
+              >Save File</button
+            >
+            <button
+              id="btn-nano-exit"
+              class="px-3 py-1 bg-white text-black hover:bg-gray-200 font-semibold rounded text-xs transition-all border-none cursor-pointer"
+              >Save &amp; Exit</button
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <Footer lang={lang} />
+  </div>
+</Layout>
+
+<script>
+  // App Controller Script
+  document.addEventListener("DOMContentLoaded", () => {
+    // 1. URL State Management for Views
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialView = urlParams.get("view") || "dashboard";
+
+    function switchView(viewName: string) {
+      const vDashboard = document.getElementById("view-dashboard");
+      const vSandbox = document.getElementById("view-sandbox");
+      const vAbout = document.getElementById("view-about");
+      const vTools = document.getElementById("view-tools");
+
+      // Hide all views
+      [vDashboard, vSandbox, vAbout, vTools].forEach((el) => {
+        el?.classList.add("hidden");
+        el?.classList.remove("block");
+      });
+
+      // Show selected view
+      let targetSection: HTMLElement | null = null;
+      if (viewName === "dashboard") targetSection = vDashboard;
+      else if (viewName === "sandbox") targetSection = vSandbox;
+      else if (viewName === "about") targetSection = vAbout;
+      else if (viewName === "tools") targetSection = vTools;
+
+      if (targetSection) {
+        targetSection.classList.remove("hidden");
+        targetSection.classList.add("block");
+      }
+
+      // Sync browser history
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.set("view", viewName);
+      window.history.replaceState({}, "", currentUrl.toString());
+
+      // Notify global state
+      if ((window as any).appState) {
+        (window as any).appState.activeView = viewName;
+      }
+      window.dispatchEvent(
+        new CustomEvent("app:state-updated", {
+          detail: (window as any).appState || { activeView: viewName },
+        }),
+      );
+
+      // Auto-focus terminal if switching to sandbox
+      if (viewName === "sandbox") {
+        setTimeout(() => {
+          document.getElementById("terminal-input")?.focus();
+        }, 150);
+      }
+    }
+
+    // Set initial view
+    switchView(initialView);
+
+    // Listen for nav & internal events
+    window.addEventListener("app:view-change", (e: any) => {
+      switchView(e.detail.view);
+    });
+
+    document
+      .getElementById("btn-back-to-dashboard-from-about")
+      ?.addEventListener("click", () => {
+        switchView("dashboard");
+      });
+
+    // Feedback dialog handling
+    const btnFeedback = document.getElementById("btn-feedback");
+    const modalFeedback = document.getElementById("modal-feedback");
+    const closeFeedback = document.getElementById("btn-close-feedback");
+    const cancelFeedback = document.getElementById("btn-cancel-feedback");
+    const submitFeedback = document.getElementById("btn-submit-feedback");
+    const feedbackTextarea = document.getElementById(
+      "feedback-textarea",
+    ) as HTMLTextAreaElement;
+
+    btnFeedback?.addEventListener("click", () => {
+      if (feedbackTextarea) feedbackTextarea.value = "";
+      modalFeedback?.classList.remove("hidden");
+    });
+
+    const hideFeedbackModal = () => {
+      modalFeedback?.classList.add("hidden");
+    };
+
+    closeFeedback?.addEventListener("click", hideFeedbackModal);
+    cancelFeedback?.addEventListener("click", hideFeedbackModal);
+
+    modalFeedback?.addEventListener("click", (e: any) => {
+      if (e.target === modalFeedback) {
+        hideFeedbackModal();
+      }
+    });
+
+    submitFeedback?.addEventListener("click", () => {
+      const text = feedbackTextarea ? feedbackTextarea.value.trim() : "";
+      if (!text) return;
+
+      const mailtoUrl = `mailto:support@bashquest.com?subject=BashQuest Feedback&body=${encodeURIComponent(text)}`;
+      window.location.href = mailtoUrl;
+      hideFeedbackModal();
+    });
+
+    // GNU Nano Simulated Editor
+    let currentNanoFile = "";
+    let currentNanoPath = "";
+
+    window.addEventListener("app:open-nano", (e: any) => {
+      const { filename, currentPath, content } = e.detail;
+      currentNanoFile = filename;
+      currentNanoPath = currentPath;
+
+      const modal = document.getElementById("modal-nano-editor");
+      const textarea = document.getElementById(
+        "nano-textarea",
+      ) as HTMLTextAreaElement;
+      const title = document.getElementById("nano-filename");
+      const modified = document.getElementById("nano-modified");
+
+      if (title) title.textContent = `File: ${filename}`;
+      if (modified) modified.textContent = "";
+      if (textarea) textarea.value = content;
+
+      modal?.classList.remove("hidden");
+      setTimeout(() => textarea?.focus(), 100);
+    });
+
+    document.getElementById("nano-textarea")?.addEventListener("input", () => {
+      const modified = document.getElementById("nano-modified");
+      if (modified) modified.textContent = "[ Modified ]";
+    });
+
+    document
+      .getElementById("nano-textarea")
+      ?.addEventListener("keydown", (e: any) => {
+        if (e.ctrlKey && e.key === "o") {
+          e.preventDefault();
+          saveNanoContent(false);
+        } else if (e.ctrlKey && e.key === "x") {
+          e.preventDefault();
+          saveNanoContent(true);
+        }
+      });
+
+    function saveNanoContent(shouldExit = false) {
+      const textarea = document.getElementById(
+        "nano-textarea",
+      ) as HTMLTextAreaElement;
+      const content = textarea ? textarea.value : "";
+
+      const globalWindow = window as any;
+      if (
+        globalWindow.appState &&
+        globalWindow.appState.fs &&
+        currentNanoFile
+      ) {
+        const fs = globalWindow.appState.fs;
+
+        const existing = fs.getNodeByPath(currentNanoPath, currentNanoFile);
+        if (existing && existing.type === "file") {
+          existing.content = content;
+        } else {
+          fs.createNode(currentNanoPath, currentNanoFile, "file", { content });
+        }
+
+        window.dispatchEvent(new CustomEvent("app:filesystem-update"));
+
+        window.dispatchEvent(
+          new CustomEvent("app:print-terminal", {
+            detail: {
+              text: `[ File '${currentNanoFile}' saved successfully ]`,
+            },
+          }),
+        );
+
+        const modified = document.getElementById("nano-modified");
+        if (modified) modified.textContent = "";
+      }
+
+      if (shouldExit) {
+        document.getElementById("modal-nano-editor")?.classList.add("hidden");
+
+        setTimeout(() => {
+          document.getElementById("terminal-input")?.focus();
+        }, 50);
+      }
+    }
+
+    document
+      .getElementById("btn-nano-cancel")
+      ?.addEventListener("click", () => {
+        document.getElementById("modal-nano-editor")?.classList.add("hidden");
+        setTimeout(() => {
+          document.getElementById("terminal-input")?.focus();
+        }, 50);
+      });
+    document.getElementById("btn-nano-save")?.addEventListener("click", () => {
+      saveNanoContent(false);
+    });
+    document.getElementById("btn-nano-exit")?.addEventListener("click", () => {
+      saveNanoContent(true);
+    });
+  });
+</script>
