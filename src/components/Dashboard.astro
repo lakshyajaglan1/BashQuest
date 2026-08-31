@@ -15,19 +15,19 @@ const localizedLessons = getLocalizedLessons(currentLang);
 ---
 
 <div
-  class="bg-canvas-soft mesh-gradient min-h-[calc(100vh-64px)] w-full py-12 px-4 md:px-8 select-none"
+  class="bg-canvas-soft mesh-gradient min-h-[calc(100vh-64px)] w-full py-6 sm:py-12 px-3 sm:px-4 md:px-8 select-none pb-24 md:pb-12"
 >
-  <div class="w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
+  <div class="w-full grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
     <!-- User Profile, Stats & Quick Links (Left Column) -->
     <div class="lg:col-span-1 space-y-6">
       <!-- Profile Card -->
       <div
-        class="card-marketing border border-hairline bg-canvas p-6 flex flex-col justify-between h-auto shadow-level-3"
+        class="card-marketing border border-hairline bg-canvas p-5 sm:p-6 flex flex-col justify-between h-auto shadow-level-3"
       >
         <div>
           <div class="flex items-center gap-4 mb-6">
             <div
-              class="w-14 h-14 rounded-full bg-primary text-on-primary flex items-center justify-center font-mono text-2xl font-bold border border-hairline shadow-level-2 relative group/avatar overflow-hidden"
+              class="w-14 h-14 rounded-full bg-primary text-on-primary flex items-center justify-center font-mono text-2xl font-bold border border-hairline shadow-level-2 relative group/avatar overflow-hidden shrink-0"
             >
               <span
                 class="relative z-10 transition-transform duration-300 group-hover/avatar:scale-110 block"
@@ -37,7 +37,7 @@ const localizedLessons = getLocalizedLessons(currentLang);
             <div>
               <h2
                 id="profile-title"
-                class="text-xl font-sans font-extrabold text-ink tracking-tight"
+                class="text-lg sm:text-xl font-sans font-extrabold text-ink tracking-tight"
               >
                 {getLevelName(1, currentLang)}.
               </h2>
@@ -95,22 +95,22 @@ const localizedLessons = getLocalizedLessons(currentLang);
           <p class="text-[10px] text-mute font-mono mb-3 leading-relaxed">
             {t("dashboard.noSignup")}
           </p>
-          <div class="grid grid-cols-3 gap-2">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
             <button
               id="btn-export-save"
-              class="h-9 px-1.5 rounded-sm bg-canvas-soft-2 text-ink hover:bg-white dark:hover:bg-[#1a1a1a] border border-hairline text-[11px] font-semibold transition-all cursor-pointer shadow-sm hover:shadow-xs flex items-center justify-center whitespace-nowrap"
+              class="h-9 px-2 rounded-sm bg-canvas-soft-2 text-ink hover:bg-white dark:hover:bg-[#1a1a1a] border border-hairline text-xs font-semibold transition-all cursor-pointer shadow-sm hover:shadow-xs flex items-center justify-center text-center"
             >
               {t("dashboard.exportSave")}
             </button>
             <button
               id="btn-import-save"
-              class="h-9 px-1.5 rounded-sm bg-canvas-soft-2 text-ink hover:bg-white dark:hover:bg-[#1a1a1a] border border-hairline text-[11px] font-semibold transition-all cursor-pointer shadow-sm hover:shadow-xs flex items-center justify-center whitespace-nowrap"
+              class="h-9 px-2 rounded-sm bg-canvas-soft-2 text-ink hover:bg-white dark:hover:bg-[#1a1a1a] border border-hairline text-xs font-semibold transition-all cursor-pointer shadow-sm hover:shadow-xs flex items-center justify-center text-center"
             >
               {t("dashboard.importSave")}
             </button>
             <button
               id="btn-reset-progress"
-              class="h-9 px-1.5 rounded-sm border border-red-200 text-error bg-red-50 text-[11px] font-semibold hover:bg-error-soft hover:text-error-deep hover:border-red-300 dark:bg-red-950/10 dark:border-red-900/30 dark:text-red-400 flex items-center justify-center whitespace-nowrap cursor-pointer"
+              class="h-9 px-2 rounded-sm border border-red-200 text-error bg-red-50 text-xs font-semibold hover:bg-error-soft hover:text-error-deep hover:border-red-300 dark:bg-red-950/10 dark:border-red-900/30 dark:text-red-400 flex items-center justify-center text-center cursor-pointer"
             >
               {t("dashboard.reset")}
             </button>

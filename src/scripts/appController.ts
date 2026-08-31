@@ -552,6 +552,64 @@ export class AppStateManager {
           }),
         );
       });
+
+    // Mobile Workspace panel tab switching
+    const tabLesson = document.getElementById("tab-mobile-lesson");
+    const tabTerminal = document.getElementById("tab-mobile-terminal");
+    const tabExplorer = document.getElementById("tab-mobile-explorer");
+
+    const panelLesson = document.getElementById("container-mobile-lesson");
+    const panelTerminal = document.getElementById("container-mobile-terminal");
+    const panelExplorer = document.getElementById("container-mobile-explorer");
+
+    const setMobilePanel = (active: "lesson" | "terminal" | "explorer") => {
+      const isMobile = window.innerWidth < 1024;
+      if (!isMobile) return;
+
+      [tabLesson, tabTerminal, tabExplorer].forEach((t) => {
+        t?.classList.remove("bg-primary", "text-on-primary");
+        t?.classList.add("text-body", "hover:text-ink");
+      });
+
+      if (active === "lesson") {
+        tabLesson?.classList.add("bg-primary", "text-on-primary");
+        tabLesson?.classList.remove("text-body", "hover:text-ink");
+        panelLesson?.classList.remove("hidden");
+        panelLesson?.classList.add("block");
+        panelTerminal?.classList.add("hidden");
+        panelTerminal?.classList.remove("block");
+        panelExplorer?.classList.add("hidden");
+        panelExplorer?.classList.remove("block");
+      } else if (active === "terminal") {
+        tabTerminal?.classList.add("bg-primary", "text-on-primary");
+        tabTerminal?.classList.remove("text-body", "hover:text-ink");
+        panelTerminal?.classList.remove("hidden");
+        panelTerminal?.classList.add("block");
+        panelLesson?.classList.add("hidden");
+        panelLesson?.classList.remove("block");
+        panelExplorer?.classList.add("hidden");
+        panelExplorer?.classList.remove("block");
+        setTimeout(() => document.getElementById("terminal-input")?.focus(), 50);
+      } else if (active === "explorer") {
+        tabExplorer?.classList.add("bg-primary", "text-on-primary");
+        tabExplorer?.classList.remove("text-body", "hover:text-ink");
+        panelExplorer?.classList.remove("hidden");
+        panelExplorer?.classList.add("block");
+        panelLesson?.classList.add("hidden");
+        panelLesson?.classList.remove("block");
+        panelTerminal?.classList.add("hidden");
+        panelTerminal?.classList.remove("block");
+      }
+    };
+
+    tabLesson?.addEventListener("click", () => setMobilePanel("lesson"));
+    tabTerminal?.addEventListener("click", () => setMobilePanel("terminal"));
+    tabExplorer?.addEventListener("click", () => setMobilePanel("explorer"));
+
+    // When selecting a lesson, show the quest instructions panel on mobile
+    window.addEventListener("app:select-lesson", () => {
+      setMobilePanel("lesson");
+    });
   }
 
   updateStreak() {
