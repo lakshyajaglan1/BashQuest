@@ -293,10 +293,25 @@ export class AppStateManager {
       activeLessonId: this.state.activeLessonId,
       streak: this.state.streak,
       lastCompletedDate: this.state.lastCompletedDate,
+      resetActiveLessonFilesystem: () => {
+        window.dispatchEvent(new CustomEvent("app:restore-lesson"));
+      },
     };
   }
 
   bindEvents() {
+    window.addEventListener("app:terminal-command", (e: any) => {
+      const cmd = e.detail?.command;
+      if (!cmd) return;
+      const globalWindow = window as any;
+      if (globalWindow.appState) {
+        if (!Array.isArray(globalWindow.appState.terminalCommands)) {
+          globalWindow.appState.terminalCommands = [];
+        }
+        globalWindow.appState.terminalCommands.push(cmd);
+      }
+    });
+
     window.addEventListener("app:view-change", (e: any) => {
       this.state.activeView = e.detail.view;
       this.applyViewVisibility();

@@ -611,15 +611,19 @@ const t = useTranslations(currentLang);
     setTimeout(() => {
       const fs = globalWindow.appState.fs;
       const session = globalWindow.appState.session;
-      const history = globalWindow.appState.terminalCommands || [];
+      const history = (
+        globalWindow.appState.terminalCommands && globalWindow.appState.terminalCommands.length > 0
+      )
+        ? globalWindow.appState.terminalCommands
+        : (session ? session.history : []) || [];
 
       // Run check hook
       const checkRes = activeLesson.verify(fs, session, history);
-      validationResult = checkRes;
+      validationResult = checkRes || { success: false, checks: [] };
 
       renderObjectives();
 
-      if (checkRes.success) {
+      if (checkRes && checkRes.success) {
         // Complete Lesson!
         failedAttempts = 0;
         dismissedHints.clear();
@@ -672,9 +676,11 @@ const t = useTranslations(currentLang);
     const globalWindow = window as any;
     if (
       globalWindow.appState &&
-      globalWindow.appState.resetActiveLessonFilesystem
+      typeof globalWindow.appState.resetActiveLessonFilesystem === "function"
     ) {
       globalWindow.appState.resetActiveLessonFilesystem();
+    } else {
+      window.dispatchEvent(new CustomEvent("app:restore-lesson"));
     }
     validationResult = {
       success: false,

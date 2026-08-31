@@ -288,6 +288,14 @@
 
     updatePrompt();
 
+    // Directly record to terminalCommands
+    if (globalWindow.appState) {
+      if (!Array.isArray(globalWindow.appState.terminalCommands)) {
+        globalWindow.appState.terminalCommands = [];
+      }
+      globalWindow.appState.terminalCommands.push(trimmed);
+    }
+
     // Broadcast event that shell has changed states
     window.dispatchEvent(new CustomEvent("app:filesystem-update"));
     window.dispatchEvent(
@@ -418,6 +426,10 @@
     }
   });
   window.addEventListener("app:select-lesson", () => {
+    updatePrompt();
+    clearTerminal();
+  });
+  window.addEventListener("app:restore-lesson", () => {
     updatePrompt();
     clearTerminal();
   });

@@ -254,11 +254,11 @@ export const lessons = [
       const dirExists = node && node.type === 'dir';
 
       return {
-        success: inHome && usedMkdir && dirExists,
+        success: Boolean(inHome && usedMkdir && dirExists),
         checks: [
-          { id: 'in_home', passed: inHome },
-          { id: 'used_mkdir', passed: usedMkdir },
-          { id: 'dir_exists', passed: dirExists }
+          { id: 'in_home', passed: Boolean(inHome) },
+          { id: 'used_mkdir', passed: Boolean(usedMkdir) },
+          { id: 'dir_exists', passed: Boolean(dirExists) }
         ]
       };
     }
@@ -293,10 +293,10 @@ export const lessons = [
       });
 
       return {
-        success: nestedDirExists && usedPSwitch,
+        success: Boolean(nestedDirExists && usedPSwitch),
         checks: [
-          { id: 'nested_dir_exists', passed: !!nestedDirExists },
-          { id: 'used_p_switch', passed: usedPSwitch }
+          { id: 'nested_dir_exists', passed: Boolean(nestedDirExists) },
+          { id: 'used_p_switch', passed: Boolean(usedPSwitch) }
         ]
       };
     }
@@ -395,10 +395,10 @@ export const lessons = [
       const fileExists = node && node.type === 'file';
 
       return {
-        success: usedTouch && fileExists,
+        success: Boolean(usedTouch && fileExists),
         checks: [
-          { id: 'used_touch', passed: usedTouch },
-          { id: 'file_exists', passed: fileExists }
+          { id: 'used_touch', passed: Boolean(usedTouch) },
+          { id: 'file_exists', passed: Boolean(fileExists) }
         ]
       };
     }
@@ -555,10 +555,10 @@ export const lessons = [
       const fileExists = fileNode && fileNode.type === 'file';
 
       return {
-        success: dirExists && fileExists,
+        success: Boolean(dirExists && fileExists),
         checks: [
-          { id: 'dir_with_space_exists', passed: !!dirExists },
-          { id: 'file_with_space_exists', passed: !!fileExists }
+          { id: 'dir_with_space_exists', passed: Boolean(dirExists) },
+          { id: 'file_with_space_exists', passed: Boolean(fileExists) }
         ]
       };
     }
@@ -593,11 +593,11 @@ export const lessons = [
       const contentCorrect = fileCreated && node.content.trim() === 'System Online';
 
       return {
-        success: usedEchoRedirect && fileCreated && contentCorrect,
+        success: Boolean(usedEchoRedirect && fileCreated && contentCorrect),
         checks: [
-          { id: 'used_echo_redirect', passed: usedEchoRedirect },
-          { id: 'file_created', passed: fileCreated },
-          { id: 'content_correct', passed: contentCorrect }
+          { id: 'used_echo_redirect', passed: Boolean(usedEchoRedirect) },
+          { id: 'file_created', passed: Boolean(fileCreated) },
+          { id: 'content_correct', passed: Boolean(contentCorrect) }
         ]
       };
     }
@@ -896,11 +896,11 @@ export const lessons = [
       const onlyErrors = exists && lines.length > 0 && lines.every(line => line.includes('[ERROR]'));
 
       return {
-        success: usedGrep && exists && onlyErrors,
+        success: Boolean(usedGrep && exists && onlyErrors),
         checks: [
-          { id: 'used_grep', passed: usedGrep },
-          { id: 'errors_log_exists', passed: !!exists },
-          { id: 'only_errors', passed: onlyErrors }
+          { id: 'used_grep', passed: Boolean(usedGrep) },
+          { id: 'errors_log_exists', passed: Boolean(exists) },
+          { id: 'only_errors', passed: Boolean(onlyErrors) }
         ]
       };
     }
@@ -2221,12 +2221,12 @@ export const lessons = [
       });
 
       return {
-        success: exists && hasContent && isExec && executed,
+        success: Boolean(exists && hasContent && isExec && executed),
         checks: [
-          { id: 'script_exists', passed: !!exists },
-          { id: 'script_content', passed: !!hasContent },
-          { id: 'script_executable', passed: !!isExec },
-          { id: 'script_executed', passed: executed }
+          { id: 'script_exists', passed: Boolean(exists) },
+          { id: 'script_content', passed: Boolean(hasContent) },
+          { id: 'script_executable', passed: Boolean(isExec) },
+          { id: 'script_executed', passed: Boolean(executed) }
         ]
       };
     }
@@ -2267,12 +2267,12 @@ export const lessons = [
       });
 
       return {
-        success: exists && hasContent && isExec && executed,
+        success: Boolean(exists && hasContent && isExec && executed),
         checks: [
-          { id: 'greet_exists', passed: !!exists },
-          { id: 'greet_content', passed: !!hasContent },
-          { id: 'greet_executable', passed: !!isExec },
-          { id: 'greet_executed', passed: executed }
+          { id: 'greet_exists', passed: Boolean(exists) },
+          { id: 'greet_content', passed: Boolean(hasContent) },
+          { id: 'greet_executable', passed: Boolean(isExec) },
+          { id: 'greet_executed', passed: Boolean(executed) }
         ]
       };
     }
@@ -2313,12 +2313,12 @@ export const lessons = [
       });
 
       return {
-        success: exists && logicOK && isExec && executed,
+        success: Boolean(exists && logicOK && isExec && executed),
         checks: [
-          { id: 'check_exists', passed: !!exists },
-          { id: 'check_logic', passed: !!logicOK },
-          { id: 'check_executable', passed: !!isExec },
-          { id: 'check_executed', passed: executed }
+          { id: 'check_exists', passed: Boolean(exists) },
+          { id: 'check_logic', passed: Boolean(logicOK) },
+          { id: 'check_executable', passed: Boolean(isExec) },
+          { id: 'check_executed', passed: Boolean(executed) }
         ]
       };
     }
@@ -2359,12 +2359,12 @@ export const lessons = [
       const backupDirOK = backupDir && backupDir.type === 'dir';
 
       return {
-        success: exists && logicOK && executed && backupDirOK,
+        success: Boolean(exists && logicOK && executed && backupDirOK),
         checks: [
-          { id: 'backup_script_exists', passed: !!exists },
-          { id: 'backup_logic', passed: !!logicOK },
-          { id: 'backup_executed', passed: executed },
-          { id: 'backup_dir_ok', passed: !!backupDirOK }
+          { id: 'backup_script_exists', passed: Boolean(exists) },
+          { id: 'backup_logic', passed: Boolean(logicOK) },
+          { id: 'backup_executed', passed: Boolean(executed) },
+          { id: 'backup_dir_ok', passed: Boolean(backupDirOK) }
         ]
       };
     }
@@ -2404,11 +2404,11 @@ export const lessons = [
       });
 
       return {
-        success: exists && hasFunction && isExec && executed,
+        success: Boolean(exists && hasFunction && isExec && executed),
         checks: [
-          { id: 'script_exists', passed: !!exists },
-          { id: 'has_function', passed: !!hasFunction },
-          { id: 'script_executed', passed: isExec && executed }
+          { id: 'script_exists', passed: Boolean(exists) },
+          { id: 'has_function', passed: Boolean(hasFunction) },
+          { id: 'script_executed', passed: Boolean(isExec && executed) }
         ]
       };
     }
@@ -2452,11 +2452,11 @@ export const lessons = [
       const installed = session.crontab && session.crontab.includes('backup_helper.sh');
 
       return {
-        success: fileCreated && hasCronString && (ranCrontabInstall || installed) && ranCrontabL,
+        success: Boolean(fileCreated && hasCronString && (ranCrontabInstall || installed) && ranCrontabL),
         checks: [
-          { id: 'cron_file_created', passed: !!(fileCreated && hasCronString) },
-          { id: 'cron_installed', passed: !!(ranCrontabInstall || installed) },
-          { id: 'cron_listed', passed: ranCrontabL }
+          { id: 'cron_file_created', passed: Boolean(fileCreated && hasCronString) },
+          { id: 'cron_installed', passed: Boolean(ranCrontabInstall || installed) },
+          { id: 'cron_listed', passed: Boolean(ranCrontabL) }
         ]
       };
     }
