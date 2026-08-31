@@ -6,6 +6,22 @@ import Footer from "../components/Footer.astro";
 // These questions match real search phrases typed into Google by students and beginners
 const faqs = [
     {
+        q: "How can I do free online Linux terminal practice without installing anything?",
+        a: "You can do free online Linux terminal practice directly on BashQuest. Our interactive online Linux terminal runs completely inside your browser with a virtual simulated filesystem, so you can practice Linux terminal commands without dual-booting, installing Linux, or configuring virtual machines.",
+    },
+    {
+        q: "What makes BashQuest one of the best Linux learning resources and websites?",
+        a: "BashQuest stands out among Linux learning websites because it is an interactive bash learning game rather than passive text or video. With 60+ progressive quests, instant command validation, XP tracking, and visual directory exploration, students achieve practical Linux terminal learning in a fun, frictionless environment.",
+    },
+    {
+        q: "What are the core terminal learning objectives covered in this bash learning game?",
+        a: "Every quest in BashQuest is built around concrete terminal learning objectives: mastering filesystem navigation, creating and modifying files, managing user permissions (chmod/chown), searching with grep and regex, chaining commands with pipes, running processes, editing files with GNU Nano, and writing automated bash scripts.",
+    },
+    {
+        q: "What Linux terminal commands can I practice in this online Linux terminal?",
+        a: "You can practice all essential Linux terminal commands including pwd, cd, ls, mkdir, touch, cat, echo, cp, mv, rm, chmod, chown, grep, awk, sed, find, ps, top, kill, systemctl, curl, ping, ip, and interactive GNU Nano text editing, as well as pipes and redirection.",
+    },
+    {
         q: "How can I practice Linux commands online without installing anything?",
         a: "You can practice Linux commands safely using BashQuest's built-in web terminal simulator. It provides a complete, simulated filesystem directly in your browser, meaning you can learn without setting up virtual machines, dual-booting, or installing software.",
     },
@@ -24,10 +40,6 @@ const faqs = [
     {
         q: "Does this online Bash terminal practice save my progress?",
         a: "Yes. Your progress, XP, collected badges, and simulated directory state are saved locally on your device inside your browser's local storage. Your data remains completely private on your system.",
-    },
-    {
-        q: "What Linux commands can I learn and practice in this browser sandbox?",
-        a: "You can practice core filesystem and search utility commands including pwd, cd, ls, mkdir, touch, cat, echo, cp, mv, rm, chmod, and grep, along with interactive GNU Nano text editing, wildcards, and pipelines.",
     },
     {
         q: "Is BashQuest good for learning Linux command line for DevOps?",
@@ -70,8 +82,8 @@ const faqSchema = {
 ---
 
 <Layout
-    title="FAQ — Learn Linux Commands Online Free | Bash Practice Questions"
-    description="Answers to frequently asked questions about learning Linux online, practicing Bash commands in a browser terminal simulator, DevOps prep, shell scripting exercises, and more."
+    title="FAQ — Free Online Linux Terminal Practice & Linux Learning Website | BashQuest"
+    description="Answers to frequently asked questions about practicing Linux terminal commands online, free online Linux terminal practice, bash learning games, and achieving clear terminal learning objectives."
 >
     <!-- Google Structured Data Script -->
     <script
@@ -99,9 +111,7 @@ const faqSchema = {
                         Frequently Asked Questions.
                     </h1>
                     <p class="body-md text-body max-w-lg mx-auto">
-                        Everything you need to know about practicing Linux
-                        commands online, saving your progress, and terminal
-                        sandbox tools.
+                        Everything you need to know about practicing Linux terminal commands online, terminal learning objectives, and free interactive bash learning games.
                     </p>
                 </div>
 
