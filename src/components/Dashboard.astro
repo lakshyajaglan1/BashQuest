@@ -1,5 +1,5 @@
 ---
-import { modules, lessons } from "../lib/lessons";
+import { getLocalizedModules, getLocalizedLessons, getLevelName, getLocalizedBadge } from "../i18n/lessons/index";
 import { type SupportedLanguage } from "../i18n/languages";
 import { getLangFromUrl, useTranslations, useTranslatedPath } from "../i18n/utils";
 
@@ -10,8 +10,9 @@ interface Props {
 const currentLang = Astro.props.lang || getLangFromUrl(Astro.url);
 const t = useTranslations(currentLang);
 const translatePath = useTranslatedPath(currentLang);
+const localizedModules = getLocalizedModules(currentLang);
+const localizedLessons = getLocalizedLessons(currentLang);
 ---
-
 
 <div
   class="bg-canvas-soft mesh-gradient min-h-[calc(100vh-64px)] w-full py-12 px-4 md:px-8 select-none"
@@ -38,13 +39,13 @@ const translatePath = useTranslatedPath(currentLang);
                 id="profile-title"
                 class="text-xl font-sans font-extrabold text-ink tracking-tight"
               >
-                Linux Novice.
+                {getLevelName(1, currentLang)}.
               </h2>
               <p
                 id="profile-level"
                 class="text-[11px] text-mute font-mono uppercase tracking-wider font-semibold mt-0.5"
               >
-                Level 1 User
+                {t("dashboard.levelUser").replace("{level}", "1")}
               </p>
             </div>
           </div>
@@ -52,7 +53,7 @@ const translatePath = useTranslatedPath(currentLang);
           <!-- XP Bar -->
           <div class="space-y-2 mb-6">
             <div class="flex justify-between text-xs font-mono">
-              <span class="text-mute">XP Progress</span>
+              <span class="text-mute">{t("dashboard.xpProgress")}</span>
               <span id="profile-xp-ratio" class="text-ink font-bold"
                 >0 / 300</span
               >
@@ -74,14 +75,14 @@ const translatePath = useTranslatedPath(currentLang);
             class="grid grid-cols-2 gap-4 py-4 border-t border-b border-hairline mb-6 font-mono text-xs"
           >
             <div>
-              <span class="text-mute block">Completed</span>
+              <span class="text-mute block">{t("dashboard.completed")}</span>
               <span
                 id="profile-completed-count"
-                class="text-base font-bold text-ink">0 / 10</span
+                class="text-base font-bold text-ink">0 / {localizedLessons.length}</span
               >
             </div>
             <div>
-              <span class="text-mute block">Unlocked Badges</span>
+              <span class="text-mute block">{t("dashboard.unlockedBadges")}</span>
               <span
                 id="profile-badge-count"
                 class="text-base font-bold text-ink">0</span
@@ -92,27 +93,26 @@ const translatePath = useTranslatedPath(currentLang);
 
         <div>
           <p class="text-[10px] text-mute font-mono mb-3 leading-relaxed">
-            No signup required. Progress is saved locally. Export your save code
-            to play on another device.
+            {t("dashboard.noSignup")}
           </p>
           <div class="grid grid-cols-3 gap-2">
             <button
               id="btn-export-save"
               class="h-9 px-1.5 rounded-sm bg-canvas-soft-2 text-ink hover:bg-white dark:hover:bg-[#1a1a1a] border border-hairline text-[11px] font-semibold transition-all cursor-pointer shadow-sm hover:shadow-xs flex items-center justify-center whitespace-nowrap"
             >
-              Export Save
+              {t("dashboard.exportSave")}
             </button>
             <button
               id="btn-import-save"
               class="h-9 px-1.5 rounded-sm bg-canvas-soft-2 text-ink hover:bg-white dark:hover:bg-[#1a1a1a] border border-hairline text-[11px] font-semibold transition-all cursor-pointer shadow-sm hover:shadow-xs flex items-center justify-center whitespace-nowrap"
             >
-              Import Save
+              {t("dashboard.importSave")}
             </button>
             <button
               id="btn-reset-progress"
               class="h-9 px-1.5 rounded-sm border border-red-200 text-error bg-red-50 text-[11px] font-semibold hover:bg-error-soft hover:text-error-deep hover:border-red-300 dark:bg-red-950/10 dark:border-red-900/30 dark:text-red-400 flex items-center justify-center whitespace-nowrap cursor-pointer"
             >
-              Reset
+              {t("dashboard.reset")}
             </button>
           </div>
         </div>
@@ -123,19 +123,19 @@ const translatePath = useTranslatedPath(currentLang);
         <h3
           class="text-xs font-bold tracking-widest text-mute uppercase font-mono mb-4 border-l-2 border-primary pl-2"
         >
-          Earned Badges
+          {t("dashboard.earnedBadges")}
         </h3>
         <div id="dashboard-badges-rack" class="flex flex-wrap gap-2">
           <!-- Dynamically filled with badges -->
         </div>
       </div>
 
-      <!-- Quick Navigation & Legal Links (Added here for instant visibility!) -->
+      <!-- Quick Navigation & Legal Links -->
       <div class="card-marketing bg-canvas p-6 shadow-level-3 space-y-4">
         <h3
           class="text-xs font-bold tracking-widest text-mute uppercase font-mono border-l-2 border-primary pl-2"
         >
-          Help & Legal
+          {t("dashboard.helpLegal")}
         </h3>
         <div class="grid grid-cols-1 gap-3 font-sans text-xs">
           <a
@@ -187,12 +187,12 @@ const translatePath = useTranslatedPath(currentLang);
           <h1
             class="text-base md:text-lg font-bold text-on-primary tracking-tight font-sans"
           >
-            Online Linux Terminal Practice — Learn by Actually Doing.
+            {t("dashboard.heroOnlinePractice")}
           </h1>
           <p
             class="text-xs md:text-sm text-on-primary/70 mt-1.5 leading-relaxed max-w-xl"
           >
-            Master essential Linux terminal commands and clear terminal learning objectives through a free, hands-on bash learning game and interactive filesystem simulation.
+            {t("dashboard.heroPracticeDesc")}
           </p>
         </div>
 
@@ -234,7 +234,7 @@ const translatePath = useTranslatedPath(currentLang);
                 d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
               ></path>
             </svg>
-            60+ Quests &amp; Objectives
+            {t("dashboard.badgeQuests")}
           </span>
 
           <span
@@ -254,7 +254,7 @@ const translatePath = useTranslatedPath(currentLang);
                 d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
               ></path>
             </svg>
-            Free Online Terminal Practice
+            {t("dashboard.badgeFreePractice")}
           </span>
 
           <span
@@ -274,24 +274,23 @@ const translatePath = useTranslatedPath(currentLang);
                 d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
               ></path>
             </svg>
-            Interactive Bash Learning Game
+            {t("dashboard.badgeInteractive")}
           </span>
         </div>
       </div>
 
       <div class="mb-4">
         <h2 class="display-lg text-ink font-bold tracking-tight">
-          Interactive Learning Path &amp; Terminal Objectives.
+          {t("dashboard.pathTitle")}
         </h2>
         <p class="body-md text-body mt-2">
-          Your complete Linux learning path with structured terminal learning objectives. Click any unlocked challenge node
-          to open your interactive Linux terminal workspace.
+          {t("dashboard.pathDesc")}
         </p>
       </div>
 
       {
-        modules.map((mod) => {
-          const moduleLessons = lessons.filter((l) => l.moduleId === mod.id);
+        localizedModules.map((mod) => {
+          const moduleLessons = localizedLessons.filter((l: any) => l.moduleId === mod.id);
           return (
             <div class="space-y-4">
               <h2 class="text-xs font-mono font-bold tracking-widest text-mute uppercase px-1 border-l-2 border-primary">
@@ -299,18 +298,18 @@ const translatePath = useTranslatedPath(currentLang);
               </h2>
 
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {moduleLessons.map((lesson) => (
+                {moduleLessons.map((lesson: any) => (
                   <div
                     data-lesson-id={lesson.id}
                     class="lesson-node-card cursor-pointer border border-hairline rounded-md p-5 bg-canvas flex flex-col justify-between hover:shadow-md transition-all duration-200 relative group opacity-60 pointer-events-none"
                   >
                     <div class="flex justify-between items-start mb-2">
                       <span class="font-mono text-xs font-bold text-mute bg-canvas-soft-2 px-2 py-0.5 rounded border border-hairline">
-                        Quest{" "}
-                        {lessons.findIndex((l: any) => l.id === lesson.id) + 1}
+                        {t("dashboard.quest")}{" "}
+                        {localizedLessons.findIndex((l: any) => l.id === lesson.id) + 1}
                       </span>
                       <span class="node-status-badge text-[10px] font-mono font-bold text-mute bg-canvas-soft border border-hairline px-2 py-0.5 rounded">
-                        Locked
+                        {t("dashboard.locked")}
                       </span>
                     </div>
 
@@ -328,7 +327,7 @@ const translatePath = useTranslatedPath(currentLang);
                         +{lesson.xp} XP
                       </span>
                       <span class="start-text text-xs text-mute font-medium flex items-center gap-1 group-hover:text-ink transition-colors">
-                        Start <span class="font-mono">→</span>
+                        {t("dashboard.start")} <span class="font-mono">→</span>
                       </span>
                     </div>
 
@@ -390,26 +389,12 @@ const translatePath = useTranslatedPath(currentLang);
       </div>
       <div>
         <h3 class="text-base font-bold text-ink tracking-tight">
-          Reset All Progress?
+          {t("dashboard.resetTitle")}
         </h3>
         <p class="text-xs text-mute font-mono mt-1">
-          This action is irreversible
+          {t("dashboard.resetWarning")}
         </p>
       </div>
-    </div>
-
-    <div class="text-sm text-body leading-relaxed mb-6 space-y-2">
-      <p>
-        Are you sure you want to reset all progress? This will permanently wipe
-        your:
-      </p>
-      <ul
-        class="list-disc list-inside text-xs space-y-1 font-mono text-mute pl-2"
-      >
-        <li>Completed quests history</li>
-        <li>Earned XP levels and badges</li>
-        <li>Simulated Linux filesystem configuration</li>
-      </ul>
     </div>
 
     <div class="flex justify-end gap-3">
@@ -417,13 +402,13 @@ const translatePath = useTranslatedPath(currentLang);
         id="btn-cancel-reset"
         class="h-9 px-4 rounded-sm border border-hairline bg-canvas text-ink text-xs font-semibold hover:bg-canvas-soft-2 transition-all cursor-pointer"
       >
-        Cancel
+        {t("dashboard.cancel")}
       </button>
       <button
         id="btn-confirm-reset"
         class="h-9 px-4 rounded-sm bg-error text-on-primary text-xs font-semibold hover:bg-error-deep transition-all cursor-pointer border-none"
       >
-        Yes, Reset Progress
+        {t("dashboard.confirmReset")}
       </button>
     </div>
   </div>
@@ -475,19 +460,15 @@ const translatePath = useTranslatedPath(currentLang);
       </div>
       <div>
         <h3 class="text-base font-bold text-ink tracking-tight">
-          Export Progress
+          {t("dashboard.exportTitle")}
         </h3>
         <p class="text-xs text-mute font-mono mt-1">
-          Copy code to transfer progress
+          {t("dashboard.exportDesc")}
         </p>
       </div>
     </div>
 
     <div class="text-sm text-body leading-relaxed mb-4">
-      <p class="mb-2">
-        Your simulated local profile state has been compiled into a secure
-        Base64 key:
-      </p>
       <div
         class="w-full bg-[#171717] rounded-md p-3 border border-white/10 relative"
       >
@@ -504,7 +485,7 @@ const translatePath = useTranslatedPath(currentLang);
         id="btn-close-export"
         class="h-9 px-4 rounded-sm border border-hairline bg-canvas text-ink text-xs font-semibold hover:bg-canvas-soft-2 transition-all cursor-pointer"
       >
-        Close
+        {t("dashboard.close")}
       </button>
       <button
         id="btn-copy-export"
@@ -522,7 +503,7 @@ const translatePath = useTranslatedPath(currentLang);
             stroke-linejoin="round"
             d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18"></path>
         </svg>
-        <span id="btn-copy-text">Copy to Clipboard</span>
+        <span id="btn-copy-text">{t("dashboard.copyCode")}</span>
       </button>
     </div>
   </div>
@@ -574,19 +555,15 @@ const translatePath = useTranslatedPath(currentLang);
       </div>
       <div>
         <h3 class="text-base font-bold text-ink tracking-tight">
-          Import Progress
+          {t("dashboard.importTitle")}
         </h3>
         <p class="text-xs text-mute font-mono mt-1">
-          Paste code to restore progress
+          {t("dashboard.importDesc")}
         </p>
       </div>
     </div>
 
     <div class="text-sm text-body leading-relaxed mb-4">
-      <p class="mb-2">
-        Paste your Base64 save code below. Note that this will completely
-        overwrite your current progress.
-      </p>
       <div class="w-full bg-canvas rounded-md p-3 border border-hairline">
         <textarea
           id="import-textarea"
@@ -604,38 +581,38 @@ const translatePath = useTranslatedPath(currentLang);
         id="btn-cancel-import"
         class="h-9 px-4 rounded-sm border border-hairline bg-canvas text-ink text-xs font-semibold hover:bg-canvas-soft-2 transition-all cursor-pointer"
       >
-        Cancel
+        {t("dashboard.cancel")}
       </button>
       <button
         id="btn-confirm-import"
         class="h-9 px-4 rounded-sm bg-primary text-on-primary text-xs font-semibold hover:opacity-90 transition-all cursor-pointer border-none"
       >
-        Restore Progress
+        {t("dashboard.restoreProgress")}
       </button>
     </div>
   </div>
 </div>
 
 <script>
-  import { lessons } from "../lib/lessons";
+  import { getLocalizedLessons, getLevelName, getLocalizedBadge } from "../i18n/lessons/index";
+  import type { SupportedLanguage } from "../i18n/languages";
 
-  const levelNames = [
-    "Guest",
-    "Linux Novice",
-    "Filesystem Explorer",
-    "Shell Apprentice",
-    "Console Wrangler",
-    "Command Initiate",
-    "Script Cadet",
-    "Bash Squire",
-    "Permissions Paladin",
-    "Sysadmin",
-    "Network Warden",
-    "Kernel Wizard",
-    "Root Superuser",
-    "Linux Archmage",
-    "Linux Demigod",
-  ];
+  const i18nLabels: Record<string, { passed: string; active: string; locked: string; start: string; review: string; noBadges: string; quest: string; levelUser: string }> = {
+    en: { passed: "Passed", active: "Active", locked: "Locked", start: "Start", review: "Review", noBadges: "No badges unlocked yet.<br>Complete quests to collect!", quest: "Quest", levelUser: "Level {level} User" },
+    es: { passed: "Completado", active: "Activo", locked: "Bloqueado", start: "Comenzar", review: "Revisar", noBadges: "No hay insignias desbloqueadas aún.<br>¡Completa misiones para coleccionar!", quest: "Misión", levelUser: "Usuario Nivel {level}" },
+    fr: { passed: "Réussi", active: "Actif", locked: "Verrouillé", start: "Démarrer", review: "Revoir", noBadges: "Aucun badge débloqué pour le moment.<br>Complétez des quêtes pour en collecter !", quest: "Quête", levelUser: "Utilisateur Niveau {level}" },
+    de: { passed: "Bestanden", active: "Aktiv", locked: "Gesperrt", start: "Starten", review: "Wiederholen", noBadges: "Noch keine Abzeichen freigeschaltet.<br>Schließen Sie Quests ab, um welche zu sammeln!", quest: "Quest", levelUser: "Level {level} Benutzer" },
+    ja: { passed: "合格", active: "アクティブ", locked: "ロック中", start: "開始", review: "復習", noBadges: "まだバッジはありません。<br>クエストをクリアして集めましょう！", quest: "クエスト", levelUser: "レベル {level} ユーザー" },
+    pt: { passed: "Concluído", active: "Ativo", locked: "Bloqueado", start: "Iniciar", review: "Revisar", noBadges: "Nenhum emblema desbloqueado ainda.<br>Complete missões para colecionar!", quest: "Missão", levelUser: "Usuário Nivel {level}" },
+    ko: { passed: "통과", active: "진행중", locked: "잠김", start: "시작", review: "복습", noBadges: "아직 획득한 배지가 없습니다.<br>퀘스트를 완료하고 배지를 모아보세요!", quest: "퀘스트", levelUser: "레벨 {level} 유저" },
+    it: { passed: "Completato", active: "Attivo", locked: "Bloccato", start: "Inizia", review: "Rivedi", noBadges: "Nessun distintivo ancora sbloccato.<br>Completa le missioni per collezionarli!", quest: "Missione", levelUser: "Utente Livello {level}" },
+  };
+
+  function getCurrentLang(): SupportedLanguage {
+    const docLang = document.documentElement.lang as SupportedLanguage;
+    if (docLang && i18nLabels[docLang]) return docLang;
+    return "en";
+  }
 
   function updateDashboardUI() {
     const globalWindow = window as any;
@@ -645,6 +622,10 @@ const translatePath = useTranslatedPath(currentLang);
     if (dashboardView && dashboardView.classList.contains("hidden")) {
       return;
     }
+
+    const currentLang = getCurrentLang();
+    const labels = i18nLabels[currentLang] || i18nLabels.en;
+    const lessons = getLocalizedLessons(currentLang);
 
     const state = globalWindow.appState;
     const completed = state.completedLessons || [];
@@ -659,12 +640,7 @@ const translatePath = useTranslatedPath(currentLang);
     }
     const xpInLevel = state.xp - accumulatedXp;
     const xpPerLevel = totalXpNeededForNext;
-    const levelName = levelNames[Math.min(level - 1, levelNames.length - 1)];
-
-    let displayedTitle = levelName;
-    if (level > 10) {
-      displayedTitle = `${levelName} (Lv. ${level})`;
-    }
+    const displayedTitle = getLevelName(level, currentLang);
 
     const profileTitle = document.getElementById("profile-title");
     const profileLevel = document.getElementById("profile-level");
@@ -680,7 +656,7 @@ const translatePath = useTranslatedPath(currentLang);
         ? displayedTitle
         : displayedTitle + ".";
     }
-    if (profileLevel) profileLevel.textContent = `Level ${level} User`;
+    if (profileLevel) profileLevel.textContent = labels.levelUser.replace("{level}", level.toString());
     if (profileXpRatio)
       profileXpRatio.textContent = `${xpInLevel} / ${xpPerLevel}`;
     if (profileXpProgress) {
@@ -711,7 +687,7 @@ const translatePath = useTranslatedPath(currentLang);
       if (earnedBadges.length === 0) {
         badgesRack.innerHTML = `
           <div class="w-full text-center py-5 border border-dashed border-hairline rounded-md text-mute text-[10px] font-mono bg-canvas-soft-2/50">
-            No badges unlocked yet.<br>Complete quests to collect!
+            ${labels.noBadges}
           </div>
         `;
       } else {
@@ -740,33 +716,21 @@ const translatePath = useTranslatedPath(currentLang);
             const color = colors[index % colors.length];
 
             let emoji = "🏆";
-            const badgeLower = item.badge.toLowerCase();
-            if (badgeLower.includes("explorer")) emoji = "🧭";
-            else if (badgeLower.includes("navigator")) emoji = "🗺️";
-            else if (badgeLower.includes("builder")) emoji = "🛠️";
-            else if (badgeLower.includes("architect")) emoji = "📐";
-            else if (badgeLower.includes("neat")) emoji = "🧹";
-            else if (badgeLower.includes("helpful")) emoji = "❓";
-            else if (badgeLower.includes("creator")) emoji = "✨";
-            else if (badgeLower.includes("reader")) emoji = "📖";
-            else if (badgeLower.includes("peeker")) emoji = "👁️";
-            else if (badgeLower.includes("pager")) emoji = "📄";
-            else if (badgeLower.includes("quoter")) emoji = "💬";
-            else if (badgeLower.includes("writer")) emoji = "✍️";
-            else if (badgeLower.includes("journal")) emoji = "📓";
-            else if (badgeLower.includes("archivist")) emoji = "📦";
-            else if (badgeLower.includes("wildcard")) emoji = "🃏";
-            else if (badgeLower.includes("cleaner")) emoji = "🗑️";
-            else if (badgeLower.includes("plumber")) emoji = "🔧";
-            else if (badgeLower.includes("organizer")) emoji = "🗂️";
-            else if (badgeLower.includes("filterer")) emoji = "🔍";
+            const badgeLower = (item.badge || "").toLowerCase();
+            if (badgeLower.includes("explorer") || badgeLower.includes("explorateur") || badgeLower.includes("explorador") || badgeLower.includes("erkunder") || badgeLower.includes("エクスプローラー") || badgeLower.includes("탐험가")) emoji = "🧭";
+            else if (badgeLower.includes("navigator") || badgeLower.includes("navigateur") || badgeLower.includes("navegante") || badgeLower.includes("ナビゲーター") || badgeLower.includes("항해사")) emoji = "🗺️";
+            else if (badgeLower.includes("builder") || badgeLower.includes("bâtisseur") || badgeLower.includes("constructor") || badgeLower.includes("erbauer")) emoji = "🛠️";
+            else if (badgeLower.includes("architect") || badgeLower.includes("architecte") || badgeLower.includes("arquitecto") || badgeLower.includes("architekt")) emoji = "📐";
+            else if (badgeLower.includes("cleaner") || badgeLower.includes("nettoyeur") || badgeLower.includes("limpiador")) emoji = "🗑️";
+            else if (badgeLower.includes("plumber") || badgeLower.includes("plombier") || badgeLower.includes("fontanero")) emoji = "🔧";
+            else if (badgeLower.includes("filterer") || badgeLower.includes("filtreur") || badgeLower.includes("filtrador")) emoji = "🔍";
 
             return `
             <div class="flex items-center gap-2 px-3 py-1.5 ${color.bg} ${color.border} border rounded-full transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm cursor-default select-none group/badge relative">
               <span class="text-sm shrink-0">${emoji}</span>
               <span class="text-[11px] font-mono font-bold ${color.text} truncate max-w-[100px]">${item.badge}</span>
               <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 opacity-0 scale-95 pointer-events-none group-hover/badge:opacity-100 group-hover/badge:scale-100 bg-primary text-on-primary text-[9px] font-mono py-1 px-2 rounded shadow-level-3 border border-hairline z-10 transition-all duration-200 whitespace-nowrap">
-                Quest ${item.title}
+                ${labels.quest} ${item.title}
               </div>
             </div>
           `;
@@ -784,7 +748,7 @@ const translatePath = useTranslatedPath(currentLang);
       const isCompleted = completed.includes(lessonId);
       const lessonIndex = lessons.findIndex((l: any) => l.id === lessonId);
       const isUnlocked =
-        lessonIndex === 0 || completed.includes(lessons[lessonIndex - 1].id);
+        lessonIndex === 0 || completed.includes(lessons[lessonIndex - 1]?.id);
 
       const statusBadge = node.querySelector(".node-status-badge");
       const lockOverlay = node.querySelector(".node-lock-overlay");
@@ -840,7 +804,7 @@ const translatePath = useTranslatedPath(currentLang);
       );
       startText?.classList.add("text-mute");
       if (startText) {
-        startText.innerHTML = 'Start <span class="font-mono">→</span>';
+        startText.innerHTML = `${labels.start} <span class="font-mono">→</span>`;
       }
       if (titleEl) {
         titleEl.className =
@@ -860,12 +824,12 @@ const translatePath = useTranslatedPath(currentLang);
           descEl.className = "text-xs text-body line-clamp-2 mt-1";
         }
         if (statusBadge) {
-          statusBadge.textContent = "Passed";
+          statusBadge.textContent = labels.passed;
           statusBadge.className =
             "node-status-badge text-[10px] font-mono font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 dark:text-emerald-400 dark:bg-emerald-950/20 dark:border-emerald-800/40 px-2 py-0.5 rounded";
         }
         if (startText) {
-          startText.innerHTML = 'Review <span class="font-mono">→</span>';
+          startText.innerHTML = `${labels.review} <span class="font-mono">→</span>`;
           startText.classList.remove("text-mute");
           startText.classList.add(
             "text-mute",
@@ -891,7 +855,7 @@ const translatePath = useTranslatedPath(currentLang);
           );
         }
         if (statusBadge) {
-          statusBadge.textContent = "Active";
+          statusBadge.textContent = labels.active;
           statusBadge.className =
             "node-status-badge text-[10px] font-mono font-bold text-violet-deep bg-violet-soft border border-violet-soft px-2.5 py-0.5 rounded";
         }
@@ -904,7 +868,7 @@ const translatePath = useTranslatedPath(currentLang);
         );
         lockOverlay?.classList.remove("hidden");
         if (statusBadge) {
-          statusBadge.textContent = "Locked";
+          statusBadge.textContent = labels.locked;
           statusBadge.className =
             "node-status-badge text-[10px] font-mono font-bold text-mute bg-canvas-soft border-hairline px-2 py-0.5 rounded";
         }

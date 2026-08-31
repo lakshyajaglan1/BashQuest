@@ -1,5 +1,13 @@
 ---
+import { type SupportedLanguage } from "../i18n/languages";
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
 
+interface Props {
+  lang?: SupportedLanguage;
+}
+
+const currentLang = Astro.props.lang || getLangFromUrl(Astro.url);
+const t = useTranslations(currentLang);
 ---
 
 <div
@@ -12,7 +20,7 @@
         id="lesson-eyebrow"
         class="font-mono text-xs font-bold text-violet-deep bg-violet-soft border border-violet-soft px-2.5 py-0.5 rounded-sm"
       >
-        QUEST 1
+        {t("lesson.quest")} 1
       </span>
       <span class="text-xs font-mono text-mute font-bold" id="lesson-xp-reward">
         +100 XP
@@ -37,9 +45,10 @@
     <!-- Commands Table Reference -->
     <div class="space-y-2 pt-2">
       <h4
+        id="label-command-ref"
         class="text-xs font-mono font-bold uppercase text-body tracking-wider"
       >
-        Command Reference
+        {t("lesson.commandRef")}
       </h4>
       <div
         id="lesson-commands"
@@ -52,9 +61,10 @@
     <!-- Objectives List -->
     <div class="space-y-3 pt-3 border-t border-hairline/60">
       <h4
+        id="label-checklist"
         class="text-xs font-mono font-bold uppercase text-body tracking-wider"
       >
-        Verification Checklist
+        {t("lesson.checklist")}
       </h4>
       <div
         id="lesson-objectives"
@@ -70,6 +80,7 @@
       class="hidden space-y-3 pt-3 border-t border-hairline/60 animate-in fade-in duration-200"
     >
       <h4
+        id="label-revealed-hints"
         class="text-xs font-mono font-bold uppercase text-amber-600 dark:text-amber-500 tracking-wider flex items-center gap-1.5"
       >
         <svg
@@ -85,7 +96,7 @@
             d="M9.663 17h4.673M12 3v1m6.364 .364l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 01-2 2h0a2 2 0 01-2-2v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
           ></path>
         </svg>
-        Revealed Hints
+        <span>{t("lesson.revealedHints")}</span>
       </h4>
       <div id="lesson-hints-container" class="space-y-2">
         <!-- Injected dynamically -->
@@ -106,14 +117,14 @@
         ✓
       </div>
       <div>
-        <h4 class="text-sm font-bold text-green-950 dark:text-green-50">
-          Quest Completed!
+        <h4 id="label-quest-completed" class="text-sm font-bold text-green-950 dark:text-green-50">
+          {t("lesson.questCompleted")}
         </h4>
         <p
           id="success-badge-award"
           class="text-xs text-green-800 dark:text-green-200 font-mono font-bold"
         >
-          Unlocked badge: Explorer
+          {t("lesson.unlockedBadge")} Explorer
         </p>
       </div>
     </div>
@@ -146,21 +157,21 @@
             stroke-linejoin="round"
             d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18"></path>
         </svg>
-        <span>Restore</span>
+        <span id="btn-restore-label">{t("lesson.restoreState")}</span>
       </button>
 
       <button
         id="btn-verify-lesson"
         class="flex-1 h-12 bg-primary text-on-primary rounded-sm font-medium text-sm hover:opacity-90 transition-all cursor-pointer flex items-center justify-center gap-2"
       >
-        <span>Verify Challenge</span>
+        <span id="btn-verify-label">{t("lesson.verifyOutput")}</span>
       </button>
 
       <button
         id="btn-next-lesson"
         class="hidden flex-1 h-12 bg-emerald-600 text-white hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 rounded-sm font-semibold text-sm transition-all cursor-pointer flex items-center justify-center gap-2 animate-pulse-slow shadow-md shadow-emerald-600/10 dark:shadow-emerald-500/10 border-none"
       >
-        <span>Next Quest</span>
+        <span id="btn-next-label">{t("lesson.nextQuest")}</span>
         <span class="font-mono">→</span>
       </button>
     </div>
@@ -168,7 +179,169 @@
 </div>
 
 <script>
-  import { lessons } from "../lib/lessons";
+  import { getLocalizedLesson, getLocalizedLessons, getLocalizedBadge } from "../i18n/lessons/index";
+  import type { SupportedLanguage } from "../i18n/languages";
+
+  const lessonPanelLabels: Record<string, {
+    quest: string;
+    commandRef: string;
+    noCommands: string;
+    checklist: string;
+    revealedHints: string;
+    questCompleted: string;
+    unlockedBadge: string;
+    bonusXp: string;
+    restoreState: string;
+    verifyOutput: string;
+    testing: string;
+    nextQuest: string;
+    objective: string;
+    directAnswer: string;
+    hint: string;
+  }> = {
+    en: {
+      quest: "QUEST",
+      commandRef: "Command Reference",
+      noCommands: "No commands for this lesson.",
+      checklist: "Verification Checklist",
+      revealedHints: "Revealed Hints",
+      questCompleted: "Quest Completed!",
+      unlockedBadge: "Unlocked badge:",
+      bonusXp: "Earned Bonus XP!",
+      restoreState: "Restore",
+      verifyOutput: "Verify Output",
+      testing: "Testing Filesystem...",
+      nextQuest: "Next Quest",
+      objective: "Objective:",
+      directAnswer: "DIRECT ANSWER:",
+      hint: "HINT",
+    },
+    es: {
+      quest: "MISIÓN",
+      commandRef: "Referencia de Comandos",
+      noCommands: "No hay comandos para esta misión.",
+      checklist: "Lista de Verificación",
+      revealedHints: "Pistas Reveladas",
+      questCompleted: "¡Misión Completada!",
+      unlockedBadge: "Insignia desbloqueada:",
+      bonusXp: "¡XP de bonificación obtenida!",
+      restoreState: "Restaurar",
+      verifyOutput: "Verificar Resultado",
+      testing: "Comprobando sistema...",
+      nextQuest: "Siguiente Misión",
+      objective: "Objetivo:",
+      directAnswer: "RESPUESTA DIRECTA:",
+      hint: "PISTA",
+    },
+    fr: {
+      quest: "QUÊTE",
+      commandRef: "Référence des Commandes",
+      noCommands: "Aucune commande pour cette quête.",
+      checklist: "Liste de Vérification",
+      revealedHints: "Indices Révélés",
+      questCompleted: "Quête Terminée !",
+      unlockedBadge: "Badge débloqué :",
+      bonusXp: "XP Bonus obtenu !",
+      restoreState: "Restaurer",
+      verifyOutput: "Vérifier le Résultat",
+      testing: "Test du système de fichiers...",
+      nextQuest: "Quête Suivante",
+      objective: "Objectif :",
+      directAnswer: "RÉPONSE DIRECTE :",
+      hint: "INDICE",
+    },
+    de: {
+      quest: "QUEST",
+      commandRef: "Befehlsübersicht",
+      noCommands: "Keine Befehle für diese Quest.",
+      checklist: "Überprüfungs-Checkliste",
+      revealedHints: "Aufgedeckte Hinweise",
+      questCompleted: "Quest Abgeschlossen!",
+      unlockedBadge: "Freigeschaltetes Abzeichen:",
+      bonusXp: "Bonus-XP erhalten!",
+      restoreState: "Zurücksetzen",
+      verifyOutput: "Ausgabe Überprüfen",
+      testing: "Dateisystem wird geprüft...",
+      nextQuest: "Nächste Quest",
+      objective: "Lernziel:",
+      directAnswer: "DIREKTE ANTWORT:",
+      hint: "HINWEIS",
+    },
+    ja: {
+      quest: "クエスト",
+      commandRef: "コマンドリファレンス",
+      noCommands: "このクエストに登録されたコマンドはありません。",
+      checklist: "達成目標チェックリスト",
+      revealedHints: "公開されたヒント",
+      questCompleted: "クエスト達成！",
+      unlockedBadge: "アンロックされたバッジ:",
+      bonusXp: "ボーナスXPを獲得！",
+      restoreState: "初期化",
+      verifyOutput: "結果を判定",
+      testing: "判定中...",
+      nextQuest: "次のクエストへ",
+      objective: "目標:",
+      directAnswer: "解答コマンド:",
+      hint: "ヒント",
+    },
+    pt: {
+      quest: "MISSÃO",
+      commandRef: "Referência de Comandos",
+      noCommands: "Nenhum comando para esta missão.",
+      checklist: "Lista de Verificação",
+      revealedHints: "Dicas Reveladas",
+      questCompleted: "Missão Concluída!",
+      unlockedBadge: "Emblema desbloqueado:",
+      bonusXp: "XP Bônus Conquistado!",
+      restoreState: "Restaurar",
+      verifyOutput: "Verificar Saída",
+      testing: "Verificando arquivos...",
+      nextQuest: "Próxima Missão",
+      objective: "Objetivo:",
+      directAnswer: "RESPOSTA DIRETA:",
+      hint: "DICA",
+    },
+    ko: {
+      quest: "퀘스트",
+      commandRef: "명령어 참조",
+      noCommands: "이 퀘스트에는 등록된 명령어가 없습니다.",
+      checklist: "검증 체크리스트",
+      revealedHints: "공개된 힌트",
+      questCompleted: "퀘스트 완료!",
+      unlockedBadge: "잠금 해제된 배지:",
+      bonusXp: "보너스 XP 획득!",
+      restoreState: "초기화",
+      verifyOutput: "결과 확인",
+      testing: "검증 중...",
+      nextQuest: "다음 퀘스트",
+      objective: "목표:",
+      directAnswer: "정답 명령어:",
+      hint: "힌트",
+    },
+    it: {
+      quest: "MISSIONE",
+      commandRef: "Riferimento Comandi",
+      noCommands: "Nessun comando per questa missione.",
+      checklist: "Lista di Controllo",
+      revealedHints: "Suggerimenti Rivelati",
+      questCompleted: "Missione Completata!",
+      unlockedBadge: "Distintivo sbloccato:",
+      bonusXp: "XP Bonus Ottenuto!",
+      restoreState: "Ripristina",
+      verifyOutput: "Verifica Risultato",
+      testing: "Verifica in corso...",
+      nextQuest: "Prossima Missione",
+      objective: "Obiettivo:",
+      directAnswer: "RISPOSTA DIRETTA:",
+      hint: "SUGGERIMENTO",
+    },
+  };
+
+  function getCurrentLang(): SupportedLanguage {
+    const docLang = document.documentElement.lang as SupportedLanguage;
+    if (docLang && lessonPanelLabels[docLang]) return docLang;
+    return "en";
+  }
 
   const HINT_1_THRESHOLD = 3;
   const HINT_2_THRESHOLD = 5;
@@ -197,8 +370,12 @@
     const globalWindow = window as any;
     if (!globalWindow.appState) return;
 
+    const currentLang = getCurrentLang();
+    const labels = lessonPanelLabels[currentLang] || lessonPanelLabels.en;
+    const allLessons = getLocalizedLessons(currentLang);
+
     const lessonId = forcedLessonId || globalWindow.appState.activeLessonId;
-    const lesson = lessons.find((l: any) => l.id === lessonId);
+    const lesson = getLocalizedLesson(lessonId, currentLang);
     if (!lesson) return;
 
     activeLesson = lesson;
@@ -214,9 +391,9 @@
     renderHints();
 
     if (lessonEyebrow) {
-      const index = lessons.findIndex((l: any) => l.id === lesson.id);
+      const index = allLessons.findIndex((l: any) => l.id === lesson.id);
       const questNumber = index >= 0 ? index + 1 : lesson.id;
-      lessonEyebrow.textContent = `QUEST ${questNumber}`;
+      lessonEyebrow.textContent = `${labels.quest} ${questNumber}`;
     }
     if (lessonTitle) {
       lessonTitle.textContent = /[.?!]$/.test(lesson.title)
@@ -238,7 +415,7 @@
 
       formattedText += `
         <div class="mt-4 p-3 bg-link-bg-soft/20 border border-link/20 rounded text-xs text-link-deep font-sans">
-          <strong>Objective:</strong> ${lesson.instructions}
+          <strong>${labels.objective}</strong> ${lesson.instructions}
         </div>
       `;
       lessonDesc.innerHTML = formattedText;
@@ -247,7 +424,7 @@
     if (lessonCommands) {
       if (!lesson.commandHelp || lesson.commandHelp.length === 0) {
         lessonCommands.innerHTML =
-          '<div class="p-3 text-mute italic">No commands for this lesson.</div>';
+          `<div class="p-3 text-mute italic">${labels.noCommands}</div>`;
       } else {
         lessonCommands.innerHTML = lesson.commandHelp
           .map(
@@ -265,7 +442,7 @@
     renderObjectives();
 
     btnVerify?.classList.remove("hidden");
-    if (btnVerify) btnVerify.innerHTML = "<span>Verify Challenge</span>";
+    if (btnVerify) btnVerify.innerHTML = `<span>${labels.verifyOutput}</span>`;
     btnNext?.classList.add("hidden");
     successBanner?.classList.add("hidden");
     const errorBanner = document.getElementById("error-banner");
@@ -314,6 +491,9 @@
       return;
     }
 
+    const currentLang = getCurrentLang();
+    const labels = lessonPanelLabels[currentLang] || lessonPanelLabels.en;
+
     const revealedHints = [];
     if (
       failedAttempts >= HINT_1_THRESHOLD &&
@@ -357,14 +537,14 @@
         if (hint.type === "answer") {
           return `
           <div class="p-3 bg-violet-50 border border-violet-200 dark:bg-violet-950/20 dark:border-violet-800/40 rounded-sm text-xs leading-relaxed text-violet-800 dark:text-violet-300 font-sans flex items-start gap-2.5 animate-in fade-in duration-200">
-            <span class="font-mono font-bold text-violet-600 dark:text-violet-400 shrink-0">DIRECT ANSWER:</span>
+            <span class="font-mono font-bold text-violet-600 dark:text-violet-400 shrink-0">${labels.directAnswer}</span>
             <span class="flex-1 font-semibold">${hint.text}</span>
           </div>
         `;
         } else {
           return `
           <div class="p-3 bg-amber-50 border border-amber-200 dark:bg-amber-950/20 dark:border-amber-900/40 rounded-sm text-xs leading-relaxed text-amber-800 dark:text-amber-300 font-sans flex items-start gap-2.5 animate-in fade-in duration-200">
-            <span class="font-mono font-bold text-amber-600 dark:text-amber-500 shrink-0">HINT ${hint.index}:</span>
+            <span class="font-mono font-bold text-amber-600 dark:text-amber-500 shrink-0">${labels.hint} ${hint.index}:</span>
             <span class="flex-1">${hint.text}</span>
             <button class="btn-dismiss-hint text-amber-400 hover:text-amber-600 dark:text-amber-600 dark:hover:text-amber-400 transition-colors ml-1 cursor-pointer bg-transparent border-none p-0 focus:outline-none" data-hint-idx="${idx}" title="Dismiss hint">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -379,11 +559,15 @@
   }
 
   function showCompletionUI() {
+    const currentLang = getCurrentLang();
+    const labels = lessonPanelLabels[currentLang] || lessonPanelLabels.en;
+    const allLessons = getLocalizedLessons(currentLang);
+
     successBanner?.classList.remove("hidden");
     if (successBadge && activeLesson) {
       successBadge.textContent = activeLesson.badge
-        ? `Unlocked badge: ${activeLesson.badge}`
-        : "Earned Bonus XP!";
+        ? `${labels.unlockedBadge} ${activeLesson.badge}`
+        : labels.bonusXp;
     }
     btnVerify?.classList.add("hidden");
 
@@ -396,12 +580,13 @@
     errorBanner?.classList.add("hidden");
 
     // Check if there is a next lesson
-    const currentIndex = lessons.findIndex(
+    const currentIndex = allLessons.findIndex(
       (l: any) => l.id === activeLesson.id,
     );
-    const nextLesson = lessons[currentIndex + 1];
+    const nextLesson = allLessons[currentIndex + 1];
     if (nextLesson) {
       btnNext?.classList.remove("hidden");
+      if (btnNext) btnNext.querySelector("span")!.textContent = labels.nextQuest;
     }
   }
 
@@ -411,16 +596,18 @@
     const globalWindow = window as any;
     if (!globalWindow.appState) return;
 
+    const currentLang = getCurrentLang();
+    const labels = lessonPanelLabels[currentLang] || lessonPanelLabels.en;
+
     if (btnVerify)
       btnVerify.innerHTML = `
       <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
       </svg>
-      <span>Testing Filesystem...</span>
+      <span>${labels.testing}</span>
     `;
 
-    // Simulate 600ms validation check delay for realistic premium visual feel
     setTimeout(() => {
       const fs = globalWindow.appState.fs;
       const session = globalWindow.appState.session;
@@ -446,121 +633,90 @@
         // Failed
         failedAttempts++;
         renderHints();
-        if (btnVerify) btnVerify.innerHTML = "<span>Verify Challenge</span>";
+        if (btnVerify) btnVerify.innerHTML = `<span>${labels.verifyOutput}</span>`;
 
-        // Show inline error banner with shake and fade out after 4 seconds
         const errorBanner = document.getElementById("error-banner");
         if (errorBanner) {
-          errorBanner.classList.remove("hidden", "opacity-0", "animate-shake");
-          void errorBanner.offsetWidth; // trigger reflow
-          errorBanner.classList.add("animate-shake");
-
-          if ((window as any).errorTimeout)
-            clearTimeout((window as any).errorTimeout);
-          (window as any).errorTimeout = setTimeout(() => {
+          errorBanner.classList.remove("hidden");
+          errorBanner.classList.remove("opacity-0");
+          setTimeout(() => {
             errorBanner.classList.add("opacity-0");
-            setTimeout(() => {
-              errorBanner.classList.add("hidden");
-              errorBanner.classList.remove("opacity-0");
-            }, 300); // match duration-300
-          }, 4000);
+            setTimeout(() => errorBanner.classList.add("hidden"), 300);
+          }, 3000);
         }
       }
     }, 600);
   });
 
-  // Next Lesson button
+  // Next Lesson Navigation
   btnNext?.addEventListener("click", () => {
     if (!activeLesson) return;
-    const currentIndex = lessons.findIndex(
+    const currentLang = getCurrentLang();
+    const allLessons = getLocalizedLessons(currentLang);
+    const currentIndex = allLessons.findIndex(
       (l: any) => l.id === activeLesson.id,
     );
-    const nextLesson = lessons[currentIndex + 1];
-    const nextId = nextLesson ? nextLesson.id : activeLesson.id;
-    window.dispatchEvent(
-      new CustomEvent("app:select-lesson", { detail: { lessonId: nextId } }),
-    );
+    const nextLesson = allLessons[currentIndex + 1];
+    if (nextLesson) {
+      window.dispatchEvent(
+        new CustomEvent("app:select-lesson", {
+          detail: { lessonId: nextLesson.id },
+        }),
+      );
+    }
   });
 
-  // Restore Lesson button
+  // Restore starting state button
   btnRestore?.addEventListener("click", () => {
+    if (!activeLesson) return;
     const globalWindow = window as any;
-    if (!activeLesson || !globalWindow.appState) return;
     if (
-      confirm(
-        "Are you sure you want to reset the filesystem and start this quest over? This will wipe your progress for this quest.",
-      )
-    ) {
-      window.dispatchEvent(new CustomEvent("app:restore-lesson"));
-    }
-  });
-
-  // Listeners
-  window.addEventListener("app:select-lesson", (e: any) => {
-    // Save current commands for state loading
-    const detail = (e as CustomEvent).detail;
-    const lessonId = detail ? detail.lessonId : null;
-    loadActiveLesson(lessonId);
-  });
-
-  window.addEventListener("app:state-updated", () => {
-    const globalWindow = window as any;
-    // Sync state
-    if (!activeLesson && globalWindow.appState) {
-      loadActiveLesson();
-    } else if (
-      activeLesson &&
       globalWindow.appState &&
-      globalWindow.appState.completedLessons.includes(activeLesson.id)
+      globalWindow.appState.resetActiveLessonFilesystem
     ) {
-      showCompletionUI();
+      globalWindow.appState.resetActiveLessonFilesystem();
     }
+    validationResult = {
+      success: false,
+      checks: activeLesson.objectives.map((o: any) => ({
+        id: o.id,
+        passed: false,
+      })),
+    };
+    renderObjectives();
   });
 
-  // Check commands as user types to dynamically tick off simple objectives if they pass
-  window.addEventListener("app:terminal-command", (e: any) => {
-    // Append command to state
-    const globalWindow = window as any;
-    if (globalWindow.appState) {
-      if (!globalWindow.appState.terminalCommands)
-        globalWindow.appState.terminalCommands = [];
-      globalWindow.appState.terminalCommands.push(
-        (e as CustomEvent).detail.command,
-      );
-    }
-  });
-
-  // Dismiss hint listener using event delegation
+  // Dismiss individual hint click handler
   hintsContainer?.addEventListener("click", (e: any) => {
-    const target = e.target as HTMLElement;
-    const dismissBtn = target.closest(".btn-dismiss-hint");
+    const dismissBtn = e.target.closest(".btn-dismiss-hint");
     if (dismissBtn) {
-      const hintIdx = parseInt(
-        dismissBtn.getAttribute("data-hint-idx") || "0",
-        10,
-      );
-      dismissedHints.add(hintIdx);
-      renderHints();
+      const idx = parseInt(dismissBtn.getAttribute("data-hint-idx"), 10);
+      if (!isNaN(idx)) {
+        dismissedHints.add(idx);
+        renderHints();
+      }
     }
+  });
+
+  // Keyboard shortcut Ctrl+Enter to trigger verification
+  window.addEventListener("keydown", (e: KeyboardEvent) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+      e.preventDefault();
+      if (btnVerify && !btnVerify.classList.contains("hidden")) {
+        btnVerify.click();
+      } else if (btnNext && !btnNext.classList.contains("hidden")) {
+        btnNext.click();
+      }
+    }
+  });
+
+  // Listen for lesson selections
+  window.addEventListener("app:select-lesson", (e: any) => {
+    loadActiveLesson(e.detail.lessonId);
+  });
+
+  // Initial Load
+  window.addEventListener("DOMContentLoaded", () => {
+    loadActiveLesson();
   });
 </script>
-
-<style>
-  @keyframes shake {
-    0%,
-    100% {
-      transform: translateX(0);
-    }
-    20%,
-    60% {
-      transform: translateX(-4px);
-    }
-    40%,
-    80% {
-      transform: translateX(4px);
-    }
-  }
-  .animate-shake {
-    animation: shake 0.3s ease-in-out;
-  }
-</style>

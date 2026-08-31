@@ -7,7 +7,7 @@ import Terminal from "../../components/Terminal.astro";
 import LessonPanel from "../../components/LessonPanel.astro";
 import Footer from "../../components/Footer.astro";
 import WebTools from "../../components/WebTools.astro";
-import { modules } from "../../lib/lessons.js";
+import { getLocalizedModules } from "../../i18n/lessons/index";
 import { nonDefaultLangs, type SupportedLanguage } from "../../i18n/languages";
 import { useTranslations, useTranslatedPath } from "../../i18n/utils";
 
@@ -92,7 +92,7 @@ const orgSchema = {
         >
           <!-- Left Column: Lesson Instructions Panel (5 cols) -->
           <div class="lg:col-span-5 h-auto lg:h-full min-h-0">
-            <LessonPanel />
+            <LessonPanel lang={lang} />
           </div>
 
           <!-- Right Column: Visual Explorer & Terminal (7 cols) -->
@@ -232,7 +232,7 @@ const orgSchema = {
 
               <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                 {
-                  modules.map((mod) => (
+                  getLocalizedModules(lang).map((mod) => (
                     <div class="p-4 bg-canvas border border-hairline rounded-md shadow-level-2 hover:shadow-level-3 transition-all duration-200">
                       <div class="caption-mono text-mute uppercase font-semibold mb-1">
                         {t("dashboard.module")} {mod.id}

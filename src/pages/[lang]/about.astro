@@ -2,7 +2,7 @@
 import Layout from "../../layouts/Layout.astro";
 import Navigation from "../../components/Navigation.astro";
 import Footer from "../../components/Footer.astro";
-import { modules } from "../../lib/lessons.js";
+import { getLocalizedModules } from "../../i18n/lessons/index";
 import { nonDefaultLangs, type SupportedLanguage } from "../../i18n/languages";
 import { useTranslations, useTranslatedPath } from "../../i18n/utils";
 
@@ -147,7 +147,7 @@ const translatePath = useTranslatedPath(lang);
 
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             {
-              modules.map((mod) => (
+              getLocalizedModules(lang).map((mod) => (
                 <div class="p-4 bg-canvas border border-hairline rounded-md shadow-level-2 hover:shadow-level-3 transition-all duration-200">
                   <div class="caption-mono text-mute uppercase font-semibold mb-1">
                     {t("dashboard.module")} {mod.id}
