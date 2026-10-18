@@ -16,12 +16,24 @@ const t = useTranslations(currentLang);
   <!-- Lesson Header -->
   <div class="pb-4 border-b border-hairline mb-5">
     <div class="flex items-center justify-between mb-2">
-      <span
-        id="lesson-eyebrow"
-        class="font-mono text-xs font-bold text-violet-deep bg-violet-soft border border-violet-soft px-2.5 py-0.5 rounded-sm"
-      >
-        {t("lesson.quest")} 1
-      </span>
+      <div class="flex items-center gap-2">
+        <span
+          id="lesson-eyebrow"
+          class="font-mono text-xs font-bold text-violet-deep bg-violet-soft border border-violet-soft px-2.5 py-0.5 rounded-sm"
+        >
+          {t("lesson.quest")} 1
+        </span>
+        <!-- Boss Rush Live Stopwatch Timer -->
+        <div
+          id="lesson-boss-rush-timer"
+          class="hidden items-center gap-1.5 px-2 py-0.5 rounded-sm font-mono text-xs font-bold bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 select-none animate-pulse"
+          title="Boss Rush Live Stopwatch"
+        >
+          <span>⏱️</span>
+          <span class="text-[10px] uppercase font-bold tracking-wider">Rush:</span>
+          <span id="lesson-boss-rush-display" class="tabular-nums">00:00</span>
+        </div>
+      </div>
       <span class="text-xs font-mono text-mute font-bold" id="lesson-xp-reward">
         +100 XP
       </span>

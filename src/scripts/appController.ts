@@ -3,6 +3,7 @@ import { lessons } from "../lib/lessons";
 
 export class AppStateManager {
   state: any;
+  bossRushInterval: any = null;
   constructor() {
 
     this.state = {
@@ -171,6 +172,10 @@ export class AppStateManager {
         "git",
         "docker",
       ],
+      bossRushMode: false,
+      bossRushStartTime: null,
+      fastestBossRushTime: null,
+      fastestBossRushStr: null,
     };
 
     this.init();
@@ -709,10 +714,88 @@ export class AppStateManager {
       activeView: this.state.activeView,
       streak: this.state.streak,
       lastCompletedDate: this.state.lastCompletedDate,
+      bossRushMode: this.state.bossRushMode,
+      bossRushStartTime: this.state.bossRushStartTime,
+      fastestBossRushTime: this.state.fastestBossRushTime,
+      fastestBossRushStr: this.state.fastestBossRushStr,
       resetActiveLessonFilesystem: () => {
         window.dispatchEvent(new CustomEvent("app:restore-lesson"));
       },
     };
+  }
+
+  startBossRushTimer() {
+    if (this.bossRushInterval) {
+      clearInterval(this.bossRushInterval);
+      this.bossRushInterval = null;
+    }
+
+    const updateDisplay = () => {
+      const timerEls = [
+        document.getElementById("workspace-boss-rush-timer"),
+        document.getElementById("lesson-boss-rush-timer"),
+        document.getElementById("boss-rush-banner"),
+      ];
+      const displayEls = [
+        document.getElementById("workspace-boss-rush-display"),
+        document.getElementById("lesson-boss-rush-display"),
+        document.getElementById("dashboard-boss-rush-timer"),
+      ];
+
+      if (!this.state.bossRushMode || !this.state.bossRushStartTime) {
+        timerEls.forEach((el) => {
+          if (el) {
+            el.classList.add("hidden");
+            el.classList.remove("flex", "inline-flex");
+          }
+        });
+        return;
+      }
+
+      timerEls.forEach((el) => {
+        if (el) {
+          el.classList.remove("hidden");
+          el.classList.add("flex");
+        }
+      });
+
+      const elapsedMs = Math.max(0, Date.now() - this.state.bossRushStartTime);
+      const totalSeconds = Math.floor(elapsedMs / 1000);
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      const formatted = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+
+      displayEls.forEach((el) => {
+        if (el) {
+          if (el.id === "dashboard-boss-rush-timer") {
+            el.textContent = `⏱️ ${formatted}`;
+          } else {
+            el.textContent = formatted;
+          }
+        }
+      });
+    };
+
+    updateDisplay();
+    this.bossRushInterval = setInterval(updateDisplay, 500);
+  }
+
+  stopBossRushTimer() {
+    if (this.bossRushInterval) {
+      clearInterval(this.bossRushInterval);
+      this.bossRushInterval = null;
+    }
+    const timerEls = [
+      document.getElementById("workspace-boss-rush-timer"),
+      document.getElementById("lesson-boss-rush-timer"),
+      document.getElementById("boss-rush-banner"),
+    ];
+    timerEls.forEach((el) => {
+      if (el) {
+        el.classList.add("hidden");
+        el.classList.remove("flex", "inline-flex");
+      }
+    });
   }
 
   bindEvents() {
@@ -788,7 +871,72 @@ export class AppStateManager {
         this.state.xp += practiceXp;
       }
 
+      // Check Boss Rush Completion (all 17 Boss Challenges completed)
+      const bossLessons = lessons.filter((l) => l.title.includes("Boss Challenge"));
+      const allBossesDone =
+        bossLessons.length > 0 &&
+        bossLessons.every((b) => this.state.completedLessons.includes(b.id));
+
+      if ((this.state.bossRushMode || this.state.bossRushStartTime) && allBossesDone) {
+        const startTime = this.state.bossRushStartTime || Date.now();
+        const elapsedMs = Math.max(0, Date.now() - startTime);
+        const prevFastest = localStorage.getItem("bashquest_fastest_boss_rush");
+        const prevFastestMs = prevFastest ? parseInt(prevFastest, 10) : Infinity;
+
+        const totalSec = Math.floor(elapsedMs / 1000);
+        const mins = Math.floor(totalSec / 60);
+        const secs = totalSec % 60;
+        const formatted = `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+
+        let isNewBest = false;
+        if (elapsedMs < prevFastestMs) {
+          isNewBest = true;
+          localStorage.setItem("bashquest_fastest_boss_rush", elapsedMs.toString());
+          localStorage.setItem("bashquest_fastest_boss_rush_str", formatted);
+          this.state.fastestBossRushTime = elapsedMs;
+          this.state.fastestBossRushStr = formatted;
+        }
+
+        window.dispatchEvent(
+          new CustomEvent("app:boss-rush-completed", {
+            detail: {
+              elapsedMs,
+              formattedTime: formatted,
+              isNewBest,
+            },
+          }),
+        );
+      }
+
       this.updateStreak();
+      this.saveToStorage();
+      this.broadcastState();
+    });
+
+    window.addEventListener("app:toggle-boss-rush", (e: any) => {
+      const targetState =
+        typeof e.detail?.enable === "boolean"
+          ? e.detail.enable
+          : !this.state.bossRushMode;
+      this.state.bossRushMode = targetState;
+
+      if (this.state.bossRushMode) {
+        if (!this.state.bossRushStartTime) {
+          this.state.bossRushStartTime = Date.now();
+        }
+        localStorage.setItem("bashquest_boss_rush_mode", "true");
+        localStorage.setItem(
+          "bashquest_boss_rush_start",
+          this.state.bossRushStartTime.toString(),
+        );
+        this.startBossRushTimer();
+      } else {
+        this.state.bossRushStartTime = null;
+        localStorage.removeItem("bashquest_boss_rush_mode");
+        localStorage.removeItem("bashquest_boss_rush_start");
+        this.stopBossRushTimer();
+      }
+
       this.saveToStorage();
       this.broadcastState();
     });
@@ -961,7 +1109,16 @@ export class AppStateManager {
           "git",
           "docker",
         ],
+        bossRushMode: false,
+        bossRushStartTime: null,
+        fastestBossRushTime: null,
+        fastestBossRushStr: null,
       };
+      localStorage.removeItem("bashquest_boss_rush_mode");
+      localStorage.removeItem("bashquest_boss_rush_start");
+      localStorage.removeItem("bashquest_fastest_boss_rush");
+      localStorage.removeItem("bashquest_fastest_boss_rush_str");
+      this.stopBossRushTimer();
       this.resetFilesystem();
       this.applyViewVisibility();
 
@@ -1199,6 +1356,10 @@ export class AppStateManager {
       globalWindow.appState.activeLessonId = this.state.activeLessonId;
       globalWindow.appState.streak = this.state.streak;
       globalWindow.appState.activeView = this.state.activeView;
+      globalWindow.appState.bossRushMode = this.state.bossRushMode;
+      globalWindow.appState.bossRushStartTime = this.state.bossRushStartTime;
+      globalWindow.appState.fastestBossRushTime = this.state.fastestBossRushTime;
+      globalWindow.appState.fastestBossRushStr = this.state.fastestBossRushStr;
       if (
         !globalWindow.appState.activeLesson ||
         globalWindow.appState.activeLesson.id !== this.state.activeLessonId
@@ -1228,6 +1389,21 @@ export class AppStateManager {
       } catch (e) {
         console.error("Failed to parse storage, using defaults", e);
       }
+    }
+
+    const fastestMs = localStorage.getItem("bashquest_fastest_boss_rush");
+    if (fastestMs) {
+      this.state.fastestBossRushTime = parseInt(fastestMs, 10);
+      this.state.fastestBossRushStr =
+        localStorage.getItem("bashquest_fastest_boss_rush_str") || "";
+    }
+
+    const bossMode = localStorage.getItem("bashquest_boss_rush_mode");
+    const bossStart = localStorage.getItem("bashquest_boss_rush_start");
+    if (bossMode === "true" && bossStart) {
+      this.state.bossRushMode = true;
+      this.state.bossRushStartTime = parseInt(bossStart, 10);
+      setTimeout(() => this.startBossRushTimer(), 100);
     }
   }
 }

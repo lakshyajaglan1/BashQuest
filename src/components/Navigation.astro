@@ -76,6 +76,17 @@ const homePath = translatePath("/");
 
   <!-- Profile & Stats Cluster -->
   <div class="flex items-center gap-1.5 sm:gap-3 md:gap-4 shrink-0">
+    <!-- Boss Rush Live Stopwatch Timer (Workspace Header) -->
+    <div
+      id="workspace-boss-rush-timer"
+      class="hidden items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full font-mono text-xs font-bold bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 select-none animate-pulse shadow-xs"
+      title="Boss Rush Live Stopwatch"
+    >
+      <span class="text-xs sm:text-sm">⏱️</span>
+      <span class="hidden sm:inline text-[10px] tracking-wider uppercase font-mono font-bold">Boss Rush:</span>
+      <span id="workspace-boss-rush-display" class="tabular-nums font-bold">00:00</span>
+    </div>
+
     <!-- Language Picker -->
     <LanguagePicker currentLang={currentLang} variant="nav" />
 

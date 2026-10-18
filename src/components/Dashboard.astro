@@ -13,11 +13,74 @@ const t = useTranslations(currentLang);
 const translatePath = useTranslatedPath(currentLang);
 const localizedModules = getLocalizedModules(currentLang);
 const localizedLessons = getLocalizedLessons(currentLang);
+
+const verifyQueryToken = Astro.url.searchParams.get("verify") || "";
+let initialVerifiedCredential: any = null;
+if (verifyQueryToken && !verifyQueryToken.startsWith("BQ-PREVIEW-")) {
+  try {
+    const cleanToken = verifyQueryToken.startsWith("BQ-") ? verifyQueryToken.slice(3) : verifyQueryToken;
+    const decodedStr = decodeURIComponent(escape(atob(cleanToken)));
+    const parsed = JSON.parse(decodedStr);
+    if (parsed && parsed.name && (parsed.bossCount >= 17 || parsed.count >= 150 || parsed.verified)) {
+      initialVerifiedCredential = { ...parsed, token: verifyQueryToken, verified: true };
+    }
+  } catch (e) {
+    // Invalid token format
+  }
+}
 ---
 
 <div
   class="bg-canvas-soft mesh-gradient min-h-[calc(100vh-64px)] w-full py-6 sm:py-12 px-3 sm:px-4 md:px-8 select-none pb-24 md:pb-12"
 >
+  <!-- Verifiable Credential Banner (shown when ?verify=<token> is present) -->
+  <div
+    id="credential-verification-banner"
+    class={`${initialVerifiedCredential ? "flex" : "hidden"} mb-6 card-marketing border-2 border-emerald-500/40 bg-emerald-500/5 p-4 sm:p-6 rounded-lg shadow-level-3 flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-in fade-in duration-300`}
+  >
+    <div class="flex items-start sm:items-center gap-3">
+      <div class="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-lg shrink-0 border border-emerald-500/30">
+        ✓
+      </div>
+      <div class="space-y-1">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+            Verified Credential Badge
+          </span>
+          <span class="text-[11px] font-mono text-mute">Official BashQuest Accreditation</span>
+        </div>
+        <h3 class="text-base sm:text-lg font-bold text-ink">
+          BashQuest Linux & Shell Mastery Certificate
+        </h3>
+        <p class="text-xs sm:text-sm text-body leading-relaxed">
+          Officially verified credential issued to <strong class="text-ink font-semibold" id="verify-learner-name">{initialVerifiedCredential?.name || ""}</strong> on <strong class="text-ink font-semibold" id="verify-date">{initialVerifiedCredential?.date || ""}</strong> for mastering <strong class="text-ink font-semibold" id="verify-count">{initialVerifiedCredential?.count ?? 150}</strong> Quests with <strong class="text-ink font-semibold" id="verify-xp">{initialVerifiedCredential?.xp ?? 0}</strong> XP.
+        </p>
+      </div>
+    </div>
+    <div class="flex sm:flex-col items-center sm:items-end gap-2 w-full sm:w-auto shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-hairline">
+      <span class="font-mono text-[10px] text-mute truncate max-w-[200px]" title={verifyQueryToken}>
+        Token: <code class="text-ink font-bold" id="verify-token-code">{verifyQueryToken}</code>
+      </span>
+      <div class="flex items-center gap-2">
+        <button
+          id="btn-verify-view-cert"
+          type="button"
+          class="h-8 px-3 rounded bg-primary text-on-primary font-sans text-xs font-semibold hover:opacity-90 transition-all cursor-pointer shadow-sm"
+        >
+          View Certificate ↗
+        </button>
+        <button
+          id="btn-dismiss-verify-banner"
+          type="button"
+          class="h-8 px-2.5 rounded border border-hairline bg-canvas text-mute hover:text-ink font-sans text-xs font-semibold cursor-pointer"
+          title="Dismiss Banner"
+        >
+          ✕
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div class="w-full grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
     <!-- User Profile, Stats & Quick Links (Left Column) -->
     <div class="lg:col-span-1 space-y-6">
@@ -116,6 +179,51 @@ const localizedLessons = getLocalizedLessons(currentLang);
               {t("dashboard.reset")}
             </button>
           </div>
+        </div>
+      </div>
+
+      <!-- Linux Certificate Accreditation Card -->
+      <div class="card-marketing border border-hairline bg-canvas p-5 sm:p-6 shadow-level-3 space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xs font-bold tracking-widest text-mute uppercase font-mono border-l-2 border-primary pl-2">
+            Accreditation
+          </h3>
+          <span
+            id="cert-status-badge"
+            class="text-[10px] font-mono px-2 py-0.5 rounded bg-canvas-soft-2 text-mute border border-hairline font-bold"
+          >
+            In Progress
+          </span>
+        </div>
+        <p class="text-xs text-body leading-relaxed">
+          Verifiable HTML5 completion credential with deterministic cryptographic token & LinkedIn sharing.
+        </p>
+        <button
+          id="btn-claim-certificate"
+          type="button"
+          class="w-full h-10 px-3 rounded-sm bg-primary text-on-primary text-xs font-semibold hover:opacity-90 active:scale-[0.99] transition-all cursor-pointer flex items-center justify-between shadow-sm group"
+        >
+          <span class="flex items-center gap-2">
+            <span class="text-base group-hover:scale-110 transition-transform">🎓</span>
+            <span>Claim Linux Certificate</span>
+          </span>
+          <span
+            id="cert-progress-badge"
+            class="font-mono text-[10px] px-2 py-0.5 rounded bg-on-primary/20 text-on-primary font-bold tabular-nums"
+          >
+            0 / 17 Bosses
+          </span>
+        </button>
+        <div class="flex items-center justify-between text-[11px] font-mono text-mute pt-1">
+          <span id="cert-progress-count" class="tabular-nums">0 / 17 Boss Challenges completed</span>
+          <button
+            id="btn-preview-certificate"
+            type="button"
+            class="text-link hover:underline cursor-pointer bg-transparent border-none p-0 text-[11px] font-mono font-medium"
+            title="Preview and test your certificate credential"
+          >
+            Preview ↗
+          </button>
         </div>
       </div>
 
@@ -281,38 +389,73 @@ const localizedLessons = getLocalizedLessons(currentLang);
       </div>
 
       <div class="mb-4">
-        <h2 class="display-lg text-ink font-bold tracking-tight">
-          {t("dashboard.pathTitle")}
-        </h2>
-        <p class="body-md text-body mt-2">
-          {t("dashboard.pathDesc")}
-        </p>
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h2 class="display-lg text-ink font-bold tracking-tight">
+              {t("dashboard.pathTitle")}
+            </h2>
+            <p class="body-md text-body mt-2">
+              {t("dashboard.pathDesc")}
+            </p>
+          </div>
+          <!-- Boss Rush Mode Toggle -->
+          <div class="flex items-center gap-2 shrink-0">
+            <button
+              id="btn-boss-rush-toggle"
+              type="button"
+              class="h-9 px-4 rounded-full border border-hairline bg-canvas text-ink text-xs font-semibold hover:bg-canvas-soft-2 transition-all cursor-pointer flex items-center gap-2 shadow-xs group select-none"
+              title="Toggle Boss Rush Mode (17 Scenarios)"
+            >
+              <span class="text-sm group-hover:scale-110 transition-transform">⚔️</span>
+              <span>Boss Rush (17 Scenarios)</span>
+              <span id="boss-rush-status-dot" class="w-2 h-2 rounded-full bg-mute transition-colors"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Boss Rush Banner when Active -->
+      <div
+        id="boss-rush-banner"
+        class="hidden mb-4 p-3.5 rounded-md bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs font-mono flex items-center justify-between gap-3 animate-in fade-in duration-200"
+      >
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="text-base shrink-0">⚔️</span>
+          <span class="truncate font-sans font-semibold">Boss Rush Mode Active: All 17 Boss Challenges unlocked!</span>
+        </div>
+        <div class="flex items-center gap-3 shrink-0">
+          <span id="dashboard-boss-rush-timer" class="font-bold tabular-nums">⏱️ 00:00</span>
+          <span id="dashboard-fastest-time" class="hidden text-amber-600 dark:text-amber-400 font-bold">⚡ Best: 00:00</span>
+        </div>
       </div>
 
       {
         localizedModules.map((mod) => {
           const moduleLessons = localizedLessons.filter((l: any) => l.moduleId === mod.id);
           return (
-            <div class="space-y-4">
-              <h2 class="text-xs font-mono font-bold tracking-widest text-mute uppercase px-1 border-l-2 border-primary">
+            <div class="space-y-4 module-container" data-module-id={mod.id}>
+              <h2 class="text-xs font-mono font-bold tracking-widest text-mute uppercase px-1 border-l-2 border-primary module-title">
                 {mod.title}
               </h2>
 
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {moduleLessons.map((lesson: any, lIndex: number) => {
                   const isBoss = lIndex === moduleLessons.length - 1;
+                  const isBossChallenge = lesson.title.includes("Boss Challenge");
                   const questNumber = localizedLessons.findIndex((l: any) => l.id === lesson.id) + 1;
                   const slug = getQuestSlug(lesson, questNumber - 1);
                   const questUrl = translatePath(`/quests/${slug}`);
                   return (
                     <div
                       data-lesson-id={lesson.id}
+                      data-is-boss={isBoss || isBossChallenge ? "true" : "false"}
+                      data-is-boss-challenge={isBossChallenge ? "true" : "false"}
                       data-terminal-url={translatePath("/terminal")}
                       class="lesson-node-card cursor-pointer border border-hairline rounded-md p-5 bg-canvas flex flex-col justify-between hover:shadow-md transition-all duration-200 relative group opacity-60 pointer-events-none"
                     >
                       <div class="flex justify-between items-start mb-2">
-                        <span class={`font-mono text-xs font-bold px-2 py-0.5 rounded border ${isBoss ? "text-amber-600 dark:text-amber-400 bg-amber-500/10 border-amber-500/20 font-bold" : "text-mute bg-canvas-soft-2 border-hairline"}`}>
-                          {isBoss ? "👑 Boss · " : ""}{t("dashboard.quest")}{" "}
+                        <span class={`font-mono text-xs font-bold px-2 py-0.5 rounded border ${isBoss || isBossChallenge ? "text-amber-600 dark:text-amber-400 bg-amber-500/10 border-amber-500/20 font-bold" : "text-mute bg-canvas-soft-2 border-hairline"}`}>
+                          {isBoss || isBossChallenge ? "👑 Boss · " : ""}{t("dashboard.quest")}{" "}
                           {questNumber}
                         </span>
                         <span class="node-status-badge text-[10px] font-mono font-bold text-mute bg-canvas-soft border border-hairline px-2 py-0.5 rounded">
@@ -611,6 +754,132 @@ const localizedLessons = getLocalizedLessons(currentLang);
   </div>
 </div>
 
+<!-- Custom Modal for Linux Certificate Claim & Preview -->
+<div
+  id="modal-certificate"
+  class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-sm hidden select-none overflow-y-auto"
+>
+  <div
+    class="w-full max-w-4xl bg-canvas rounded-xl border border-hairline shadow-2xl p-4 sm:p-6 sm:p-8 relative my-auto animate-in fade-in zoom-in-95 duration-200 max-h-[94vh] flex flex-col"
+  >
+    <!-- Modal Header -->
+    <div class="flex items-start justify-between pb-4 border-b border-hairline mb-4">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-xl">🎓</span>
+          <h3 class="text-lg sm:text-xl font-bold text-ink tracking-tight font-sans">
+            Linux & Shell Mastery Certificate
+          </h3>
+        </div>
+        <p class="text-xs text-mute font-mono mt-1">
+          Official Verifiable Credential • 150 Quests • 17 Modules • 140+ Linux Commands
+        </p>
+      </div>
+      <button
+        id="btn-close-cert-modal"
+        class="text-mute hover:text-ink cursor-pointer bg-transparent border-none p-1.5 rounded-sm hover:bg-canvas-soft-2 transition-colors"
+        aria-label="Close certificate modal"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Name Input Form -->
+    <div class="mb-4 space-y-1.5">
+      <label for="cert-learner-name" class="block text-xs font-mono font-bold uppercase tracking-wider text-body">
+        Learner's Full Name (Printed on Credential)
+      </label>
+      <div class="flex gap-2">
+        <input
+          id="cert-learner-name"
+          type="text"
+          placeholder="Enter your full name (e.g. Linus Torvalds)..."
+          maxlength="50"
+          class="flex-1 h-10 px-3 bg-canvas-soft-2 border border-hairline rounded-sm text-ink font-sans text-sm focus:border-primary focus:outline-none transition-colors"
+        />
+        <button
+          id="btn-render-cert"
+          type="button"
+          class="h-10 px-4 rounded-sm bg-canvas-soft-2 text-ink border border-hairline hover:bg-white dark:hover:bg-[#1a1a1a] text-xs font-semibold cursor-pointer transition-all shrink-0"
+        >
+          Update
+        </button>
+      </div>
+    </div>
+
+    <!-- Status / Locked Notice -->
+    <div
+      id="cert-locked-notice"
+      class="hidden mb-3 p-3 rounded-md bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs font-mono flex items-center justify-between gap-2"
+    >
+      <div class="flex items-center gap-2">
+        <span class="text-base shrink-0">🔒</span>
+        <span id="cert-locked-msg">
+          Preview Mode: Complete all 17 Boss Challenges to unlock official certificate download and LinkedIn sharing.
+        </span>
+      </div>
+      <span id="cert-locked-pill" class="shrink-0 px-2 py-0.5 rounded bg-amber-500/20 text-amber-800 dark:text-amber-200 font-bold">
+        Locked
+      </span>
+    </div>
+
+    <!-- Certificate Canvas Display -->
+    <div class="flex-1 min-h-0 overflow-hidden rounded-lg border border-hairline bg-[#07080c] shadow-2xl flex items-center justify-center p-2 sm:p-3 mb-4">
+      <canvas
+        id="cert-canvas"
+        width="1920"
+        height="1080"
+        class="w-full h-auto max-h-[50vh] object-contain rounded block shadow-lg"
+      ></canvas>
+    </div>
+
+    <!-- Token & Action Buttons Footer -->
+    <div class="space-y-3 pt-3 border-t border-hairline">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-mono bg-canvas-soft-2 p-2.5 rounded border border-hairline">
+        <div class="flex items-center gap-2 truncate">
+          <span class="text-mute shrink-0">Deterministic Token:</span>
+          <span id="cert-token-display" class="font-bold text-success truncate select-all cursor-text font-mono">
+            BQ-...
+          </span>
+        </div>
+        <button
+          id="btn-copy-cert-link"
+          type="button"
+          class="text-link hover:underline cursor-pointer bg-transparent border-none p-0 text-[11px] shrink-0 self-start sm:self-auto font-mono"
+        >
+          Copy Verification Link ↗
+        </button>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-end gap-2.5">
+        <button
+          id="btn-share-cert-linkedin"
+          type="button"
+          class="h-9 px-4 rounded-sm bg-[#0077b5] text-white text-xs font-semibold hover:brightness-110 transition-all cursor-pointer border-none flex items-center gap-1.5 shadow-sm"
+        >
+          <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+            <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.25V10.9H6.46M7.86 6.54a1.64 1.64 0 1 0 0 3.28 1.64 1.64 0 0 0 0-3.28z"/>
+          </svg>
+          <span>Share on LinkedIn</span>
+        </button>
+
+        <button
+          id="btn-download-cert-png"
+          type="button"
+          class="h-9 px-4 rounded-sm bg-primary text-on-primary text-xs font-semibold hover:opacity-90 transition-all cursor-pointer border-none flex items-center gap-1.5 shadow-sm"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+          </svg>
+          <span>Download PNG</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   import { getLocalizedLessons, getLevelName, getLocalizedBadge } from "../i18n/lessons/index";
   import type { SupportedLanguage } from "../i18n/languages";
@@ -757,6 +1026,72 @@ const localizedLessons = getLocalizedLessons(currentLang);
       }
     }
 
+    // Update Certificate section in sidebar
+    const bossLessons = lessons.filter((l: any) => l.title.includes("Boss Challenge"));
+    const bossCompletedCount = bossLessons.filter((b: any) => completed.includes(b.id)).length;
+
+    const certProgressBadge = document.getElementById("cert-progress-badge");
+    const certProgressCount = document.getElementById("cert-progress-count");
+    const certStatusBadge = document.getElementById("cert-status-badge");
+    const btnClaimCert = document.getElementById("btn-claim-certificate") as HTMLButtonElement | null;
+
+    if (certProgressBadge) {
+      certProgressBadge.textContent = `${bossCompletedCount} / 17 Bosses`;
+    }
+    if (certProgressCount) {
+      certProgressCount.textContent = `${bossCompletedCount} / 17 Boss Challenges completed`;
+    }
+    if (certStatusBadge && btnClaimCert) {
+      if (bossCompletedCount >= 17 || completed.length >= lessons.length) {
+        certStatusBadge.textContent = "Unlocked";
+        certStatusBadge.className = "text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-300 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-800/40 font-bold";
+        btnClaimCert.classList.add("bg-gradient-to-r", "from-violet", "to-link", "animate-pulse");
+        btnClaimCert.classList.remove("opacity-70");
+        btnClaimCert.title = "Claim your official Linux Certificate!";
+      } else {
+        certStatusBadge.textContent = `Locked (${bossCompletedCount}/17)`;
+        certStatusBadge.className = "text-[10px] font-mono px-2 py-0.5 rounded bg-canvas-soft-2 text-mute border border-hairline font-bold";
+        btnClaimCert.classList.remove("bg-gradient-to-r", "from-violet", "to-link", "animate-pulse");
+        btnClaimCert.classList.add("opacity-70");
+        btnClaimCert.title = `Locked: Complete all 17 Boss Challenges to claim certificate (${bossCompletedCount}/17 completed)`;
+      }
+    }
+
+    // Boss Rush mode handling
+    const isBossRush = Boolean(state.bossRushMode);
+    const bossRushToggleBtn = document.getElementById("btn-boss-rush-toggle");
+    const bossRushStatusDot = document.getElementById("boss-rush-status-dot");
+    const bossRushBanner = document.getElementById("boss-rush-banner");
+    const dashboardFastestTime = document.getElementById("dashboard-fastest-time");
+
+    if (bossRushToggleBtn && bossRushStatusDot) {
+      if (isBossRush) {
+        bossRushToggleBtn.classList.remove("bg-canvas", "text-ink", "border-hairline");
+        bossRushToggleBtn.classList.add("bg-amber-500", "text-black", "border-amber-600", "font-bold", "shadow-sm");
+        bossRushStatusDot.classList.remove("bg-mute");
+        bossRushStatusDot.classList.add("bg-emerald-600", "animate-ping");
+        bossRushBanner?.classList.remove("hidden");
+        bossRushBanner?.classList.add("flex");
+      } else {
+        bossRushToggleBtn.classList.add("bg-canvas", "text-ink", "border-hairline");
+        bossRushToggleBtn.classList.remove("bg-amber-500", "text-black", "border-amber-600", "font-bold", "shadow-sm");
+        bossRushStatusDot.classList.add("bg-mute");
+        bossRushStatusDot.classList.remove("bg-emerald-600", "animate-ping");
+        bossRushBanner?.classList.add("hidden");
+        bossRushBanner?.classList.remove("flex");
+      }
+    }
+
+    const fastestStr = localStorage.getItem("bashquest_fastest_boss_rush_str");
+    if (dashboardFastestTime) {
+      if (fastestStr) {
+        dashboardFastestTime.textContent = `⚡ Best: ${fastestStr}`;
+        dashboardFastestTime.classList.remove("hidden");
+      } else {
+        dashboardFastestTime.classList.add("hidden");
+      }
+    }
+
     const nodes = document.querySelectorAll(".lesson-node-card");
     nodes.forEach((node) => {
       const lessonIdAttr = node.getAttribute("data-lesson-id");
@@ -765,8 +1100,23 @@ const localizedLessons = getLocalizedLessons(currentLang);
 
       const isCompleted = completed.includes(lessonId);
       const lessonIndex = lessons.findIndex((l: any) => l.id === lessonId);
-      const isUnlocked =
+      const isBoss = node.getAttribute("data-is-boss") === "true" || node.getAttribute("data-is-boss-challenge") === "true";
+
+      let isUnlocked =
         lessonIndex === 0 || completed.includes(lessons[lessonIndex - 1]?.id);
+
+      // In Boss Rush Mode, only the 17 Boss Challenges are visible and all 17 are unlocked!
+      if (isBossRush) {
+        if (!isBoss) {
+          node.classList.add("hidden");
+          return;
+        } else {
+          node.classList.remove("hidden");
+          isUnlocked = true;
+        }
+      } else {
+        node.classList.remove("hidden");
+      }
 
       const statusBadge = node.querySelector(".node-status-badge");
       const lockOverlay = node.querySelector(".node-lock-overlay");
@@ -907,6 +1257,21 @@ const localizedLessons = getLocalizedLessons(currentLang);
             );
           });
         }
+      }
+    });
+
+    // Toggle module container visibility in Boss Rush Mode
+    const moduleContainers = document.querySelectorAll(".module-container");
+    moduleContainers.forEach((mc) => {
+      if (isBossRush) {
+        const visibleNodes = mc.querySelectorAll(".lesson-node-card:not(.hidden)");
+        if (visibleNodes.length === 0) {
+          mc.classList.add("hidden");
+        } else {
+          mc.classList.remove("hidden");
+        }
+      } else {
+        mc.classList.remove("hidden");
       }
     });
   }
@@ -1063,4 +1428,614 @@ const localizedLessons = getLocalizedLessons(currentLang);
   window.addEventListener("app:filesystem-update", () => {
     updateDashboardUI();
   });
+
+  // --- Boss Rush Toggle Handler ---
+  const bossRushToggleBtn = document.getElementById("btn-boss-rush-toggle");
+  bossRushToggleBtn?.addEventListener("click", () => {
+    const globalWindow = window as any;
+    const currentMode = Boolean(globalWindow.appState?.bossRushMode);
+    window.dispatchEvent(
+      new CustomEvent("app:toggle-boss-rush", {
+        detail: { enable: !currentMode },
+      }),
+    );
+  });
+
+  // --- HTML5 Canvas Certificate Drawing Engine (1920x1080) ---
+  function drawCertificate(
+    canvas: HTMLCanvasElement,
+    data: {
+      name: string;
+      date: string;
+      xp: number;
+      count: number;
+      token: string;
+      isQualified?: boolean;
+      bossCompletedCount?: number;
+    },
+  ) {
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const W = 1920;
+    const H = 1080;
+    canvas.width = W;
+    canvas.height = H;
+    const isQualified = data.isQualified !== false;
+
+    // 1. Deep Space Dark Background with Radial Gradient
+    const bgGrad = ctx.createRadialGradient(W / 2, H / 2, 80, W / 2, H / 2, 1100);
+    bgGrad.addColorStop(0, "#161b26");
+    bgGrad.addColorStop(0.5, "#0d1017");
+    bgGrad.addColorStop(1, "#07080c");
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, W, H);
+
+    // 2. Subtle Technical Grid Pattern
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.025)";
+    ctx.lineWidth = 1;
+    const step = 40;
+    for (let x = 0; x < W; x += step) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, H);
+      ctx.stroke();
+    }
+    for (let y = 0; y < H; y += step) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(W, y);
+      ctx.stroke();
+    }
+
+    // 3. Atmospheric Corner Glows (Mesh Accents)
+    const glow1 = ctx.createRadialGradient(160, 160, 10, 160, 160, 420);
+    glow1.addColorStop(0, "rgba(121, 40, 202, 0.18)"); // violet
+    glow1.addColorStop(1, "rgba(0, 0, 0, 0)");
+    ctx.fillStyle = glow1;
+    ctx.fillRect(0, 0, 600, 600);
+
+    const glow2 = ctx.createRadialGradient(W - 160, 160, 10, W - 160, 160, 420);
+    glow2.addColorStop(0, "rgba(0, 112, 243, 0.18)"); // link blue
+    glow2.addColorStop(1, "rgba(0, 0, 0, 0)");
+    ctx.fillStyle = glow2;
+    ctx.fillRect(W - 600, 0, 600, 600);
+
+    const glow3 = ctx.createRadialGradient(W / 2, H - 120, 20, W / 2, H - 120, 520);
+    glow3.addColorStop(0, "rgba(80, 227, 194, 0.12)"); // cyan
+    glow3.addColorStop(1, "rgba(0, 0, 0, 0)");
+    ctx.fillStyle = glow3;
+    ctx.fillRect(W / 2 - 500, H - 600, 1000, 600);
+
+    // 4. Multi-layer High-Tech Outer Borders
+    ctx.strokeStyle = "#232838";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(36, 36, W - 72, H - 72);
+
+    const borderGrad = ctx.createLinearGradient(48, 48, W - 48, H - 48);
+    borderGrad.addColorStop(0, "#007cf0");
+    borderGrad.addColorStop(0.25, "#7928ca");
+    borderGrad.addColorStop(0.5, "#ff0080");
+    borderGrad.addColorStop(0.75, "#50e3c2");
+    borderGrad.addColorStop(1, "#f9cb28");
+    ctx.strokeStyle = borderGrad;
+    ctx.lineWidth = 3.5;
+    ctx.strokeRect(48, 48, W - 96, H - 96);
+
+    ctx.strokeStyle = "#1b202d";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(60, 60, W - 120, H - 120);
+
+    // Decorative Corner Brackets
+    const drawBracket = (x: number, y: number, dx: number, dy: number) => {
+      ctx.strokeStyle = "#50e3c2";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(x + dx * 46, y);
+      ctx.lineTo(x, y);
+      ctx.lineTo(x, y + dy * 46);
+      ctx.stroke();
+
+      ctx.fillStyle = "#f5a623";
+      ctx.fillRect(x - 3, y - 3, 6, 6);
+    };
+    drawBracket(70, 70, 1, 1);
+    drawBracket(W - 70, 70, -1, 1);
+    drawBracket(70, H - 70, 1, -1);
+    drawBracket(W - 70, H - 70, -1, -1);
+
+    // 5. BashQuest Branding & Terminal Badge (Top Center)
+    const iconSize = 64;
+    const iconX = W / 2 - 146;
+    const iconY = 100;
+    ctx.fillStyle = "#12151e";
+    ctx.strokeStyle = "#2c3346";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    if (typeof (ctx as any).roundRect === "function") {
+      (ctx as any).roundRect(iconX, iconY, iconSize, iconSize, 12);
+    } else {
+      ctx.rect(iconX, iconY, iconSize, iconSize);
+    }
+    ctx.fill();
+    ctx.stroke();
+
+    // $ Terminal Icon
+    ctx.fillStyle = "#27c93f";
+    ctx.font = "bold 38px 'JetBrains Mono', 'Courier New', monospace";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("$", iconX + iconSize / 2, iconY + iconSize / 2 + 1);
+
+    // BashQuest. Logo Text
+    ctx.textAlign = "left";
+    ctx.font = "bold 46px 'Inter', system-ui, sans-serif";
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText("BashQuest", iconX + iconSize + 18, iconY + iconSize / 2 + 2);
+
+    const brandW = ctx.measureText("BashQuest").width;
+    ctx.fillStyle = "#0070f3";
+    ctx.fillText(".", iconX + iconSize + 18 + brandW, iconY + iconSize / 2 + 2);
+
+    // Eyebrow Subtitle
+    ctx.textAlign = "center";
+    ctx.font = "bold 15px 'JetBrains Mono', monospace";
+    ctx.fillStyle = "#50e3c2";
+    ctx.fillText("OFFICIAL LINUX SHELL CERTIFICATION", W / 2, 210);
+
+    // 6. Certificate Title
+    ctx.font = "bold 44px 'Inter', system-ui, sans-serif";
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText("CERTIFICATE OF LINUX MASTERY", W / 2, 280);
+
+    ctx.font = "16px 'JetBrains Mono', monospace";
+    ctx.fillStyle = "#888888";
+    ctx.fillText("THIS CREDENTIAL IS PROUDLY CONFERRED UPON", W / 2, 335);
+
+    // 7. Learner Name
+    ctx.font = "bold 64px 'Inter', system-ui, sans-serif";
+    const nameGrad = ctx.createLinearGradient(W / 2 - 300, 0, W / 2 + 300, 0);
+    nameGrad.addColorStop(0, "#ffffff");
+    nameGrad.addColorStop(0.5, "#d3e5ff");
+    nameGrad.addColorStop(1, "#ffffff");
+    ctx.fillStyle = nameGrad;
+    ctx.fillText(data.name || "Linux Explorer", W / 2, 425);
+
+    // Decorative Accent Line under Name
+    const lineGrad = ctx.createLinearGradient(W / 2 - 280, 0, W / 2 + 280, 0);
+    lineGrad.addColorStop(0, "rgba(0, 112, 243, 0)");
+    lineGrad.addColorStop(0.2, "rgba(0, 112, 243, 0.8)");
+    lineGrad.addColorStop(0.5, "rgba(80, 227, 194, 1)");
+    lineGrad.addColorStop(0.8, "rgba(121, 40, 202, 0.8)");
+    lineGrad.addColorStop(1, "rgba(121, 40, 202, 0)");
+    ctx.fillStyle = lineGrad;
+    ctx.fillRect(W / 2 - 280, 455, 560, 3);
+
+    // 8. Description of Accomplishment
+    ctx.font = "20px 'Inter', system-ui, sans-serif";
+    ctx.fillStyle = "#a1a1a1";
+    ctx.fillText(
+      "For successfully conquering the complete Linux terminal curriculum, demonstrating verified competency",
+      W / 2,
+      515,
+    );
+    ctx.fillText(
+      "in shell script automation, process management, filesystem architecture, and live incident response.",
+      W / 2,
+      550,
+    );
+
+    // 9. Completion Stats Banner (150 Quests • 17 Modules • 140+ Linux Commands Mastered)
+    const statsBoxW = 980;
+    const statsBoxH = 68;
+    const statsBoxX = (W - statsBoxW) / 2;
+    const statsBoxY = 610;
+
+    ctx.fillStyle = "#121622";
+    ctx.strokeStyle = "#273045";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    if (typeof (ctx as any).roundRect === "function") {
+      (ctx as any).roundRect(statsBoxX, statsBoxY, statsBoxW, statsBoxH, 34);
+    } else {
+      ctx.rect(statsBoxX, statsBoxY, statsBoxW, statsBoxH);
+    }
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.font = "bold 21px 'JetBrains Mono', monospace";
+    ctx.fillStyle = "#ffffff";
+    ctx.textAlign = "center";
+    ctx.fillText(
+      "150 Quests   •   17 Modules   •   140+ Linux Commands Mastered",
+      W / 2,
+      statsBoxY + statsBoxH / 2 + 7,
+    );
+
+    // 10. Date of Issue & Verified Proctor (Bottom Left)
+    const leftX = 260;
+    ctx.textAlign = "left";
+    ctx.font = "bold 13px 'JetBrains Mono', monospace";
+    ctx.fillStyle = "#888888";
+    ctx.fillText("DATE OF ISSUE", leftX, 790);
+
+    ctx.font = "bold 20px 'Inter', system-ui, sans-serif";
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText(data.date, leftX, 825);
+
+    ctx.fillStyle = "#273045";
+    ctx.fillRect(leftX, 845, 240, 2);
+
+    ctx.font = "14px 'JetBrains Mono', monospace";
+    ctx.fillStyle = "#50e3c2";
+    ctx.fillText("VERIFIED PROCTOR: BASH ENGINE", leftX, 875);
+
+    // 11. Circular Authority Seal & Signature (Bottom Right)
+    const rightX = W - 480;
+    const sealX = rightX + 110;
+    const sealY = 825;
+    const sealR = 54;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(sealX, sealY, sealR, 0, Math.PI * 2);
+    ctx.fillStyle = isQualified ? "#161b29" : "#241619";
+    ctx.fill();
+    ctx.strokeStyle = isQualified ? "#f5a623" : "#ef4444";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(sealX, sealY, sealR - 8, 0, Math.PI * 2);
+    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = isQualified ? "#50e3c2" : "#f59e0b";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.textAlign = "center";
+    ctx.fillStyle = isQualified ? "#f5a623" : "#ef4444";
+    ctx.font = "bold 28px sans-serif";
+    ctx.fillText(isQualified ? "★" : "🔒", sealX, sealY + 10);
+    ctx.restore();
+
+    ctx.textAlign = "center";
+    ctx.font = "bold 13px 'JetBrains Mono', monospace";
+    ctx.fillStyle = isQualified ? "#888888" : "#f87171";
+    ctx.fillText(isQualified ? "OFFICIAL SEAL" : "PREVIEW ONLY (LOCKED)", sealX, 915);
+    ctx.font = "14px 'Inter', sans-serif";
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText(
+      isQualified ? "BashQuest Validation Daemon" : `In Progress: ${data.bossCompletedCount ?? 0}/17 Bosses`,
+      sealX,
+      938,
+    );
+
+    // 12. Deterministic Verification Token (Bottom Center)
+    ctx.textAlign = "center";
+    ctx.font = "14px 'JetBrains Mono', monospace";
+    ctx.fillStyle = "#666666";
+    ctx.fillText(isQualified ? "OFFICIAL VERIFICATION TOKEN" : "TOKEN STATUS: UNVERIFIED SAMPLE", W / 2, 945);
+
+    ctx.font = "bold 16px 'JetBrains Mono', monospace";
+    ctx.fillStyle = isQualified ? "#50e3c2" : "#f5a623";
+    ctx.fillText(data.token, W / 2, 975);
+
+    // 13. High-visibility watermark for unqualified previews
+    if (!isQualified) {
+      ctx.save();
+      ctx.translate(W / 2, H / 2);
+      ctx.rotate(-Math.PI / 8);
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+
+      // Semi-transparent diagonal red banner
+      ctx.fillStyle = "rgba(239, 68, 68, 0.12)";
+      ctx.fillRect(-W, -70, W * 2, 140);
+      ctx.strokeStyle = "rgba(239, 68, 68, 0.35)";
+      ctx.lineWidth = 3;
+      ctx.strokeRect(-W, -70, W * 2, 140);
+
+      ctx.font = "bold 48px 'JetBrains Mono', monospace";
+      ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+      ctx.fillText(
+        `SAMPLE PREVIEW • ${data.bossCompletedCount ?? 0}/17 BOSS CHALLENGES COMPLETED`,
+        0,
+        -15,
+      );
+
+      ctx.font = "bold 20px 'JetBrains Mono', monospace";
+      ctx.fillStyle = "rgba(239, 68, 68, 0.9)";
+      ctx.fillText(
+        "COMPLETE ALL 17 BOSS CHALLENGES TO UNLOCK AND DOWNLOAD OFFICIAL CERTIFICATE",
+        0,
+        32,
+      );
+
+      ctx.restore();
+    }
+  }
+
+  // --- Certificate Modal Controller ---
+  let activeCertToken = "";
+  let isCurrentlyQualified = false;
+
+  function renderCurrentCertificate(nameParam?: string, overrideData?: any) {
+    const canvas = document.getElementById("cert-canvas") as HTMLCanvasElement;
+    const nameInput = document.getElementById("cert-learner-name") as HTMLInputElement;
+    const tokenDisplay = document.getElementById("cert-token-display");
+    if (!canvas) return;
+
+    const globalWindow = window as any;
+    const state = globalWindow.appState || {};
+    const completed: number[] = state.completedLessons || [];
+    const currentLang = getCurrentLang();
+    const lessons = getLocalizedLessons(currentLang);
+    const bossLessons = lessons.filter((l: any) => l.title.includes("Boss Challenge"));
+    const bossCompletedCount = bossLessons.filter((b: any) => completed.includes(b.id)).length;
+
+    const isQualified = Boolean(
+      overrideData?.verified === true ||
+      bossCompletedCount >= 17 ||
+      completed.length >= lessons.length
+    );
+    isCurrentlyQualified = isQualified;
+
+    // Update locked notice & buttons
+    const certLockedNotice = document.getElementById("cert-locked-notice");
+    const certLockedMsg = document.getElementById("cert-locked-msg");
+    const certLockedPill = document.getElementById("cert-locked-pill");
+    const btnDownloadPng = document.getElementById("btn-download-cert-png") as HTMLButtonElement | null;
+    const btnShareLinkedin = document.getElementById("btn-share-cert-linkedin") as HTMLButtonElement | null;
+    const btnCopyCertLink = document.getElementById("btn-copy-cert-link") as HTMLButtonElement | null;
+
+    if (certLockedNotice) {
+      if (isQualified) {
+        certLockedNotice.classList.add("hidden");
+        certLockedNotice.classList.remove("flex");
+      } else {
+        certLockedNotice.classList.remove("hidden");
+        certLockedNotice.classList.add("flex");
+        if (certLockedMsg) {
+          certLockedMsg.textContent = `Locked Preview: You have completed ${bossCompletedCount} of 17 Boss Challenges. Complete all 17 Boss Challenges to unlock official certificate download and LinkedIn sharing.`;
+        }
+        if (certLockedPill) {
+          certLockedPill.textContent = `${bossCompletedCount}/17 Bosses`;
+        }
+      }
+    }
+
+    if (btnDownloadPng) {
+      if (isQualified) {
+        btnDownloadPng.disabled = false;
+        btnDownloadPng.removeAttribute("aria-disabled");
+        btnDownloadPng.classList.remove("opacity-50", "cursor-not-allowed", "pointer-events-none");
+        btnDownloadPng.title = "Download high-resolution certificate PNG";
+        btnDownloadPng.innerHTML = `
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+          </svg>
+          <span>Download PNG</span>
+        `;
+      } else {
+        btnDownloadPng.disabled = true;
+        btnDownloadPng.setAttribute("aria-disabled", "true");
+        btnDownloadPng.classList.add("opacity-50", "cursor-not-allowed", "pointer-events-none");
+        btnDownloadPng.title = `Download locked: ${bossCompletedCount}/17 Boss Challenges completed`;
+        btnDownloadPng.innerHTML = `
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+          </svg>
+          <span>Download Locked (${bossCompletedCount}/17)</span>
+        `;
+      }
+    }
+
+    if (btnShareLinkedin) {
+      if (isQualified) {
+        btnShareLinkedin.disabled = false;
+        btnShareLinkedin.removeAttribute("aria-disabled");
+        btnShareLinkedin.classList.remove("opacity-50", "cursor-not-allowed", "pointer-events-none");
+        btnShareLinkedin.title = "Share your verified credential on LinkedIn";
+      } else {
+        btnShareLinkedin.disabled = true;
+        btnShareLinkedin.setAttribute("aria-disabled", "true");
+        btnShareLinkedin.classList.add("opacity-50", "cursor-not-allowed", "pointer-events-none");
+        btnShareLinkedin.title = `Sharing locked: ${bossCompletedCount}/17 Boss Challenges completed`;
+      }
+    }
+
+    if (btnCopyCertLink) {
+      if (isQualified) {
+        btnCopyCertLink.classList.remove("opacity-50", "cursor-not-allowed", "pointer-events-none");
+        btnCopyCertLink.title = "Copy verification URL";
+      } else {
+        btnCopyCertLink.classList.add("opacity-50", "cursor-not-allowed", "pointer-events-none");
+        btnCopyCertLink.title = `Verification link locked: ${bossCompletedCount}/17 Boss Challenges completed`;
+      }
+    }
+
+    const name = (nameParam || nameInput?.value || localStorage.getItem("bashquest_cert_name") || "Linux Explorer").trim() || "Linux Explorer";
+    const date = overrideData?.date || new Date().toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+    const xp = typeof overrideData?.xp === "number" ? overrideData.xp : (state.xp || 1500);
+    const count = typeof overrideData?.count === "number" ? overrideData.count : completed.length;
+
+    // Deterministic Token Formula: BQ-${btoa(JSON.stringify({ name, date, xp, count, bossCount: bossCompletedCount, verified: isQualified }))}
+    const tokenPayload = { name, date, xp, count, bossCount: bossCompletedCount, verified: isQualified };
+    let tokenBase64 = "";
+    try {
+      tokenBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(tokenPayload))));
+    } catch {
+      tokenBase64 = btoa(JSON.stringify({ name: "Learner", date, xp, count, bossCount: bossCompletedCount, verified: isQualified }));
+    }
+    const token = isQualified ? `BQ-${tokenBase64}` : `BQ-PREVIEW-${tokenBase64}`;
+    activeCertToken = token;
+
+    if (tokenDisplay) {
+      if (isQualified) {
+        tokenDisplay.textContent = token;
+        tokenDisplay.className = "font-bold text-success truncate select-all cursor-text font-mono";
+      } else {
+        tokenDisplay.textContent = `[LOCKED - ${bossCompletedCount}/17 BOSS CHALLENGES COMPLETED]`;
+        tokenDisplay.className = "font-bold text-amber-500 truncate font-mono";
+      }
+    }
+
+    drawCertificate(canvas, {
+      name,
+      date,
+      xp,
+      count,
+      token: isQualified ? token : `[LOCKED PREVIEW - ${bossCompletedCount}/17 BOSSES]`,
+      isQualified,
+      bossCompletedCount,
+    });
+  }
+
+  const certModal = document.getElementById("modal-certificate");
+  const btnClaimCert = document.getElementById("btn-claim-certificate");
+  const btnPreviewCert = document.getElementById("btn-preview-certificate");
+  const btnCloseCertModal = document.getElementById("btn-close-cert-modal");
+  const certNameInput = document.getElementById("cert-learner-name") as HTMLInputElement;
+  const btnRenderCert = document.getElementById("btn-render-cert");
+  const btnDownloadPng = document.getElementById("btn-download-cert-png");
+  const btnShareLinkedin = document.getElementById("btn-share-cert-linkedin");
+  const btnCopyCertLink = document.getElementById("btn-copy-cert-link");
+
+  const openCertModal = (overrideName?: string, overrideData?: any) => {
+    if (!certModal) return;
+    const initialName = overrideName || localStorage.getItem("bashquest_cert_name") || "";
+    if (certNameInput) certNameInput.value = initialName || "Linux Explorer";
+    certModal.classList.remove("hidden");
+    renderCurrentCertificate(initialName || "Linux Explorer", overrideData);
+  };
+
+  const closeCertModal = () => {
+    certModal?.classList.add("hidden");
+  };
+
+  btnClaimCert?.addEventListener("click", () => openCertModal());
+  btnPreviewCert?.addEventListener("click", () => openCertModal());
+  btnCloseCertModal?.addEventListener("click", closeCertModal);
+
+  certModal?.addEventListener("click", (e: any) => {
+    if (e.target === certModal) closeCertModal();
+  });
+
+  certNameInput?.addEventListener("input", () => {
+    const name = certNameInput.value.trim() || "Linux Explorer";
+    localStorage.setItem("bashquest_cert_name", name);
+    renderCurrentCertificate(name);
+  });
+
+  btnRenderCert?.addEventListener("click", () => {
+    const name = certNameInput?.value.trim() || "Linux Explorer";
+    localStorage.setItem("bashquest_cert_name", name);
+    renderCurrentCertificate(name);
+  });
+
+  btnDownloadPng?.addEventListener("click", () => {
+    if (!isCurrentlyQualified) {
+      alert("Certificate download is locked! You must complete all 17 Boss Challenges to download the official certificate.");
+      return;
+    }
+    const canvas = document.getElementById("cert-canvas") as HTMLCanvasElement;
+    if (!canvas) return;
+    const name = certNameInput?.value.trim() || "Linux_Explorer";
+    const dataUrl = canvas.toDataURL("image/png");
+    const a = document.createElement("a");
+    a.href = dataUrl;
+    a.download = `BashQuest-Certificate-${name.replace(/\s+/g, "_")}.png`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  });
+
+  const certCanvasEl = document.getElementById("cert-canvas");
+  certCanvasEl?.addEventListener("contextmenu", (e) => {
+    if (!isCurrentlyQualified) {
+      e.preventDefault();
+    }
+  });
+
+  btnShareLinkedin?.addEventListener("click", () => {
+    if (!isCurrentlyQualified) {
+      alert("LinkedIn sharing is locked! You must complete all 17 Boss Challenges to share your verified credential.");
+      return;
+    }
+    const token = activeCertToken;
+    const verifyUrl = `${window.location.origin}${window.location.pathname}?verify=${encodeURIComponent(token)}`;
+    const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(verifyUrl)}`;
+    window.open(linkedinUrl, "_blank", "noopener,noreferrer");
+  });
+
+  btnCopyCertLink?.addEventListener("click", () => {
+    if (!isCurrentlyQualified) {
+      alert("Verification link is locked until all 17 Boss Challenges are completed.");
+      return;
+    }
+    const token = activeCertToken;
+    const verifyUrl = `${window.location.origin}${window.location.pathname}?verify=${encodeURIComponent(token)}`;
+    navigator.clipboard.writeText(verifyUrl).then(() => {
+      if (btnCopyCertLink) {
+        const originalText = btnCopyCertLink.textContent;
+        btnCopyCertLink.textContent = "Copied Verification Link!";
+        setTimeout(() => {
+          btnCopyCertLink.textContent = originalText;
+        }, 1500);
+      }
+    });
+  });
+
+  // --- Verification Banner URL Handler ---
+  function checkVerifyTokenInUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get("verify");
+    const banner = document.getElementById("credential-verification-banner");
+    if (!token || !banner || token.startsWith("BQ-PREVIEW-")) return;
+
+    try {
+      const cleanToken = token.startsWith("BQ-") ? token.slice(3) : token;
+      const decodedStr = decodeURIComponent(escape(atob(cleanToken)));
+      const data = JSON.parse(decodedStr);
+      if (data && data.name && (data.bossCount >= 17 || data.count >= 150 || data.verified)) {
+        const nameEl = document.getElementById("verify-learner-name");
+        const dateEl = document.getElementById("verify-date");
+        const countEl = document.getElementById("verify-count");
+        const xpEl = document.getElementById("verify-xp");
+        const tokenCode = document.getElementById("verify-token-code");
+
+        if (nameEl) nameEl.textContent = data.name;
+        if (dateEl) dateEl.textContent = data.date || "Verified";
+        if (countEl) countEl.textContent = (data.count ?? 150).toString();
+        if (xpEl) xpEl.textContent = (data.xp ?? 0).toString();
+        if (tokenCode) tokenCode.textContent = token;
+
+        banner.classList.remove("hidden");
+        banner.classList.add("flex");
+
+        const viewCertBtn = document.getElementById("btn-verify-view-cert");
+        if (viewCertBtn) {
+          viewCertBtn.onclick = () => {
+            openCertModal(data.name, { ...data, verified: true });
+          };
+        }
+      }
+    } catch (e) {
+      console.warn("Could not decode verification token from URL:", e);
+    }
+
+    const dismissBtn = document.getElementById("btn-dismiss-verify-banner");
+    dismissBtn?.addEventListener("click", () => {
+      banner.classList.add("hidden");
+      banner.classList.remove("flex");
+    });
+  }
+
+  // Run on mount
+  checkVerifyTokenInUrl();
 </script>
