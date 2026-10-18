@@ -1,4 +1,4 @@
-import type { LessonTranslation } from "./types";
+import type { LessonTranslation } from "./types.ts";
 
 export const translations_pt: Record<number, LessonTranslation> = {
   "1": {
@@ -140,7 +140,7 @@ export const translations_pt: Record<number, LessonTranslation> = {
     "hints": [
       "Remova todo o texto antigo e comece do zero.",
       "Execute o comando que limpa a tela do terminal.",
-      "Tente executar: limpar"
+      "Tente executar: clear"
     ]
   },
   "6": {
@@ -162,7 +162,7 @@ export const translations_pt: Record<number, LessonTranslation> = {
     "hints": [
       "Revise as instruções para localizar o comando apropriado para a ajuda do livro de regras.",
       "Use o comando 'ajuda'.",
-      "Tente executar: ajuda"
+      "Tente executar: help"
     ]
   },
   "7": {
@@ -314,8 +314,12 @@ export const translations_pt: Record<number, LessonTranslation> = {
   "12": {
     "title": "Copiando e movendo arquivos",
     "description": "Imagine reorganizar sua sala: às vezes você quer fazer uma fotocópia de um documento para guardar em outra gaveta, e outras vezes você só quer pegar uma pasta e colocá-la em uma nova prateleira ou mudar seu rótulo. Fazemos isso no Linux com comandos simples:\n\n- `cp <source> <destination>` cria uma duplicata idêntica de um arquivo em um novo local.\n- `mv <source> <destination>` move um arquivo para uma nova pasta ou renomeia o arquivo se você o mantiver na mesma pasta (por exemplo, `mv old.txt new.txt`).",
-    "instructions": "Vamos renomear um arquivo. Altere o nome de `status.txt` em sua pasta pessoal para `system.log` usando o comando `mv`.",
+    "instructions": "Vamos fazer um backup e renomear um arquivo! Use `cp status.txt status_backup.txt` para duplicá-lo e `mv status.txt system.log` para renomear o original.",
     "commandHelp": [
+      {
+        "cmd": "cp status.txt status_backup.txt",
+        "desc": "Crie uma cópia de backup de status.txt"
+      },
       {
         "cmd": "mv status.txt system.log",
         "desc": "Renomeie status.txt para system.log"
@@ -323,16 +327,16 @@ export const translations_pt: Record<number, LessonTranslation> = {
     ],
     "objectives": [
       {
+        "id": "used_cp",
+        "text": "Use o comando \"cp\" para criar status_backup.txt"
+      },
+      {
         "id": "used_mv",
-        "text": "Use o comando \"mv\" para renomear"
+        "text": "Use o comando \"mv\" para renomear status.txt para system.log"
       },
       {
-        "id": "old_removed",
-        "text": "Status.txt original foi excluído/renomeado"
-      },
-      {
-        "id": "new_created",
-        "text": "Novo arquivo system.log existe com conteúdo correto"
+        "id": "files_verified",
+        "text": "Verifique se status_backup.txt e system.log existem com o conteúdo correto"
       }
     ],
     "hints": [
@@ -702,7 +706,7 @@ export const translations_pt: Record<number, LessonTranslation> = {
     ]
   },
   "25": {
-    "title": "Verificando o uso da memória (gratuito)",
+    "title": "Verificando o uso da memória (free)",
     "description": "Imagine que seu laptop começa a ficar lento, as páginas da web congelam e a troca de aplicativos parece dolorosamente lenta. Isso geralmente significa que seu computador está sem memória ativa (RAM). No Linux, podemos verificar quanto espaço nosso sistema tem para respirar usando o comando `free`.\n\n- O comando `free` mostra a memória física (RAM) total, usada e disponível e o espaço de troca.\n- Adicionar o sinalizador `-h` (executando `free -h`) formata os tamanhos de memória em gigabytes (GB) e megabytes (MB) fáceis de ler para que você possa saber se um programa está consumindo todos os seus recursos.\n\n**Por que isso é importante**: Se você executar `free` sem `-h`, o uso de memória será impresso em quilobytes brutos (por exemplo, `16323456` em vez de `16G`), o que é difícil de interpretar rapidamente. O sinalizador `-h` dimensiona automaticamente os números para gigabytes (G) ou megabytes (M) para facilitar a leitura.",
     "instructions": "Vamos verificar a memória do sistema. Verifique a RAM disponível em formato legível executando `free -h`.",
     "commandHelp": [
@@ -776,7 +780,7 @@ export const translations_pt: Record<number, LessonTranslation> = {
     ]
   },
   "28": {
-    "title": "Monitor de processo interativo (topo)",
+    "title": "Monitor de processo interativo (top)",
     "description": "Imagine olhar para uma foto estática de uma rodovia em vez de assistir a uma transmissão ao vivo de uma câmera de trânsito. Enquanto `ps` fornece um instantâneo rápido do que está sendo executado no momento, `top` permite que você observe o desempenho do seu sistema ao vivo.\n\n- O comando `top` inicia um painel interativo em tempo real que é atualizado a cada poucos segundos. Ele exibe o uso da CPU, as médias de carga e classifica dinamicamente os processos com maior consumo de recursos em execução neste exato momento.",
     "instructions": "Vamos assistir a transmissão ao vivo. Inicie o monitor de processo interativo executando o comando `top`.",
     "commandHelp": [
@@ -798,7 +802,7 @@ export const translations_pt: Record<number, LessonTranslation> = {
     ]
   },
   "29": {
-    "title": "Parando processos não autorizados (matar)",
+    "title": "Parando processos não autorizados (kill)",
     "description": "Imagine que um aplicativo em seu telefone congela, bloqueando completamente sua tela, e você precisa fechá-lo à força para que tudo funcione perfeitamente novamente. No Linux, paramos de programas malcomportados ou congelados usando o comando `kill` seguido pelo ID do processo (PID) do programa.\n\n- A execução de `kill 1234` envia uma solicitação educada solicitando ao programa que salve seu trabalho e feche.\n- Se estiver congelado e ignorar a solicitação educada, `kill -9 1234` forçará o sistema operacional a desligá-lo instantaneamente. Temos um processo descontrolado com PID `9999` consumindo toda a nossa CPU agora – vamos desligá-lo!",
     "instructions": "Vamos parar o processo desonesto. Force o fechamento do processo com PID `9999` executando `kill 9999`.",
     "commandHelp": [
@@ -962,13 +966,13 @@ export const translations_pt: Record<number, LessonTranslation> = {
     "objectives": [
       {
         "id": "ran_history",
-        "text": "Execute o comando \"histórico\""
+        "text": "Execute o comando \"history\""
       }
     ],
     "hints": [
       "Pense em qual comando lista os comandos executados recentemente.",
       "Use o comando 'histórico'.",
-      "Tente executar: histórico"
+      "Tente executar: history"
     ]
   },
   "36": {
@@ -1422,35 +1426,35 @@ export const translations_pt: Record<number, LessonTranslation> = {
     ]
   },
   "51": {
-    "title": "Espiando arquivos (cabeçalho e final)",
+    "title": "Espiando arquivos (head & tail)",
     "description": "Agora que você pode ler um arquivo inteiro com `cat`, e se o arquivo tiver milhares de linhas e você quiser ver apenas a parte superior ou inferior? Despejar um arquivo enorme com `cat` inunda sua tela. Em vez disso, usamos `head` e `tail` para espiar as bordas.\n\n- O comando `head` exibe as primeiras 10 linhas de um arquivo por padrão. Você pode alterar isso usando `-n <number>` (por exemplo, `head -n 5 log.txt` para as primeiras 5 linhas).\n- O comando `tail` exibe as últimas 10 linhas por padrão, suportando a mesma opção `-n`.\n- Crucialmente, `tail -f` (seguir) monitora um arquivo em tempo real, mostrando novas linhas à medida que são escritas pelo sistema. Esta é a ferramenta favorita do administrador de sistema para assistir logs ao vivo.",
-    "instructions": "Vamos inspecionar os logs. Use `head -n 5 logs/app.log` para visualizar as primeiras 5 linhas do log do aplicativo. Em seguida, execute `tail -n 3 logs/security.log` para visualizar os últimos 3 eventos de segurança. Por fim, execute `tail -f logs/app.log` para simular o monitoramento de log em tempo real (ele imprimirá entradas simuladas e sairá).",
+    "instructions": "Vamos inspecionar os logs. Use `tail -n 2 logs.txt` (ou `head -n 5 logs/app.log` / `tail -n 3 logs/security.log`) para ver as linhas e execute `tail -f logs.txt` para simular o monitoramento em tempo real.",
     "commandHelp": [
       {
+        "cmd": "tail -n 2 logs.txt",
+        "desc": "Exiba as últimas 2 linhas de logs.txt"
+      },
+      {
+        "cmd": "tail -f logs.txt",
+        "desc": "Monitore atualizações de logs.txt em tempo real"
+      },
+      {
         "cmd": "head -n 5 logs/app.log",
-        "desc": "Exibe as primeiras 5 linhas de app.log"
+        "desc": "Exiba as primeiras 5 linhas de app.log"
       },
       {
         "cmd": "tail -n 3 logs/security.log",
-        "desc": "Exibe as últimas 3 linhas de security.log"
-      },
-      {
-        "cmd": "tail -f logs/app.log",
-        "desc": "Monitora atualizações de app.log em tempo real"
+        "desc": "Exiba as últimas 3 linhas de security.log"
       }
     ],
     "objectives": [
       {
-        "id": "used_head",
-        "text": "Execute o comando \"head\" com -n 5 em logs/app.log"
-      },
-      {
-        "id": "used_tail",
-        "text": "Execute o comando \"tail\" com -n 3 em logs/security.log"
+        "id": "used_tail_n",
+        "text": "Execute tail com -n (ex: tail -n 2 logs.txt)"
       },
       {
         "id": "used_tail_f",
-        "text": "Execute o comando \"tail\" com -f para seguir app.log"
+        "text": "Execute tail com -f (ex: tail -f logs.txt)"
       }
     ],
     "hints": [
@@ -1460,7 +1464,7 @@ export const translations_pt: Record<number, LessonTranslation> = {
     ]
   },
   "52": {
-    "title": "Rolagem interativa de arquivos (menos e mais)",
+    "title": "Rolagem interativa de arquivos (less & more)",
     "description": "Espiar a parte superior e inferior de um arquivo com `head` e `tail` é ótimo, mas e se você precisar navegar em um arquivo de configuração longo, página por página? É para isso que servem pagers como `less` e `more`.\n\n- Os pagers carregam arquivos de forma interativa, mostrando uma página de texto por vez para evitar lentidão do sistema em arquivos grandes.\n- `less` é a escolha moderna, permitindo rolar para frente e para trás usando as teclas de seta, pesquisar texto com `/` e sair pressionando `q`.\n- `more` é um pager mais antigo e simples que apenas rola para frente.",
     "instructions": "Vamos ler um arquivo longo página por página. Execute `less /etc/hosts` para abri-lo em uma visualização de rolagem. (Em nosso terminal, isso exibirá o conteúdo em um quadro rolável. Pressione `q` para retornar).",
     "commandHelp": [
@@ -1515,7 +1519,7 @@ export const translations_pt: Record<number, LessonTranslation> = {
     ]
   },
   "54": {
-    "title": "Lógica Reutilizável (funções bash)",
+    "title": "Lógica Reutilizável (bash functions)",
     "description": "Você escreveu loops e condicionais para automatizar ações em scripts. Mas à medida que seus scripts crescem, copiar e colar a mesma lógica repetidamente torna-os difíceis de manter. No bash, podemos agrupar comandos em funções reutilizáveis.\n\n- Para definir uma função, declaramos ela pelo nome seguido de parênteses e chaves: `log_msg() { echo \"msg\"; }`.\n- As funções podem receber argumentos como scripts de shell, que são acessados ​​usando os parâmetros de posição local `$1`, `$2`, etc.\n- Para chamar uma função, basta usar seu nome como qualquer outro comando: `log_msg \"Backup started\"`.",
     "instructions": "Vamos construir um script de backup modular. Crie um script chamado `backup_helper.sh` em sua pasta pessoal. Defina uma função chamada `log_msg` que imprima uma mensagem com carimbo de data/hora (por exemplo, `log_msg() { echo \"[$(date +%T)] $1\"; }` ou similar) e chame-a pelo menos duas vezes dentro do script para registrar ações. Torne-o executável e execute-o.",
     "commandHelp": [
@@ -1579,7 +1583,7 @@ export const translations_pt: Record<number, LessonTranslation> = {
     ]
   },
   "56": {
-    "title": "Encontrando Comandos (que)",
+    "title": "Encontrando Comandos (which)",
     "description": "Agora que você está familiarizado com variáveis ​​de ambiente ativas como `PATH` (que armazena os diretórios onde o Linux procura comandos), como você encontra o caminho exato do arquivo do programa que é executado quando você digita `ls` ou `grep`? Usamos `which` para localizar binários de comando.\n\n- O comando `which` pesquisa as pastas listadas em sua variável `$PATH` e imprime o caminho absoluto do binário executado quando o comando é executado (por exemplo, `which ls` gera `/bin/ls`).\n- Isso é útil para descobrir onde uma ferramenta está instalada ou resolver conflitos entre várias versões da mesma ferramenta.",
     "instructions": "Vamos encontrar nossas ferramentas. Execute `which ls` para ver onde o executável `ls` está armazenado no sistema. Em seguida, encontre o caminho do comando `grep` executando `which grep`.",
     "commandHelp": [
@@ -1595,11 +1599,11 @@ export const translations_pt: Record<number, LessonTranslation> = {
     "objectives": [
       {
         "id": "used_which_ls",
-        "text": "Execute o comando \"qual\" em ls"
+        "text": "Execute o comando \"which\" em ls"
       },
       {
         "id": "used_which_grep",
-        "text": "Execute o comando \"qual\" em grep"
+        "text": "Execute o comando \"which\" em grep"
       }
     ],
     "hints": [
@@ -1744,7 +1748,7 @@ export const translations_pt: Record<number, LessonTranslation> = {
     ]
   },
   "62": {
-    "title": "Compactação de arquivos (gzip e gunzip)",
+    "title": "Compactação de arquivos (gzip & gunzip)",
     "description": "Imagine que você tem um único arquivo de texto contendo um conjunto de dados enorme e deseja reduzir seu tamanho para economizar espaço em disco ou acelerar o compartilhamento. No Linux, compactamos arquivos individuais usando `gzip` e os restauramos usando `gunzip`.\n\n- O comando `gzip <filename>` compacta um arquivo, substituindo-o por uma versão compactada que termina em `.gz` (por exemplo, `backup.txt` passa a ser `backup.txt.gz`).\n- O comando `gunzip <filename.gz>` descompacta o arquivo, restaurando a versão original.",
     "instructions": "Vamos compactar um arquivo para economizar espaço. Execute `gzip note.txt` em sua pasta pessoal. Em seguida, descompacte o arquivo `note.txt.gz` resultante de volta ao seu estado original executando `gunzip note.txt.gz`.",
     "commandHelp": [
@@ -1774,7 +1778,7 @@ export const translations_pt: Record<number, LessonTranslation> = {
     ]
   },
   "63": {
-    "title": "Administração de grupos (groupadd e grupos)",
+    "title": "Administração de grupos (groupadd & groups)",
     "description": "No Linux, os usuários são organizados em **grupos** para compartilhar permissões facilmente. Por exemplo, todos os desenvolvedores podem pertencer a um grupo denominado `developers`. Isso nos permite compartilhar arquivos com toda a equipe de uma só vez.\n\n- O comando `groupadd` cria um novo grupo. Como esta é uma configuração do sistema, requer privilégios de superusuário (por exemplo, `sudo groupadd developers`).\n- O comando `groups [username]` lista todos os grupos aos quais um usuário pertence. Executado sem argumentos, exibe grupos para o usuário atual.",
     "instructions": "Vamos gerenciar grupos. Crie um novo grupo chamado `developers` executando `sudo groupadd developers`. Em seguida, verifique seus próprios grupos ativos executando o comando `groups`.",
     "commandHelp": [
@@ -2080,7 +2084,7 @@ export const translations_pt: Record<number, LessonTranslation> = {
     ]
   },
   "75": {
-    "title": "Estatísticas de soquete e conexão (netstat e ss)",
+    "title": "Estatísticas de soquete e conexão (netstat & ss)",
     "description": "Ao configurar um banco de dados ou servidor web, você deve verificar se o serviço está rodando e escutando na porta correta e verificar se alguma conexão não autorizada foi estabelecida. Fazemos isso usando `netstat` ou `ss`.\n\n- O comando `netstat` (estatísticas de rede) é uma ferramenta clássica para mostrar conexões TCP e portas de escuta. Por exemplo `netstat -tuln` lista as portas de escuta TCP/UDP.\n- O comando `ss` (estatísticas de soquete) é a alternativa moderna e mais rápida ao `netstat` que exibe detalhes de conexão de soquete diretamente do namespace do kernel.",
     "instructions": "Vamos auditar as portas. Verifique os soquetes TCP/UDP de escuta executando `netstat -tuln` e, em seguida, verifique-os usando o comando moderno de estatísticas de soquete `ss -tuln`.",
     "commandHelp": [
@@ -2130,7 +2134,7 @@ export const translations_pt: Record<number, LessonTranslation> = {
     ]
   },
   "77": {
-    "title": "Firewalls Linux (ufw e iptables)",
+    "title": "Firewalls Linux (ufw & iptables)",
     "description": "Imagine viver em um prédio de apartamentos seguro, onde um segurança fica na entrada, verificando identidades e bloqueando visitantes não autorizados. No Linux, um **firewall** atua como um guarda de segurança para suas portas de rede.\n\n- O comando `ufw` (Firewall Descomplicado) é uma interface amigável para gerenciar regras de firewall. A execução de `sudo ufw status` mostra se o firewall está ativo e quais portas (como a porta 22 para SSH ou a porta 80 para servidores web) estão abertas.\n- O comando `iptables` é a ferramenta Netfilter tradicional de baixo nível que realmente bloqueia ou redireciona pacotes. A execução de `sudo iptables -L` lista as cadeias de segurança ativas e as regras de correspondência de pacotes.",
     "instructions": "Vamos fiscalizar nossos seguranças. Visualize o status do firewall descomplicado executando `sudo ufw status` e, em seguida, verifique as regras do Netfilter de nível inferior executando `sudo iptables -L`.",
     "commandHelp": [

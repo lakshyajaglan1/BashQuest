@@ -1,0 +1,286 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Navigation from "../../components/Navigation.astro";
+import Footer from "../../components/Footer.astro";
+import { lessons, modules } from "../../lib/lessons.js";
+import { getQuestSlug } from "../../lib/questSlug";
+
+export { getQuestSlug };
+
+export async function getStaticPaths() {
+  return lessons.map((lesson: any, index: number) => {
+    const slug = getQuestSlug(lesson, index);
+    const prevLesson = index > 0 ? lessons[index - 1] : null;
+    const nextLesson = index < lessons.length - 1 ? lessons[index + 1] : null;
+    const prevSlug = prevLesson ? getQuestSlug(prevLesson, index - 1) : null;
+    const nextSlug = nextLesson ? getQuestSlug(nextLesson, index + 1) : null;
+
+    return {
+      params: { slug },
+      props: {
+        lesson,
+        index,
+        prevLesson: prevLesson ? { title: prevLesson.title, slug: prevSlug, number: index } : null,
+        nextLesson: nextLesson ? { title: nextLesson.title, slug: nextSlug, number: index + 2 } : null,
+      },
+    };
+  });
+}
+
+const { lesson, index, prevLesson, nextLesson } = Astro.props;
+const lang = "en";
+const questNumber = index + 1;
+const moduleInfo = modules.find((m: any) => m.id === lesson.moduleId);
+
+const pageTitle = `${lesson.title} — Interactive Linux Terminal Practice | BashQuest`;
+const plainDesc = lesson.description
+  .replace(/\n+/g, " ")
+  .replace(/[*_`#]/g, "")
+  .slice(0, 160)
+  .trim();
+const metaDescription = `Practice Quest ${questNumber}: ${lesson.title}. ${plainDesc}... Run real shell commands online in a safe, interactive Linux sandbox.`;
+
+const terminalLaunchUrl = `/?view=sandbox&quest=${lesson.id}`;
+
+// Format description text with clean markdown-like inline code and bolding
+const formattedDescription = lesson.description
+  .split("\n\n")
+  .map((p: string) =>
+    p
+      .replace(/\n/g, "<br>")
+      .replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-ink">$1</strong>')
+      .replace(
+        /`([^`]+)`/g,
+        '<code class="px-1.5 py-0.5 bg-canvas-soft-2 dark:bg-canvas-soft border border-hairline rounded font-mono text-xs text-primary">$1</code>',
+      ),
+  );
+
+const formattedInstructions = lesson.instructions
+  .replace(/\n/g, "<br>")
+  .replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-ink">$1</strong>')
+  .replace(
+    /`([^`]+)`/g,
+    '<code class="px-1.5 py-0.5 bg-canvas-soft-2 dark:bg-canvas-soft border border-hairline rounded font-mono text-xs text-primary">$1</code>',
+  );
+
+const pageUrl = new URL(Astro.url.pathname, Astro.site || "https://bashquest.com").toString();
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "LearningResource",
+  name: `${lesson.title} — Interactive Linux Terminal Practice`,
+  description: metaDescription,
+  learningResourceType: "Interactive Simulation",
+  educationalLevel: "Beginner to Advanced Linux Administration",
+  teaches: lesson.title,
+  inLanguage: "en",
+  url: pageUrl,
+  provider: {
+    "@type": "Organization",
+    "name": "BashQuest",
+    "url": "https://bashquest.com",
+  },
+};
+---
+
+<Layout
+  title={pageTitle}
+  description={metaDescription}
+  lang={lang}
+  structuredData={structuredData}
+>
+  <div class="flex flex-col min-h-screen bg-canvas-soft text-ink">
+    <Navigation activePage="dashboard" lang={lang} />
+
+    <main class="flex-1 w-full mesh-gradient py-8 sm:py-12 px-4 sm:px-6 lg:px-8 select-text">
+      <div class="max-w-4xl mx-auto space-y-8">
+        
+        <!-- Breadcrumbs & Meta Top -->
+        <nav aria-label="Breadcrumb" class="flex flex-wrap items-center gap-2 text-xs text-mute font-mono">
+          <a href="/" class="hover:text-ink transition-colors">Curriculum</a>
+          <span>/</span>
+          {moduleInfo && (
+            <>
+              <span class="text-mute">{moduleInfo.title}</span>
+              <span>/</span>
+            </>
+          )}
+          <span class="text-ink font-semibold">Quest {questNumber}</span>
+        </nav>
+
+        <!-- Quest Header Card -->
+        <header class="card-marketing border border-hairline bg-canvas p-6 sm:p-8 rounded-xl shadow-level-3 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 text-xs font-mono font-bold uppercase rounded bg-canvas-soft-2 border border-hairline text-ink">
+                Quest {questNumber}
+              </span>
+              {lesson.badge && (
+                <span class="px-2.5 py-1 text-xs font-sans font-medium rounded bg-violet-soft/30 text-violet border border-violet/20">
+                  {lesson.badge}
+                </span>
+              )}
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="px-3 py-1 text-xs font-mono font-bold rounded-full bg-link-bg-soft/30 text-link-deep border border-link/20">
+                +{lesson.xp} XP
+              </span>
+            </div>
+          </div>
+
+          <h1 class="display-lg text-ink font-extrabold tracking-tight">
+            {lesson.title}
+          </h1>
+
+          <div class="pt-2 flex flex-col sm:flex-row sm:items-center gap-4">
+            <a
+              href={terminalLaunchUrl}
+              class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-ink text-canvas font-semibold text-sm hover:opacity-90 active:scale-[0.99] transition-all shadow-md group"
+            >
+              <span>Launch Interactive Terminal for This Quest</span>
+              <span class="transition-transform group-hover:translate-x-1">→</span>
+            </a>
+            <span class="text-xs text-mute font-mono">No installation required • Runs fully in browser</span>
+          </div>
+        </header>
+
+        <!-- Quest Explanation Section -->
+        <section class="card-marketing border border-hairline bg-canvas p-6 sm:p-8 rounded-xl shadow-level-2 space-y-6">
+          <h2 class="text-xl font-bold text-ink tracking-tight flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-success"></span>
+            Concept & Overview
+          </h2>
+          
+          <div class="prose prose-sm dark:prose-invert max-w-none space-y-4 text-body body-md leading-relaxed">
+            {formattedDescription.map((para: string) => (
+              <p set:html={para} />
+            ))}
+          </div>
+
+          <!-- Instructions Callout Box -->
+          <div class="p-4 sm:p-5 rounded-lg bg-canvas-soft-2 border border-link/30 space-y-2">
+            <div class="text-xs font-mono uppercase tracking-wider font-bold text-link flex items-center gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              Mission Instructions
+            </div>
+            <div class="text-sm text-ink leading-relaxed" set:html={formattedInstructions} />
+          </div>
+        </section>
+
+        <!-- Command Reference Table -->
+        {lesson.commandHelp && lesson.commandHelp.length > 0 && (
+          <section class="card-marketing border border-hairline bg-canvas p-6 sm:p-8 rounded-xl shadow-level-2 space-y-4">
+            <h2 class="text-xl font-bold text-ink tracking-tight flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-link"></span>
+              Command Syntax Reference
+            </h2>
+            <div class="overflow-x-auto border border-hairline rounded-lg">
+              <table class="w-full text-left text-sm font-sans">
+                <thead class="bg-canvas-soft-2 border-b border-hairline text-mute uppercase text-xs font-mono">
+                  <tr>
+                    <th scope="col" class="px-4 py-3">Command / Syntax</th>
+                    <th scope="col" class="px-4 py-3">Description</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-hairline">
+                  {lesson.commandHelp.map((cmdItem: any) => (
+                    <tr class="hover:bg-canvas-soft-2/50 transition-colors">
+                      <td class="px-4 py-3.5 font-mono text-xs sm:text-sm font-bold text-ink whitespace-nowrap">
+                        <code class="px-2 py-1 rounded bg-canvas-soft-2 border border-hairline text-primary">
+                          {cmdItem.cmd}
+                        </code>
+                      </td>
+                      <td class="px-4 py-3.5 text-body text-xs sm:text-sm">
+                        {cmdItem.desc}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+
+        <!-- Objectives Checklist -->
+        {lesson.objectives && lesson.objectives.length > 0 && (
+          <section class="card-marketing border border-hairline bg-canvas p-6 sm:p-8 rounded-xl shadow-level-2 space-y-4">
+            <h2 class="text-xl font-bold text-ink tracking-tight flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-warning"></span>
+              Verification Objectives
+            </h2>
+            <p class="text-xs text-mute font-sans">
+              These conditions will be automatically verified when you run commands inside the interactive terminal simulator:
+            </p>
+            <ul class="space-y-2.5 pt-2">
+              {lesson.objectives.map((obj: any) => (
+                <li class="flex items-start gap-3 p-3 rounded-lg border border-hairline bg-canvas-soft-2/40">
+                  <div class="w-5 h-5 rounded-full border border-hairline-strong flex items-center justify-center shrink-0 mt-0.5 text-xs text-mute font-mono">
+                    ○
+                  </div>
+                  <span class="text-sm text-ink font-medium">{obj.text}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        <!-- Launch CTA Banner -->
+        <section class="card-marketing border border-hairline bg-gradient-to-r from-canvas to-canvas-soft-2 p-8 rounded-xl text-center space-y-4 shadow-level-3">
+          <h2 class="text-2xl font-bold text-ink tracking-tight">
+            Ready to complete Quest {questNumber}?
+          </h2>
+          <p class="text-sm text-body max-w-xl mx-auto">
+            Test your skills live in the browser terminal with an emulated Linux filesystem, real-time command evaluation, and instant step-by-step hints.
+          </p>
+          <div class="pt-2">
+            <a
+              href={terminalLaunchUrl}
+              class="inline-flex items-center gap-2 px-8 py-3.5 rounded-lg bg-ink text-canvas font-bold text-sm hover:opacity-90 active:scale-[0.99] transition-all shadow-md group"
+            >
+              <span>Launch Interactive Terminal for This Quest</span>
+              <span class="transition-transform group-hover:translate-x-1">→</span>
+            </a>
+          </div>
+        </section>
+
+        <!-- Prev / Next Quest Pagination -->
+        <nav aria-label="Quest Pagination" class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+          {prevLesson ? (
+            <a
+              href={`/quests/${prevLesson.slug}`}
+              class="p-4 rounded-xl border border-hairline bg-canvas hover:border-hairline-strong transition-all flex flex-col gap-1 group"
+            >
+              <span class="text-xs font-mono text-mute flex items-center gap-1">
+                <span>←</span> Quest {prevLesson.number}
+              </span>
+              <span class="text-sm font-bold text-ink group-hover:text-link transition-colors">
+                {prevLesson.title}
+              </span>
+            </a>
+          ) : (
+            <div />
+          )}
+
+          {nextLesson && (
+            <a
+              href={`/quests/${nextLesson.slug}`}
+              class="p-4 rounded-xl border border-hairline bg-canvas hover:border-hairline-strong transition-all flex flex-col items-end gap-1 group text-right sm:col-start-2"
+            >
+              <span class="text-xs font-mono text-mute flex items-center gap-1">
+                Quest {nextLesson.number} <span>→</span>
+              </span>
+              <span class="text-sm font-bold text-ink group-hover:text-link transition-colors">
+                {nextLesson.title}
+              </span>
+            </a>
+          )}
+        </nav>
+
+      </div>
+    </main>
+
+    <Footer lang={lang} />
+  </div>
+</Layout>

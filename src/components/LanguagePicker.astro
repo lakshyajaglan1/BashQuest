@@ -44,6 +44,7 @@ const currentLangData = languages[lang] || languages.en;
 
     <!-- Language Label: Full name on sm+, compact code on mobile -->
     <span class="font-sans tracking-tight hidden sm:inline">{currentLangData.nativeName}</span>
+    <span class="text-mute font-mono text-[10px] uppercase font-semibold hidden sm:inline">({lang})</span>
     <span class="font-mono text-[11px] font-bold uppercase tracking-wider inline sm:hidden">{lang}</span>
 
     <!-- Down Chevron -->
@@ -87,9 +88,10 @@ const currentLangData = languages[lang] || languages.en;
               hreflang={locale}
             >
               <div class="flex items-center gap-2">
-                <span class="uppercase font-mono text-[10px] opacity-75">
+                <span class="uppercase font-mono text-[10px] font-semibold px-1.5 py-0.5 rounded bg-canvas-soft dark:bg-canvas-soft-2 border border-hairline opacity-85">
                   {locale}
                 </span>
+                <span class="text-mute opacity-50 select-none">·</span>
                 <span>{item.nativeName}</span>
               </div>
               {isCurrent && (

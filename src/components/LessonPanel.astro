@@ -721,8 +721,17 @@ const t = useTranslations(currentLang);
     loadActiveLesson(e.detail.lessonId);
   });
 
-  // Initial Load
-  window.addEventListener("DOMContentLoaded", () => {
-    loadActiveLesson();
+  // Re-sync if state is updated
+  window.addEventListener("app:state-updated", (e: any) => {
+    if (e.detail?.activeLessonId && (!activeLesson || activeLesson.id !== e.detail.activeLessonId)) {
+      loadActiveLesson(e.detail.activeLessonId);
+    }
   });
+
+  // Initial Load
+  if (document.readyState === "loading") {
+    window.addEventListener("DOMContentLoaded", () => loadActiveLesson());
+  } else {
+    loadActiveLesson();
+  }
 </script>

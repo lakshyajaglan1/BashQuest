@@ -1,4 +1,4 @@
-import type { LessonTranslation } from "./types";
+import type { LessonTranslation } from "./types.ts";
 
 export const translations_ja: Record<number, LessonTranslation> = {
   "1": {
@@ -134,13 +134,13 @@ export const translations_ja: Record<number, LessonTranslation> = {
     "objectives": [
       {
         "id": "ran_clear",
-        "text": "「クリア」コマンドを実行します"
+        "text": "「clear」コマンドを実行します"
       }
     ],
     "hints": [
       "古いテキストをすべて消去し、新たに開始します。",
       "端末画面をクリアするコマンドを実行します。",
-      "実行してみてください: クリア"
+      "実行してみてください: clear"
     ]
   },
   "6": {
@@ -156,13 +156,13 @@ export const translations_ja: Record<number, LessonTranslation> = {
     "objectives": [
       {
         "id": "ran_help",
-        "text": "「ヘルプ」コマンドを実行します"
+        "text": "「help」コマンドを実行します"
       }
     ],
     "hints": [
       "手順を確認して、ルールブック ヘルプの適切なコマンドを見つけます。",
       "「ヘルプ」コマンドを使用します。",
-      "実行してみてください: ヘルプ"
+      "実行してみてください: help"
     ]
   },
   "7": {
@@ -182,7 +182,7 @@ export const translations_ja: Record<number, LessonTranslation> = {
     "objectives": [
       {
         "id": "used_touch",
-        "text": "「タッチ」コマンドを使用する"
+        "text": "「touch」コマンドを使用する"
       },
       {
         "id": "file_exists",
@@ -314,25 +314,29 @@ export const translations_ja: Record<number, LessonTranslation> = {
   "12": {
     "title": "ファイルのコピーと移動",
     "description": "部屋を整理することを想像してください。文書のコピーを作成して別の引き出しに保管したい場合もあれば、フォルダーを取得して新しい棚にスライドさせたり、ラベルを変更したりしたい場合もあります。 Linux では次のような簡単なコマンドを使用してこれを実行します。\n\n- `cp <source> <destination>` は、新しい場所にファイルの同一の複製を作成します。\n- `mv <source> <destination>` は、ファイルを新しいフォルダーに移動するか、同じフォルダー内にファイルを保持する場合はファイルの名前を変更します (例: `mv old.txt new.txt`)。",
-    "instructions": "ファイルの名前を変更しましょう。 `mv` コマンドを使用して、ホーム フォルダー内の `status.txt` の名前を `system.log` に変更します。",
+    "instructions": "バックアップを作成してファイルの名前を変更しましょう！ `cp status.txt status_backup.txt` で複製し、`mv status.txt system.log` で元の名前を変更します。",
     "commandHelp": [
       {
+        "cmd": "cp status.txt status_backup.txt",
+        "desc": "status.txt のバックアップコピーを作成する"
+      },
+      {
         "cmd": "mv status.txt system.log",
-        "desc": "status.txt の名前を system.log に変更します"
+        "desc": "status.txt を system.log に名前変更する"
       }
     ],
     "objectives": [
       {
+        "id": "used_cp",
+        "text": "「cp」コマンドを使用して status_backup.txt を作成する"
+      },
+      {
         "id": "used_mv",
-        "text": "「mv」コマンドを使用して名前を変更します"
+        "text": "「mv」コマンドを使用して status.txt を system.log に名前変更する"
       },
       {
-        "id": "old_removed",
-        "text": "元の status.txt は削除/名前変更されます"
-      },
-      {
-        "id": "new_created",
-        "text": "新しいファイル system.log が正しい内容で存在します"
+        "id": "files_verified",
+        "text": "status_backup.txt と system.log が正しい内容で存在することを確認する"
       }
     ],
     "hints": [
@@ -702,7 +706,7 @@ export const translations_ja: Record<number, LessonTranslation> = {
     ]
   },
   "25": {
-    "title": "メモリ使用量の確認 (無料)",
+    "title": "メモリ使用量の確認 (free)",
     "description": "ラップトップの動作が遅くなり、Web ページがフリーズし、アプリの切り替えがひどく遅く感じられると想像してみてください。これは通常、コンピュータのアクティブ メモリ (RAM) が不足していることを意味します。 Linux では、`free` コマンドを使用して、システムにどれだけの呼吸スペースがあるかを確認できます。\n\n- `free` コマンドは、合計、使用済み、および利用可能な物理メモリ (RAM) とスワップ領域を表示します。\n- `-h` フラグを追加すると (`free -h` を実行)、メモリ サイズが読みやすいギガバイト (GB) とメガバイト (MB) にフォーマットされるため、プログラムがすべてのリソースを使い果たしているかどうかがわかります。\n\n**これが重要な理由**: `-h` を使用せずに `free` を実行すると、メモリ使用量が未加工のキロバイト単位で出力されます (例: `16G` ではなく `16323456`)。これを迅速に解釈するのは困難です。 `-h` フラグは、読みやすいように数値をギガバイト (G) またはメガバイト (M) に自動的にスケールします。",
     "instructions": "システムのメモリを確認してみましょう。 `free -h` を実行して、利用可能な RAM を人間が判読できる形式で確認します。",
     "commandHelp": [
@@ -776,7 +780,7 @@ export const translations_ja: Record<number, LessonTranslation> = {
     ]
   },
   "28": {
-    "title": "インタラクティブ プロセス モニター (上)",
+    "title": "インタラクティブ プロセス モニター (top)",
     "description": "高速道路の静止写真を見るのと、交通カメラのライブ フィードを見ることを想像してみてください。 `ps` では現在実行中のものの簡単なスナップショットが得られますが、`top` ではシステムのパフォーマンスをライブで監視できます。\n\n- `top` コマンドは、数秒ごとに更新される対話型のリアルタイム ダッシュボードを起動します。 CPU 使用率、負荷平均を表示し、現時点で実行されている最もリソースを大量に使用するプロセスを動的にランク付けします。",
     "instructions": "ライブフィードを見てみましょう。 `top` コマンドを実行して、対話型プロセス モニターを起動します。",
     "commandHelp": [
@@ -794,7 +798,7 @@ export const translations_ja: Record<number, LessonTranslation> = {
     "hints": [
       "どのコマンドが対話型プロセス モニターを起動するかを考えてください。",
       "'top' または 'htop' コマンドを使用します。",
-      "実行してみてください: トップ"
+      "実行してみてください: top"
     ]
   },
   "29": {
@@ -962,7 +966,7 @@ export const translations_ja: Record<number, LessonTranslation> = {
     "objectives": [
       {
         "id": "ran_history",
-        "text": "「履歴」コマンドを実行します"
+        "text": "「history」コマンドを実行します"
       }
     ],
     "hints": [
@@ -1422,35 +1426,35 @@ export const translations_ja: Record<number, LessonTranslation> = {
     ]
   },
   "51": {
-    "title": "ファイルの覗き見 (先頭と末尾)",
+    "title": "ファイルの覗き見 (head & tail)",
     "description": "`cat` を使用してファイル全体を読み取ることができるようになりましたが、ファイルに数千行があり、先頭または末尾のみを確認したい場合はどうすればよいでしょうか。 `cat` を含む巨大なファイルをダンプすると、画面があふれてしまいます。代わりに、`head` と `tail` を使用してエッジを確認します。\n\n- `head` コマンドは、デフォルトでファイルの最初の 10 行を表示します。これは `-n <number>` を使用して変更できます (例: 最初の 5 行は `head -n 5 log.txt`)。\n- `tail` コマンドは、デフォルトで最後の 10 行を表示し、同じ `-n` オプションをサポートします。\n- 重要なことに、`tail -f` (以下) はファイルをリアルタイムで監視し、システムによって書き込まれる新しい行を表示します。これは、ライブ ログを監視するためのシステム管理者のお気に入りのツールです。",
-    "instructions": "ログを調べてみましょう。 `head -n 5 logs/app.log` を使用して、アプリケーション ログの最初の 5 行を表示します。次に、`tail -n 3 logs/security.log` を実行して、最後の 3 つのセキュリティ イベントを表示します。最後に、`tail -f logs/app.log` を実行して、リアルタイムのログ監視をシミュレートします (模擬エントリを出力して終了します)。",
+    "instructions": "ログを確認しましょう。`tail -n 2 logs.txt` (または `head -n 5 logs/app.log` / `tail -n 3 logs/security.log`) を実行し、`tail -f logs.txt` でリアルタイム監視をシミュレートします。",
     "commandHelp": [
       {
+        "cmd": "tail -n 2 logs.txt",
+        "desc": "logs.txt の最後の2行を表示する"
+      },
+      {
+        "cmd": "tail -f logs.txt",
+        "desc": "logs.txt の更新をリアルタイムで監視する"
+      },
+      {
         "cmd": "head -n 5 logs/app.log",
-        "desc": "app.log の最初の 5 行を表示"
+        "desc": "app.log の最初の5行を表示する"
       },
       {
         "cmd": "tail -n 3 logs/security.log",
-        "desc": "security.log の最後の 3 行を表示"
-      },
-      {
-        "cmd": "tail -f logs/app.log",
-        "desc": "app.log の更新をリアルタイムで監視"
+        "desc": "security.log の最後の3行を表示する"
       }
     ],
     "objectives": [
       {
-        "id": "used_head",
-        "text": "logs/app.log で -n 5 を指定して \"head\" コマンドを実行"
-      },
-      {
-        "id": "used_tail",
-        "text": "logs/security.log で -n 3 を指定して \"tail\" コマンドを実行"
+        "id": "used_tail_n",
+        "text": "-n を指定して tail を実行する (例: tail -n 2 logs.txt)"
       },
       {
         "id": "used_tail_f",
-        "text": "-f を指定して \"tail\" コマンドを実行して app.log を追跡"
+        "text": "-f を指定して tail を実行する (例: tail -f logs.txt)"
       }
     ],
     "hints": [
@@ -1460,7 +1464,7 @@ export const translations_ja: Record<number, LessonTranslation> = {
     ]
   },
   "52": {
-    "title": "インタラクティブなファイル スクロール (少ないものと多いもの)",
+    "title": "インタラクティブなファイル スクロール (less & more)",
     "description": "`head` と `tail` を使用してファイルの先頭と末尾を覗くのは素晴らしいことですが、長い構成ファイルをページごとに参照する必要がある場合はどうすればよいでしょうか? `less` や `more` のようなポケットベルはそのためのものです。\n\n- ページャーはファイルを対話的に読み込み、一度に 1 ページのテキストを表示して、大きなファイルでのシステムの速度低下を防ぎます。\n- `less` は最新の選択肢であり、矢印キーを使用して前後にスクロールし、`/` でテキストを検索し、`q` を押して終了することができます。\n- `more` は、前方にスクロールするだけの古い、よりシンプルなページャです。",
     "instructions": "長いファイルをページごとに読んでみましょう。 `less /etc/hosts` を実行して、スクロール ビューで開きます。 (ターミナルでは、スクロール可能なフレームに内容が出力されます。戻るには `q` を押してください)。",
     "commandHelp": [
@@ -1515,7 +1519,7 @@ export const translations_ja: Record<number, LessonTranslation> = {
     ]
   },
   "54": {
-    "title": "再利用可能なロジック (bash 関数)",
+    "title": "再利用可能なロジック (bash functions)",
     "description": "スクリプト内のアクションを自動化するループと条件を記述しました。しかし、スクリプトが大きくなるにつれて、同じロジックを何度もコピー＆ペーストすると保守が困難になります。 bash では、コマンドを再利用可能な関数にグループ化できます。\n\n- 関数を定義するには、名前の後に括弧と中括弧を続けて関数を宣言します: `log_msg() { echo \"msg\"; }`。\n- 関数は、関数本体内のローカル位置パラメーター `$1`、`$2` などを使用してアクセスされるシェル スクリプトと同じように引数を受け取ることができます。\n- 関数を呼び出すには、他のコマンドと同様にその名前を使用するだけです: `log_msg \"Backup started\"`。",
     "instructions": "モジュール式バックアップ スクリプトを構築しましょう。ホームフォルダーに `backup_helper.sh` という名前のスクリプトを作成します。タイムスタンプ付きのメッセージを出力する `log_msg` という名前の関数 (`log_msg() { echo \"[$(date +%T)] $1\"; }` など) を定義し、スクリプト内で少なくとも 2 回呼び出してアクションを記録します。実行可能にして実行します。",
     "commandHelp": [
@@ -1579,7 +1583,7 @@ export const translations_ja: Record<number, LessonTranslation> = {
     ]
   },
   "56": {
-    "title": "コマンド (どれ)",
+    "title": "コマンド (which)",
     "description": "の検索 `PATH` (Linux がコマンドを検索するディレクトリを保存する) などのアクティブな環境変数については理解できたので、`ls` または `grep` と入力したときに実行されるプログラムの正確なファイル パスを見つけるにはどうすればよいでしょうか。 `which` を使用してコマンド バイナリを見つけます。\n\n- `which` コマンドは、`$PATH` 変数にリストされているフォルダーを検索し、コマンドの実行時に実行されるバイナリの絶対パスを出力します (たとえば、`which ls` は `/bin/ls` を出力します)。\n- これは、ツールがインストールされている場所を見つけたり、同じツールの複数のバージョン間の競合を解決したりするのに役立ちます。",
     "instructions": "ツールを見つけてみましょう。 `which ls` を実行して、`ls` 実行可能ファイルがシステム上のどこに保存されているかを確認します。次に、`which grep` を実行して、`grep` コマンドのパスを見つけます。",
     "commandHelp": [
@@ -1595,11 +1599,11 @@ export const translations_ja: Record<number, LessonTranslation> = {
     "objectives": [
       {
         "id": "used_which_ls",
-        "text": "ls で「どれ」コマンドを実行"
+        "text": "ls で「which」コマンドを実行"
       },
       {
         "id": "used_which_grep",
-        "text": "grep で「どれ」コマンドを実行"
+        "text": "grep で「which」コマンドを実行"
       }
     ],
     "hints": [
@@ -1608,7 +1612,7 @@ export const translations_ja: Record<number, LessonTranslation> = {
     ]
   },
   "57": {
-    "title": "カスタム シェル ショートカット (エイリアス)",
+    "title": "カスタム シェル ショートカット (alias)",
     "description": "複数のフラグを指定して長いコマンドを入力すると、非常に疲れる可能性があります。 Linux では、エイリアスと呼ばれるカスタム ショートカットを作成できます。たとえば、`ll` をマップして `ls -la` を自動的に実行できます。\n\n- 一時的なエイリアスを作成するには、`alias name='command'` (例: `alias ll='ls -la'`) を実行します。\n- 引数なしで `alias` を実行すると、現在のセッション内のすべてのアクティブなエイリアスが一覧表示されます。\n- エイリアスを再起動後も永続的にするには、通常、エイリアスは `.bashrc` または `.bash_profile` 構成ファイルに書き込まれます。",
     "instructions": "いくつかのショートカットを設定しましょう。 `alias la='ls -a'` を実行することで `ls -a` を実行する `la` という名前の一時エイリアスを作成します。ターミナルで `la` を実行してテストします。",
     "commandHelp": [
@@ -1638,7 +1642,7 @@ export const translations_ja: Record<number, LessonTranslation> = {
     ]
   },
   "58": {
-    "title": "ユーザー管理 (useradd および passwd)",
+    "title": "ユーザー管理 (useradd & passwd)",
     "description": "これまでは、`learner` ユーザーとして作業してきました。しかし、現実のサーバーでは、システム管理者は複数のアカウントを管理する必要があります。新しいユーザーを追加し、パスワードを設定する方法を学びましょう。\n\n- `useradd` コマンドは、新しいユーザー アカウントを作成します。アカウントの作成はシステムのセキュリティに影響するため、スーパーユーザー権限 (`sudo useradd deployer` など) で実行する必要があります。\n- `passwd` コマンドは、ユーザーのパスワードを設定または変更します。 `sudo passwd deployer` として実行して、デプロイヤ ユーザーのパスワードを設定します。",
     "instructions": "同僚のアカウントを追加しましょう。 `sudo useradd deployer` を実行して、`deployer` という名前の新しいユーザーを作成します。次に、`sudo passwd deployer` を実行してパスワードを設定します (プロンプトが表示されたら任意の模擬パスワードを入力します)。",
     "commandHelp": [
@@ -1744,7 +1748,7 @@ export const translations_ja: Record<number, LessonTranslation> = {
     ]
   },
   "62": {
-    "title": "ファイル圧縮 (gzip および Gunzip)",
+    "title": "ファイル圧縮 (gzip & gunzip)",
     "description": "大規模なデータセットを含む 1 つのテキスト ファイルがあり、ディスク領域を節約したり、共有を高速化するためにそのサイズを削減したいとします。 Linux では、`gzip` を使用して個々のファイルを圧縮し、`gunzip` を使用して復元します。\n\n- `gzip <filename>` コマンドはファイルを圧縮し、`.gz` で終わる圧縮バージョンに置き換えます (例: `backup.txt` は `backup.txt.gz` になります)。\n- `gunzip <filename.gz>` コマンドはファイルを解凍し、元のバージョンを復元します。",
     "instructions": "ファイルを圧縮してスペースを節約しましょう。ホームフォルダーで `gzip note.txt` を実行します。次に、`gunzip note.txt.gz` を実行して、結果の `note.txt.gz` ファイルを元の状態に解凍します。",
     "commandHelp": [
@@ -1774,7 +1778,7 @@ export const translations_ja: Record<number, LessonTranslation> = {
     ]
   },
   "63": {
-    "title": "グループ管理 (groupadd とグループ)",
+    "title": "グループ管理 (groupadd & groups)",
     "description": "Linux では、ユーザーは権限を簡単に共有するために **グループ**に編成されます。たとえば、すべての開発者が `developers` という名前のグループに属しているとします。これにより、チーム全体で一度にファイルを共有できるようになります。\n\n- `groupadd` コマンドは新しいグループを作成します。これはシステム構成であるため、スーパーユーザー権限が必要です (例: `sudo groupadd developers`)。\n- `groups [username]` コマンドは、ユーザーが属するすべてのグループを一覧表示します。引数なしで実行すると、現在のユーザーのグループが表示されます。",
     "instructions": "グループを管理しましょう。 `sudo groupadd developers` を実行して、`developers` という名前の新しいグループを作成します。次に、`groups` コマンドを実行して、自分のアクティブなグループを確認します。",
     "commandHelp": [
@@ -1875,7 +1879,7 @@ export const translations_ja: Record<number, LessonTranslation> = {
     ]
   },
   "67": {
-    "title": "代替圧縮 (bzip2 および xz)",
+    "title": "代替圧縮 (bzip2 & xz)",
     "description": "`gzip` および `zip` を超えて、Linux は、CPU 速度を犠牲にしてより高い圧縮率を実現するために最適化された他の圧縮形式をサポートしています。これらは、`bzip2` (bz2) と `xz` (xz) です。\n\n- `bzip2 <file>` コマンドはファイルを圧縮し、`<file>.bz2` を出力します。\n- `xz <file>` コマンドは、ロスレス LZMA 圧縮を使用して `<file>.xz` を作成します。これにより、ファイル サイズが非常に小さくなるため、Linux カーネル リリースに最適です。",
     "instructions": "形式を比較してみましょう。 `bzip2 note.txt` を使用して `note.txt` を圧縮します。次に、`xz note.txt` を使用して結果のファイルを圧縮します (両方をシミュレートするため)。",
     "commandHelp": [
@@ -1934,7 +1938,7 @@ export const translations_ja: Record<number, LessonTranslation> = {
     ]
   },
   "69": {
-    "title": "RedHat パッケージ マネージャー (yum および dnf)",
+    "title": "RedHat パッケージ マネージャー (yum & dnf)",
     "description": "すべての Linux 環境が Debian/Ubuntu に基づいているわけではありません。 RedHat、Fedora、または CentOS システムで作業している場合、`apt` や `dpkg` は見つかりません。代わりに、古い `yum` または最新の `dnf` (Dandified YUM) パッケージ マネージャーを使用してパッケージを管理します。\n\n- `dnf check-update` (または `yum check-update`) コマンドは、RedHat リポジトリに接続して、利用可能なパッケージ更新をスキャンします。\n- `dnf install <package>` コマンドは、`apt install` と同様のプログラムを取得してインストールします。",
     "instructions": "RedHat ベースのシミュレーターで更新を実行してみましょう。 `dnf check-update` (または `yum check-update`) を実行して、更新が必要なパッケージを確認します。",
     "commandHelp": [
@@ -1959,7 +1963,7 @@ export const translations_ja: Record<number, LessonTranslation> = {
     ]
   },
   "70": {
-    "title": "ユーザーの管理 (adduser および userdel)",
+    "title": "ユーザーの管理 (adduser & userdel)",
     "description": "`useradd` はシステム構成ファイルにユーザーの詳細を登録するだけの低レベル ユーティリティですが、Debian/Ubuntu システムは、ホーム フォルダーの作成、パスワードの設定、およびシェル環境の初期化を自動化する `adduser` と呼ばれる高レベルの対話型スクリプトを提供します。逆に、`userdel` はユーザー アカウントを完全に削除します。\n\n- `sudo adduser tester` を実行すると、対話形式でユーザー構成をガイドできます。\n- `sudo userdel tester` を実行すると、ユーザー アカウントが削除されます。",
     "instructions": "ユーザーのライフサイクルを処理しましょう。 `sudo adduser tester` を使用してユーザーを作成します。その後、`sudo userdel tester` を実行してユーザーを削除します。",
     "commandHelp": [
@@ -2080,7 +2084,7 @@ export const translations_ja: Record<number, LessonTranslation> = {
     ]
   },
   "75": {
-    "title": "ソケットと接続の統計 (netstat と ss)",
+    "title": "ソケットと接続の統計 (netstat & ss)",
     "description": "データベースまたは Web サーバーをセットアップするときは、サービスが正しいポートで実行およびリッスンしていることを確認し、不正な接続が確立されていないかどうかを確認する必要があります。これは、`netstat` または `ss` を使用して行います。\n\n- `netstat` (ネットワーク統計) コマンドは、TCP 接続とリスニング ポートを表示するための古典的なツールです。例えば。 `netstat -tuln` は、TCP/UDP リスニング ポートをリストします。\n- `ss` (ソケット統計) コマンドは、カーネル名前空間から直接ソケット接続の詳細を表示する `netstat` に代わる最新の高速なコマンドです。",
     "instructions": "ポートを監査しましょう。 `netstat -tuln` を実行してリスニング中の TCP/UDP ソケットを確認し、最新のソケット統計コマンド `ss -tuln` を使用して確認します。",
     "commandHelp": [
@@ -2130,7 +2134,7 @@ export const translations_ja: Record<number, LessonTranslation> = {
     ]
   },
   "77": {
-    "title": "Linux ファイアウォール (ufw および iptables)",
+    "title": "Linux ファイアウォール (ufw & iptables)",
     "description": "入り口に警備員が立って ID をチェックし、許可されていない訪問者をブロックしている安全なアパートに住んでいることを想像してください。 Linux では、**ファイアウォール** がネットワーク ポートのセキュリティ ガードとして機能します。\n\n- `ufw` (Uncomplicated Firewall) コマンドは、ファイアウォール ルールを管理するための使いやすいインターフェイスです。 `sudo ufw status` を実行すると、ファイアウォールがアクティブかどうか、およびどのポート (SSH の場合はポート 22、Web サーバーの場合はポート 80 など) が開いているかが表示されます。\n- `iptables` コマンドは、実際にパケットをブロックまたはリダイレクトする低レベルの従来の Netfilter ツールです。 `sudo iptables -L` を実行すると、アクティブなセキュリティ チェーンとパケット マッチング ルールが一覧表示されます。",
     "instructions": "警備員を検査しましょう。 `sudo ufw status` を実行して単純なファイアウォールのステータスを表示し、`sudo iptables -L` を実行して下位レベルの Netfilter ルールを確認します。",
     "commandHelp": [
@@ -2259,7 +2263,7 @@ export const translations_ja: Record<number, LessonTranslation> = {
     "objectives": [
       {
         "id": "ran_apt_search",
-        "text": "「apt search Tree」を実行してパッケージ カタログをクエリします"
+        "text": "「apt search tree」を実行してパッケージ カタログをクエリします"
       }
     ],
     "hints": [
@@ -2269,7 +2273,7 @@ export const translations_ja: Record<number, LessonTranslation> = {
     ]
   },
   "82": {
-    "title": "パッケージのパージ (apt パージ)",
+    "title": "パッケージのパージ (apt purge)",
     "description": "Linux でソフトウェアをアンインストールする場合、標準の `apt remove` はアプリケーション バイナリをアンインストールしますが、後で再インストールする場合に備えてシステム構成ファイルを残します。ソフトウェア パッケージを完全に削除し、関連するすべての構成ファイルを消去するには、`apt purge` (または `apt remove --purge`) を使用します。\n\n- `sudo apt purge <package>` コマンドはアプリケーションを削除し、残っているすべての構成ファイルを消去します。\n- パージではシステム全体のフォルダーと構成ファイルが変更されるため、スーパーユーザー (`sudo`) 権限が必要です。",
     "instructions": "パッケージとその構成ファイルを完全に削除しましょう。 `sudo apt purge tree` を実行して、システムから `tree` プログラムを削除します。",
     "commandHelp": [
@@ -2281,7 +2285,7 @@ export const translations_ja: Record<number, LessonTranslation> = {
     "objectives": [
       {
         "id": "purged_tree",
-        "text": "「sudo apt purge Tree」を使用してパッケージ「ツリー」をパージします"
+        "text": "「sudo apt purge tree」を使用してパッケージ「tree」をパージします"
       }
     ],
     "hints": [

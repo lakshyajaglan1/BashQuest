@@ -4,6 +4,7 @@ import { lessons } from "../lib/lessons";
 export class AppStateManager {
   state: any;
   constructor() {
+
     this.state = {
       xp: 0,
       completedLessons: [],
@@ -106,6 +107,69 @@ export class AppStateManager {
         "bg",
         "iostat",
         "exit",
+        "file",
+        "stat",
+        "tree",
+        "rmdir",
+        "tee",
+        "diff",
+        "umask",
+        "chgrp",
+        "getfacl",
+        "setfacl",
+        "rpm",
+        "snap",
+        "lsblk",
+        "blkid",
+        "mount",
+        "umount",
+        "dmesg",
+        "pgrep",
+        "pkill",
+        "killall",
+        "nohup",
+        "watch",
+        "dig",
+        "nslookup",
+        "host",
+        "wget",
+        "nc",
+        "hostname",
+        "hostnamectl",
+        "locate",
+        "updatedb",
+        "whereis",
+        "type",
+        "apropos",
+        "whatis",
+        "timedatectl",
+        "shutdown",
+        "reboot",
+        "vim",
+        "vi",
+        "date",
+        "jq",
+        "strings",
+        "xxd",
+        "hexdump",
+        "read",
+        "rsync",
+        "sha256sum",
+        "md5sum",
+        "dd",
+        "mktemp",
+        "source",
+        "unset",
+        "unalias",
+        "usermod",
+        "ssh-keygen",
+        "ssh-copy-id",
+        "who",
+        "w",
+        "last",
+        "tmux",
+        "git",
+        "docker",
       ],
     };
 
@@ -117,14 +181,34 @@ export class AppStateManager {
 
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
-      const viewParam = urlParams.get("view");
-      if (
-        viewParam === "dashboard" ||
-        viewParam === "sandbox" ||
-        viewParam === "about" ||
-        viewParam === "tools"
-      ) {
-        this.state.activeView = viewParam;
+      const questParam = urlParams.get("quest");
+      if (questParam) {
+        const questId = Number(questParam);
+        if (lessons.some((l) => l.id === questId)) {
+          this.state.activeLessonId = questId;
+          this.state.activeView = "sandbox";
+        }
+      }
+
+      const path = window.location.pathname;
+      if (path.includes("/terminal")) {
+        this.state.activeView = "sandbox";
+      } else if (path.includes("/tools")) {
+        this.state.activeView = "tools";
+      } else if (path.includes("/about")) {
+        this.state.activeView = "about";
+      } else {
+        const viewParam = urlParams.get("view");
+        if (
+          viewParam === "dashboard" ||
+          viewParam === "sandbox" ||
+          viewParam === "about" ||
+          viewParam === "tools"
+        ) {
+          this.state.activeView = viewParam;
+        } else if (!questParam) {
+          this.state.activeView = "dashboard";
+        }
       }
     }
 
@@ -138,13 +222,22 @@ export class AppStateManager {
     const fs = new FileSystem(this.state.fsTree);
     const completed = this.state.completedLessons;
 
-    if (completed.includes(10) && !completed.includes(12)) {
+    if (!completed.includes(12)) {
       const statusNode = fs.getNodeByPath("/home/learner", "status.txt");
       if (!statusNode) {
         fs.createNode("/home/learner", "status.txt", "file", {
           content: "System Online\nAll Checks Green\n",
         });
       }
+    }
+
+    if (!fs.getNodeByPath("/home/learner", "notes.txt")) {
+      fs.createNode("/home/learner", "notes.txt", "file", {
+        content: "Meeting Notes:\nDiscussing new Linux architecture.",
+        permissions: "644",
+        owner: "learner",
+        group: "learner"
+      });
     }
 
     if (!completed.includes(13)) {
@@ -258,10 +351,322 @@ export class AppStateManager {
       }
     }
 
-    if (!fs.getNodeByPath("/etc", "group")) {
+    const groupNode = fs.getNodeByPath("/etc", "group");
+    if (!groupNode) {
       fs.createNode("/etc", "group", "file", {
         content: "root:x:0:\nlearner:x:1000:\nsudo:x:27:learner\n",
+        permissions: "644",
+        owner: "root",
+        group: "root",
       });
+    } else if (groupNode.owner === "learner") {
+      groupNode.owner = "root";
+      groupNode.group = "root";
+      groupNode.permissions = "644";
+    }
+
+    // Boss Challenge Scenario Initial States
+    if (this.state.activeLessonId === 84 && !completed.includes(84)) {
+      fs.deleteNode("/home/learner", "app", true);
+    }
+
+    if (!completed.includes(85)) {
+      if (!fs.getNodeByPath("/home/learner", "temp_install.tmp")) {
+        fs.createNode("/home/learner", "temp_install.tmp", "file", {
+          content: "Temporary installation cache\n",
+        });
+      }
+      if (!fs.getNodeByPath("/home/learner", "old_log.txt")) {
+        fs.createNode("/home/learner", "old_log.txt", "file", {
+          content: "Legacy log dump\n",
+        });
+      }
+      if (!fs.getNodeByPath("/home/learner", "staging.conf")) {
+        fs.createNode("/home/learner", "staging.conf", "file", {
+          content: "DB_HOST=prod-db.internal\nCACHE_ENABLED=true\n",
+        });
+      }
+    }
+
+    if (!completed.includes(86)) {
+      if (!fs.getNodeByPath("/home/learner", "access.log")) {
+        fs.createNode("/home/learner", "access.log", "file", {
+          content:
+            '203.0.113.19 - - [03/Jul/2026:10:00:00] "POST /login" 401\n198.51.100.42 - - [03/Jul/2026:10:00:01] "GET /admin" 403\n203.0.113.19 - - [03/Jul/2026:10:00:02] "POST /login" 401\n198.51.100.42 - - [03/Jul/2026:10:00:04] "GET /admin" 403\n',
+        });
+      }
+    }
+
+    if (!completed.includes(87)) {
+      const vNode = fs.getNodeByPath("/etc", "vault.conf");
+      if (!vNode) {
+        fs.createNode("/etc", "vault.conf", "file", {
+          content:
+            "SECRET_KEY=super_secure_vault_pass_999\nDATABASE_URL=postgres://app:sec@db/prod\n",
+          permissions: "777",
+          owner: "learner",
+        });
+      }
+    }
+
+    if (!completed.includes(88)) {
+      if (!fs.getNodeByPath("/tmp", "corrupt_pkg.deb")) {
+        fs.createNode("/tmp", "corrupt_pkg.deb", "file", {
+          content: "corrupt binary payload\n",
+        });
+      }
+    }
+
+    if (!completed.includes(89)) {
+      if (!fs.getNodeByPath("/var/log", "huge_core_dump.log")) {
+        fs.createNode("/var/log", "huge_core_dump.log", "file", {
+          content: "CRASH CORE DUMP OVERFLOW BUFFER 0xDEADBEEF\n",
+          size: 52428800,
+        });
+      }
+    }
+
+    if (!fs.getNodeByPath("/etc", "fstab")) {
+      fs.createNode("/etc", "fstab", "file", {
+        content:
+          "# /etc/fstab: static file system information.\n# <file system> <mount point>   <type>  <options>       <dump>  <pass>\nUUID=b1e2c3d4-0001-4000-8000-000000000001 / ext4 defaults 0 1\nUUID=c2d3e4f5-0002-4000-8000-000000000002 none swap sw 0 0\nUUID=d3e4f5a6-0003-4000-8000-000000000003 /mnt/data ext4 defaults,noatime 0 2\n",
+        permissions: "644",
+      });
+    }
+
+    if (!fs.getNodeByPath("/etc", "resolv.conf")) {
+      fs.createNode("/etc", "resolv.conf", "file", {
+        content:
+          "# Generated by NetworkManager\nnameserver 127.0.0.53\noptions edns0 trust-ad\nsearch localdomain\n",
+        permissions: "644",
+      });
+    }
+
+    if (!fs.getNodeByPath("/mnt", "data")) {
+      if (!fs.getNodeByPath("/", "mnt")) {
+        fs.createNode("/", "mnt", "dir");
+      }
+      fs.createNode("/mnt", "data", "dir", { permissions: "755" });
+    }
+
+    if (!fs.getNodeByPath("/home/learner", "backup.sh")) {
+      fs.createNode("/home/learner", "backup.sh", "file", {
+        content: '#!/bin/bash\n# Production backup task\nsleep 30\necho "Backup finished successfully"\n',
+        permissions: "755",
+        owner: "learner",
+        group: "learner",
+      });
+    }
+
+    if (!completed.includes(91)) {
+      const hostsNode: any = fs.getNodeByPath("/etc", "hosts");
+      if (hostsNode && !hostsNode.content.includes("evil-tracker.local")) {
+        hostsNode.content += "0.0.0.0 evil-tracker.local\n";
+      }
+    }
+
+    if (!completed.includes(92)) {
+      if (!fs.getNodeByPath("/var", "backups")) {
+        fs.createNode("/var", "backups", "dir");
+      }
+      if (!fs.getNodeByPath("/var/backups", "lost")) {
+        fs.createNode("/var/backups", "lost", "dir");
+      }
+      if (!fs.getNodeByPath("/var/backups/lost", "db_backup_secure.tar.gz")) {
+        fs.createNode("/var/backups/lost", "db_backup_secure.tar.gz", "file", {
+          content: "production_db_dump_compressed\n",
+        });
+      }
+    }
+
+    if (this.state.activeLessonId === 94 && !completed.includes(94)) {
+      const serverConf: any = fs.getNodeByPath("/home/learner", "server.conf");
+      if (serverConf && serverConf.type === "file") {
+        serverConf.content =
+          "host=0.0.0.0.0\nport=99999\nmax_connections=10\n";
+      } else {
+        fs.createNode("/home/learner", "server.conf", "file", {
+          content: "host=0.0.0.0.0\nport=99999\nmax_connections=10\n",
+        });
+      }
+    }
+
+    if (!completed.includes(96)) {
+      if (!fs.getNodeByPath("/home/learner", "messy_data.csv")) {
+        fs.createNode("/home/learner", "messy_data.csv", "file", {
+          content:
+            "alice:dev:engineering;\nbob:ops:infrastructure;\ncharlie:sec:security;\ndavid:analyst:data;\n",
+        });
+      }
+    }
+
+    if (!completed.includes(97)) {
+      if (!fs.getNodeByPath("/tmp", "evil_bin")) {
+        fs.createNode("/tmp", "evil_bin", "dir");
+      }
+      const rcNode: any = fs.getNodeByPath("/home/learner", ".bashrc");
+      if (!rcNode) {
+        fs.createNode("/home/learner", ".bashrc", "file", {
+          content:
+            'export PATH=/tmp/evil_bin:$PATH\nalias ls="/tmp/evil_bin/spy_ls"\n',
+        });
+      } else if (!rcNode.content.includes("evil_bin")) {
+        rcNode.content += "export PATH=/tmp/evil_bin:$PATH\n";
+      }
+    }
+
+    if (!completed.includes(98)) {
+      if (!fs.getNodeByPath("/home/learner", "links")) {
+        fs.createNode("/home/learner", "links", "dir");
+      }
+      if (!fs.getNodeByPath("/home/learner/links", "current_log")) {
+        fs.createNode("/home/learner/links", "current_log", "symlink", {
+          target: "/tmp/old_syslog",
+        });
+      }
+    }
+
+    if (!completed.includes(99)) {
+      const pNode: any = fs.getNodeByPath("/etc", "passwd");
+      if (pNode && !pNode.content.includes("backdoor")) {
+        pNode.content += "backdoor:x:1001:1001::/home/backdoor:/bin/bash\n";
+      }
+      const gNode: any = fs.getNodeByPath("/etc", "group");
+      if (gNode && !gNode.content.includes("rogue_admins")) {
+        gNode.content += "rogue_admins:x:1002:backdoor\n";
+      }
+    }
+
+    if (!completed.includes(102)) {
+      if (!fs.getNodeByPath("/home/learner", "temp_empty")) {
+        fs.createNode("/home/learner", "temp_empty", "dir");
+      }
+    }
+
+    if (!completed.includes(103)) {
+      if (!fs.getNodeByPath("/etc", "app.conf")) {
+        fs.createNode("/etc", "app.conf", "file", {
+          content: "# Application Configuration\nVERSION=1.0.0\n",
+          permissions: "644",
+          owner: "root",
+          group: "root"
+        });
+      }
+    }
+
+    if (!completed.includes(104)) {
+      if (!fs.getNodeByPath("/home/learner", "app_v1.conf")) {
+        fs.createNode("/home/learner", "app_v1.conf", "file", {
+          content: "PORT=3000\nTIMEOUT=30\nLOG_LEVEL=info\n"
+        });
+      }
+      if (!fs.getNodeByPath("/home/learner", "app_v2.conf")) {
+        fs.createNode("/home/learner", "app_v2.conf", "file", {
+          content: "PORT=3000\nTIMEOUT=60\nLOG_LEVEL=debug\n"
+        });
+      }
+    }
+
+    if (!completed.includes(108)) {
+      if (!fs.getNodeByPath("/home/learner", "project.txt")) {
+        fs.createNode("/home/learner", "project.txt", "file", {
+          content: "Project team assets and notes\n"
+        });
+      }
+    }
+
+    if (!completed.includes(109)) {
+      if (!fs.getNodeByPath("/tmp", "shared")) {
+        fs.createNode("/tmp", "shared", "dir", { permissions: "777" });
+      }
+      if (!fs.getNodeByPath("/home/learner", "admin_tool")) {
+        fs.createNode("/home/learner", "admin_tool", "file", {
+          content: "#!/bin/bash\necho 'Admin tool executed'\n",
+          permissions: "755"
+        });
+      }
+      if (!fs.getNodeByPath("/usr/bin", "passwd")) {
+        fs.createNode("/usr/bin", "passwd", "file", {
+          content: "ELF binary passwd\n",
+          permissions: "4755",
+          owner: "root",
+          group: "root"
+        });
+      }
+    }
+
+    if (!fs.getNodeByPath("/bin", "app")) {
+      fs.createNode("/bin", "app", "file", {
+        content: "\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x03\x00>\x00\x01\x00\x00\x00\n/lib64/ld-linux-x86-64.so.2\nlibc.so.6\nputs\nprintf\n__libc_start_main\nGLIBC_2.2.5\nBashQuest Enterprise App v2.4.1\nCompiled by root@build-srv-01\nBuild Date: 2026-06-15\nDATABASE_URL=postgres://localhost:5432/production\nSecret API Key: bq_prod_994827104\n",
+        permissions: "755",
+        owner: "root",
+        group: "root"
+      });
+    }
+
+    if (!fs.getNodeByPath("/home/learner", "api.json")) {
+      fs.createNode("/home/learner", "api.json", "file", {
+        content: JSON.stringify({
+          service: "billing-api",
+          version: "1.4.0",
+          status: "healthy",
+          users: [
+            { id: 1, name: "alice", role: "admin" },
+            { id: 2, name: "bob", role: "user" },
+            { id: 3, name: "charlie", role: "developer" }
+          ]
+        }, null, 2) + "\n"
+      });
+    }
+
+    if (!fs.getNodeByPath("/home/learner", "app.db")) {
+      fs.createNode("/home/learner", "app.db", "file", {
+        content: "SQLite format 3\x00\x10\x00\x01\x01\x00@  \x00\x00\x00\x02\x00\x00\x00\x04\nproduction_database_table_users\n"
+      });
+    }
+
+    if (!fs.getNodeByPath("/home/learner", "access.log")) {
+      fs.createNode("/home/learner", "access.log", "file", {
+        content: "192.168.1.10 - - [03/Jul/2026:10:00:00] \"GET /index.html\" 200\n192.168.1.15 - - [03/Jul/2026:10:00:01] \"GET /api/v1/status\" 200\n192.168.1.10 - - [03/Jul/2026:10:00:02] \"GET /favicon.ico\" 200\n192.168.1.20 - - [03/Jul/2026:10:00:03] \"POST /login\" 401\n192.168.1.10 - - [03/Jul/2026:10:00:04] \"GET /dashboard\" 200\n192.168.1.10 - - [03/Jul/2026:10:00:05] \"GET /api/user\" 200\n192.168.1.15 - - [03/Jul/2026:10:00:06] \"GET /api/v1/metrics\" 200\n192.168.1.10 - - [03/Jul/2026:10:00:07] \"GET /logout\" 200\n"
+      });
+    }
+
+    if (!fs.getNodeByPath("/home/learner", "src")) {
+      fs.createNode("/home/learner", "src", "dir");
+      fs.createNode("/home/learner/src", "app.js", "file", {
+        content: "console.log('App running');\n"
+      });
+      fs.createNode("/home/learner/src", "utils.js", "file", {
+        content: "module.exports = {};\n"
+      });
+    }
+
+    if (!fs.getNodeByPath("/home/learner", "backups")) {
+      fs.createNode("/home/learner", "backups", "dir");
+      fs.createNode("/home/learner/backups", "checksums.sha256", "file", {
+        content: "d62bd36ae2c36c209574e8478acb67acecea2c8d662433f095c3e40bd5122d0d  data_backup.tar.gz\n"
+      });
+      fs.createNode("/home/learner/backups", "data_backup.tar.gz", "file", {
+        content: "Corrupted archive data payload\n"
+      });
+    }
+
+    if (!fs.getNodeByPath("/var", "backups")) {
+      fs.createNode("/var", "backups", "dir");
+      fs.createNode("/var/backups", "data_backup.tar.gz", "file", {
+        content: "Archive data payload version 1.0.0\nDatabase dump valid\n"
+      });
+    }
+
+    if (!fs.getNodeByPath("/home/learner", "server.js")) {
+      fs.createNode("/home/learner", "server.js", "file", {
+        content: "const express = require('express');\nconst app = express();\nconst PORT = 3000;\n\napp.get('/health', (req, res) => res.json({ status: 'healthy' }));\napp.listen(PORT, () => console.log('Listening on ' + PORT));\n"
+      });
+    }
+
+    const etcPasswd: any = fs.getNodeByPath("/etc", "passwd");
+    if (etcPasswd && !etcPasswd.content.includes("deployer")) {
+      etcPasswd.content += "deployer:x:1002:1002::/home/deployer:/bin/sh\n";
     }
 
     this.state.fsTree = fs.tree;
@@ -282,6 +687,15 @@ export class AppStateManager {
       this.state.installedPackages,
     );
 
+    if (activeId === 90 && !completed.includes(90)) {
+      session.rogueProcessAlive = true;
+    }
+    if (activeId === 93 && !completed.includes(93)) {
+      session.services.apache2 = "inactive";
+    }
+
+    const currentLesson =
+      lessons.find((l) => l.id === this.state.activeLessonId) || lessons[0];
     const globalWindow = window as any;
     globalWindow.appState = {
       ...globalWindow.appState,
@@ -291,6 +705,8 @@ export class AppStateManager {
       xp: this.state.xp,
       completedLessons: this.state.completedLessons,
       activeLessonId: this.state.activeLessonId,
+      activeLesson: currentLesson,
+      activeView: this.state.activeView,
       streak: this.state.streak,
       lastCompletedDate: this.state.lastCompletedDate,
       resetActiveLessonFilesystem: () => {
@@ -481,6 +897,69 @@ export class AppStateManager {
           "bg",
           "iostat",
           "exit",
+          "file",
+          "stat",
+          "tree",
+          "rmdir",
+          "tee",
+          "diff",
+          "umask",
+          "chgrp",
+          "getfacl",
+          "setfacl",
+          "rpm",
+          "snap",
+          "lsblk",
+          "blkid",
+          "mount",
+          "umount",
+          "dmesg",
+          "pgrep",
+          "pkill",
+          "killall",
+          "nohup",
+          "watch",
+          "dig",
+          "nslookup",
+          "host",
+          "wget",
+          "nc",
+          "hostname",
+          "hostnamectl",
+          "locate",
+          "updatedb",
+          "whereis",
+          "type",
+          "apropos",
+          "whatis",
+          "timedatectl",
+          "shutdown",
+          "reboot",
+          "vim",
+          "vi",
+          "date",
+          "jq",
+          "strings",
+          "xxd",
+          "hexdump",
+          "read",
+          "rsync",
+          "sha256sum",
+          "md5sum",
+          "dd",
+          "mktemp",
+          "source",
+          "unset",
+          "unalias",
+          "usermod",
+          "ssh-keygen",
+          "ssh-copy-id",
+          "who",
+          "w",
+          "last",
+          "tmux",
+          "git",
+          "docker",
         ],
       };
       this.resetFilesystem();
@@ -720,6 +1199,13 @@ export class AppStateManager {
       globalWindow.appState.activeLessonId = this.state.activeLessonId;
       globalWindow.appState.streak = this.state.streak;
       globalWindow.appState.activeView = this.state.activeView;
+      if (
+        !globalWindow.appState.activeLesson ||
+        globalWindow.appState.activeLesson.id !== this.state.activeLessonId
+      ) {
+        globalWindow.appState.activeLesson =
+          lessons.find((l) => l.id === this.state.activeLessonId) || lessons[0];
+      }
     }
 
     window.dispatchEvent(

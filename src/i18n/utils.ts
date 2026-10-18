@@ -8,9 +8,14 @@ export function getLangFromUrl(url: URL): SupportedLanguage {
 }
 
 export function useTranslations(lang: SupportedLanguage) {
-  return function t(key: keyof typeof ui[typeof defaultLang]): string {
-    const langDict = ui[lang] as typeof ui[typeof defaultLang] | undefined;
-    return (langDict && langDict[key]) || ui[defaultLang][key] || key;
+  return function t(key: keyof (typeof ui)[typeof defaultLang] | string): string {
+    const langDict = ui[lang] as Record<string, string> | undefined;
+    const defaultDict = ui[defaultLang] as Record<string, string> | undefined;
+    const val = langDict?.[key];
+    if (val !== undefined && val !== "") return val;
+    const defaultVal = defaultDict?.[key];
+    if (defaultVal !== undefined && defaultVal !== "") return defaultVal;
+    return key;
   };
 }
 

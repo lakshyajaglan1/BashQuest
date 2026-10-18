@@ -9,10 +9,13 @@ import Footer from "../components/Footer.astro";
 import WebTools from "../components/WebTools.astro";
 import { getLocalizedModules } from "../i18n/lessons/index";
 import { useTranslations, useTranslatedPath } from "../i18n/utils";
+import { lessons, modules } from "../lib/lessons.js";
 
 const lang = "en";
 const t = useTranslations(lang);
 const translatePath = useTranslatedPath(lang);
+const totalQuests = lessons.length;
+const totalModules = modules.length;
 
 const softwareAppSchema = {
   "@context": "https://schema.org",
@@ -23,13 +26,13 @@ const softwareAppSchema = {
   operatingSystem: "Any (Web Browser)",
   url: "https://bashquest.com/",
   description:
-    "A free online Linux terminal practice platform and bash learning game with 60+ quests. Learn Linux terminal commands, bash scripting, and master core terminal learning objectives directly in your browser with no installation required.",
+    `A free online Linux terminal practice platform and bash learning game with ${totalQuests}+ quests. Learn Linux terminal commands, bash scripting, and master core terminal learning objectives directly in your browser with no installation required.`,
   featureList: [
     "Online Linux terminal practice sandbox with zero install",
-    "Free online Linux terminal practice with 60+ hands-on quests",
+    `Free online Linux terminal practice with ${totalQuests}+ hands-on quests`,
     "Interactive bash learning game with XP and badge system",
     "Master essential Linux terminal commands and text manipulation",
-    "Clear terminal learning objectives across 16 curriculum modules",
+    `Clear terminal learning objectives across ${totalModules} curriculum modules`,
     "Top-tier Linux learning website and beginner-friendly resource",
     "GNU Nano text editor practice in browser",
     "Grep, awk, sed, and command pipeline exercises",
@@ -330,17 +333,17 @@ const orgSchema = {
                   What you'll learn.
                 </h2>
                 <p class="body-sm text-body mt-1">
-                  Our progressive curriculum covers 16 core Linux administration
+                  Our progressive curriculum covers {totalModules} core Linux administration
                   skill sets:
                 </p>
               </div>
 
               <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                 {
-                  getLocalizedModules(lang).map((mod) => (
+                  getLocalizedModules(lang).map((mod, index) => (
                     <div class="p-4 bg-canvas border border-hairline rounded-md shadow-level-2 hover:shadow-level-3 transition-all duration-200">
                       <div class="caption-mono text-mute uppercase font-semibold mb-1">
-                        Module {mod.id}
+                        Module {index + 1}
                       </div>
                       <h3 class="font-sans text-sm font-bold text-ink leading-tight">
                         {mod.title.replace(/^\d+\.\s*/, "")}

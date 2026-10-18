@@ -1,6 +1,7 @@
 import { lessons, modules } from "../../lib/lessons.js";
+export { lessons, modules };
 import type { SupportedLanguage } from "../languages";
-import type { LessonTranslation, ModuleTranslation } from "./types";
+import type { LessonTranslation, ModuleTranslation } from "./types.ts";
 import { moduleTranslations } from "./modules.ts";
 import { levelNames, badgeTranslations } from "./levels.ts";
 
@@ -70,11 +71,26 @@ export function getLocalizedLesson(id: number, lang: SupportedLanguage = "en") {
     description: translation.description || baseLesson.description,
     instructions: translation.instructions || baseLesson.instructions,
     badge: localizedBadge,
-    commandHelp: translation.commandHelp && translation.commandHelp.length > 0
-      ? translation.commandHelp
+    commandHelp: baseLesson.commandHelp
+      ? baseLesson.commandHelp.map((baseItem: any, idx: number) => {
+          const transItem = translation.commandHelp?.[idx];
+          return {
+            cmd: baseItem.cmd,
+            desc: transItem?.desc || baseItem.desc,
+          };
+        })
       : baseLesson.commandHelp,
-    objectives: translation.objectives && translation.objectives.length > 0
-      ? translation.objectives
+    objectives: baseLesson.objectives
+      ? baseLesson.objectives.map((baseObj: any, idx: number) => {
+          let transObj = translation.objectives?.find((o: any) => o.id === baseObj.id);
+          if (!transObj && translation.objectives && translation.objectives.length === baseLesson.objectives.length) {
+            transObj = translation.objectives[idx];
+          }
+          return {
+            id: baseObj.id,
+            text: transObj?.text || baseObj.text,
+          };
+        })
       : baseLesson.objectives,
     hints: translation.hints && translation.hints.length > 0
       ? translation.hints
@@ -89,6 +105,6 @@ export function getLocalizedLessons(lang: SupportedLanguage = "en") {
   return lessons.map((l: any) => getLocalizedLesson(l.id, lang));
 }
 
-export * from "./types";
-export * from "./modules";
-export * from "./levels";
+export * from "./types.ts";
+export * from "./modules.ts";
+export * from "./levels.ts";

@@ -1,4 +1,4 @@
-import type { LessonTranslation } from "./types";
+import type { LessonTranslation } from "./types.ts";
 
 export const translations_es: Record<number, LessonTranslation> = {
   "1": {
@@ -140,7 +140,7 @@ export const translations_es: Record<number, LessonTranslation> = {
     "hints": [
       "Elimina todo el texto antiguo y comienza de nuevo.",
       "Ejecute el comando que borra la pantalla del terminal.",
-      "Intente ejecutar: borrar"
+      "Intente ejecutar: clear"
     ]
   },
   "6": {
@@ -156,13 +156,13 @@ export const translations_es: Record<number, LessonTranslation> = {
     "objectives": [
       {
         "id": "ran_help",
-        "text": "Ejecute el comando \"ayuda\""
+        "text": "Ejecute el comando \"help\""
       }
     ],
     "hints": [
       "Revise las instrucciones para encontrar el comando apropiado para obtener ayuda del libro de reglas.",
-      "Utilice el comando 'ayuda'.",
-      "Intente ejecutar: ayuda"
+      "Utilice el comando 'help'.",
+      "Intente ejecutar: help"
     ]
   },
   "7": {
@@ -182,17 +182,17 @@ export const translations_es: Record<number, LessonTranslation> = {
     "objectives": [
       {
         "id": "used_touch",
-        "text": "Use el comando \"tocar\""
+        "text": "Use el comando \"touch\""
       },
       {
         "id": "file_exists",
-        "text": "Cree el archivo \"task.txt\" dentro de \"proyectos\""
+        "text": "Cree el archivo \"task.txt\" dentro de \"projects\""
       }
     ],
     "hints": [
       "Piense en qué comando crea un nuevo archivo vacío.",
-      "Utilice el comando 'touch' dentro del directorio 'proyectos'.",
-      "Intente ejecutar: toque proyectos/task.txt"
+      "Utilice el comando 'touch' dentro del directorio 'projects'.",
+      "Intente ejecutar: touch projects/task.txt"
     ]
   },
   "8": {
@@ -234,23 +234,23 @@ export const translations_es: Record<number, LessonTranslation> = {
     "objectives": [
       {
         "id": "dir_with_space_exists",
-        "text": "Crea el directorio \"mi código\""
+        "text": "Crea el directorio \"my code\""
       },
       {
         "id": "file_with_space_exists",
-        "text": "Crea el archivo \"mi tarea\" dentro de \"mi código\""
+        "text": "Crea el archivo \"my task\" dentro de \"my code\""
       }
     ],
     "hints": [
       "Al crear archivos o directorios con espacios en sus nombres, entre comillas.",
-      "Utilice mkdir \"mi código\" seguido de toque \"mi código/mi tarea\".",
-      "Intente ejecutar: mkdir \"mi código\" y toque \"mi código/mi tarea\""
+      "Utilice mkdir \"my code\" seguido de touch \"my code/my task\".",
+      "Intente ejecutar: mkdir \"my code\" y touch \"my code/my task\""
     ]
   },
   "10": {
     "title": "Escritura y sobrescritura de archivos",
     "description": "Si desea escribir un mensaje en una pizarra, primero limpie la pizarra por completo y luego escriba las nuevas palabras. En Linux, escribimos mensajes en archivos usando el operador `>` (redirección de salida).\n\n- El comando `echo \"message\"` normalmente imprime texto en la pantalla.\n- Al agregar el símbolo `>`, redirigimos ese texto a un archivo. Por ejemplo, `echo \"Hi\" > greeting.txt` escribe \"Hola\" en `greeting.txt`. Si el archivo ya tiene texto, `>` lo sobrescribe completamente con el nuevo mensaje.",
-    "instructions": "Escribamos en un nuevo archivo. Guarde el texto \"Sistema en línea\" en un archivo llamado `status.txt` en su carpeta de inicio `/home/learner`.",
+    "instructions": "Escribamos en un nuevo archivo. Guarde el texto \"System Online\" en un archivo llamado `status.txt` en su carpeta de inicio `/home/learner`.",
     "commandHelp": [
       {
         "cmd": "echo \"System Online\" > status.txt",
@@ -260,7 +260,7 @@ export const translations_es: Record<number, LessonTranslation> = {
     "objectives": [
       {
         "id": "used_echo_redirect",
-        "text": "Usar eco con > redirección"
+        "text": "Usar echo con > redirección"
       },
       {
         "id": "file_created",
@@ -268,19 +268,19 @@ export const translations_es: Record<number, LessonTranslation> = {
       },
       {
         "id": "content_correct",
-        "text": "El contenido del archivo es exactamente \"Sistema en línea\""
+        "text": "El contenido del archivo es exactamente \"System Online\""
       }
     ],
     "hints": [
       "Para escribir texto en un archivo, puede redirigir la salida del comando echo.",
-      "Utilice el operador '>' para redirigir echo \"Sistema en línea\" a status.txt.",
-      "Intente ejecutar: echo \"Sistema en línea\" > status.txt"
+      "Utilice el operador '>' para redirigir echo \"System Online\" a status.txt.",
+      "Intente ejecutar: echo \"System Online\" > status.txt"
     ]
   },
   "11": {
     "title": "Agregar a archivos",
     "description": "En lugar de limpiar la pizarra, ¿qué sucede si solo desea agregar una nueva línea en la parte inferior? En Linux, agregamos texto al final de un archivo sin tocar el contenido existente usando el operador `>>` (añadir redirección).\n\n- El operador `>>` agrega el nuevo texto al final del archivo. Por ejemplo, `echo \"New Line\" >> logs.txt` agrega \"Nueva línea\" al final de `logs.txt` mientras mantiene seguros todos sus registros antiguos.",
-    "instructions": "Agreguemos una línea. Agregue el texto \"Todos los cheques en verde\" al final de su archivo `status.txt` dentro de su carpeta de inicio `/home/learner`, y luego ejecute `cat` en él para ver ambas líneas.",
+    "instructions": "Agreguemos una línea. Agregue el texto \"All Checks Green\" al final de su archivo `status.txt` dentro de su carpeta de inicio `/home/learner`, y luego ejecute `cat` en él para ver ambas líneas.",
     "commandHelp": [
       {
         "cmd": "echo \"All Checks Green\" >> status.txt",
@@ -290,15 +290,15 @@ export const translations_es: Record<number, LessonTranslation> = {
     "objectives": [
       {
         "id": "used_append",
-        "text": "Usar eco con >> agregar redirección"
+        "text": "Usar echo con >> agregar redirección"
       },
       {
         "id": "has_first_line",
-        "text": "La primera línea sigue siendo \"Sistema en línea\""
+        "text": "La primera línea sigue siendo \"System Online\""
       },
       {
         "id": "has_second_line",
-        "text": "La segunda línea tiene \"Todos los controles en verde\""
+        "text": "La segunda línea tiene \"All Checks Green\""
       },
       {
         "id": "used_cat",
@@ -314,25 +314,29 @@ export const translations_es: Record<number, LessonTranslation> = {
   "12": {
     "title": "Copiar y mover archivos",
     "description": "Imagínese reorganizar su habitación: a veces desea hacer una fotocopia de un documento para guardarlo en otro cajón, y otras veces simplemente desea tomar una carpeta y deslizarla en un nuevo estante o cambiar su etiqueta. Hacemos esto en Linux con comandos simples:\n\n- `cp <source> <destination>` crea un duplicado idéntico de un archivo en una nueva ubicación.\n- `mv <source> <destination>` mueve un archivo a una nueva carpeta o cambia el nombre del archivo si lo mantiene en la misma carpeta (por ejemplo, `mv old.txt new.txt`).",
-    "instructions": "Cambiemos el nombre de un archivo. Cambie el nombre de `status.txt` en su carpeta de inicio a `system.log` usando el comando `mv`.",
+    "instructions": "¡Hagamos una copia de seguridad y cambiemos el nombre de un archivo! Usa `cp status.txt status_backup.txt` para duplicarlo y `mv status.txt system.log` para renombrar el original.",
     "commandHelp": [
       {
+        "cmd": "cp status.txt status_backup.txt",
+        "desc": "Crea una copia de seguridad de status.txt"
+      },
+      {
         "cmd": "mv status.txt system.log",
-        "desc": "Cambie el nombre de status.txt a system.log"
+        "desc": "Cambia el nombre de status.txt a system.log"
       }
     ],
     "objectives": [
       {
+        "id": "used_cp",
+        "text": "Usa el comando \"cp\" para crear status_backup.txt"
+      },
+      {
         "id": "used_mv",
-        "text": "Utilice el comando \"mv\" para cambiar el nombre"
+        "text": "Usa el comando \"mv\" para renombrar status.txt a system.log"
       },
       {
-        "id": "old_removed",
-        "text": "El status.txt original se elimina/renombra"
-      },
-      {
-        "id": "new_created",
-        "text": "Existe un nuevo archivo system.log con el contenido correcto"
+        "id": "files_verified",
+        "text": "Verifica que status_backup.txt y system.log existan con el contenido correcto"
       }
     ],
     "hints": [
@@ -432,13 +436,13 @@ export const translations_es: Record<number, LessonTranslation> = {
     ]
   },
   "16": {
-    "title": "Clasificación y búsqueda de cartas únicas",
+    "title": "Ordenar y encontrar líneas únicas (sort & uniq)",
     "description": "Imagínese clasificar una baraja de cartas donde hay duplicados esparcidos por todas partes. Para detectar y eliminar duplicados fácilmente, primero debes agrupar las tarjetas idénticas. En Linux, el comando `uniq` filtra las líneas repetidas, pero tiene un inconveniente: **¡solo detecta duplicados que están uno al lado del otro**!\n\n- Para eliminar todos los duplicados de una lista desordenada, primero debes ordenar las líneas usando `sort` y luego pasar el resultado a `uniq`. Por ejemplo, `sort raw.txt | uniq` organiza y limpia la lista de una sola vez.",
     "instructions": "Limpiemos una lista de invitados desordenada. El archivo `names.txt` contiene nombres duplicados. Conecte `sort` y `uniq` con una tubería para encontrar todos los nombres únicos alfabéticamente y guárdelos en `unique_names.txt`.",
     "commandHelp": [
       {
         "cmd": "sort names.txt",
-        "desc": "Ordenar líneas de nombres.txt alfabéticamente"
+        "desc": "Ordenar líneas de names.txt alfabéticamente"
       },
       {
         "cmd": "sort names.txt | uniq > unique_names.txt",
@@ -448,7 +452,7 @@ export const translations_es: Record<number, LessonTranslation> = {
     "objectives": [
       {
         "id": "used_sort",
-        "text": "Usar el comando \"sort\" en nombres.txt"
+        "text": "Usar el comando \"sort\" en names.txt"
       },
       {
         "id": "used_uniq",
@@ -465,8 +469,8 @@ export const translations_es: Record<number, LessonTranslation> = {
     ],
     "hints": [
       "Primero debe ordenar los nombres alfabéticamente y luego filtrar los duplicados.",
-      "Canalice la salida de sort nombres.txt a uniq y rediríjala a nombres_únicos.txt.",
-      "Intente ejecutar: ordenar nombres.txt | uniq > nombres_únicos.txt"
+      "Canalice la salida de sort names.txt a uniq y rediríjala a unique_names.txt.",
+      "Intente ejecutar: sort names.txt | uniq > unique_names.txt"
     ]
   },
   "17": {
@@ -702,7 +706,7 @@ export const translations_es: Record<number, LessonTranslation> = {
     ]
   },
   "25": {
-    "title": "Comprobación del uso de la memoria (gratis)",
+    "title": "Comprobación del uso de la memoria (free)",
     "description": "Imagine que su computadora portátil comienza a retrasarse, las páginas web se congelan y el cambio de aplicaciones se siente terriblemente lento. Esto generalmente significa que su computadora se está quedando sin memoria activa (RAM). En Linux, podemos comprobar cuánto espacio para respirar tiene nuestro sistema usando el comando `free`.\n\n- El comando `free` muestra la memoria física (RAM) y el espacio de intercambio total, utilizado y disponible.\n- Agregar el indicador `-h` (ejecutando `free -h`) formatea los tamaños de memoria en gigabytes (GB) y megabytes (MB) fáciles de leer para que pueda saber si un programa está consumiendo todos sus recursos.\n\n**Por qué esto es importante**: si ejecuta `free` sin `-h`, el uso de memoria se imprime en kilobytes sin procesar (por ejemplo, `16323456` en lugar de `16G`), lo cual es difícil de interpretar rápidamente. La bandera `-h` escala automáticamente los números a gigabytes (G) o megabytes (M) para facilitar la lectura.",
     "instructions": "Comprobemos la memoria del sistema. Verifique la RAM disponible en formato legible para humanos ejecutando `free -h`.",
     "commandHelp": [
@@ -714,12 +718,12 @@ export const translations_es: Record<number, LessonTranslation> = {
     "objectives": [
       {
         "id": "ran_free",
-        "text": "Ejecute \"gratis\" con la opción -h o -m"
+        "text": "Ejecute \"free\" con la opción -h o -m"
       }
     ],
     "hints": [
       "Piense en qué comando muestra las estadísticas de la memoria.",
-      "Utilice el comando 'gratuito' con una opción legible por humanos.",
+      "Utilice el comando 'free' con una opción legible por humanos.",
       "Intente ejecutar: free -h"
     ]
   },
@@ -776,7 +780,7 @@ export const translations_es: Record<number, LessonTranslation> = {
     ]
   },
   "28": {
-    "title": "Monitor de proceso interactivo (arriba)",
+    "title": "Monitor de proceso interactivo (top)",
     "description": "Imagínese mirar una fotografía estática de una carretera en lugar de mirar una cámara de tráfico en vivo. Mientras que `ps` le brinda una instantánea rápida de lo que se está ejecutando en este momento, `top` le permite ver el rendimiento de su sistema en vivo.\n\n- El comando `top` inicia un panel interactivo en tiempo real que se actualiza cada pocos segundos. Muestra el uso de la CPU, los promedios de carga y clasifica dinámicamente los procesos con mayor uso de recursos que se ejecutan en este momento exacto.",
     "instructions": "Veamos la transmisión en vivo. Inicie el monitor de proceso interactivo ejecutando el comando `top`.",
     "commandHelp": [
@@ -788,17 +792,17 @@ export const translations_es: Record<number, LessonTranslation> = {
     "objectives": [
       {
         "id": "ran_top",
-        "text": "Ejecutar el comando \"superior\""
+        "text": "Ejecutar el comando \"top\""
       }
     ],
     "hints": [
       "Piense en qué comando inicia el monitor de procesos interactivo.",
       "Utilice el comando 'top' o 'htop'.",
-      "Intente ejecutar: arriba"
+      "Intente ejecutar: top"
     ]
   },
   "29": {
-    "title": "Detener procesos no autorizados (eliminar)",
+    "title": "Detener procesos no autorizados (kill)",
     "description": "Imagina que una aplicación de tu teléfono se congela, bloquea completamente la pantalla y necesitas cerrarla a la fuerza para que todo vuelva a funcionar sin problemas. En Linux, detenemos los programas que se comportan mal o se congelan usando el comando `kill` seguido del ID de proceso (PID) del programa.\n\n- Al ejecutar `kill 1234` se envía una solicitud cortés pidiendo al programa que guarde su trabajo y lo cierre.\n- Si se congela e ignora la solicitud cortés, `kill -9 1234` obliga al sistema operativo a apagarlo instantáneamente. Tenemos un proceso fuera de control con PID `9999` acaparando toda nuestra CPU en este momento. ¡Apaguémoslo!",
     "instructions": "Detengamos el proceso deshonesto. Forzar el cierre del proceso con PID `9999` ejecutando `kill 9999`.",
     "commandHelp": [
@@ -928,7 +932,7 @@ export const translations_es: Record<number, LessonTranslation> = {
     ]
   },
   "34": {
-    "title": "Búsqueda de archivos por nombre (buscar)",
+    "title": "Búsqueda de archivos por nombre (find)",
     "description": "Imagine perder un archivo de texto importante en algún lugar de su carpeta de usuario y tener que buscar en docenas de directorios anidados uno por uno. En Linux, evitamos la búsqueda manual utilizando la utilidad `find` como un motor de búsqueda ultrarrápido en todo el sistema.\n\n- El comando `find` busca en árboles de directorios según el nombre, el tamaño, el tipo o la fecha.\n- La sintaxis es `find <where> -name \"<pattern>\"`. Por ejemplo, `find . -name \"*.txt\"` busca en el directorio actual y en todas las subcarpetas archivos que terminen en `.txt`.\n\n**Por qué esto es importante**: Si ejecuta `find . \"*.log\"` sin `-name`, obtendrá el error: `find: paths must precede expression: '*.log'`. El indicador `-name` es necesario para especificar que el patrón posterior debe compararse con los nombres de archivo.",
     "instructions": "Rastreemos algunos archivos. Busque en el directorio actual y sus subcarpetas cualquier archivo con una extensión `.log` ejecutando `find . -name \"*.log\"`.",
     "commandHelp": [
@@ -940,13 +944,13 @@ export const translations_es: Record<number, LessonTranslation> = {
     "objectives": [
       {
         "id": "ran_find",
-        "text": "Ejecute el comando \"buscar\" con la opción -name"
+        "text": "Ejecute el comando \"find\" con la opción -name"
       }
     ],
     "hints": [
       "Piense en qué comando busca archivos de forma recursiva por nombre que coincida con un patrón.",
-      "Utilice buscar en el directorio actual (.) con el patrón de nombre '*.log'.",
-      "Intente ejecutar: buscar . -nombre \"*.log\""
+      "Utilice find en el directorio actual (.) con el patrón de nombre '*.log'.",
+      "Intente ejecutar: find . -name \"*.log\""
     ]
   },
   "35": {
@@ -962,13 +966,13 @@ export const translations_es: Record<number, LessonTranslation> = {
     "objectives": [
       {
         "id": "ran_history",
-        "text": "Ejecuta el comando \"historial\""
+        "text": "Ejecuta el comando \"history\""
       }
     ],
     "hints": [
       "Piensa en qué comando enumera los comandos ejecutados recientemente.",
-      "Utilice el comando 'historial'.",
-      "Intente ejecutar: historial"
+      "Utilice el comando 'history'.",
+      "Intente ejecutar: history"
     ]
   },
   "36": {
@@ -1417,15 +1421,23 @@ export const translations_es: Record<number, LessonTranslation> = {
     ],
     "hints": [
       "Busque todos los archivos de registro y canalice los nombres a wc -l usando xargs.",
-      "Utilice buscar registros -nombre \"*.log\" y canalícelo (|) en xargs wc -l.",
-      "Intente ejecutar: buscar registros -nombre \"*.log\" | xargs baño -l"
+      "Utilice find logs -name \"*.log\" y canalícelo (|) a xargs wc -l.",
+      "Intente ejecutar: find logs -name \"*.log\" | xargs wc -l"
     ]
   },
   "51": {
-    "title": "Echando un vistazo a los archivos (cabeza y cola)",
+    "title": "Echando un vistazo a los archivos (head & tail)",
     "description": "Ahora que puedes leer un archivo completo con `cat`, ¿qué pasa si el archivo tiene miles de líneas y solo quieres ver la parte superior o inferior? Volcar un archivo enorme con `cat` inunda tu pantalla. En lugar de eso, usamos `head` y `tail` para mirar los bordes.\n\n- El comando `head` muestra las primeras 10 líneas de un archivo de forma predeterminada. Puede cambiar esto usando `-n <number>` (por ejemplo, `head -n 5 log.txt` para las primeras 5 líneas).\n- El comando `tail` muestra las últimas 10 líneas de forma predeterminada y admite la misma opción `-n`.\n- Fundamentalmente, `tail -f` (seguir) monitorea un archivo en tiempo real, mostrando nuevas líneas a medida que el sistema las escribe. Esta es la herramienta favorita de los administradores de sistemas para ver registros en vivo.",
-    "instructions": "Inspeccionemos los registros. Utilice `head -n 5 logs/app.log` para ver las primeras 5 líneas del registro de la aplicación. A continuación, ejecute `tail -n 3 logs/security.log` para ver los últimos 3 eventos de seguridad. Finalmente, ejecute `tail -f logs/app.log` para simular el monitoreo de registros en tiempo real (imprimirá entradas simuladas y saldrá).",
+    "instructions": "Inspeccionemos los registros. Usa `tail -n 2 logs.txt` (o `head -n 5 logs/app.log` / `tail -n 3 logs/security.log`) para ver líneas, y ejecuta `tail -f logs.txt` para simular el monitoreo en tiempo real.",
     "commandHelp": [
+      {
+        "cmd": "tail -n 2 logs.txt",
+        "desc": "Muestra las últimas 2 líneas de logs.txt"
+      },
+      {
+        "cmd": "tail -f logs.txt",
+        "desc": "Monitorea actualizaciones de logs.txt en tiempo real"
+      },
       {
         "cmd": "head -n 5 logs/app.log",
         "desc": "Muestra las primeras 5 líneas de app.log"
@@ -1433,24 +1445,16 @@ export const translations_es: Record<number, LessonTranslation> = {
       {
         "cmd": "tail -n 3 logs/security.log",
         "desc": "Muestra las últimas 3 líneas de security.log"
-      },
-      {
-        "cmd": "tail -f logs/app.log",
-        "desc": "Monitorea las actualizaciones de app.log en tiempo real"
       }
     ],
     "objectives": [
       {
-        "id": "used_head",
-        "text": "Ejecute el comando \"head\" con -n 5 en logs/app.log"
-      },
-      {
-        "id": "used_tail",
-        "text": "Ejecute el comando \"tail\" con -n 3 en logs/security.log"
+        "id": "used_tail_n",
+        "text": "Ejecuta tail con -n (ej. tail -n 2 logs.txt)"
       },
       {
         "id": "used_tail_f",
-        "text": "Ejecute el comando \"tail\" con -f para seguir app.log"
+        "text": "Ejecuta tail con -f (ej. tail -f logs.txt)"
       }
     ],
     "hints": [
@@ -1460,27 +1464,27 @@ export const translations_es: Record<number, LessonTranslation> = {
     ]
   },
   "52": {
-    "title": "Desplazamiento interactivo de archivos (menos y más)",
-    "description": "Echar un vistazo a la parte superior e inferior de un archivo con `head` y `tail` es excelente, pero ¿qué sucede si necesita explorar un archivo de configuración largo página por página? Para eso están los buscapersonas como `less` y `more`.\n\n- Los buscapersonas cargan archivos de forma interactiva, mostrando una página de texto a la vez para evitar la desaceleración del sistema en archivos grandes.\n- `less` es la opción moderna, que le permite desplazarse hacia adelante y hacia atrás usando las teclas de flecha, buscar texto con `/` y salir presionando `q`.\n- `more` es un buscapersonas más antiguo y simple que solo se desplaza hacia adelante.",
+    "title": "Desplazamiento interactivo de archivos (less & more)",
+    "description": "Echar un vistazo a la parte superior e inferior de un archivo con `head` y `tail` es excelente, pero ¿qué sucede si necesita explorar un archivo de configuración largo página por página? Para eso están los paginadores de terminal como `less` y `more`.\n\n- Los paginadores de terminal cargan archivos de forma interactiva, mostrando una página de texto a la vez para evitar la desaceleración del sistema en archivos grandes.\n- `less` es la opción moderna, que le permite desplazarse hacia adelante y hacia atrás usando las teclas de flecha, buscar texto con `/` y salir presionando `q`.\n- `more` es un paginador de terminal más antiguo y simple que solo se desplaza hacia adelante.",
     "instructions": "Leamos un archivo largo página por página. Ejecute `less /etc/hosts` para abrirlo en una vista de desplazamiento. (En nuestra terminal, esto generará el contenido en un marco desplazable. Presione `q` para regresar).",
     "commandHelp": [
       {
         "cmd": "less /etc/hosts",
-        "desc": "Abrir el archivo de hosts en el buscapersonas menos"
+        "desc": "Abrir el archivo de hosts en el paginador less"
       },
       {
         "cmd": "more /etc/hosts",
-        "desc": "Abrir el archivo de hosts en el buscapersonas más"
+        "desc": "Abrir el archivo de hosts en el paginador more"
       }
     ],
     "objectives": [
       {
         "id": "used_less",
-        "text": "Abrir /etc/hosts en un buscapersonas (menos o más)"
+        "text": "Abrir /etc/hosts en un paginador de terminal (less o more)"
       }
     ],
     "hints": [
-      "Utilice el comando 'menos' o 'más' en la ruta del archivo /etc/hosts.",
+      "Utilice el comando 'less' o 'more' en la ruta del archivo /etc/hosts.",
       "Intente ejecutar: less /etc/hosts"
     ]
   },
@@ -1515,7 +1519,7 @@ export const translations_es: Record<number, LessonTranslation> = {
     ]
   },
   "54": {
-    "title": "Lógica reutilizable (funciones bash)",
+    "title": "Lógica reutilizable (bash functions)",
     "description": "Ha escrito bucles y condicionales para automatizar acciones en scripts. Pero a medida que sus scripts crecen, copiar y pegar la misma lógica una y otra vez hace que sea difícil mantenerlos. En bash, podemos agrupar comandos en funciones reutilizables.\n\n- Para definir una función, la declaramos por su nombre seguido de paréntesis y llaves: `log_msg() { echo \"msg\"; }`.\n- Las funciones pueden recibir argumentos como los scripts de shell, a los que se accede utilizando los parámetros de posición local `$1`, `$2`, etc. dentro del cuerpo de la función.\n- Para llamar a una función, simplemente use su nombre como cualquier otro comando: `log_msg \"Backup started\"`.",
     "instructions": "Creemos un script de respaldo modular. Cree un script llamado `backup_helper.sh` en su carpeta de inicio. Defina una función llamada `log_msg` que imprima un mensaje con una marca de tiempo (por ejemplo, `log_msg() { echo \"[$(date +%T)] $1\"; }` o similar) y llámela al menos dos veces dentro del script para registrar acciones. Hazlo ejecutable y ejecútalo.",
     "commandHelp": [
@@ -1579,7 +1583,7 @@ export const translations_es: Record<number, LessonTranslation> = {
     ]
   },
   "56": {
-    "title": "Encontrar comandos (cuáles)",
+    "title": "Encontrar comandos (which)",
     "description": "Ahora que está familiarizado con las variables de entorno activas como `PATH` (que almacena los directorios donde Linux busca comandos), ¿cómo puede encontrar la ruta exacta del archivo del programa que se ejecuta cuando escribe `ls` o `grep`? Usamos `which` para localizar binarios de comandos.\n\n- El comando `which` busca las carpetas enumeradas en su variable `$PATH` e imprime la ruta absoluta del binario ejecutado cuando se ejecuta el comando (por ejemplo, `which ls` genera `/bin/ls`).\n- Esto es útil para encontrar dónde está instalada una herramienta o resolver conflictos entre múltiples versiones de la misma herramienta.",
     "instructions": "Busquemos nuestras herramientas. Ejecute `which ls` para ver dónde está almacenado el ejecutable `ls` en el sistema. Luego, busque la ruta del comando `grep` ejecutando `which grep`.",
     "commandHelp": [
@@ -1595,16 +1599,16 @@ export const translations_es: Record<number, LessonTranslation> = {
     "objectives": [
       {
         "id": "used_which_ls",
-        "text": "Ejecute el comando \"cuál\" en ls"
+        "text": "Ejecute el comando \"which\" en ls"
       },
       {
         "id": "used_which_grep",
-        "text": "Ejecute el comando \"cuál\" en grep"
+        "text": "Ejecute el comando \"which\" en grep"
       }
     ],
     "hints": [
       "Ejecute which ls para encontrar la ruta de ls y which grep para encontrar la ruta de grep.",
-      "Intente ejecutar: which ls y luego Which grep"
+      "Intente ejecutar: which ls y luego which grep"
     ]
   },
   "57": {
@@ -1744,7 +1748,7 @@ export const translations_es: Record<number, LessonTranslation> = {
     ]
   },
   "62": {
-    "title": "Compresión de archivos (gzip y gunzip)",
+    "title": "Compresión de archivos (gzip & gunzip)",
     "description": "Imagine que tiene un único archivo de texto que contiene un conjunto de datos masivo y desea reducir su tamaño para ahorrar espacio en el disco o acelerar el uso compartido. En Linux, comprimimos archivos individuales usando `gzip` y los restauramos usando `gunzip`.\n\n- El comando `gzip <filename>` comprime un archivo y lo reemplaza con una versión comprimida que termina en `.gz` (por ejemplo, `backup.txt` se convierte en `backup.txt.gz`).\n- El comando `gunzip <filename.gz>` descomprime el archivo restaurando la versión original.",
     "instructions": "Comprimamos un archivo para ahorrar espacio. Ejecute `gzip note.txt` en su carpeta de inicio. Luego, descomprima el archivo `note.txt.gz` resultante a su estado original ejecutando `gunzip note.txt.gz`.",
     "commandHelp": [
@@ -1774,7 +1778,7 @@ export const translations_es: Record<number, LessonTranslation> = {
     ]
   },
   "63": {
-    "title": "Administración de grupos (groupadd y grupos)",
+    "title": "Administración de grupos (groupadd & groups)",
     "description": "En Linux, los usuarios se organizan en **grupos** para compartir permisos fácilmente. Por ejemplo, todos los desarrolladores pueden pertenecer a un grupo denominado `developers`. Esto nos permite compartir archivos con todo el equipo a la vez.\n\n- El comando `groupadd` crea un nuevo grupo. Dado que se trata de una configuración del sistema, requiere privilegios de superusuario (por ejemplo, `sudo groupadd developers`).\n- El comando `groups [username]` enumera todos los grupos a los que pertenece un usuario. Ejecutar sin argumentos, muestra grupos para el usuario actual.",
     "instructions": "Gestionemos grupos. Cree un nuevo grupo llamado `developers` ejecutando `sudo groupadd developers`. Luego, verifique sus propios grupos activos ejecutando el comando `groups`.",
     "commandHelp": [
@@ -1875,7 +1879,7 @@ export const translations_es: Record<number, LessonTranslation> = {
     ]
   },
   "67": {
-    "title": "Compresión alternativa (bzip2 y xz)",
+    "title": "Compresión alternativa (bzip2 & xz)",
     "description": "Más allá de `gzip` y `zip`, Linux admite otros formatos de compresión optimizados para relaciones de compresión más altas a expensas de la velocidad de la CPU. Estos son `bzip2` (bz2) y `xz` (xz).\n\n- El comando `bzip2 <file>` comprime un archivo y genera `<file>.bz2`.\n- El comando `xz <file>` utiliza compresión LZMA sin pérdidas para crear `<file>.xz`, lo que produce tamaños de archivo excepcionalmente pequeños, lo que lo hace ideal para las versiones del kernel de Linux.",
     "instructions": "Comparemos formatos. Comprime `note.txt` usando `bzip2 note.txt`. Luego, comprime los archivos resultantes usando `xz note.txt` (para simular ambos).",
     "commandHelp": [
@@ -1934,7 +1938,7 @@ export const translations_es: Record<number, LessonTranslation> = {
     ]
   },
   "69": {
-    "title": "Administradores de paquetes RedHat (yum y dnf)",
+    "title": "Administradores de paquetes RedHat (yum & dnf)",
     "description": "No todos los entornos Linux están basados ​​en Debian/Ubuntu. Si trabaja en sistemas RedHat, Fedora o CentOS, no encontrará `apt` o `dpkg`. En su lugar, administrará paquetes utilizando administradores de paquetes `yum` más antiguos o `dnf` (Dandified YUM) modernos.\n\n- El comando `dnf check-update` (o `yum check-update`) se conecta a los repositorios de RedHat para buscar actualizaciones de paquetes disponibles.\n- El comando `dnf install <package>` busca e instala programas similares a `apt install`.",
     "instructions": "Ejecutemos actualizaciones en un simulador basado en RedHat. Busque paquetes que necesiten actualizaciones ejecutando `dnf check-update` (o `yum check-update`).",
     "commandHelp": [
@@ -1959,7 +1963,7 @@ export const translations_es: Record<number, LessonTranslation> = {
     ]
   },
   "70": {
-    "title": "Administrar usuarios (adduser y userdel)",
+    "title": "Administrar usuarios (adduser & userdel)",
     "description": "Mientras que `useradd` es una utilidad de bajo nivel que simplemente registra los detalles del usuario en archivos de configuración del sistema, los sistemas Debian/Ubuntu proporcionan un script interactivo de alto nivel llamado `adduser` que automatiza la creación de carpetas de inicio, la configuración de contraseñas y la inicialización de entornos de shell. Por el contrario, `userdel` elimina limpiamente las cuentas de usuario.\n\n- La ejecución de `sudo adduser tester` lo guía a través de la configuración del usuario de forma interactiva.\n- Al ejecutar `sudo userdel tester` se elimina la cuenta de usuario.",
     "instructions": "Manejemos los ciclos de vida de los usuarios. Cree un usuario usando `sudo adduser tester`. Después de eso, elimine el usuario ejecutando `sudo userdel tester`.",
     "commandHelp": [
@@ -2130,7 +2134,7 @@ export const translations_es: Record<number, LessonTranslation> = {
     ]
   },
   "77": {
-    "title": "Firewalls de Linux (ufw e iptables)",
+    "title": "Firewalls de Linux (ufw & iptables)",
     "description": "Imagínese vivir en un edificio de apartamentos seguro donde un guardia de seguridad se encuentra en la entrada verificando las identificaciones y bloqueando a los visitantes no autorizados. En Linux, un **firewall** actúa como guardia de seguridad para sus puertos de red.\n\n- El comando `ufw` (Firewall sin complicaciones) es una interfaz fácil de usar para administrar reglas de firewall. La ejecución de `sudo ufw status` muestra si el firewall está activo y qué puertos (como el puerto 22 para SSH o el puerto 80 para servidores web) están abiertos.\n- El comando `iptables` es la herramienta Netfilter tradicional de bajo nivel que en realidad bloquea o redirige paquetes. La ejecución de `sudo iptables -L` enumera las cadenas de seguridad activas y las reglas de coincidencia de paquetes.",
     "instructions": "Inspeccionemos a nuestros guardias de seguridad. Vea el estado del firewall sencillo ejecutando `sudo ufw status` y luego verifique las reglas de Netfilter de nivel inferior ejecutando `sudo iptables -L`.",
     "commandHelp": [
@@ -2247,25 +2251,25 @@ export const translations_es: Record<number, LessonTranslation> = {
     ]
   },
   "81": {
-    "title": "Búsqueda de paquetes (búsqueda apta)",
+    "title": "Búsqueda de paquetes (apt search)",
     "description": "Antes de instalar software en Linux, ¿cómo descubre qué paquetes están disponibles en el repositorio? En Linux, usamos `apt search` para consultar el catálogo de software por palabra clave.\n\n- El comando `apt search <keyword>` escanea las descripciones del repositorio y enumera los paquetes de software coincidentes junto con sus versiones.\n- A diferencia de `apt install`, la búsqueda en repositorios de paquetes solo lee archivos de índice del catálogo local y **no** requiere privilegios de superusuario (`sudo`).",
     "instructions": "¡Busquemos en el repositorio de paquetes! Ejecute `apt search tree` para buscar paquetes relacionados con la visualización de directorios en el catálogo de software.",
     "commandHelp": [
       {
         "cmd": "apt search tree",
-        "desc": "Busque en los repositorios de paquetes paquetes que coincidan con \"árbol\""
+        "desc": "Busque en los repositorios de paquetes paquetes que coincidan con \"tree\""
       }
     ],
     "objectives": [
       {
         "id": "ran_apt_search",
-        "text": "Ejecute \"árbol de búsqueda apt\" para consultar el catálogo de paquetes"
+        "text": "Ejecute \"apt search tree\" para consultar el catálogo de paquetes"
       }
     ],
     "hints": [
-      "Utilice el comando de búsqueda apt seguido del nombre o palabra clave del paquete que desea buscar.",
-      "Ejecute el árbol de búsqueda de apt para ver los paquetes disponibles en el repositorio.",
-      "Intente ejecutar: árbol de búsqueda apto"
+      "Utilice el comando apt search seguido del nombre o palabra clave del paquete que desea buscar.",
+      "Ejecute apt search tree para ver los paquetes disponibles en el repositorio.",
+      "Intente ejecutar: apt search tree"
     ]
   },
   "82": {

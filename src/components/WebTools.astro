@@ -196,9 +196,13 @@ const t = useTranslations(currentLang);
         </div>
 
         <!-- Field labels -->
-        <div class="grid grid-cols-5 gap-1 text-center">
+        <div class="grid grid-cols-5 gap-1.5 text-center" role="group" aria-label="Cron schedule fields">
           {["min", "hour", "day", "mon", "dow"].map((f) => (
-            <span class="caption-mono text-mute uppercase">{f}</span>
+            <div class="flex items-center justify-center">
+              <span class="caption-mono text-mute uppercase font-semibold text-[10px] px-1 py-0.5 rounded bg-canvas-soft dark:bg-canvas-soft-2 border border-hairline w-full text-center">
+                {f}
+              </span>
+            </div>
           ))}
         </div>
 

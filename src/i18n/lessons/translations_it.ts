@@ -1,4 +1,4 @@
-import type { LessonTranslation } from "./types";
+import type { LessonTranslation } from "./types.ts";
 
 export const translations_it: Record<number, LessonTranslation> = {
   "1": {
@@ -134,13 +134,13 @@ export const translations_it: Record<number, LessonTranslation> = {
     "objectives": [
       {
         "id": "ran_clear",
-        "text": "Esegui il comando \"cancella\""
+        "text": "Esegui il comando \"clear\""
       }
     ],
     "hints": [
       "Spazza via tutto il vecchio testo e ricomincia da capo.",
       "Esegui il comando che cancella lo schermo del terminale.",
-      "Prova a eseguire: cancella"
+      "Prova a eseguire: clear"
     ]
   },
   "6": {
@@ -314,8 +314,12 @@ export const translations_it: Record<number, LessonTranslation> = {
   "12": {
     "title": "Copia e spostamento di file",
     "description": "Immagina di riorganizzare la tua stanza: a volte vuoi fare una fotocopia di un documento da tenere in un altro cassetto, e altre volte vuoi semplicemente prendere una cartella e farla scorrere in un nuovo scaffale o cambiarne l'etichetta. Lo facciamo in Linux con semplici comandi:\n\n- `cp <source> <destination>` crea un duplicato identico di un file in una nuova posizione.\n- `mv <source> <destination>` sposta un file in una nuova cartella o rinomina il file se lo tieni nella stessa cartella (ad esempio, `mv old.txt new.txt`).",
-    "instructions": "Rinominiamo un file. Cambia il nome di `status.txt` nella tua cartella Inizio in `system.log` utilizzando il comando `mv`.",
+    "instructions": "Creiamo un backup e rinominiamo un file! Usa `cp status.txt status_backup.txt` per duplicarlo e `mv status.txt system.log` per rinominare l'originale.",
     "commandHelp": [
+      {
+        "cmd": "cp status.txt status_backup.txt",
+        "desc": "Crea una copia di backup di status.txt"
+      },
       {
         "cmd": "mv status.txt system.log",
         "desc": "Rinomina status.txt in system.log"
@@ -323,16 +327,16 @@ export const translations_it: Record<number, LessonTranslation> = {
     ],
     "objectives": [
       {
+        "id": "used_cp",
+        "text": "Usa il comando \"cp\" per creare status_backup.txt"
+      },
+      {
         "id": "used_mv",
-        "text": "Usa il comando \"mv\" per rinominare"
+        "text": "Usa il comando \"mv\" per rinominare status.txt in system.log"
       },
       {
-        "id": "old_removed",
-        "text": "Lo status.txt originale viene eliminato/rinominato"
-      },
-      {
-        "id": "new_created",
-        "text": "Il nuovo file system.log esiste con il contenuto corretto"
+        "id": "files_verified",
+        "text": "Verifica che status_backup.txt e system.log esistano con i contenuti corretti"
       }
     ],
     "hints": [
@@ -702,7 +706,7 @@ export const translations_it: Record<number, LessonTranslation> = {
     ]
   },
   "25": {
-    "title": "Controllo dell'utilizzo della memoria (gratuito)",
+    "title": "Controllo dell'utilizzo della memoria (free)",
     "description": "Immagina che il tuo laptop inizi a rallentare, le pagine Web si blocchino e il passaggio da un'app all'altra sia dolorosamente lento. Questo di solito significa che il tuo computer sta esaurendo la memoria attiva (RAM). In Linux, possiamo verificare quanto respiro ha il nostro sistema utilizzando il comando `free`.\n\n- Il comando `free` mostra la memoria fisica totale, utilizzata e disponibile (RAM) e lo spazio di swap.\n- L'aggiunta del flag `-h` (in esecuzione `free -h`) formatta le dimensioni della memoria in gigabyte (GB) e megabyte (MB) di facile lettura in modo da poter sapere se un programma sta consumando tutte le risorse.\n\n**Perché è importante**: se esegui `free` senza `-h`, l'utilizzo della memoria viene stampato in kilobyte grezzi (ad esempio, `16323456` invece di `16G`), il che è difficile da interpretare rapidamente. Il flag `-h` ridimensiona automaticamente i numeri in gigabyte (G) o megabyte (M) per una facile lettura.",
     "instructions": "Controlliamo la memoria del sistema. Controlla la RAM disponibile in formato leggibile eseguendo `free -h`.",
     "commandHelp": [
@@ -714,7 +718,7 @@ export const translations_it: Record<number, LessonTranslation> = {
     "objectives": [
       {
         "id": "ran_free",
-        "text": "Esegui \"gratuitamente\" con l'opzione -h o -m"
+        "text": "Esegui \"free\" con l'opzione -h o -m"
       }
     ],
     "hints": [
@@ -776,7 +780,7 @@ export const translations_it: Record<number, LessonTranslation> = {
     ]
   },
   "28": {
-    "title": "Monitor interattivo dei processi (in alto)",
+    "title": "Monitor interattivo dei processi (top)",
     "description": "Immagina di guardare una foto statica di un'autostrada invece di guardare il feed di una telecamera sul traffico in tempo reale. Mentre `ps` ti offre una rapida istantanea di ciò che è in esecuzione in questo momento, `top` ti consente di guardare le prestazioni del tuo sistema in tempo reale.\n\n- Il comando `top` avvia una dashboard interattiva in tempo reale che si aggiorna ogni pochi secondi. Visualizza l'utilizzo della CPU, le medie di carico e classifica dinamicamente i processi più pesanti in esecuzione in questo preciso momento.",
     "instructions": "Guardiamo la live. Avviare il monitor interattivo del processo eseguendo il comando `top`.",
     "commandHelp": [
@@ -798,7 +802,7 @@ export const translations_it: Record<number, LessonTranslation> = {
     ]
   },
   "29": {
-    "title": "Arresto dei processi non autorizzati (uccisione)",
+    "title": "Arresto dei processi non autorizzati (kill)",
     "description": "Immagina che un'app sul tuo telefono si blocchi, bloccando completamente lo schermo e che tu debba forzarne la chiusura per far funzionare di nuovo le cose senza intoppi. In Linux, interrompiamo il comportamento anomalo o blocchiamo i programmi utilizzando il comando `kill` seguito dall'ID processo (PID) del programma.\n\n- L'esecuzione di `kill 1234` invia una richiesta cortese chiedendo al programma di salvare il proprio lavoro e di chiudersi.\n- Se è bloccato e ignora la richiesta gentile, `kill -9 1234` forza il sistema operativo a spegnerlo immediatamente. Abbiamo un processo fuori controllo con PID `9999` che monopolizza tutta la nostra CPU: spegniamolo!",
     "instructions": "Fermiamo questo processo canaglia. Forza la chiusura del processo con PID `9999` eseguendo `kill 9999`.",
     "commandHelp": [
@@ -928,7 +932,7 @@ export const translations_it: Record<number, LessonTranslation> = {
     ]
   },
   "34": {
-    "title": "Trovare file per nome (trova)",
+    "title": "Trovare file per nome (find)",
     "description": "Immagina di smarrire un importante file di testo da qualche parte nella tua cartella utente e di dover cercare tra dozzine di directory nidificate una per una. In Linux, evitiamo la ricerca manuale utilizzando l'utilità `find` come motore di ricerca velocissimo a livello di sistema.\n\n- Il comando `find` effettua la ricerca negli alberi di directory in base a nome, dimensione, tipo o data.\n- La sintassi è `find <where> -name \"<pattern>\"`. Ad esempio, `find . -name \"*.txt\"` cerca nella directory corrente e in tutte le sottocartelle i file che terminano con `.txt`.\n\n**Perché è importante**: se esegui `find . \"*.log\"` senza `-name`, riceverai l'errore: `find: paths must precede expression: '*.log'`. Il flag `-name` è necessario per specificare che il modello successivo deve essere confrontato con i nomi dei file.",
     "instructions": "Rintracciamo alcuni file. Cerca nella directory corrente e nelle relative sottocartelle eventuali file con estensione `.log` eseguendo `find . -name \"*.log\"`.",
     "commandHelp": [
@@ -940,7 +944,7 @@ export const translations_it: Record<number, LessonTranslation> = {
     "objectives": [
       {
         "id": "ran_find",
-        "text": "Esegui il comando \"trova\" con l'opzione -name"
+        "text": "Esegui il comando \"find\" con l'opzione -name"
       }
     ],
     "hints": [
@@ -962,13 +966,13 @@ export const translations_it: Record<number, LessonTranslation> = {
     "objectives": [
       {
         "id": "ran_history",
-        "text": "Esegui il comando \"cronologia\""
+        "text": "Esegui il comando \"history\""
       }
     ],
     "hints": [
       "Pensa a quale comando elenca i comandi eseguiti di recente.",
       "Usa il comando 'storia'.",
-      "Prova a eseguire: cronologia"
+      "Prova a eseguire: history"
     ]
   },
   "36": {
@@ -1422,10 +1426,18 @@ export const translations_it: Record<number, LessonTranslation> = {
     ]
   },
   "51": {
-    "title": "Sbirciare i file (testa e coda)",
+    "title": "Sbirciare i file (head & tail)",
     "description": "Ora che puoi leggere un intero file con `cat`, cosa succede se il file ha migliaia di righe e vuoi vedere solo la parte superiore o inferiore? Il dump di un file enorme con `cat` inonda lo schermo. Usiamo invece `head` e `tail` per sbirciare i bordi.\n\n- Il comando `head` visualizza le prime 10 righe di un file per impostazione predefinita. Puoi modificarlo utilizzando `-n <number>` (ad esempio `head -n 5 log.txt` per le prime 5 righe).\n- Il comando `tail` visualizza le ultime 10 righe per impostazione predefinita, supportando la stessa opzione `-n`.\n- Fondamentalmente, `tail -f` (follow) monitora un file in tempo reale, mostrando le nuove righe man mano che vengono scritte dal sistema. Questo è lo strumento preferito dagli amministratori di sistema per guardare i registri in tempo reale.",
-    "instructions": "Ispezioniamo i log. Utilizzare `head -n 5 logs/app.log` per visualizzare le prime 5 righe del registro dell'applicazione. Successivamente, esegui `tail -n 3 logs/security.log` per visualizzare gli ultimi 3 eventi di sicurezza. Infine, esegui `tail -f logs/app.log` per simulare il monitoraggio del registro in tempo reale (stamperà voci fittizie e uscirà).",
+    "instructions": "Ispezioniamo i file di log. Usa `tail -n 2 logs.txt` (o `head -n 5 logs/app.log` / `tail -n 3 logs/security.log`) per visualizzare le righe, ed esegui `tail -f logs.txt` per simulare il monitoraggio in tempo reale.",
     "commandHelp": [
+      {
+        "cmd": "tail -n 2 logs.txt",
+        "desc": "Visualizza le ultime 2 righe di logs.txt"
+      },
+      {
+        "cmd": "tail -f logs.txt",
+        "desc": "Monitora gli aggiornamenti di logs.txt in tempo reale"
+      },
       {
         "cmd": "head -n 5 logs/app.log",
         "desc": "Visualizza le prime 5 righe di app.log"
@@ -1433,24 +1445,16 @@ export const translations_it: Record<number, LessonTranslation> = {
       {
         "cmd": "tail -n 3 logs/security.log",
         "desc": "Visualizza le ultime 3 righe di security.log"
-      },
-      {
-        "cmd": "tail -f logs/app.log",
-        "desc": "Monitora gli aggiornamenti di app.log in tempo reale"
       }
     ],
     "objectives": [
       {
-        "id": "used_head",
-        "text": "Esegui il comando \"head\" con -n 5 su logs/app.log"
-      },
-      {
-        "id": "used_tail",
-        "text": "Esegui il comando \"tail\" con -n 3 su logs/security.log"
+        "id": "used_tail_n",
+        "text": "Esegui tail con -n (es. tail -n 2 logs.txt)"
       },
       {
         "id": "used_tail_f",
-        "text": "Esegui il comando \"tail\" con -f per seguire app.log"
+        "text": "Esegui tail con -f (es. tail -f logs.txt)"
       }
     ],
     "hints": [
@@ -1460,7 +1464,7 @@ export const translations_it: Record<number, LessonTranslation> = {
     ]
   },
   "52": {
-    "title": "Scorrimento interattivo dei file (meno e più)",
+    "title": "Scorrimento interattivo dei file (less & more)",
     "description": "Sbirciare nella parte superiore e inferiore di un file con `head` e `tail` è fantastico, ma cosa succede se devi sfogliare un lungo file di configurazione pagina per pagina? Ecco a cosa servono i cercapersone come `less` e `more`.\n\n- I cercapersone caricano i file in modo interattivo, mostrando una pagina di testo alla volta per evitare rallentamenti del sistema su file di grandi dimensioni.\n- `less` è la scelta moderna, che ti consente di scorrere sia avanti che indietro utilizzando i tasti freccia, cercare testo con `/` e uscire premendo `q`.\n- `more` è un cercapersone più vecchio e più semplice che scorre solo in avanti.",
     "instructions": "Leggiamo un lungo file pagina per pagina. Esegui `less /etc/hosts` per aprirlo in una vista a scorrimento. (Nel nostro terminale, questo mostrerà il contenuto in una cornice scorrevole. Premi `q` per tornare).",
     "commandHelp": [
@@ -1515,7 +1519,7 @@ export const translations_it: Record<number, LessonTranslation> = {
     ]
   },
   "54": {
-    "title": "Logica riutilizzabile (funzioni bash)",
+    "title": "Logica riutilizzabile (bash functions)",
     "description": "Hai scritto cicli e condizionali per automatizzare le azioni negli script. Ma man mano che i tuoi script crescono, copiare e incollare la stessa logica più e più volte li rende difficili da mantenere. In bash possiamo raggruppare i comandi in funzioni riutilizzabili.\n\n- Per definire una funzione, la dichiariamo con il nome seguito da parentesi e parentesi graffe: `log_msg() { echo \"msg\"; }`.\n- Le funzioni possono ricevere argomenti proprio come gli script di shell, a cui si accede utilizzando i parametri di posizione locale `$1`, `$2`, ecc. all'interno del corpo della funzione.\n- Per chiamare una funzione, usa semplicemente il suo nome come qualsiasi altro comando: `log_msg \"Backup started\"`.",
     "instructions": "Costruiamo uno script di backup modulare. Crea uno script denominato `backup_helper.sh` nella tua cartella Home. Definire una funzione denominata `log_msg` che stampi un messaggio con un timestamp (ad esempio `log_msg() { echo \"[$(date +%T)] $1\"; }` o simile) e chiamarla almeno due volte all'interno dello script per registrare le azioni. Rendilo eseguibile ed eseguilo.",
     "commandHelp": [
@@ -1579,7 +1583,7 @@ export const translations_it: Record<number, LessonTranslation> = {
     ]
   },
   "56": {
-    "title": "Trovare i comandi (quali)",
+    "title": "Trovare i comandi (which)",
     "description": "Ora che hai familiarità con le variabili di ambiente attive come `PATH` (che memorizza le directory in cui Linux cerca i comandi), come trovi il percorso esatto del file del programma che viene eseguito quando digiti `ls` o `grep`? Usiamo `which` per individuare i binari dei comandi.\n\n- Il comando `which` cerca le cartelle elencate nella variabile `$PATH` e stampa il percorso assoluto del binario eseguito quando viene eseguito il comando (ad esempio `which ls` restituisce `/bin/ls`).\n- Questo è utile per scoprire dove è installato uno strumento o risolvere conflitti tra più versioni dello stesso strumento.",
     "instructions": "Troviamo i nostri strumenti. Esegui `which ls` per vedere dove è archiviato l'eseguibile `ls` nel sistema. Quindi, trova il percorso del comando `grep` eseguendo `which grep`.",
     "commandHelp": [
@@ -1595,11 +1599,11 @@ export const translations_it: Record<number, LessonTranslation> = {
     "objectives": [
       {
         "id": "used_which_ls",
-        "text": "Esegui il comando \"quale\" su ls"
+        "text": "Esegui il comando \"which\" su ls"
       },
       {
         "id": "used_which_grep",
-        "text": "Esegui il comando \"quale\" su grep"
+        "text": "Esegui il comando \"which\" su grep"
       }
     ],
     "hints": [
@@ -1638,7 +1642,7 @@ export const translations_it: Record<number, LessonTranslation> = {
     ]
   },
   "58": {
-    "title": "Amministrazione utente (useradd e passwd)",
+    "title": "Amministrazione utente (useradd & passwd)",
     "description": "Finora hai lavorato come utente `learner`. Ma nei server reali, gli amministratori di sistema devono gestire più account. Impariamo come aggiungere nuovi utenti e impostare le loro password.\n\n- Il comando `useradd` crea un nuovo account utente. Poiché la creazione di account influisce sulla sicurezza del sistema, deve essere eseguita con privilegi di superutente (ad esempio `sudo useradd deployer`).\n- Il comando `passwd` imposta o modifica la password di un utente. Esegui come `sudo passwd deployer` per impostare la password dell'utente del distributore.",
     "instructions": "Aggiungiamo l'account di un collega. Crea un nuovo utente denominato `deployer` eseguendo `sudo useradd deployer`. Quindi, imposta una password eseguendo `sudo passwd deployer` (digita qualsiasi password fittizia quando richiesto).",
     "commandHelp": [
@@ -1744,7 +1748,7 @@ export const translations_it: Record<number, LessonTranslation> = {
     ]
   },
   "62": {
-    "title": "Compressione file (gzip e gunzip)",
+    "title": "Compressione file (gzip & gunzip)",
     "description": "Immagina di avere un singolo file di testo contenente un enorme set di dati e di voler ridurne le dimensioni per risparmiare spazio su disco o accelerare la condivisione. In Linux, comprimiamo i singoli file utilizzando `gzip` e li ripristiniamo utilizzando `gunzip`.\n\n- Il comando `gzip <filename>` comprime un file, sostituendolo con una versione compressa che termina con `.gz` (es. `backup.txt` diventa `backup.txt.gz`).\n- Il comando `gunzip <filename.gz>` decomprime il file, ripristinando la versione originale.",
     "instructions": "Comprimiamo un file per risparmiare spazio. Esegui `gzip note.txt` nella tua cartella Inizio. Quindi, decomprimi il file `note.txt.gz` risultante riportandolo allo stato originale eseguendo `gunzip note.txt.gz`.",
     "commandHelp": [
@@ -1774,7 +1778,7 @@ export const translations_it: Record<number, LessonTranslation> = {
     ]
   },
   "63": {
-    "title": "Amministrazione gruppi (groupadd e gruppi)",
+    "title": "Amministrazione gruppi (groupadd & groups)",
     "description": "In Linux, gli utenti sono organizzati in **gruppi** per condividere facilmente i permessi. Ad esempio, tutti gli sviluppatori potrebbero appartenere a un gruppo denominato `developers`. Questo ci consente di condividere file con l'intero team contemporaneamente.\n\n- Il comando `groupadd` crea un nuovo gruppo. Poiché si tratta di una configurazione di sistema, richiede privilegi di superutente (ad esempio `sudo groupadd developers`).\n- Il comando `groups [username]` elenca tutti i gruppi a cui appartiene un utente. Eseguito senza argomenti, visualizza i gruppi per l'utente corrente.",
     "instructions": "Gestiamo i gruppi. Crea un nuovo gruppo denominato `developers` eseguendo `sudo groupadd developers`. Quindi, controlla i tuoi gruppi attivi eseguendo il comando `groups`.",
     "commandHelp": [
@@ -1934,7 +1938,7 @@ export const translations_it: Record<number, LessonTranslation> = {
     ]
   },
   "69": {
-    "title": "Gestori di pacchetti RedHat (yum e dnf)",
+    "title": "Gestori di pacchetti RedHat (yum & dnf)",
     "description": "Non tutti gli ambienti Linux sono basati su Debian/Ubuntu. Se lavori su sistemi RedHat, Fedora o CentOS, non troverai `apt` o `dpkg`. Gestirai invece i pacchetti utilizzando i gestori di pacchetti `yum` più vecchi o moderni `dnf` (Dandified YUM).\n\n- Il comando `dnf check-update` (o `yum check-update`) si connette ai repository RedHat per cercare gli aggiornamenti dei pacchetti disponibili.\n- Il comando `dnf install <package>` recupera e installa programmi simili a `apt install`.",
     "instructions": "Eseguiamo gli aggiornamenti su un simulatore basato su RedHat. Verifica la presenza di pacchetti che necessitano di aggiornamenti eseguendo `dnf check-update` (o `yum check-update`).",
     "commandHelp": [
@@ -1959,7 +1963,7 @@ export const translations_it: Record<number, LessonTranslation> = {
     ]
   },
   "70": {
-    "title": "Gestione degli utenti (adduser e userdel)",
+    "title": "Gestione degli utenti (adduser & userdel)",
     "description": "Mentre `useradd` è un'utilità di basso livello che registra semplicemente i dettagli dell'utente nei file di configurazione del sistema, i sistemi Debian/Ubuntu forniscono uno script interattivo di alto livello chiamato `adduser` che automatizza la creazione di cartelle home, l'impostazione delle password e l'inizializzazione degli ambienti shell. Al contrario, `userdel` elimina in modo pulito gli account utente.\n\n- L'esecuzione di `sudo adduser tester` ti guida attraverso la configurazione dell'utente in modo interattivo.\n- L'esecuzione di `sudo userdel tester` elimina l'account utente.",
     "instructions": "Gestiamo i cicli di vita degli utenti. Crea un utente utilizzando `sudo adduser tester`. Successivamente, elimina l'utente eseguendo `sudo userdel tester`.",
     "commandHelp": [
@@ -2080,7 +2084,7 @@ export const translations_it: Record<number, LessonTranslation> = {
     ]
   },
   "75": {
-    "title": "Statistiche socket e connessione (netstat e ss)",
+    "title": "Statistiche socket e connessione (netstat & ss)",
     "description": "Quando si configura un database o un server Web, è necessario verificare che il servizio sia in esecuzione e in ascolto sulla porta corretta e verificare se vengono stabilite connessioni non autorizzate. Lo facciamo utilizzando `netstat` o `ss`.\n\n- Il comando `netstat` (statistiche di rete) è uno strumento classico per mostrare le connessioni TCP e le porte di ascolto. Per esempio. `netstat -tuln` elenca le porte di ascolto TCP/UDP.\n- Il comando `ss` (statistiche socket) è l'alternativa moderna e più veloce a `netstat` che visualizza i dettagli della connessione socket direttamente dallo spazio dei nomi del kernel.",
     "instructions": "Controlliamo le porte. Controlla i socket TCP/UDP in ascolto eseguendo `netstat -tuln`, quindi controllali utilizzando il comando moderno delle statistiche dei socket `ss -tuln`.",
     "commandHelp": [
@@ -2130,7 +2134,7 @@ export const translations_it: Record<number, LessonTranslation> = {
     ]
   },
   "77": {
-    "title": "Firewall Linux (ufw e iptables)",
+    "title": "Firewall Linux (ufw & iptables)",
     "description": "Immagina di vivere in un condominio sicuro dove una guardia di sicurezza sta all'ingresso controllando gli ID e bloccando i visitatori non autorizzati. In Linux, un **firewall** funge da guardia di sicurezza per le porte di rete.\n\n- Il comando `ufw` (Uncomplicated Firewall) è un'interfaccia intuitiva per la gestione delle regole del firewall. L'esecuzione di `sudo ufw status` mostra se il firewall è attivo e quali porte (come la porta 22 per SSH o la porta 80 per i server Web) sono aperte.\n- Il comando `iptables` è lo strumento Netfilter tradizionale di basso livello che blocca o reindirizza effettivamente i pacchetti. L'esecuzione di `sudo iptables -L` elenca le catene di sicurezza attive e le regole di corrispondenza dei pacchetti.",
     "instructions": "Ispezioniamo le nostre guardie di sicurezza. Visualizza lo stato del semplice firewall eseguendo `sudo ufw status`, quindi controlla le regole Netfilter di livello inferiore eseguendo `sudo iptables -L`.",
     "commandHelp": [
@@ -2247,7 +2251,7 @@ export const translations_it: Record<number, LessonTranslation> = {
     ]
   },
   "81": {
-    "title": "Ricerca di pacchetti (ricerca apt)",
+    "title": "Ricerca di pacchetti (apt search)",
     "description": "Prima di installare il software su Linux, come si scoprono quali pacchetti sono disponibili nel repository? In Linux utilizziamo `apt search` per interrogare il catalogo software tramite parola chiave.\n\n- Il comando `apt search <keyword>` analizza le descrizioni del repository ed elenca i pacchetti software corrispondenti insieme alle relative versioni.\n- A differenza di `apt install`, la ricerca nei repository dei pacchetti legge solo i file di indice del catalogo locale e **non** richiede i privilegi di superutente (`sudo`).",
     "instructions": "Cerchiamo nel repository dei pacchetti! Esegui `apt search tree` per trovare i pacchetti relativi alla visualizzazione delle directory nel catalogo software.",
     "commandHelp": [

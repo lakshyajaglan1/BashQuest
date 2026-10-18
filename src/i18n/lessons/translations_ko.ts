@@ -1,4 +1,4 @@
-import type { LessonTranslation } from "./types";
+import type { LessonTranslation } from "./types.ts";
 
 export const translations_ko: Record<number, LessonTranslation> = {
   "1": {
@@ -140,7 +140,7 @@ export const translations_ko: Record<number, LessonTranslation> = {
     "hints": [
       "이전 텍스트를 모두 지우고 새로 시작합니다.",
       "터미널 화면을 지우는 명령을 실행합니다.",
-      "실행해 보세요: 지우기"
+      "실행해 보세요: clear"
     ]
   },
   "6": {
@@ -314,25 +314,29 @@ export const translations_ko: Record<number, LessonTranslation> = {
   "12": {
     "title": "파일 복사 및 이동",
     "description": "방을 재구성한다고 상상해 보십시오. 때로는 문서의 복사본을 만들어 다른 서랍에 보관하고 싶고, 때로는 폴더를 가져와 새 선반에 밀어 넣거나 레이블을 변경하고 싶을 때도 있습니다. Linux에서는 간단한 명령을 사용하여 이 작업을 수행합니다.\n\n- `cp <source> <destination>`은(는) 새 위치에 파일의 동일한 복사본을 생성합니다.\n- `mv <source> <destination>`은 파일을 새 폴더로 이동하거나 파일을 동일한 폴더에 보관하는 경우 파일 이름을 바꿉니다(예: `mv old.txt new.txt`).",
-    "instructions": "파일 이름을 바꾸겠습니다. `mv` 명령을 사용하여 홈 폴더의 `status.txt` 이름을 `system.log`로 변경합니다.",
+    "instructions": "백업을 만들고 파일 이름을 바꿔봅시다! `cp status.txt status_backup.txt`로 복제하고 `mv status.txt system.log`로 원본 이름을 변경하세요.",
     "commandHelp": [
       {
+        "cmd": "cp status.txt status_backup.txt",
+        "desc": "status.txt의 백업 사본 생성"
+      },
+      {
         "cmd": "mv status.txt system.log",
-        "desc": "status.txt를 system.log로 이름 바꾸기"
+        "desc": "status.txt의 이름을 system.log로 변경"
       }
     ],
     "objectives": [
       {
+        "id": "used_cp",
+        "text": "\"cp\" 명령을 사용하여 status_backup.txt 생성"
+      },
+      {
         "id": "used_mv",
-        "text": "이름을 바꾸려면 \"mv\" 명령을 사용하십시오."
+        "text": "\"mv\" 명령을 사용하여 status.txt의 이름을 system.log로 변경"
       },
       {
-        "id": "old_removed",
-        "text": "원래 status.txt가 삭제/이름이 바뀌었습니다."
-      },
-      {
-        "id": "new_created",
-        "text": "새 파일 system.log가 올바른 내용으로 존재합니다."
+        "id": "files_verified",
+        "text": "status_backup.txt 및 system.log가 올바른 내용으로 존재하는지 확인"
       }
     ],
     "hints": [
@@ -702,7 +706,7 @@ export const translations_ko: Record<number, LessonTranslation> = {
     ]
   },
   "25": {
-    "title": "메모리 사용량 확인(무료)",
+    "title": "메모리 사용량 확인(free)",
     "description": "노트북이 지연되기 시작하고, 웹 페이지가 정지되고, 앱 전환이 고통스러울 정도로 느리게 느껴진다고 상상해 보세요. 이는 일반적으로 컴퓨터에 활성 메모리(RAM)가 부족함을 의미합니다. Linux에서는 `free` 명령을 사용하여 시스템에 숨쉴 공간이 얼마나 있는지 확인할 수 있습니다.\n\n- `free` 명령은 총 메모리, 사용된 메모리, 사용 가능한 물리적 메모리(RAM) 및 스왑 공간을 표시합니다.\n- `-h` 플래그(`free -h` 실행)를 추가하면 메모리 크기가 읽기 쉬운 기가바이트(GB) 및 메가바이트(MB)로 형식화되므로 프로그램이 모든 리소스를 소모하는지 알 수 있습니다.\n\n**중요한 이유**: `-h` 없이 `free`을 실행하면 메모리 사용량이 원시 킬로바이트(예: `16G` 대신 `16323456`)로 인쇄되므로 빠르게 해석하기 어렵습니다. `-h` 플래그는 쉽게 읽을 수 있도록 숫자를 기가바이트(G) 또는 메가바이트(M)로 자동 조정합니다.",
     "instructions": "시스템 메모리를 확인해 보겠습니다. `free -h`을 실행하여 사람이 읽을 수 있는 형식으로 사용 가능한 RAM을 확인하세요.",
     "commandHelp": [
@@ -776,7 +780,7 @@ export const translations_ko: Record<number, LessonTranslation> = {
     ]
   },
   "28": {
-    "title": "대화형 프로세스 모니터(위)",
+    "title": "대화형 프로세스 모니터(top)",
     "description": "고속도로의 정적 사진을 보는 것과 실시간 교통 카메라 피드를 보는 것을 상상해 보십시오. `ps`은 현재 실행 중인 항목에 대한 빠른 스냅샷을 제공하는 반면, `top`을 사용하면 시스템 성능을 실시간으로 볼 수 있습니다.\n\n- `top` 명령은 몇 초마다 업데이트되는 대화형 실시간 대시보드를 시작합니다. CPU 사용량, 로드 평균을 표시하고 정확한 순간에 실행 중인 리소스를 가장 많이 사용하는 프로세스의 순위를 동적으로 지정합니다.",
     "instructions": "라이브 피드를 시청해 보세요. `top` 명령을 실행하여 대화형 프로세스 모니터를 시작합니다.",
     "commandHelp": [
@@ -968,7 +972,7 @@ export const translations_ko: Record<number, LessonTranslation> = {
     "hints": [
       "최근에 실행한 명령을 나열하는 명령이 무엇인지 생각해 보세요.",
       "'history' 명령을 사용하십시오.",
-      "실행해 보세요: 기록"
+      "실행해 보세요: history"
     ]
   },
   "36": {
@@ -1024,7 +1028,7 @@ export const translations_ko: Record<number, LessonTranslation> = {
     ]
   },
   "38": {
-    "title": "구성 파일 편집(나노)",
+    "title": "구성 파일 편집(nano)",
     "description": "그래픽 데스크탑이나 커서가 없고 구성 파일의 한 줄을 신속하게 수정해야 하는 원격 클라우드 서버에 SSH를 사용한다고 상상해 보십시오. 이러한 시나리오에서는 `nano`과 같은 터미널 텍스트 편집기를 사용해야 합니다.\n\n- `nano <filename>`을 실행하면 쉘 창 내부에 직접 간단하고 가벼운 텍스트 편집기가 로드됩니다.\n- 단축키는 항상 화면 하단에 표시됩니다. 변경 사항을 기록(저장)하려면 `Ctrl+O`를 누르고 편집기를 종료하려면 `Ctrl+X`을 누르세요.",
     "instructions": "구성 파일을 편집해 보겠습니다. `nano server.conf`를 사용하여 홈 디렉터리에서 `server.conf`을 열고 `port=8080`이라는 줄을 추가한 다음 저장하고 편집기를 종료합니다.",
     "commandHelp": [
@@ -1422,10 +1426,18 @@ export const translations_ko: Record<number, LessonTranslation> = {
     ]
   },
   "51": {
-    "title": "파일 엿보기(머리 및 꼬리)",
+    "title": "파일 엿보기(head & tail)",
     "description": "이제 `cat`을 사용하여 전체 파일을 읽을 수 있습니다. 파일에 수천 줄이 있고 위쪽이나 아래쪽만 보려면 어떻게 해야 합니까? `cat`을 사용하여 대용량 파일을 덤프하면 화면이 가득 찼습니다. 대신 `head` 및 `tail`을 사용하여 가장자리를 엿봅니다.\n\n- `head` 명령은 기본적으로 파일의 처음 10줄을 표시합니다. `-n <number>`를 사용하여 이를 변경할 수 있습니다(예: 처음 5줄의 경우 `head -n 5 log.txt`).\n- `tail` 명령은 기본적으로 마지막 10줄을 표시하며 동일한 `-n` 옵션을 지원합니다.\n- 결정적으로 `tail -f`(follow)는 파일을 실시간으로 모니터링하여 시스템에서 작성된 새 줄을 표시합니다. 이것은 실시간 로그를 보기 위해 시스템 관리자가 가장 좋아하는 도구입니다.",
-    "instructions": "로그를 살펴보겠습니다. `head -n 5 logs/app.log`을 사용하면 애플리케이션 로그의 처음 5줄을 볼 수 있습니다. 그런 다음 `tail -n 3 logs/security.log`을 실행하여 마지막 3개의 보안 이벤트를 확인하세요. 마지막으로 `tail -f logs/app.log`을 실행하여 실시간 로그 모니터링을 시뮬레이션합니다(모의 항목을 인쇄하고 종료합니다).",
+    "instructions": "로그를 확인합시다. `tail -n 2 logs.txt` (또는 `head -n 5 logs/app.log` / `tail -n 3 logs/security.log`)를 실행하고, `tail -f logs.txt`를 실행하여 실시간 모니터링을 시뮬레이션하세요.",
     "commandHelp": [
+      {
+        "cmd": "tail -n 2 logs.txt",
+        "desc": "logs.txt의 마지막 2줄 표시"
+      },
+      {
+        "cmd": "tail -f logs.txt",
+        "desc": "logs.txt의 실시간 업데이트 모니터링"
+      },
       {
         "cmd": "head -n 5 logs/app.log",
         "desc": "app.log의 처음 5줄 표시"
@@ -1433,24 +1445,16 @@ export const translations_ko: Record<number, LessonTranslation> = {
       {
         "cmd": "tail -n 3 logs/security.log",
         "desc": "security.log의 마지막 3줄 표시"
-      },
-      {
-        "cmd": "tail -f logs/app.log",
-        "desc": "app.log 업데이트를 실시간으로 모니터링"
       }
     ],
     "objectives": [
       {
-        "id": "used_head",
-        "text": "log/app.log에서 -n 5와 함께 \"head\" 명령 실행"
-      },
-      {
-        "id": "used_tail",
-        "text": "log/security.log에서 -n 3과 함께 \"tail\" 명령 실행"
+        "id": "used_tail_n",
+        "text": "-n 옵션과 함께 tail 실행 (예: tail -n 2 logs.txt)"
       },
       {
         "id": "used_tail_f",
-        "text": "app.log를 따르려면 -f와 함께 \"tail\" 명령 실행"
+        "text": "-f 옵션과 함께 tail 실행 (예: tail -f logs.txt)"
       }
     ],
     "hints": [
@@ -1460,7 +1464,7 @@ export const translations_ko: Record<number, LessonTranslation> = {
     ]
   },
   "52": {
-    "title": "대화형 파일 스크롤(더 적음)",
+    "title": "대화형 파일 스크롤(less & more)",
     "description": "`head` 및 `tail`을 사용하여 파일의 상단과 하단을 엿보는 것은 훌륭하지만 긴 구성 파일을 페이지별로 검색해야 하는 경우에는 어떻게 합니까? 이것이 `less` 및 `more`과 같은 호출기의 용도입니다.\n\n- 호출기는 파일을 대화형으로 로드하여 한 번에 한 페이지의 텍스트를 표시하여 대용량 파일의 시스템 속도 저하를 방지합니다.\n- `less`는 화살표 키를 사용하여 앞뒤로 스크롤하고, `/`로 텍스트를 검색하고, `q`을 눌러 종료할 수 있는 현대적인 선택입니다.\n- `more`은 앞으로만 스크롤하는 더 오래되고 간단한 호출기입니다.",
     "instructions": "긴 파일을 페이지별로 읽어보겠습니다. `less /etc/hosts`을 실행하여 스크롤 보기로 엽니다. (우리 터미널에서는 내용이 스크롤 가능한 프레임으로 출력됩니다. 돌아가려면 `q`을 누르세요).",
     "commandHelp": [
@@ -1515,7 +1519,7 @@ export const translations_ko: Record<number, LessonTranslation> = {
     ]
   },
   "54": {
-    "title": "재사용 가능한 논리(bash 함수)",
+    "title": "재사용 가능한 논리(bash functions)",
     "description": "스크립트에서 작업을 자동화하기 위해 루프와 조건문을 작성했습니다. 그러나 스크립트가 커짐에 따라 동일한 논리를 계속해서 복사하여 붙여넣으면 유지 관리가 어려워집니다. Bash에서는 명령을 재사용 가능한 기능으로 그룹화할 수 있습니다.\n\n- 함수를 정의하려면 이름 뒤에 괄호와 중괄호를 사용하여 선언합니다(`log_msg() { echo \"msg\"; }`).\n- 함수는 함수 본문 내에서 로컬 위치 매개변수 `$1`, `$2` 등을 사용하여 액세스되는 쉘 스크립트와 마찬가지로 인수를 받을 수 있습니다.\n- 함수를 호출하려면 다른 명령과 마찬가지로 해당 이름(`log_msg \"Backup started\"`)을 사용하면 됩니다.",
     "instructions": "모듈식 백업 스크립트를 작성해 보겠습니다. 홈 폴더에 `backup_helper.sh`라는 스크립트를 만듭니다. 타임스탬프(예: `log_msg() { echo \"[$(date +%T)] $1\"; }` 또는 이와 유사한)가 포함된 메시지를 인쇄하는 `log_msg`라는 함수를 정의하고 스크립트 내에서 이를 최소 두 번 호출하여 작업을 기록합니다. 실행 가능하게 만들고 실행해 보세요.",
     "commandHelp": [
@@ -1579,7 +1583,7 @@ export const translations_ko: Record<number, LessonTranslation> = {
     ]
   },
   "56": {
-    "title": "명령 찾기(어떤)",
+    "title": "명령 찾기(which)",
     "description": "이제 `PATH`(Linux가 명령을 찾는 디렉터리를 저장하는)과 같은 활성 환경 변수에 익숙해졌으므로 `ls` 또는 `grep`를 입력할 때 실행되는 프로그램의 정확한 파일 경로를 어떻게 찾을 수 있습니까? `which`을 사용하여 명령 바이너리를 찾습니다.\n\n- `which` 명령은 `$PATH` 변수에 나열된 폴더를 검색하고 명령이 실행될 때 실행된 바이너리의 절대 경로를 인쇄합니다(예: `which ls`은 `/bin/ls`을 출력합니다).\n- 도구가 설치된 위치를 찾거나 동일한 도구의 여러 버전 간의 충돌을 해결하는 데 유용합니다.",
     "instructions": "도구를 찾아봅시다. `which ls`을 실행하여 `ls` 실행 파일이 시스템에 저장된 위치를 확인하세요. 그런 다음 `which grep`을 실행하여 `grep` 명령의 경로를 찾으십시오.",
     "commandHelp": [
@@ -1608,7 +1612,7 @@ export const translations_ko: Record<number, LessonTranslation> = {
     ]
   },
   "57": {
-    "title": "사용자 정의 셸 바로 가기(별칭)",
+    "title": "사용자 정의 셸 바로 가기(alias)",
     "description": "여러 플래그를 사용하여 긴 명령을 입력하면 지칠 수 있습니다. Linux에서는 별칭이라는 사용자 정의 바로가기를 만들 수 있습니다. 예를 들어 `ll`을 매핑하여 `ls -la`을 자동으로 실행할 수 있습니다.\n\n- 임시 별칭을 만들려면 `alias name='command'`(예: `alias ll='ls -la'`)를 실행하세요.\n- 인수 없이 `alias`을 실행하면 현재 세션의 모든 활성 별칭이 나열됩니다.\n- 재부팅 시 별칭을 영구적으로 만들기 위해 일반적으로 `.bashrc` 또는 `.bash_profile` 구성 파일에 기록됩니다.",
     "instructions": "몇 가지 단축키를 설정해 보겠습니다. `alias la='ls -a'`을 실행하여 `ls -a`을 실행하는 `la`이라는 임시 별칭을 만듭니다. 터미널에서 `la`을 실행하여 테스트하세요.",
     "commandHelp": [
@@ -1744,7 +1748,7 @@ export const translations_ko: Record<number, LessonTranslation> = {
     ]
   },
   "62": {
-    "title": "파일 압축(gzip 및 gunzip)",
+    "title": "파일 압축(gzip & gunzip)",
     "description": "대규모 데이터 세트가 포함된 단일 텍스트 파일이 있고 디스크 공간을 절약하거나 공유 속도를 높이기 위해 크기를 줄이고 싶다고 가정해 보십시오. Linux에서는 `gzip`을 사용하여 개별 파일을 압축하고 `gunzip`을 사용하여 복원합니다.\n\n- `gzip <filename>` 명령은 파일을 압축하여 `.gz`으로 끝나는 압축 버전으로 바꿉니다(예: `backup.txt`는 `backup.txt.gz`가 됩니다).\n- `gunzip <filename.gz>` 명령은 파일의 압축을 풀어 원래 버전을 복원합니다.",
     "instructions": "공간을 절약하기 위해 파일을 압축해 보겠습니다. 홈 폴더에서 `gzip note.txt`을 실행하세요. 그런 다음 `gunzip note.txt.gz`을 실행하여 결과 `note.txt.gz` 파일의 압축을 원래 상태로 되돌립니다.",
     "commandHelp": [
@@ -1959,7 +1963,7 @@ export const translations_ko: Record<number, LessonTranslation> = {
     ]
   },
   "70": {
-    "title": "사용자 관리(adduser 및 userdel)",
+    "title": "사용자 관리(adduser & userdel)",
     "description": "`useradd`은 단순히 시스템 구성 파일에 사용자 세부 정보를 등록하는 하위 수준 유틸리티인 반면, Debian/Ubuntu 시스템은 홈 폴더 생성, 암호 설정 및 셸 환경 초기화를 자동화하는 `adduser`이라는 상위 수준 대화형 스크립트를 제공합니다. 반대로 `userdel`는 사용자 계정을 완전히 삭제합니다.\n\n- `sudo adduser tester`을 실행하면 사용자 구성을 대화형으로 안내합니다.\n- `sudo userdel tester`을 실행하면 사용자 계정이 삭제됩니다.",
     "instructions": "사용자 수명주기를 처리해 보겠습니다. `sudo adduser tester`를 사용하여 사용자를 생성합니다. 그런 다음 `sudo userdel tester`을 실행하여 사용자를 삭제합니다.",
     "commandHelp": [
@@ -2130,7 +2134,7 @@ export const translations_ko: Record<number, LessonTranslation> = {
     ]
   },
   "77": {
-    "title": "Linux 방화벽(ufw 및 iptables)",
+    "title": "Linux 방화벽(ufw & iptables)",
     "description": "경비원이 입구에 서서 ID를 확인하고 무단 방문자를 차단하는 안전한 아파트 건물에 살고 있다고 상상해 보십시오. Linux에서는 **방화벽**이 네트워크 포트에 대한 보안 가드 역할을 합니다.\n\n- `ufw`(복잡하지 않은 방화벽) 명령은 방화벽 규칙을 관리하기 위한 사용자 친화적인 인터페이스입니다. `sudo ufw status`을 실행하면 방화벽이 활성화되었는지 여부와 어떤 포트(예: SSH의 경우 포트 22, 웹 서버의 경우 포트 80)가 열려 있는지 표시됩니다.\n- `iptables` 명령은 실제로 패킷을 차단하거나 리디렉션하는 낮은 수준의 기존 Netfilter 도구입니다. `sudo iptables -L`을 실행하면 활성 보안 체인과 패킷 일치 규칙이 나열됩니다.",
     "instructions": "경비원을 검사합시다. `sudo ufw status`를 실행하여 복잡하지 않은 방화벽의 상태를 확인한 다음 `sudo iptables -L`을 실행하여 하위 수준 Netfilter 규칙을 확인합니다.",
     "commandHelp": [
@@ -2265,7 +2269,7 @@ export const translations_ko: Record<number, LessonTranslation> = {
     "hints": [
       "조회하려는 패키지의 이름이나 키워드 뒤에 apt search 명령을 사용합니다.",
       "적절한 검색 트리를 실행하여 저장소에서 사용 가능한 패키지를 확인하세요.",
-      "실행해 보세요: 적절한 검색 트리"
+      "실행해 보세요: apt search tree"
     ]
   },
   "82": {

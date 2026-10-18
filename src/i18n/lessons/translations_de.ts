@@ -1,4 +1,4 @@
-import type { LessonTranslation } from "./types";
+import type { LessonTranslation } from "./types.ts";
 
 export const translations_de: Record<number, LessonTranslation> = {
   "1": {
@@ -314,25 +314,29 @@ export const translations_de: Record<number, LessonTranslation> = {
   "12": {
     "title": "Kopieren und Verschieben von Dateien",
     "description": "Stellen Sie sich vor, Sie würden Ihren Raum neu organisieren: Manchmal möchten Sie eine Fotokopie eines Dokuments erstellen, um es in einer anderen Schublade aufzubewahren, und ein anderes Mal möchten Sie einfach einen Ordner nehmen und ihn in ein neues Regal schieben oder die Beschriftung ändern. Wir machen das unter Linux mit einfachen Befehlen:\n\n- `cp <source> <destination>` erstellt ein identisches Duplikat einer Datei an einem neuen Speicherort.\n- `mv <source> <destination>` verschiebt eine Datei in einen neuen Ordner oder benennt die Datei um, wenn Sie sie im selben Ordner behalten (z. B. `mv old.txt new.txt`).",
-    "instructions": "Lassen Sie uns eine Datei umbenennen. Ändern Sie den Namen von `status.txt` in Ihrem Home-Ordner mit dem Befehl `mv` in `system.log`.",
+    "instructions": "Erstellen wir ein Backup und benennen eine Datei um! Verwenden Sie `cp status.txt status_backup.txt` zum Duplizieren und `mv status.txt system.log` zum Umbenennen des Originals.",
     "commandHelp": [
       {
+        "cmd": "cp status.txt status_backup.txt",
+        "desc": "Erstellen Sie eine Sicherungskopie von status.txt"
+      },
+      {
         "cmd": "mv status.txt system.log",
-        "desc": "Status.txt in system.log umbenennen"
+        "desc": "Benennen Sie status.txt in system.log um"
       }
     ],
     "objectives": [
       {
+        "id": "used_cp",
+        "text": "Verwenden Sie den Befehl „cp“, um status_backup.txt zu erstellen"
+      },
+      {
         "id": "used_mv",
-        "text": "Mit dem Befehl „mv“ umbenennen"
+        "text": "Verwenden Sie den Befehl „mv“, um status.txt in system.log umzubenennen"
       },
       {
-        "id": "old_removed",
-        "text": "Ursprüngliche status.txt wurde gelöscht/umbenannt"
-      },
-      {
-        "id": "new_created",
-        "text": "Neue Datei system.log mit korrektem Inhalt vorhanden"
+        "id": "files_verified",
+        "text": "Überprüfen Sie, ob status_backup.txt und system.log mit korrektem Inhalt existieren"
       }
     ],
     "hints": [
@@ -702,7 +706,7 @@ export const translations_de: Record<number, LessonTranslation> = {
     ]
   },
   "25": {
-    "title": "Überprüfen der Speichernutzung (kostenlos)",
+    "title": "Überprüfen der Speichernutzung (free)",
     "description": "Stellen Sie sich vor, Ihr Laptop fängt an zu stagnieren, Webseiten frieren ein und der Wechsel zwischen Apps fühlt sich quälend langsam an. Dies bedeutet normalerweise, dass Ihr Computer nicht mehr über genügend aktiven Speicher (RAM) verfügt. Unter Linux können wir mit dem Befehl `free` überprüfen, wie viel Spielraum unser System hat.\n\n– Der Befehl `free` zeigt den gesamten, verwendeten und verfügbaren physischen Speicher (RAM) und Auslagerungsspeicher an.\n– Durch das Hinzufügen des Flags `-h` (unter Ausführung von `free -h`) werden die Speichergrößen in leicht lesbare Gigabyte (GB) und Megabyte (MB) formatiert, sodass Sie erkennen können, ob ein Programm alle Ihre Ressourcen verbraucht.\n\n**Warum das wichtig ist**: Wenn Sie `free` ohne `-h` ausführen, wird die Speichernutzung in rohen Kilobytes ausgegeben (z. B. `16323456` statt `16G`), was schnell schwer zu interpretieren ist. Das Flag `-h` skaliert die Zahlen automatisch auf Gigabyte (G) oder Megabyte (M), um das Lesen zu erleichtern.",
     "instructions": "Lassen Sie uns den Speicher des Systems überprüfen. Überprüfen Sie den verfügbaren RAM in einem für Menschen lesbaren Format, indem Sie `free -h` ausführen.",
     "commandHelp": [
@@ -714,7 +718,7 @@ export const translations_de: Record<number, LessonTranslation> = {
     "objectives": [
       {
         "id": "ran_free",
-        "text": "„Free“ mit der Option -h oder -m ausführen"
+        "text": "„free“ mit der Option -h oder -m ausführen"
       }
     ],
     "hints": [
@@ -776,7 +780,7 @@ export const translations_de: Record<number, LessonTranslation> = {
     ]
   },
   "28": {
-    "title": "Interaktiver Prozessmonitor (oben)",
+    "title": "Interaktiver Prozessmonitor (top)",
     "description": "Stellen Sie sich vor, Sie betrachten ein statisches Foto einer Autobahn und nicht den Live-Feed einer Verkehrskamera. Während `ps` Ihnen einen schnellen Überblick darüber gibt, was gerade läuft, können Sie mit `top` die Leistung Ihres Systems live verfolgen.\n\n– Der Befehl `top` startet ein interaktives Echtzeit-Dashboard, das alle paar Sekunden aktualisiert wird. Es zeigt die CPU-Auslastung und die durchschnittliche Auslastung an und ordnet dynamisch die ressourcenintensivsten Prozesse, die genau zu diesem Zeitpunkt ausgeführt werden.",
     "instructions": "Schauen wir uns den Live-Feed an. Starten Sie den interaktiven Prozessmonitor, indem Sie den Befehl `top` ausführen.",
     "commandHelp": [
@@ -798,7 +802,7 @@ export const translations_de: Record<number, LessonTranslation> = {
     ]
   },
   "29": {
-    "title": "Stoppen unerwünschter Prozesse (Kill)",
+    "title": "Stoppen unerwünschter Prozesse (kill)",
     "description": "Stellen Sie sich vor, eine App auf Ihrem Telefon friert ein, sperrt Ihren Bildschirm vollständig und Sie müssen das Schließen erzwingen, damit alles wieder reibungslos läuft. Unter Linux stoppen wir Fehlverhalten oder eingefrorene Programme, indem wir den Befehl `kill` gefolgt von der Prozess-ID (PID) des Programms verwenden.\n\n- Beim Ausführen von `kill 1234` wird eine höfliche Anfrage gesendet, in der das Programm aufgefordert wird, seine Arbeit zu speichern und zu schließen.\n– Wenn es eingefroren ist und die höfliche Anfrage ignoriert, zwingt `kill -9 1234` das Betriebssystem, es sofort herunterzufahren. Wir haben gerade einen außer Kontrolle geratenen Prozess mit PID `9999`, der unsere gesamte CPU beansprucht – schalten wir ihn ab!",
     "instructions": "Stoppen wir den Schurkenprozess. Erzwingen Sie das Schließen des Prozesses mit PID `9999`, indem Sie `kill 9999` ausführen.",
     "commandHelp": [
@@ -858,7 +862,7 @@ export const translations_de: Record<number, LessonTranslation> = {
     ]
   },
   "31": {
-    "title": "Testen der Konnektivität (Ping)",
+    "title": "Testen der Konnektivität (ping)",
     "description": "Stellen Sie sich vor, Sie versuchen, eine Webseite zu laden, aber Ihr Browser dreht sich endlos und Sie fragen sich, ob die WLAN-Verbindung zu Hause unterbrochen ist oder ob die Website selbst abgestürzt ist. Unter Linux testen wir unsere grundlegende Netzwerkverbindung mit dem Befehl `ping`.\n\n– Der Befehl `ping` sendet winzige Datenpakete an einen Server (wie `google.com`) und misst, wie viele Millisekunden es dauert, eine Antwort zu erhalten.\n– Unter Linux läuft `ping` standardmäßig für immer weiter. Damit es nach ein paar Versuchen stoppt, verwenden wir das Flag `-c` (count) und führen `ping -c 3 google.com` aus.\n\n**Warum das wichtig ist**: Wenn Sie `ping google.com` ohne `-c` ausführen, werden unbegrenzt weiterhin Pakete gesendet und die Ausgabe gedruckt. Sie müssen es manuell mit `Ctrl+C` unterbrechen, um andere Befehle auszuführen. Das Flag `-c 3` stoppt den Befehl automatisch, nachdem genau 3 Pakete gesendet wurden.",
     "instructions": "Lassen Sie uns unsere Konnektivität überprüfen. Testen Sie Ihre Verbindung zu `google.com`, indem Sie genau 3 Pakete senden: `ping -c 3 google.com`.",
     "commandHelp": [
@@ -1422,35 +1426,35 @@ export const translations_de: Record<number, LessonTranslation> = {
     ]
   },
   "51": {
-    "title": "Einen Blick auf Dateien werfen (Kopf und Ende)",
+    "title": "Einen Blick auf Dateien werfen (head & tail)",
     "description": "Da Sie nun mit `cat` eine ganze Datei lesen können, stellt sich die Frage, ob die Datei Tausende von Zeilen enthält und Sie nur den oberen oder unteren Rand sehen möchten. Das Dumpen einer riesigen Datei mit `cat` überschwemmt Ihren Bildschirm. Stattdessen verwenden wir `head` und `tail`, um einen Blick auf die Kanten zu werfen.\n\n– Der Befehl `head` zeigt standardmäßig die ersten 10 Zeilen einer Datei an. Sie können dies mit `-n <number>` ändern (z. B. `head -n 5 log.txt` für die ersten 5 Zeilen).\n– Der Befehl `tail` zeigt standardmäßig die letzten 10 Zeilen an und unterstützt dieselbe `-n`-Option.\n- Entscheidend ist, dass `tail -f` (folgen) eine Datei in Echtzeit überwacht und neue Zeilen anzeigt, während sie vom System geschrieben werden. Dies ist das beliebteste Tool eines Systemadministrators zum Ansehen von Live-Protokollen.",
-    "instructions": "Sehen wir uns die Protokolle an. Verwenden Sie `head -n 5 logs/app.log`, um die ersten fünf Zeilen des Anwendungsprotokolls anzuzeigen. Führen Sie als Nächstes `tail -n 3 logs/security.log` aus, um die letzten drei Sicherheitsereignisse anzuzeigen. Führen Sie abschließend `tail -f logs/app.log` aus, um die Protokollüberwachung in Echtzeit zu simulieren (es werden Scheineinträge gedruckt und beendet).",
+    "instructions": "Lassen Sie uns Protokolle inspizieren. Verwenden Sie `tail -n 2 logs.txt` (oder `head -n 5 logs/app.log` / `tail -n 3 logs/security.log`), und führen Sie `tail -f logs.txt` für Live-Überwachung aus.",
     "commandHelp": [
       {
+        "cmd": "tail -n 2 logs.txt",
+        "desc": "Die letzten 2 Zeilen von logs.txt anzeigen"
+      },
+      {
+        "cmd": "tail -f logs.txt",
+        "desc": "Aktualisierungen von logs.txt in Echtzeit überwachen"
+      },
+      {
         "cmd": "head -n 5 logs/app.log",
-        "desc": "Zeigt die ersten 5 Zeilen von app.log an."
+        "desc": "Die ersten 5 Zeilen von app.log anzeigen"
       },
       {
         "cmd": "tail -n 3 logs/security.log",
-        "desc": "Zeigt die letzten 3 Zeilen von security.log an."
-      },
-      {
-        "cmd": "tail -f logs/app.log",
-        "desc": "Überwacht app.log-Updates in Echtzeit."
+        "desc": "Die letzten 3 Zeilen von security.log anzeigen"
       }
     ],
     "objectives": [
       {
-        "id": "used_head",
-        "text": "Führen Sie den Befehl „head“ mit -n 5 für logs/app.log aus."
-      },
-      {
-        "id": "used_tail",
-        "text": "Führen Sie den Befehl „tail“ mit -n 3 für logs/security.log aus."
+        "id": "used_tail_n",
+        "text": "Führen Sie tail mit -n aus (z. B. tail -n 2 logs.txt)"
       },
       {
         "id": "used_tail_f",
-        "text": "Führen Sie den Befehl „tail“ mit -f aus, um app.log zu folgen."
+        "text": "Führen Sie tail mit -f aus (z. B. tail -f logs.txt)"
       }
     ],
     "hints": [
@@ -1460,7 +1464,7 @@ export const translations_de: Record<number, LessonTranslation> = {
     ]
   },
   "52": {
-    "title": "Interaktives Scrollen von Dateien (weniger und mehr)",
+    "title": "Interaktives Scrollen von Dateien (less & more)",
     "description": "Der Blick auf den Anfang und das Ende einer Datei mit `head` und `tail` ist großartig, aber was ist, wenn Sie eine lange Konfigurationsdatei Seite für Seite durchsuchen müssen? Dafür gibt es Pager wie `less` und `more`.\n\n- Pager laden Dateien interaktiv und zeigen jeweils eine Textseite an, um eine Systemverlangsamung bei großen Dateien zu verhindern.\n- `less` ist die moderne Wahl, mit der Sie mit den Pfeiltasten vorwärts und rückwärts scrollen, mit `/` nach Text suchen und durch Drücken von `q` beenden können.\n- `more` ist ein älterer, einfacherer Pager, der nur vorwärts scrollt.",
     "instructions": "Lassen Sie uns Seite für Seite eine lange Datei lesen. Führen Sie `less /etc/hosts` aus, um es in einer Scrollansicht zu öffnen. (In unserem Terminal wird dadurch der Inhalt in einem scrollbaren Rahmen ausgegeben. Drücken Sie `q`, um zurückzukehren.)",
     "commandHelp": [
@@ -1515,7 +1519,7 @@ export const translations_de: Record<number, LessonTranslation> = {
     ]
   },
   "54": {
-    "title": "Wiederverwendbare Logik (Bash-Funktionen)",
+    "title": "Wiederverwendbare Logik (bash functions)",
     "description": "Sie haben Schleifen und Bedingungen geschrieben, um Aktionen in Skripten zu automatisieren. Wenn Ihre Skripte jedoch wachsen, wird es schwierig, sie immer wieder zu verwalten, wenn Sie immer wieder dieselbe Logik kopieren. In Bash können wir Befehle in wiederverwendbare Funktionen gruppieren.\n\n- Um eine Funktion zu definieren, deklarieren wir sie mit ihrem Namen, gefolgt von Klammern und geschweiften Klammern: `log_msg() { echo \"msg\"; }`.\n– Funktionen können wie Shell-Skripte Argumente empfangen, auf die über lokale Positionsparameter `$1`, `$2` usw. im Funktionskörper zugegriffen wird.\n- Um eine Funktion aufzurufen, verwenden Sie einfach ihren Namen wie jeden anderen Befehl: `log_msg \"Backup started\"`.",
     "instructions": "Lassen Sie uns ein modulares Backup-Skript erstellen. Erstellen Sie ein Skript mit dem Namen `backup_helper.sh` in Ihrem Home-Ordner. Definieren Sie eine Funktion namens `log_msg`, die eine Nachricht mit einem Zeitstempel (z. B. `log_msg() { echo \"[$(date +%T)] $1\"; }` oder ähnlich) ausgibt, und rufen Sie sie mindestens zweimal im Skript auf, um Aktionen zu protokollieren. Machen Sie es ausführbar und führen Sie es aus.",
     "commandHelp": [
@@ -1579,7 +1583,7 @@ export const translations_de: Record<number, LessonTranslation> = {
     ]
   },
   "56": {
-    "title": "Befehle finden (die)",
+    "title": "Befehle finden (which)",
     "description": "Nachdem Sie nun mit aktiven Umgebungsvariablen wie `PATH` (der die Verzeichnisse speichert, in denen Linux nach Befehlen sucht) vertraut sind, wie finden Sie den genauen Dateipfad des Programms, das ausgeführt wird, wenn Sie `ls` oder `grep` eingeben? Wir verwenden `which`, um Befehlsbinärdateien zu finden.\n\n– Der Befehl `which` durchsucht die in Ihrer Variable `$PATH` aufgeführten Ordner und gibt den absoluten Pfad der Binärdatei aus, die ausgeführt wird, wenn der Befehl ausgeführt wird (z. B. `which ls` gibt `/bin/ls` aus).\n– Dies ist nützlich, um herauszufinden, wo ein Tool installiert ist, oder um Konflikte zwischen mehreren Versionen desselben Tools zu lösen.",
     "instructions": "Finden wir unsere Werkzeuge. Führen Sie `which ls` aus, um zu sehen, wo die ausführbare Datei `ls` auf dem System gespeichert ist. Suchen Sie dann den Pfad des Befehls `grep`, indem Sie `which grep` ausführen.",
     "commandHelp": [
@@ -1608,7 +1612,7 @@ export const translations_de: Record<number, LessonTranslation> = {
     ]
   },
   "57": {
-    "title": "Benutzerdefinierte Shell-Verknüpfungen (Alias)",
+    "title": "Benutzerdefinierte Shell-Verknüpfungen (alias)",
     "description": "Das Eingeben langer Befehle mit mehreren Flags kann anstrengend werden. Unter Linux können wir benutzerdefinierte Verknüpfungen erstellen, die Aliase genannt werden. Beispielsweise können Sie `ll` so zuordnen, dass `ls -la` automatisch ausgeführt wird.\n\n- Um einen temporären Alias ​​zu erstellen, führen Sie `alias name='command'` aus (z. B. `alias ll='ls -la'`).\n– Wenn Sie `alias` ohne Argumente ausführen, werden alle aktiven Aliase in der aktuellen Sitzung aufgelistet.\n– Um Aliase über Neustarts hinweg dauerhaft zu machen, werden sie normalerweise in die Konfigurationsdateien `.bashrc` oder `.bash_profile` geschrieben.",
     "instructions": "Lassen Sie uns einige Verknüpfungen einrichten. Erstellen Sie einen temporären Alias ​​mit dem Namen `la`, der `ls -a` ausführt, indem Sie `alias la='ls -a'` ausführen. Testen Sie es, indem Sie `la` in Ihrem Terminal ausführen.",
     "commandHelp": [
@@ -1875,7 +1879,7 @@ export const translations_de: Record<number, LessonTranslation> = {
     ]
   },
   "67": {
-    "title": "Alternative Komprimierung (bzip2 und xz)",
+    "title": "Alternative Komprimierung (bzip2 & xz)",
     "description": "Neben `gzip` und `zip` unterstützt Linux andere Komprimierungsformate, die für höhere Komprimierungsraten auf Kosten der CPU-Geschwindigkeit optimiert sind. Dies sind `bzip2` (bz2) und `xz` (xz).\n\n– Der Befehl `bzip2 <file>` komprimiert eine Datei und gibt `<file>.bz2` aus.\n– Der Befehl `xz <file>` verwendet verlustfreie LZMA-Komprimierung, um `<file>.xz` zu erstellen, was zu außergewöhnlich kleinen Dateigrößen führt und sich ideal für Linux-Kernel-Releases eignet.",
     "instructions": "Vergleichen wir Formate. Komprimieren Sie `note.txt` mit `bzip2 note.txt`. Komprimieren Sie dann die resultierenden Dateien mit `xz note.txt` (um beides zu simulieren).",
     "commandHelp": [
@@ -2109,7 +2113,7 @@ export const translations_de: Record<number, LessonTranslation> = {
     ]
   },
   "76": {
-    "title": "Verfolgen von Paketrouten (Traceroute)",
+    "title": "Verfolgen von Paketrouten (traceroute)",
     "description": "Wenn eine Webseite nicht geladen werden kann, wie können Sie feststellen, ob das Problem bei Ihrem Heimrouter, Ihrem Internetdienstanbieter (ISP) oder dem Zielserver liegt? Unter Linux verfolgen wir Pakete mit `traceroute`.\n\n– Der Befehl `traceroute` listet jedes Router-Gateway (Hop) auf, das ein Paket auf seinem Weg zu einem Remote-Server durchquert, zusammen mit der Antwortlatenz für jeden Hop.",
     "instructions": "Lassen Sie uns den Pfad zu einem Webserver verfolgen. Führen Sie `traceroute google.com` aus, um die Hops anzuzeigen.",
     "commandHelp": [

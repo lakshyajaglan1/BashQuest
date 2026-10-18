@@ -1,0 +1,377 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import Navigation from "../../../components/Navigation.astro";
+import Footer from "../../../components/Footer.astro";
+import { lessons } from "../../../lib/lessons.js";
+import { getQuestSlug } from "../../../lib/questSlug";
+import { getLocalizedLesson, getLocalizedModules } from "../../../i18n/lessons/index";
+import { languages, defaultLang, type SupportedLanguage } from "../../../i18n/languages";
+
+export async function getStaticPaths() {
+  const nonDefaultLangs = Object.keys(languages).filter(
+    (l) => l !== defaultLang,
+  ) as SupportedLanguage[];
+
+  const paths = [];
+
+  for (const lang of nonDefaultLangs) {
+    for (let index = 0; index < lessons.length; index++) {
+      const baseLesson = lessons[index];
+      const localizedLesson = getLocalizedLesson(baseLesson.id, lang) || baseLesson;
+      const slug = getQuestSlug(baseLesson, index);
+
+      const prevLesson = index > 0 ? lessons[index - 1] : null;
+      const nextLesson = index < lessons.length - 1 ? lessons[index + 1] : null;
+      const prevLocalized = prevLesson ? getLocalizedLesson(prevLesson.id, lang) || prevLesson : null;
+      const nextLocalized = nextLesson ? getLocalizedLesson(nextLesson.id, lang) || nextLesson : null;
+      const prevSlug = prevLesson ? getQuestSlug(prevLesson, index - 1) : null;
+      const nextSlug = nextLesson ? getQuestSlug(nextLesson, index + 1) : null;
+
+      paths.push({
+        params: { lang, slug },
+        props: {
+          lesson: localizedLesson,
+          index,
+          lang,
+          prevLesson: prevLocalized ? { title: prevLocalized.title, slug: prevSlug, number: index } : null,
+          nextLesson: nextLocalized ? { title: nextLocalized.title, slug: nextSlug, number: index + 2 } : null,
+        },
+      });
+    }
+  }
+
+  return paths;
+}
+
+const { lesson, index, lang, prevLesson, nextLesson } = Astro.props;
+const questNumber = index + 1;
+const localizedModules = getLocalizedModules(lang as SupportedLanguage);
+const moduleInfo = localizedModules.find((m: any) => m.id === lesson.moduleId);
+
+const ctaLabels: Record<string, { launch: string; sub: string; ready: string; overview: string; instructions: string; syntax: string; objectives: string; curriculum: string; quest: string }> = {
+  es: {
+    launch: "Iniciar terminal interactiva para esta misión",
+    sub: "Sin instalación requerida • Se ejecuta en el navegador",
+    ready: "¿Listo para completar la Misión",
+    overview: "Concepto y descripción general",
+    instructions: "Instrucciones de la misión",
+    syntax: "Referencia de sintaxis de comandos",
+    objectives: "Objetivos de verificación",
+    curriculum: "Plan de estudios",
+    quest: "Misión",
+  },
+  fr: {
+    launch: "Lancer le terminal interactif pour cette quête",
+    sub: "Aucune installation requise • S'exécute dans le navigateur",
+    ready: "Prêt à terminer la Quête",
+    overview: "Concept et aperçu",
+    instructions: "Instructions de la mission",
+    syntax: "Référence de syntaxe des commandes",
+    objectives: "Objectifs de vérification",
+    curriculum: "Programme",
+    quest: "Quête",
+  },
+  de: {
+    launch: "Interaktives Terminal für diese Quest starten",
+    sub: "Keine Installation erforderlich • Läuft im Browser",
+    ready: "Bereit für Quest",
+    overview: "Konzept & Übersicht",
+    instructions: "Missionsanweisungen",
+    syntax: "Befehlssyntax-Referenz",
+    objectives: "Prüfungsziele",
+    curriculum: "Lehrplan",
+    quest: "Quest",
+  },
+  ja: {
+    launch: "このクエストの対話型ターミナルを起動する",
+    sub: "インストール不要 • ブラウザ上で完全動作",
+    ready: "クエスト完了への準備はできましたか？",
+    overview: "概念と概要",
+    instructions: "ミッションの手順",
+    syntax: "コマンド構文リファレンス",
+    objectives: "検証目標",
+    curriculum: "カリキュラム",
+    quest: "クエスト",
+  },
+  pt: {
+    launch: "Iniciar terminal interativo para esta missão",
+    sub: "Sem instalação necessária • Executado no navegador",
+    ready: "Pronto para concluir a Missão",
+    overview: "Conceito e visão geral",
+    instructions: "Instruções da missão",
+    syntax: "Referência de sintaxe de comandos",
+    objectives: "Objetivos de verificação",
+    curriculum: "Currículo",
+    quest: "Missão",
+  },
+  ko: {
+    launch: "이 퀘스트를 위한 인터랙티브 터미널 시작",
+    sub: "설치 불필요 • 브라우저에서 바로 실행",
+    ready: "퀘스트를 완료할 준비가 되셨나요?",
+    overview: "개념 및 개요",
+    instructions: "미션 지침",
+    syntax: "명령어 구문 참조",
+    objectives: "검증 목표",
+    curriculum: "커리큘럼",
+    quest: "퀘스트",
+  },
+  it: {
+    launch: "Avvia il terminale interattivo per questa missione",
+    sub: "Nessuna installazione richiesta • Funziona nel browser",
+    ready: "Pronto a completare la Missione",
+    overview: "Concetto e panoramica",
+    instructions: "Istruzioni della missione",
+    syntax: "Riferimento sintassi dei comandi",
+    objectives: "Obiettivi di verifica",
+    curriculum: "Programma",
+    quest: "Missione",
+  },
+};
+
+const labels = ctaLabels[lang] || ctaLabels.es;
+
+const pageTitle = `${lesson.title} — Interactive Linux Terminal Practice | BashQuest`;
+const plainDesc = lesson.description
+  .replace(/\n+/g, " ")
+  .replace(/[*_`#]/g, "")
+  .slice(0, 160)
+  .trim();
+const metaDescription = `${lesson.title}. ${plainDesc}... BashQuest online Linux terminal.`;
+
+const terminalLaunchUrl = `/${lang}/?view=sandbox&quest=${lesson.id}`;
+
+const formattedDescription = lesson.description
+  .split("\n\n")
+  .map((p: string) =>
+    p
+      .replace(/\n/g, "<br>")
+      .replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-ink">$1</strong>')
+      .replace(
+        /`([^`]+)`/g,
+        '<code class="px-1.5 py-0.5 bg-canvas-soft-2 dark:bg-canvas-soft border border-hairline rounded font-mono text-xs text-primary">$1</code>',
+      ),
+  );
+
+const formattedInstructions = lesson.instructions
+  .replace(/\n/g, "<br>")
+  .replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-ink">$1</strong>')
+  .replace(
+    /`([^`]+)`/g,
+    '<code class="px-1.5 py-0.5 bg-canvas-soft-2 dark:bg-canvas-soft border border-hairline rounded font-mono text-xs text-primary">$1</code>',
+  );
+
+const pageUrl = new URL(Astro.url.pathname, Astro.site || "https://bashquest.com").toString();
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "LearningResource",
+  name: `${lesson.title} — Interactive Linux Terminal Practice`,
+  description: metaDescription,
+  learningResourceType: "Interactive Simulation",
+  educationalLevel: "Beginner to Advanced Linux Administration",
+  teaches: lesson.title,
+  inLanguage: lang,
+  url: pageUrl,
+  provider: {
+    "@type": "Organization",
+    "name": "BashQuest",
+    "url": "https://bashquest.com",
+  },
+};
+---
+
+<Layout
+  title={pageTitle}
+  description={metaDescription}
+  lang={lang as SupportedLanguage}
+  structuredData={structuredData}
+>
+  <div class="flex flex-col min-h-screen bg-canvas-soft text-ink">
+    <Navigation activePage="dashboard" lang={lang as SupportedLanguage} />
+
+    <main class="flex-1 w-full mesh-gradient py-8 sm:py-12 px-4 sm:px-6 lg:px-8 select-text">
+      <div class="max-w-4xl mx-auto space-y-8">
+        
+        <!-- Breadcrumbs & Meta Top -->
+        <nav aria-label="Breadcrumb" class="flex flex-wrap items-center gap-2 text-xs text-mute font-mono">
+          <a href={`/${lang}`} class="hover:text-ink transition-colors">{labels.curriculum}</a>
+          <span>/</span>
+          {moduleInfo && (
+            <>
+              <span class="text-mute">{moduleInfo.title}</span>
+              <span>/</span>
+            </>
+          )}
+          <span class="text-ink font-semibold">{labels.quest} {questNumber}</span>
+        </nav>
+
+        <!-- Quest Header Card -->
+        <header class="card-marketing border border-hairline bg-canvas p-6 sm:p-8 rounded-xl shadow-level-3 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 text-xs font-mono font-bold uppercase rounded bg-canvas-soft-2 border border-hairline text-ink">
+                {labels.quest} {questNumber}
+              </span>
+              {lesson.badge && (
+                <span class="px-2.5 py-1 text-xs font-sans font-medium rounded bg-violet-soft/30 text-violet border border-violet/20">
+                  {lesson.badge}
+                </span>
+              )}
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="px-3 py-1 text-xs font-mono font-bold rounded-full bg-link-bg-soft/30 text-link-deep border border-link/20">
+                +{lesson.xp} XP
+              </span>
+            </div>
+          </div>
+
+          <h1 class="display-lg text-ink font-extrabold tracking-tight">
+            {lesson.title}
+          </h1>
+
+          <div class="pt-2 flex flex-col sm:flex-row sm:items-center gap-4">
+            <a
+              href={terminalLaunchUrl}
+              class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-ink text-canvas font-semibold text-sm hover:opacity-90 active:scale-[0.99] transition-all shadow-md group"
+            >
+              <span>{labels.launch}</span>
+              <span class="transition-transform group-hover:translate-x-1">→</span>
+            </a>
+            <span class="text-xs text-mute font-mono">{labels.sub}</span>
+          </div>
+        </header>
+
+        <!-- Quest Explanation Section -->
+        <section class="card-marketing border border-hairline bg-canvas p-6 sm:p-8 rounded-xl shadow-level-2 space-y-6">
+          <h2 class="text-xl font-bold text-ink tracking-tight flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-success"></span>
+            {labels.overview}
+          </h2>
+          
+          <div class="prose prose-sm dark:prose-invert max-w-none space-y-4 text-body body-md leading-relaxed">
+            {formattedDescription.map((para: string) => (
+              <p set:html={para} />
+            ))}
+          </div>
+
+          <!-- Instructions Callout Box -->
+          <div class="p-4 sm:p-5 rounded-lg bg-canvas-soft-2 border border-link/30 space-y-2">
+            <div class="text-xs font-mono uppercase tracking-wider font-bold text-link flex items-center gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              {labels.instructions}
+            </div>
+            <div class="text-sm text-ink leading-relaxed" set:html={formattedInstructions} />
+          </div>
+        </section>
+
+        <!-- Command Reference Table -->
+        {lesson.commandHelp && lesson.commandHelp.length > 0 && (
+          <section class="card-marketing border border-hairline bg-canvas p-6 sm:p-8 rounded-xl shadow-level-2 space-y-4">
+            <h2 class="text-xl font-bold text-ink tracking-tight flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-link"></span>
+              {labels.syntax}
+            </h2>
+            <div class="overflow-x-auto border border-hairline rounded-lg">
+              <table class="w-full text-left text-sm font-sans">
+                <thead class="bg-canvas-soft-2 border-b border-hairline text-mute uppercase text-xs font-mono">
+                  <tr>
+                    <th scope="col" class="px-4 py-3">Command / Syntax</th>
+                    <th scope="col" class="px-4 py-3">Description</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-hairline">
+                  {lesson.commandHelp.map((cmdItem: any) => (
+                    <tr class="hover:bg-canvas-soft-2/50 transition-colors">
+                      <td class="px-4 py-3.5 font-mono text-xs sm:text-sm font-bold text-ink whitespace-nowrap">
+                        <code class="px-2 py-1 rounded bg-canvas-soft-2 border border-hairline text-primary">
+                          {cmdItem.cmd}
+                        </code>
+                      </td>
+                      <td class="px-4 py-3.5 text-body text-xs sm:text-sm">
+                        {cmdItem.desc}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+
+        <!-- Objectives Checklist -->
+        {lesson.objectives && lesson.objectives.length > 0 && (
+          <section class="card-marketing border border-hairline bg-canvas p-6 sm:p-8 rounded-xl shadow-level-2 space-y-4">
+            <h2 class="text-xl font-bold text-ink tracking-tight flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-warning"></span>
+              {labels.objectives}
+            </h2>
+            <ul class="space-y-2.5 pt-2">
+              {lesson.objectives.map((obj: any) => (
+                <li class="flex items-start gap-3 p-3 rounded-lg border border-hairline bg-canvas-soft-2/40">
+                  <div class="w-5 h-5 rounded-full border border-hairline-strong flex items-center justify-center shrink-0 mt-0.5 text-xs text-mute font-mono">
+                    ○
+                  </div>
+                  <span class="text-sm text-ink font-medium">{obj.text}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        <!-- Launch CTA Banner -->
+        <section class="card-marketing border border-hairline bg-gradient-to-r from-canvas to-canvas-soft-2 p-8 rounded-xl text-center space-y-4 shadow-level-3">
+          <h2 class="text-2xl font-bold text-ink tracking-tight">
+            {labels.ready} {questNumber}?
+          </h2>
+          <div class="pt-2">
+            <a
+              href={terminalLaunchUrl}
+              class="inline-flex items-center gap-2 px-8 py-3.5 rounded-lg bg-ink text-canvas font-bold text-sm hover:opacity-90 active:scale-[0.99] transition-all shadow-md group"
+            >
+              <span>{labels.launch}</span>
+              <span class="transition-transform group-hover:translate-x-1">→</span>
+            </a>
+          </div>
+        </section>
+
+        <!-- Prev / Next Quest Pagination -->
+        <nav aria-label="Quest Pagination" class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+          {prevLesson ? (
+            <a
+              href={`/${lang}/quests/${prevLesson.slug}`}
+              class="p-4 rounded-xl border border-hairline bg-canvas hover:border-hairline-strong transition-all flex flex-col gap-1 group"
+            >
+              <span class="text-xs font-mono text-mute flex items-center gap-1">
+                <span>←</span> {labels.quest} {prevLesson.number}
+              </span>
+              <span class="text-sm font-bold text-ink group-hover:text-link transition-colors">
+                {prevLesson.title}
+              </span>
+            </a>
+          ) : (
+            <div />
+          )}
+
+          {nextLesson && (
+            <a
+              href={`/${lang}/quests/${nextLesson.slug}`}
+              class="p-4 rounded-xl border border-hairline bg-canvas hover:border-hairline-strong transition-all flex flex-col items-end gap-1 group text-right sm:col-start-2"
+            >
+              <span class="text-xs font-mono text-mute flex items-center gap-1">
+                {labels.quest} {nextLesson.number} <span>→</span>
+              </span>
+              <span class="text-sm font-bold text-ink group-hover:text-link transition-colors">
+                {nextLesson.title}
+              </span>
+            </a>
+          )}
+        </nav>
+
+      </div>
+    </main>
+
+    <Footer lang={lang as SupportedLanguage} />
+  </div>
+</Layout>

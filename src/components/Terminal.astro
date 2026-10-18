@@ -86,13 +86,12 @@
   <div
     class="flex items-center gap-1.5 pt-1.5 border-t border-white/5 select-none font-mono text-xs sm:text-[13px]"
   >
-    <span class="text-green-400 font-bold shrink-0 hidden sm:inline">learner@bashquest</span>
-    <span class="text-green-400 font-bold shrink-0 inline sm:hidden">learner</span>
-    <span class="text-gray-400 shrink-0">:</span>
-    <span id="term-prompt-path" class="text-blue-400 font-semibold shrink-0 max-w-[80px] sm:max-w-none truncate"
-      >~</span
-    >
-    <span class="text-white font-bold shrink-0">$</span>
+    <div id="term-prompt-prefix" class="flex items-center shrink-0">
+      <span class="text-green-400 font-bold">learner@bashquest</span>
+      <span class="text-gray-400">:</span>
+      <span id="term-prompt-path" class="text-blue-400 font-semibold max-w-[80px] sm:max-w-none truncate">~</span>
+      <span class="text-white font-bold">$</span>
+    </div>
 
     <div class="relative flex-1 flex items-center min-w-0">
       <input
@@ -112,6 +111,15 @@
       ></span>
     </div>
   </div>
+
+  <!-- Terminal Status Bar -->
+  <div
+    class="flex items-center justify-between pt-1.5 mt-1 border-t border-white/10 text-[10px] font-mono text-gray-400 select-none"
+  >
+    <span>User: learner</span>
+    <span class="text-white/20 select-none">|</span>
+    <span id="term-status-path">/home/learner</span>
+  </div>
 </div>
 
 <script>
@@ -123,6 +131,8 @@
   const termGhost = document.getElementById("terminal-ghost");
   const termTitlePath = document.getElementById("term-title-path");
   const termPromptPath = document.getElementById("term-prompt-path");
+  const termStatusPath = document.getElementById("term-status-path");
+  const termPromptPrefix = document.getElementById("term-prompt-prefix");
 
   let historyIdx = -1;
   let tempCommand = "";
@@ -180,7 +190,7 @@
     container.className = "text-[#888] font-mono leading-relaxed";
     termHistory.appendChild(container);
 
-    const fullHtmlText = `Welcome to BashQuest Terminal v1.0.0<br>Type <span class="text-success font-semibold">help</span> to list available commands. Redirection (&gt;, &gt;&gt;) is supported.<br>Type your command and press Enter. Tab key autocompletes file paths.`;
+    const fullHtmlText = `Welcome to BashQuest Terminal v1.0.0<br>Type <span class="text-success font-semibold">help</span> to list available commands. Redirection (&gt;, &gt;&gt;, 2&gt;, &amp;&gt;) and pipes (|) are supported.<br>Type your command and press Enter. Tab key autocompletes file paths.`;
 
     typeHtml(container, fullHtmlText, 12);
   }
@@ -208,11 +218,31 @@
   function updatePrompt() {
     const globalWindow = window as any;
     if (!globalWindow.appState || !globalWindow.appState.session) return;
-    const currentPath = globalWindow.appState.session.currentPath;
+    const session = globalWindow.appState.session;
+    const currentPath = session.currentPath;
     const shortPath = getShortPath(currentPath);
 
     if (termTitlePath) termTitlePath.textContent = shortPath;
-    if (termPromptPath) termPromptPath.textContent = shortPath;
+    if (termStatusPath) termStatusPath.textContent = currentPath;
+
+    if (session.vimState) {
+      if (termPromptPrefix) {
+        termPromptPrefix.innerHTML = `<span class="text-amber-400 font-bold">[VIM:${session.vimState.mode.toUpperCase()}]</span><span class="text-white font-bold">&gt;</span>`;
+      }
+    } else if (session.hereDocState) {
+      if (termPromptPrefix) {
+        termPromptPrefix.innerHTML = `<span class="text-gray-400 font-bold">&gt;</span>`;
+      }
+    } else {
+      if (termPromptPrefix) {
+        termPromptPrefix.innerHTML = `
+          <span class="text-green-400 font-bold">learner@bashquest</span>
+          <span class="text-gray-400">:</span>
+          <span id="term-prompt-path" class="text-blue-400 font-semibold max-w-[80px] sm:max-w-none truncate">${shortPath}</span>
+          <span class="text-white font-bold">$</span>
+        `;
+      }
+    }
   }
 
   // Write a row to the terminal log
@@ -228,13 +258,21 @@
 
     if (isCommand) {
       const globalWindow = window as any;
+      const session = globalWindow.appState?.session;
       const currentPath =
-        globalWindow.appState?.session?.currentPath || "/home/learner";
+        session?.currentPath || "/home/learner";
       const shortPath = getShortPath(currentPath);
-      row.innerHTML = `
-        <span class="text-green-400 font-bold">learner@bashquest</span>:<span class="text-blue-400 font-semibold">${shortPath}</span><span class="text-white">$</span> 
-        <span class="text-white">${cmdString}</span>
-      `;
+      if (session?.hereDocState) {
+        row.innerHTML = `
+          <span class="text-gray-400 font-bold">&gt;</span> 
+          <span class="text-white">${cmdString}</span>
+        `;
+      } else {
+        row.innerHTML = `
+          <span class="text-green-400 font-bold">learner@bashquest</span>:<span class="text-blue-400 font-semibold">${shortPath}</span><span class="text-white">$</span> 
+          <span class="text-white">${cmdString}</span>
+        `;
+      }
     } else {
       row.innerHTML = htmlContent;
     }
@@ -368,6 +406,14 @@
     const globalWindow = window as any;
     if (!globalWindow.appState || !globalWindow.appState.session) return;
     const history = globalWindow.appState.session.history || [];
+
+    if (e.key === "Escape") {
+      if (globalWindow.appState.session?.vimState) {
+        e.preventDefault();
+        submitCommand("Esc");
+        return;
+      }
+    }
 
     if (e.key === "Enter") {
       submitCommand(termInput.value);

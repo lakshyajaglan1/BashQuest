@@ -1,4 +1,7 @@
 import type { SupportedLanguage } from "./languages";
+import { lessons } from "../lib/lessons.js";
+
+const totalQuests = lessons.length;
 
 export interface FAQItem {
   q: string;
@@ -13,7 +16,7 @@ export const localizedFaqs: Record<SupportedLanguage, FAQItem[]> = {
     },
     {
       q: "What makes BashQuest one of the best Linux learning resources and websites?",
-      a: "BashQuest stands out among Linux learning websites because it is an interactive bash learning game rather than passive text or video. With 60+ progressive quests, instant command validation, XP tracking, and visual directory exploration, students achieve practical Linux terminal learning in a fun, frictionless environment.",
+      a: `BashQuest stands out among Linux learning websites because it is an interactive bash learning game rather than passive text or video. With ${totalQuests}+ progressive quests, instant command validation, XP tracking, and visual directory exploration, students achieve practical Linux terminal learning in a fun, frictionless environment.`,
     },
     {
       q: "What are the core terminal learning objectives covered in this bash learning game?",
@@ -48,7 +51,7 @@ export const localizedFaqs: Record<SupportedLanguage, FAQItem[]> = {
     },
     {
       q: "¿Qué hace que BashQuest sea una de las mejores plataformas para aprender Linux?",
-      a: "BashQuest se destaca por ser un juego interactivo de aprendizaje en lugar de tutoriales pasivos en video. Con más de 60 misiones, validación instantánea de comandos y sistema de XP, los estudiantes aprenden comandos de terminal de forma entretenida y efectiva.",
+      a: `BashQuest se destaca por ser un juego interactivo de aprendizaje en lugar de tutoriales pasivos en video. Con más de ${totalQuests} misiones, validación instantánea de comandos y sistema de XP, los estudiantes aprenden comandos de terminal de forma entretenida y efectiva.`,
     },
     {
       q: "¿Cuáles son los principales objetivos de aprendizaje cubiertos en este juego de Bash?",
@@ -83,7 +86,7 @@ export const localizedFaqs: Record<SupportedLanguage, FAQItem[]> = {
     },
     {
       q: "BashQuestがおすすめのLinux学習プラットフォームである理由は？",
-      a: "動画を見るだけの受動的な学習とは異なり、60以上の実践クエスト、コマンドの即時判定、XP獲得システムを通じて、ゲーム感覚で手を動かしながら本物のコマンドラインスキルを習得できる点です。",
+      a: `動画を見るだけの受動的な学習とは異なり、${totalQuests}以上の実践クエスト、コマンドの即時判定、XP獲得システムを通じて、ゲーム感覚で手を動かしながら本物のコマンドラインスキルを習得できる点です。`,
     },
     {
       q: "このBash学習ゲームで学べる主な目標は何ですか？",
@@ -118,7 +121,7 @@ export const localizedFaqs: Record<SupportedLanguage, FAQItem[]> = {
     },
     {
       q: "Qu'est-ce qui fait de BashQuest l'un des meilleurs sites pour apprendre Linux ?",
-      a: "BashQuest combine apprentissage pratique et ludique. Avec plus de 60 quêtes guidées, la validation immédiate des commandes et un système de progression XP, vous apprenez activement en tapant les commandes.",
+      a: `BashQuest combine apprentissage pratique et ludique. Avec plus de ${totalQuests} quêtes guidées, la validation immédiate des commandes et un système de progression XP, vous apprenez activement en tapant les commandes.`,
     },
     {
       q: "Quels sont les objectifs pédagogiques clés de ce jeu d'apprentissage Bash ?",
@@ -153,7 +156,7 @@ export const localizedFaqs: Record<SupportedLanguage, FAQItem[]> = {
     },
     {
       q: "Was macht BashQuest zu einer der besten Plattformen zum Erlernen von Linux?",
-      a: "BashQuest setzt auf aktives Lernen statt passiver Videos. Mit über 60 Quests, sofortiger Befehlsüberprüfung und XP-Fortschrittssystem erlernen Sie die Linux-Kommandozeile spielerisch und praxisnah.",
+      a: `BashQuest setzt auf aktives Lernen statt passiver Videos. Mit über ${totalQuests} Quests, sofortiger Befehlsüberprüfung und XP-Fortschrittssystem erlernen Sie die Linux-Kommandozeile spielerisch und praxisnah.`,
     },
     {
       q: "Welche Kernkompetenzen werden in diesem Bash-Lernspiel vermittelt?",
@@ -188,7 +191,7 @@ export const localizedFaqs: Record<SupportedLanguage, FAQItem[]> = {
     },
     {
       q: "O que torna o BashQuest uma das melhores plataformas para aprender Linux?",
-      a: "Ao invés de videoaulas passivas, o BashQuest é um jogo de aprendizado interativo com mais de 60 missões, validação imediata de comandos e sistema de XP que ensina na prática.",
+      a: `Ao invés de videoaulas passivas, o BashQuest é um jogo de aprendizado interativo com mais de ${totalQuests} missões, validação imediata de comandos e sistema de XP que ensina na prática.`,
     },
     {
       q: "Quais são os principais objetivos de aprendizado deste jogo de Bash?",
@@ -223,7 +226,7 @@ export const localizedFaqs: Record<SupportedLanguage, FAQItem[]> = {
     },
     {
       q: "BashQuest가 리눅스 학습에 가장 좋은 사이트인 이유는 무엇인가요?",
-      a: "지루한 동영상 강의와 달리 60개 이상의 단계별 실습 퀘스트, 명령어 즉시 채점, XP 보상 시스템을 통해 직접 타이핑하며 재미있게 실무 감각을 익힐 수 있기 때문입니다.",
+      a: `지루한 동영상 강의와 달리 ${totalQuests}개 이상의 단계별 실습 퀘스트, 명령어 즉시 채점, XP 보상 시스템을 통해 직접 타이핑하며 재미있게 실무 감각을 익힐 수 있기 때문입니다.`,
     },
     {
       q: "이 Bash 학습 게임에서 다루는 핵심 학습 목표는 무엇인가요?",
@@ -258,7 +261,7 @@ export const localizedFaqs: Record<SupportedLanguage, FAQItem[]> = {
     },
     {
       q: "Cosa rende BashQuest una delle migliori piattaforme per imparare Linux?",
-      a: "BashQuest unisce pratica diretta e gamification: oltre 60 missioni progressive, verifica istantanea dei comandi e sistema a punti XP per imparare attivamente digitando la riga di comando.",
+      a: `BashQuest unisce pratica diretta e gamification: oltre ${totalQuests} missioni progressive, verifica istantanea dei comandi e sistema a punti XP per imparare attivamente digitando la riga di comando.`,
     },
     {
       q: "Quali sono i principali obiettivi didattici di questo gioco educativo su Bash?",

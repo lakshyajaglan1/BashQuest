@@ -10,6 +10,7 @@ import WebTools from "../../components/WebTools.astro";
 import { getLocalizedModules } from "../../i18n/lessons/index";
 import { nonDefaultLangs, type SupportedLanguage } from "../../i18n/languages";
 import { useTranslations, useTranslatedPath } from "../../i18n/utils";
+import { lessons, modules } from "../../lib/lessons.js";
 
 export function getStaticPaths() {
   return nonDefaultLangs.map((lang) => ({
@@ -20,6 +21,8 @@ export function getStaticPaths() {
 const { lang } = Astro.params as { lang: SupportedLanguage };
 const t = useTranslations(lang);
 const translatePath = useTranslatedPath(lang);
+const totalQuests = lessons.length;
+const totalModules = modules.length;
 
 const softwareAppSchema = {
   "@context": "https://schema.org",
@@ -32,10 +35,10 @@ const softwareAppSchema = {
   description: t("meta.homeDescription"),
   featureList: [
     "Online Linux terminal practice sandbox with zero install",
-    "Free online Linux terminal practice with 60+ hands-on quests",
+    `Free online Linux terminal practice with ${totalQuests}+ hands-on quests`,
     "Interactive bash learning game with XP and badge system",
     "Master essential Linux terminal commands and text manipulation",
-    "Clear terminal learning objectives across 16 curriculum modules",
+    `Clear terminal learning objectives across ${totalModules} curriculum modules`,
     "Top-tier Linux learning website and beginner-friendly resource",
     "GNU Nano text editor practice in browser",
     "Grep, awk, sed, and command pipeline exercises",
@@ -263,10 +266,10 @@ const orgSchema = {
 
               <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                 {
-                  getLocalizedModules(lang).map((mod) => (
+                  getLocalizedModules(lang).map((mod, index) => (
                     <div class="p-4 bg-canvas border border-hairline rounded-md shadow-level-2 hover:shadow-level-3 transition-all duration-200">
                       <div class="caption-mono text-mute uppercase font-semibold mb-1">
-                        {t("dashboard.module")} {mod.id}
+                        {t("dashboard.module")} {index + 1}
                       </div>
                       <h4 class="font-sans text-sm font-bold text-ink leading-tight">
                         {mod.title.replace(/^\d+\.\s*/, "")}

@@ -13,6 +13,10 @@ export default defineConfig({
       redirectToDefaultLocale: false,
     },
   },
+  redirects: {
+    '/terminal': '/?view=sandbox',
+    '/tools': '/?view=tools',
+  },
   vite: {
     plugins: [tailwindcss()],
   },

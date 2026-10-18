@@ -4,12 +4,23 @@ import { defaultLang, type SupportedLanguage } from "../i18n/languages";
 import { getLangFromUrl, useTranslations, useTranslatedPath } from "../i18n/utils";
 
 interface Props {
-  activePage?: "home" | "about" | "privacy";
+  activePage?: "home" | "dashboard" | "terminal" | "tools" | "about" | "privacy" | "terms" | "faq" | "contact";
   lang?: SupportedLanguage;
 }
 
 const currentLang = Astro.props.lang || getLangFromUrl(Astro.url);
-const { activePage = "home" } = Astro.props;
+const pathname = Astro.url.pathname.replace(/\/$/, "");
+let detectedPage = "home";
+if (pathname.endsWith("/terminal")) detectedPage = "terminal";
+else if (pathname.endsWith("/tools")) detectedPage = "tools";
+else if (pathname.endsWith("/about")) detectedPage = "about";
+
+const { activePage = detectedPage } = Astro.props;
+const isDashboard = activePage === "home" || activePage === "dashboard";
+const isTerminal = activePage === "terminal";
+const isTools = activePage === "tools";
+const isAbout = activePage === "about";
+
 const t = useTranslations(currentLang);
 const translatePath = useTranslatedPath(currentLang);
 const homePath = translatePath("/");
@@ -36,28 +47,28 @@ const homePath = translatePath("/");
     <a
       id="btn-nav-dashboard"
       href={`${homePath}?view=dashboard`}
-      class={`h-9 px-4 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-center decoration-none ${activePage === "home" ? "bg-primary text-on-primary shadow-sm" : "text-body hover:text-ink hover:bg-canvas-soft-2"}`}
+      class={`h-9 px-4 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-center decoration-none ${isDashboard ? "bg-primary text-on-primary shadow-sm" : "text-body hover:text-ink hover:bg-canvas-soft-2"}`}
     >
       {t("nav.dashboard")}
     </a>
     <a
       id="btn-nav-sandbox"
       href={`${homePath}?view=sandbox`}
-      class="h-9 px-4 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-center decoration-none text-body hover:text-ink hover:bg-canvas-soft-2"
+      class={`h-9 px-4 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-center decoration-none ${isTerminal ? "bg-primary text-on-primary shadow-sm" : "text-body hover:text-ink hover:bg-canvas-soft-2"}`}
     >
       {t("nav.workspace")}
     </a>
     <a
       id="btn-nav-tools"
       href={`${homePath}?view=tools`}
-      class="h-9 px-4 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-center decoration-none text-body hover:text-ink hover:bg-canvas-soft-2"
+      class={`h-9 px-4 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-center decoration-none ${isTools ? "bg-primary text-on-primary shadow-sm" : "text-body hover:text-ink hover:bg-canvas-soft-2"}`}
     >
       {t("nav.tools")}
     </a>
     <a
       id="btn-nav-about"
       href={`${homePath}?view=about`}
-      class="h-9 px-4 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-center decoration-none text-body hover:text-ink hover:bg-canvas-soft-2"
+      class={`h-9 px-4 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-center decoration-none ${isAbout ? "bg-primary text-on-primary shadow-sm" : "text-body hover:text-ink hover:bg-canvas-soft-2"}`}
     >
       {t("nav.about")}
     </a>
@@ -169,7 +180,7 @@ const homePath = translatePath("/");
   <a
     id="btn-bottom-dashboard"
     href={`${homePath}?view=dashboard`}
-    class="flex flex-col items-center justify-center py-1 px-3 rounded-md text-[10px] font-sans font-medium transition-colors decoration-none text-primary dark:text-on-primary"
+    class={`flex flex-col items-center justify-center py-1 px-3 rounded-md text-[10px] font-sans font-medium transition-colors decoration-none ${isDashboard ? "text-primary dark:text-on-primary font-bold" : "text-mute hover:text-ink"}`}
   >
     <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
@@ -180,7 +191,7 @@ const homePath = translatePath("/");
   <a
     id="btn-bottom-sandbox"
     href={`${homePath}?view=sandbox`}
-    class="flex flex-col items-center justify-center py-1 px-3 rounded-md text-[10px] font-sans font-medium transition-colors decoration-none text-mute hover:text-ink"
+    class={`flex flex-col items-center justify-center py-1 px-3 rounded-md text-[10px] font-sans font-medium transition-colors decoration-none ${isTerminal ? "text-primary dark:text-on-primary font-bold" : "text-mute hover:text-ink"}`}
   >
     <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
@@ -191,7 +202,7 @@ const homePath = translatePath("/");
   <a
     id="btn-bottom-tools"
     href={`${homePath}?view=tools`}
-    class="flex flex-col items-center justify-center py-1 px-3 rounded-md text-[10px] font-sans font-medium transition-colors decoration-none text-mute hover:text-ink"
+    class={`flex flex-col items-center justify-center py-1 px-3 rounded-md text-[10px] font-sans font-medium transition-colors decoration-none ${isTools ? "text-primary dark:text-on-primary font-bold" : "text-mute hover:text-ink"}`}
   >
     <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
@@ -203,7 +214,7 @@ const homePath = translatePath("/");
   <a
     id="btn-bottom-about"
     href={`${homePath}?view=about`}
-    class="flex flex-col items-center justify-center py-1 px-3 rounded-md text-[10px] font-sans font-medium transition-colors decoration-none text-mute hover:text-ink"
+    class={`flex flex-col items-center justify-center py-1 px-3 rounded-md text-[10px] font-sans font-medium transition-colors decoration-none ${isAbout ? "text-primary dark:text-on-primary font-bold" : "text-mute hover:text-ink"}`}
   >
     <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -266,8 +277,7 @@ const homePath = translatePath("/");
       class="text-sm text-body leading-relaxed mb-6 space-y-3"
     >
       <p>
-        Hello! I am your Linux mentor. Select a challenge to get customized
-        hints and tips for your task.
+        {t("nav.hintDefaultMessage")}
       </p>
     </div>
 
@@ -283,6 +293,9 @@ const homePath = translatePath("/");
 </div>
 
 <script>
+  import { getLocalizedLesson, lessons } from "../i18n/lessons/index";
+  import type { SupportedLanguage } from "../i18n/languages";
+
   declare global {
     interface Window {
       appState: any;
@@ -299,6 +312,11 @@ const homePath = translatePath("/");
   const btnAIGotIt = document.getElementById("btn-ai-got-it");
   const modalAI = document.getElementById("modal-ai-helper");
   const aiHintContent = document.getElementById("ai-hint-content");
+
+  const btmDashboard = document.getElementById("btn-bottom-dashboard");
+  const btmSandbox = document.getElementById("btn-bottom-sandbox");
+  const btmTools = document.getElementById("btn-bottom-tools");
+  const btmAbout = document.getElementById("btn-bottom-about");
 
   const xpCount = document.getElementById("nav-xp-count");
   const streakCount = document.getElementById("nav-streak-count");
@@ -337,18 +355,8 @@ const homePath = translatePath("/");
   }
 
   function updateNavHighlights(view: string) {
-    const dashboardBtn = document.getElementById("btn-nav-dashboard");
-    const sandboxBtn = document.getElementById("btn-nav-sandbox");
-    const aboutBtn = document.getElementById("btn-nav-about");
-    const toolsBtn = document.getElementById("btn-nav-tools");
-
-    const btmDashboard = document.getElementById("btn-bottom-dashboard");
-    const btmSandbox = document.getElementById("btn-bottom-sandbox");
-    const btmTools = document.getElementById("btn-bottom-tools");
-    const btmAbout = document.getElementById("btn-bottom-about");
-
     // Desktop nav pills
-    [dashboardBtn, sandboxBtn, aboutBtn, toolsBtn].forEach((btn) => {
+    [btnDashboard, btnSandbox, btnAbout, btnTools].forEach((btn) => {
       btn?.classList.remove("bg-primary", "text-on-primary", "shadow-sm");
       btn?.classList.add(
         "text-body",
@@ -358,10 +366,10 @@ const homePath = translatePath("/");
     });
 
     let activeBtn: HTMLElement | null = null;
-    if (view === "dashboard") activeBtn = dashboardBtn;
-    else if (view === "sandbox") activeBtn = sandboxBtn;
-    else if (view === "about") activeBtn = aboutBtn;
-    else if (view === "tools") activeBtn = toolsBtn;
+    if (view === "dashboard") activeBtn = btnDashboard;
+    else if (view === "sandbox") activeBtn = btnSandbox;
+    else if (view === "about") activeBtn = btnAbout;
+    else if (view === "tools") activeBtn = btnTools;
 
     if (activeBtn) {
       activeBtn.classList.add("bg-primary", "text-on-primary", "shadow-sm");
@@ -400,11 +408,6 @@ const homePath = translatePath("/");
     );
   };
 
-  const btmDashboard = document.getElementById("btn-bottom-dashboard");
-  const btmSandbox = document.getElementById("btn-bottom-sandbox");
-  const btmTools = document.getElementById("btn-bottom-tools");
-  const btmAbout = document.getElementById("btn-bottom-about");
-
   const bindNavClick = (el: HTMLElement | null, view: string) => {
     el?.addEventListener("click", (e) => {
       if (isHomePage()) {
@@ -424,7 +427,7 @@ const homePath = translatePath("/");
   bindNavClick(btmTools, "tools");
   bindNavClick(btmAbout, "about");
 
-  // Client-side stats loading from storage for non-home pages
+  // Client-side stats loading from storage
   function loadStatsFromStorage() {
     try {
       const saved = localStorage.getItem("bashquest_state");
@@ -465,93 +468,147 @@ const homePath = translatePath("/");
     }
   }
 
-  // Load stats initially on DOM load / script execution
+  // Load stats initially and on Astro page-load / view transitions
   loadStatsFromStorage();
+  document.addEventListener("astro:page-load", () => {
+    loadStatsFromStorage();
+    updateThemeIcons();
+  });
 
   // AI Modal Handlers — progressive hint reveal
   let hintRevealLevel = 0;
   let lastHintLessonId: number | null = null;
 
+  const openAI = () => {
+    if (modalAI) {
+      modalAI.classList.remove("hidden");
+      modalAI.style.display = "flex";
+    }
+  };
+
+  const closeAI = () => {
+    if (modalAI) {
+      modalAI.classList.add("hidden");
+      modalAI.style.display = "none";
+    }
+  };
+
+  btnCloseAI?.addEventListener("click", closeAI);
+  btnAIGotIt?.addEventListener("click", closeAI);
+  modalAI?.addEventListener("click", (e) => {
+    if (e.target === modalAI) closeAI();
+  });
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && modalAI && modalAI.style.display === "flex") {
+      closeAI();
+    }
+  });
+
   btnAskAI?.addEventListener("click", () => {
-    // Check if user is on the dashboard (not in the workspace)
-    const currentView = window.appState?.activeView;
-    if (!currentView || currentView === "dashboard" || currentView === "about" || currentView === "tools") {
+    const docLang = (document.documentElement.lang as SupportedLanguage) || "en";
+    const activeLessonId = window.appState?.activeLessonId || 1;
+    const lesson =
+      window.appState?.activeLesson ||
+      getLocalizedLesson(activeLessonId, docLang) ||
+      getLocalizedLesson(1, "en");
+
+    if (!lesson) {
       if (aiHintContent) {
         aiHintContent.innerHTML = `
-          <p>I can help you build commands and complete challenges! Please open the <strong>Workspace</strong> and select a quest first.</p>
-          <p class="text-xs text-mute mt-2">💡 Click the <strong>Workspace</strong> tab in the navigation bar, then choose a quest to get started.</p>
+          <p>I can help you build commands and complete challenges! Please select a quest to get started.</p>
         `;
       }
-      modalAI?.classList.remove("hidden");
+      openAI();
       return;
     }
 
-    // Check if there's an active lesson with hints
-    if (window.appState && window.appState.activeLesson) {
-      const lesson = window.appState.activeLesson;
-      const hints: string[] = lesson.hints || [];
+    const currentView = window.appState?.activeView || "dashboard";
+    const hints: string[] = lesson.hints || [];
 
-      // Reset hint level if switching to a different lesson
-      if (lastHintLessonId !== lesson.id) {
-        hintRevealLevel = 0;
-        lastHintLessonId = lesson.id;
+    // Reset hint level if switching to a different lesson
+    if (lastHintLessonId !== lesson.id) {
+      hintRevealLevel = 0;
+      lastHintLessonId = lesson.id;
+    }
+
+    const questIndex = lessons.findIndex((l: any) => l.id === lesson.id);
+    const questNumber = questIndex >= 0 ? questIndex + 1 : lesson.id;
+
+    if (hints.length === 0) {
+      if (aiHintContent) {
+        aiHintContent.innerHTML = `
+          <div class="space-y-3">
+            <p class="font-semibold text-ink">Quest ${questNumber}: "${lesson.title}"</p>
+            <p class="text-sm text-body">No step-by-step hints are available for this challenge. Boss challenges test your command-line problem-solving against real filesystem and system state!</p>
+            <div class="p-3 bg-canvas-soft-2 border border-hairline rounded-sm">
+              <span class="text-xs font-mono font-bold text-violet">Objective:</span>
+              <p class="text-xs text-body mt-1">${lesson.instructions || "Inspect and configure the virtual environment to meet all requirements."}</p>
+            </div>
+            ${
+              currentView !== "sandbox"
+                ? `<div class="pt-2"><button id="btn-jump-to-quest" class="w-full h-9 px-4 bg-primary text-on-primary rounded-sm font-semibold text-xs hover:opacity-90 transition-all cursor-pointer border-none flex items-center justify-center gap-2">Launch Quest in Workspace →</button></div>`
+                : ""
+            }
+          </div>
+        `;
       }
+    } else {
+      // Reveal one more hint each time the button is clicked
+      hintRevealLevel = Math.min(hintRevealLevel + 1, hints.length);
 
-      if (hints.length === 0) {
-        if (aiHintContent) {
-          aiHintContent.innerHTML = `
-            <p class="font-medium text-ink">Working on "${lesson.title}"</p>
-            <p>No specific hints are available for this quest. Try re-reading the instructions in the lesson panel!</p>
-          `;
-        }
-      } else {
-        // Reveal one more hint each time the button is clicked
-        hintRevealLevel = Math.min(hintRevealLevel + 1, hints.length);
-
-        const hintsHtml = hints.slice(0, hintRevealLevel).map((hint: string, i: number) => {
+      const hintsHtml = hints
+        .slice(0, hintRevealLevel)
+        .map((hint: string, i: number) => {
           const isLatest = i === hintRevealLevel - 1;
           const labelColors = [
-            'text-cyan bg-cyan-50 dark:bg-cyan-950/30 border-cyan-200 dark:border-cyan-800/40',
-            'text-warning bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800/40',
-            'text-success bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800/40',
+            "text-cyan bg-cyan-50 dark:bg-cyan-950/30 border-cyan-200 dark:border-cyan-800/40",
+            "text-warning bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800/40",
+            "text-success bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800/40",
           ];
-          const colorClass = labelColors[i] || labelColors[labelColors.length - 1];
+          const colorClass =
+            labelColors[i] || labelColors[labelColors.length - 1];
           return `
-            <div class="p-3 bg-canvas-soft-2 border border-hairline rounded-sm ${isLatest ? 'ring-1 ring-primary/20' : 'opacity-80'}">
+            <div class="p-3 bg-canvas-soft-2 border border-hairline rounded-sm ${isLatest ? "ring-1 ring-primary/20" : "opacity-80"}">
               <span class="inline-block text-[10px] font-mono font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border mb-1.5 ${colorClass}">Hint ${i + 1}</span>
               <p class="font-mono text-xs text-ink leading-relaxed">${hint}</p>
             </div>
           `;
-        }).join('');
+        })
+        .join("");
 
-        const moreHintsAvailable = hintRevealLevel < hints.length;
-        const footerText = moreHintsAvailable
-          ? `<p class="text-xs text-mute mt-2">💡 Click <strong>"Get a Hint"</strong> again to reveal the next hint (${hintRevealLevel}/${hints.length} shown).</p>`
-          : `<p class="text-xs text-mute mt-2">✅ All ${hints.length} hints revealed for this quest.</p>`;
+      const moreHintsAvailable = hintRevealLevel < hints.length;
+      const footerText = moreHintsAvailable
+        ? `<p class="text-xs text-mute mt-2">💡 Click <strong>"Get a Hint"</strong> again to reveal the next hint (${hintRevealLevel}/${hints.length} shown).</p>`
+        : `<p class="text-xs text-mute mt-2">✅ All ${hints.length} hints revealed for this quest.</p>`;
 
-        if (aiHintContent) {
-          aiHintContent.innerHTML = `
-            <p class="font-medium text-ink mb-1">Stuck on "${lesson.title}"?</p>
-            <div class="space-y-2">
-              ${hintsHtml}
-            </div>
-            ${footerText}
-          `;
-        }
-      }
-    } else {
+      const ctaWorkspace =
+        currentView !== "sandbox"
+          ? `<div class="pt-2"><button id="btn-jump-to-quest" class="w-full h-9 px-4 bg-primary text-on-primary rounded-sm font-semibold text-xs hover:opacity-90 transition-all cursor-pointer border-none flex items-center justify-center gap-2">Open Quest ${questNumber} in Workspace →</button></div>`
+          : "";
+
       if (aiHintContent) {
         aiHintContent.innerHTML = `
-          <p>I can help you build commands and complete challenges! Please select a quest in the Workspace first.</p>
+          <p class="font-medium text-ink mb-1">Stuck on Quest ${questNumber}: "${lesson.title}"?</p>
+          <div class="space-y-2">
+            ${hintsHtml}
+          </div>
+          ${footerText}
+          ${ctaWorkspace}
         `;
       }
     }
-    modalAI?.classList.remove("hidden");
-  });
 
-  const closeAI = () => modalAI?.classList.add("hidden");
-  btnCloseAI?.addEventListener("click", closeAI);
-  btnAIGotIt?.addEventListener("click", closeAI);
+    const jumpBtn = document.getElementById("btn-jump-to-quest");
+    jumpBtn?.addEventListener("click", () => {
+      closeAI();
+      setView("sandbox");
+      window.dispatchEvent(
+        new CustomEvent("app:select-lesson", { detail: { lessonId: lesson.id } }),
+      );
+    });
+
+    openAI();
+  });
 
   // Listen for Global State Updates
   window.addEventListener("app:state-updated", (e: any) => {

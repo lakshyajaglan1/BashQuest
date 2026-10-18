@@ -1,4 +1,4 @@
-import type { LessonTranslation } from "./types";
+import type { LessonTranslation } from "./types.ts";
 
 export const translations_fr: Record<number, LessonTranslation> = {
   "1": {
@@ -314,25 +314,29 @@ export const translations_fr: Record<number, LessonTranslation> = {
   "12": {
     "title": "Copier et déplacer des fichiers",
     "description": "Imaginez réorganiser votre pièce : parfois vous souhaitez faire une photocopie d'un document à conserver dans un autre tiroir, et d'autres fois vous souhaitez simplement saisir un dossier et le glisser dans une nouvelle étagère ou changer son étiquette. Nous faisons cela sous Linux avec des commandes simples :\n\n- `cp <source> <destination>` crée une copie identique d'un fichier dans un nouvel emplacement.\n- `mv <source> <destination>` déplace un fichier vers un nouveau dossier ou renomme le fichier si vous le conservez dans le même dossier (par exemple, `mv old.txt new.txt`).",
-    "instructions": "Renommons un fichier. Remplacez le nom de `status.txt` dans votre dossier personnel par `system.log` à l'aide de la commande `mv`.",
+    "instructions": "Faisons une sauvegarde et renommons un fichier ! Utilisez `cp status.txt status_backup.txt` pour le dupliquer et `mv status.txt system.log` pour renommer l'original.",
     "commandHelp": [
       {
+        "cmd": "cp status.txt status_backup.txt",
+        "desc": "Créer une copie de sauvegarde de status.txt"
+      },
+      {
         "cmd": "mv status.txt system.log",
-        "desc": "Renommez status.txt en system.log"
+        "desc": "Renommer status.txt en system.log"
       }
     ],
     "objectives": [
       {
+        "id": "used_cp",
+        "text": "Utilisez la commande \"cp\" pour créer status_backup.txt"
+      },
+      {
         "id": "used_mv",
-        "text": "Utilisez la commande \"mv\" pour renommer"
+        "text": "Utilisez la commande \"mv\" pour renommer status.txt en system.log"
       },
       {
-        "id": "old_removed",
-        "text": "Le status.txt d'origine est supprimé/renommé"
-      },
-      {
-        "id": "new_created",
-        "text": "Un nouveau fichier system.log existe avec un contenu correct"
+        "id": "files_verified",
+        "text": "Vérifiez que status_backup.txt et system.log existent avec le contenu correct"
       }
     ],
     "hints": [
@@ -702,7 +706,7 @@ export const translations_fr: Record<number, LessonTranslation> = {
     ]
   },
   "25": {
-    "title": "Vérification de l'utilisation de la mémoire (gratuite)",
+    "title": "Vérification de l'utilisation de la mémoire (free)",
     "description": "Imaginez que votre ordinateur portable commence à prendre du retard, que les pages Web se figent et que le changement d'application semble extrêmement lent. Cela signifie généralement que votre ordinateur manque de mémoire active (RAM). Sous Linux, nous pouvons vérifier la marge de manœuvre dont dispose notre système à l’aide de la commande `free`.\n\n- La commande `free` affiche la mémoire physique (RAM) et l'espace d'échange total, utilisés et disponibles.\n- L'ajout de l'indicateur `-h` (exécutant `free -h`) formate la taille de la mémoire en gigaoctets (Go) et mégaoctets (Mo) faciles à lire afin que vous puissiez savoir si un programme consomme toutes vos ressources.\n\n**Pourquoi est-ce important** : Si vous exécutez `free` sans `-h`, l'utilisation de la mémoire est imprimée en kilo-octets bruts (par exemple, `16323456` au lieu de `16G`), ce qui est difficile à interpréter rapidement. L'indicateur `-h` met automatiquement à l'échelle les nombres en gigaoctets (G) ou en mégaoctets (M) pour une lecture facile.",
     "instructions": "Vérifions la mémoire du système. Vérifiez la RAM disponible dans un format lisible par l'homme en exécutant `free -h`.",
     "commandHelp": [
@@ -714,7 +718,7 @@ export const translations_fr: Record<number, LessonTranslation> = {
     "objectives": [
       {
         "id": "ran_free",
-        "text": "Exécutez \"gratuitement\" avec l'option -h ou -m"
+        "text": "Exécutez \"free\" avec l'option -h ou -m"
       }
     ],
     "hints": [
@@ -776,7 +780,7 @@ export const translations_fr: Record<number, LessonTranslation> = {
     ]
   },
   "28": {
-    "title": "Moniteur de processus interactif (en haut)",
+    "title": "Moniteur de processus interactif (top)",
     "description": "Imaginez regarder une photo statique d'une autoroute plutôt que de regarder le flux d'une caméra de trafic en direct. Alors que `ps` vous donne un aperçu rapide de ce qui est en cours d'exécution, `top` vous permet de regarder les performances de votre système en direct.\n\n- La commande `top` lance un tableau de bord interactif en temps réel qui se met à jour toutes les quelques secondes. Il affiche l'utilisation du processeur, les moyennes de charge et classe dynamiquement les processus les plus gourmands en ressources en cours d'exécution à ce moment précis.",
     "instructions": "Regardons le flux en direct. Lancez le moniteur de processus interactif en exécutant la commande `top`.",
     "commandHelp": [
@@ -928,7 +932,7 @@ export const translations_fr: Record<number, LessonTranslation> = {
     ]
   },
   "34": {
-    "title": "Recherche de fichiers par nom (rechercher)",
+    "title": "Recherche de fichiers par nom (find)",
     "description": "Imaginez égarer un fichier texte important quelque part dans votre dossier utilisateur et devoir rechercher un par un dans des dizaines de répertoires imbriqués. Sous Linux, nous contournons la recherche manuelle en utilisant l'utilitaire `find` comme moteur de recherche ultra-rapide à l'échelle du système.\n\n- La commande `find` recherche dans les arborescences de répertoires en fonction du nom, de la taille, du type ou de la date.\n- La syntaxe est `find <where> -name \"<pattern>\"`. Par exemple, `find . -name \"*.txt\"` recherche dans le répertoire actuel et dans tous les sous-dossiers les fichiers se terminant par `.txt`.\n\n**Pourquoi est-ce important** : Si vous exécutez `find . \"*.log\"` sans `-name`, vous obtiendrez l'erreur : `find: paths must precede expression: '*.log'`. L'indicateur `-name` est requis pour spécifier que le modèle suivant doit être comparé aux noms de fichiers.",
     "instructions": "Retrouvons quelques fichiers. Recherchez dans le répertoire actuel et ses sous-dossiers tous les fichiers portant une extension `.log` en exécutant `find . -name \"*.log\"`.",
     "commandHelp": [
@@ -962,13 +966,13 @@ export const translations_fr: Record<number, LessonTranslation> = {
     "objectives": [
       {
         "id": "ran_history",
-        "text": "Exécuter la commande \"historique\""
+        "text": "Exécuter la commande \"history\""
       }
     ],
     "hints": [
       "Pensez aux commandes qui répertorient les commandes récemment exécutées.",
       "Utilisez la commande 'history'.",
-      "Essayez d'exécuter : historique"
+      "Essayez d'exécuter : history"
     ]
   },
   "36": {
@@ -1092,7 +1096,7 @@ export const translations_fr: Record<number, LessonTranslation> = {
     ]
   },
   "40": {
-    "title": "Variables et arguments (1 $)",
+    "title": "Variables et arguments ($1)",
     "description": "Imaginez créer un message de bienvenue personnalisé pour un site Web. Vous ne voudriez pas écrire un script distinct pour le nom de chaque client ! Au lieu de cela, vous écrivez un script qui prend un nom en entrée lorsque vous l'exécutez.\n\n- Dans les scripts bash, les variables comme `$1`, `$2`, etc. contiennent les \"arguments\" ou les entrées que vous transmettez sur la ligne de commande.\n- Par exemple, exécuter `./greet.sh Alice` signifie que `$1` à l'intérieur du script contiendra automatiquement le texte \"Alice\". De même, `$#` garde une trace du nombre d'entrées fournies par l'utilisateur.",
     "instructions": "Créons un script dynamique. Créez `greet.sh` dans votre répertoire personnel avec le shebang et la ligne `echo \"Hello, $1!\"`. Rendez-le exécutable et exécutez `./greet.sh Alice` pour le tester.",
     "commandHelp": [
@@ -1422,10 +1426,18 @@ export const translations_fr: Record<number, LessonTranslation> = {
     ]
   },
   "51": {
-    "title": "Aperçu des fichiers (tête et queue)",
+    "title": "Aperçu des fichiers (head & tail)",
     "description": "Maintenant que vous pouvez lire un fichier entier avec `cat`, que se passe-t-il si le fichier contient des milliers de lignes et que vous souhaitez voir uniquement le haut ou le bas ? Le dumping d'un énorme fichier avec `cat` inonde votre écran. Au lieu de cela, nous utilisons `head` et `tail` pour jeter un œil aux bords.\n\n- La commande `head` affiche par défaut les 10 premières lignes d'un fichier. Vous pouvez modifier cela en utilisant `-n <number>` (par exemple `head -n 5 log.txt` pour les 5 premières lignes).\n- La commande `tail` affiche les 10 dernières lignes par défaut, prenant en charge la même option `-n`.\n- Surtout, `tail -f` (suivre) surveille un fichier en temps réel, affichant les nouvelles lignes au fur et à mesure qu'elles sont écrites par le système. Il s'agit de l'outil préféré d'un administrateur système pour regarder les journaux en direct.",
-    "instructions": "Inspectons les journaux. Utilisez `head -n 5 logs/app.log` pour afficher les 5 premières lignes du journal de l'application. Ensuite, exécutez `tail -n 3 logs/security.log` pour afficher les 3 derniers événements de sécurité. Enfin, exécutez `tail -f logs/app.log` pour simuler la surveillance des journaux en temps réel (il imprimera les entrées fictives et quittera).",
+    "instructions": "Inspectons les journaux. Utilisez `tail -n 2 logs.txt` (ou `head -n 5 logs/app.log` / `tail -n 3 logs/security.log`) pour voir les lignes, et exécutez `tail -f logs.txt` pour simuler la surveillance en temps réel.",
     "commandHelp": [
+      {
+        "cmd": "tail -n 2 logs.txt",
+        "desc": "Afficher les 2 dernières lignes de logs.txt"
+      },
+      {
+        "cmd": "tail -f logs.txt",
+        "desc": "Surveiller les mises à jour de logs.txt en temps réel"
+      },
       {
         "cmd": "head -n 5 logs/app.log",
         "desc": "Afficher les 5 premières lignes de app.log"
@@ -1433,24 +1445,16 @@ export const translations_fr: Record<number, LessonTranslation> = {
       {
         "cmd": "tail -n 3 logs/security.log",
         "desc": "Afficher les 3 dernières lignes de security.log"
-      },
-      {
-        "cmd": "tail -f logs/app.log",
-        "desc": "Surveiller les mises à jour de app.log en temps réel"
       }
     ],
     "objectives": [
       {
-        "id": "used_head",
-        "text": "Exécuter la commande \"head\" avec -n 5 sur logs/app.log"
-      },
-      {
-        "id": "used_tail",
-        "text": "Exécuter la commande \"tail\" avec -n 3 sur logs/security.log"
+        "id": "used_tail_n",
+        "text": "Exécutez tail avec -n (ex. tail -n 2 logs.txt)"
       },
       {
         "id": "used_tail_f",
-        "text": "Exécuter la commande \"tail\" avec -f pour suivre app.log"
+        "text": "Exécutez tail avec -f (ex. tail -f logs.txt)"
       }
     ],
     "hints": [
@@ -1460,7 +1464,7 @@ export const translations_fr: Record<number, LessonTranslation> = {
     ]
   },
   "52": {
-    "title": "Défilement interactif des fichiers (moins et plus)",
+    "title": "Défilement interactif des fichiers (less & more)",
     "description": "Jetez un œil en haut et en bas d'un fichier avec `head` et `tail`, c'est bien, mais que se passe-t-il si vous devez parcourir un long fichier de configuration page par page ? C'est à cela que servent les téléavertisseurs comme `less` et `more`.\n\n- Les téléavertisseurs chargent les fichiers de manière interactive, affichant une page de texte à la fois pour éviter les ralentissements du système sur les fichiers volumineux.\n- `less` est le choix moderne, vous permettant de faire défiler vers l'avant et vers l'arrière à l'aide des touches fléchées, de rechercher du texte avec `/` et de quitter en appuyant sur `q`.\n- `more` est un téléavertisseur plus ancien et plus simple qui ne fait que défiler vers l'avant.",
     "instructions": "Lisons un long fichier page par page. Exécutez `less /etc/hosts` pour l'ouvrir dans une vue défilante. (Dans notre terminal, cela affichera le contenu dans un cadre déroulant. Appuyez sur `q` pour revenir).",
     "commandHelp": [
@@ -1515,7 +1519,7 @@ export const translations_fr: Record<number, LessonTranslation> = {
     ]
   },
   "54": {
-    "title": "Logique réutilisable (fonctions bash)",
+    "title": "Logique réutilisable (bash functions)",
     "description": "Vous avez écrit des boucles et des conditions pour automatiser les actions dans les scripts. Mais à mesure que vos scripts se développent, copier-coller la même logique encore et encore rend leur maintenance difficile. En bash, nous pouvons regrouper les commandes en fonctions réutilisables.\n\n- Pour définir une fonction, on la déclare par son nom suivi de parenthèses et d'accolades : `log_msg() { echo \"msg\"; }`.\n- Les fonctions peuvent recevoir des arguments tout comme les scripts shell, auxquels on accède à l'aide des paramètres de position locale `$1`, `$2`, etc. à l'intérieur du corps de la fonction.\n- Pour appeler une fonction, utilisez simplement son nom comme n'importe quelle autre commande : `log_msg \"Backup started\"`.",
     "instructions": "Construisons un script de sauvegarde modulaire. Créez un script nommé `backup_helper.sh` dans votre dossier personnel. Définissez une fonction nommée `log_msg` qui imprime un message avec un horodatage (par exemple `log_msg() { echo \"[$(date +%T)] $1\"; }` ou similaire) et appelez-la au moins deux fois dans le script pour enregistrer les actions. Rendez-le exécutable et exécutez-le.",
     "commandHelp": [
@@ -1579,7 +1583,7 @@ export const translations_fr: Record<number, LessonTranslation> = {
     ]
   },
   "56": {
-    "title": "Trouver des commandes (lesquelles)",
+    "title": "Trouver des commandes (which)",
     "description": "Maintenant que vous êtes familier avec les variables d'environnement actives comme `PATH` (qui stocke les répertoires dans lesquels Linux recherche les commandes), comment trouver le chemin exact du fichier du programme qui s'exécute lorsque vous tapez `ls` ou `grep` ? Nous utilisons `which` pour localiser les binaires de commandes.\n\n- La commande `which` recherche les dossiers répertoriés dans votre variable `$PATH` et imprime le chemin absolu du binaire exécuté lorsque la commande est exécutée (par exemple, `which ls` génère `/bin/ls`).\n- Ceci est utile pour trouver où un outil est installé ou résoudre des conflits entre plusieurs versions du même outil.",
     "instructions": "Retrouvons nos outils. Exécutez `which ls` pour voir où l'exécutable `ls` est stocké sur le système. Ensuite, recherchez le chemin de la commande `grep` en exécutant `which grep`.",
     "commandHelp": [
@@ -1595,11 +1599,11 @@ export const translations_fr: Record<number, LessonTranslation> = {
     "objectives": [
       {
         "id": "used_which_ls",
-        "text": "Exécutez la commande \" which \" sur ls"
+        "text": "Exécutez la commande \"which\" sur ls"
       },
       {
         "id": "used_which_grep",
-        "text": "Exécutez la commande \" which \" sur grep"
+        "text": "Exécutez la commande \"which\" sur grep"
       }
     ],
     "hints": [
@@ -1744,7 +1748,7 @@ export const translations_fr: Record<number, LessonTranslation> = {
     ]
   },
   "62": {
-    "title": "Compression de fichiers (gzip et gunzip)",
+    "title": "Compression de fichiers (gzip & gunzip)",
     "description": "Imaginez que vous ayez un seul fichier texte contenant un ensemble de données volumineux et que vous souhaitiez réduire sa taille pour économiser de l'espace disque ou accélérer le partage. Sous Linux, nous compressons les fichiers individuels en utilisant `gzip` et les restaurons en utilisant `gunzip`.\n\n- La commande `gzip <filename>` compresse un fichier en le remplaçant par une version compressée se terminant par `.gz` (par exemple, `backup.txt` devient `backup.txt.gz`).\n- La commande `gunzip <filename.gz>` décompresse le fichier en restaurant la version originale.",
     "instructions": "Compressons un fichier pour économiser de l'espace. Exécutez `gzip note.txt` dans votre dossier personnel. Ensuite, décompressez le fichier `note.txt.gz` résultant à son état d'origine en exécutant `gunzip note.txt.gz`.",
     "commandHelp": [
@@ -1774,7 +1778,7 @@ export const translations_fr: Record<number, LessonTranslation> = {
     ]
   },
   "63": {
-    "title": "Administration des groupes (groupadd et groupes)",
+    "title": "Administration des groupes (groupadd & groups)",
     "description": "Sous Linux, les utilisateurs sont organisés en **groupes** pour partager facilement les autorisations. Par exemple, tous les développeurs peuvent appartenir à un groupe nommé `developers`. Cela nous permet de partager des fichiers avec toute l’équipe en même temps.\n\n- La commande `groupadd` crée un nouveau groupe. Puisqu'il s'agit d'une configuration système, elle nécessite des privilèges de superutilisateur (par exemple `sudo groupadd developers`).\n- La commande `groups [username]` répertorie tous les groupes auxquels appartient un utilisateur. Exécuté sans arguments, il affiche les groupes pour l'utilisateur actuel.",
     "instructions": "Gérons les groupes. Créez un nouveau groupe nommé `developers` en exécutant `sudo groupadd developers`. Ensuite, vérifiez vos propres groupes actifs en exécutant la commande `groups`.",
     "commandHelp": [
@@ -1959,7 +1963,7 @@ export const translations_fr: Record<number, LessonTranslation> = {
     ]
   },
   "70": {
-    "title": "Gestion des utilisateurs (adduser et userdel)",
+    "title": "Gestion des utilisateurs (adduser & userdel)",
     "description": "Alors que `useradd` est un utilitaire de bas niveau qui enregistre simplement les détails de l'utilisateur dans les fichiers de configuration système, les systèmes Debian/Ubuntu fournissent un script interactif de haut niveau appelé `adduser` qui automatise la création de dossiers personnels, la définition de mots de passe et l'initialisation des environnements shell. À l'inverse, `userdel` supprime proprement les comptes d'utilisateurs.\n\n- L'exécution de `sudo adduser tester` vous guide de manière interactive à travers la configuration utilisateur.\n- L'exécution de `sudo userdel tester` supprime le compte utilisateur.",
     "instructions": "Gérons les cycles de vie des utilisateurs. Créez un utilisateur en utilisant `sudo adduser tester`. Après cela, supprimez l'utilisateur en exécutant `sudo userdel tester`.",
     "commandHelp": [
@@ -2130,7 +2134,7 @@ export const translations_fr: Record<number, LessonTranslation> = {
     ]
   },
   "77": {
-    "title": "Pare-feu Linux (ufw et iptables)",
+    "title": "Pare-feu Linux (ufw & iptables)",
     "description": "Imaginez vivre dans un immeuble sécurisé où un agent de sécurité se tient à l'entrée pour vérifier les pièces d'identité et bloquer les visiteurs non autorisés. Sous Linux, un **pare-feu** agit comme un agent de sécurité pour vos ports réseau.\n\n- La commande `ufw` (Uncomplicated Firewall) est une interface conviviale de gestion des règles de pare-feu. L'exécution de `sudo ufw status` indique si le pare-feu est actif et quels ports (comme le port 22 pour SSH ou le port 80 pour les serveurs Web) sont ouverts.\n- La commande `iptables` est l'outil Netfilter traditionnel de bas niveau qui bloque ou redirige les paquets. L'exécution de `sudo iptables -L` répertorie les chaînes de sécurité actives et les règles de correspondance de paquets.",
     "instructions": "Inspectons nos agents de sécurité. Affichez l'état du pare-feu simple en exécutant `sudo ufw status`, puis vérifiez les règles Netfilter de niveau inférieur en exécutant `sudo iptables -L`.",
     "commandHelp": [
