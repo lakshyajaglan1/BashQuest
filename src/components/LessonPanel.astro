@@ -349,6 +349,14 @@ const t = useTranslations(currentLang);
     },
   };
 
+  function escapeHtml(s: string) {
+    return String(s || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
   function getCurrentLang(): SupportedLanguage {
     const docLang = document.documentElement.lang as SupportedLanguage;
     if (docLang && lessonPanelLabels[docLang]) return docLang;
@@ -387,7 +395,14 @@ const t = useTranslations(currentLang);
     const allLessons = getLocalizedLessons(currentLang);
 
     const lessonId = forcedLessonId || globalWindow.appState.activeLessonId;
-    const lesson = getLocalizedLesson(lessonId, currentLang);
+    let lesson = getLocalizedLesson(lessonId, currentLang);
+    if (
+      !lesson &&
+      globalWindow.appState.activeLesson &&
+      globalWindow.appState.activeLesson.id === lessonId
+    ) {
+      lesson = globalWindow.appState.activeLesson;
+    }
     if (!lesson) return;
 
     activeLesson = lesson;
@@ -403,9 +418,13 @@ const t = useTranslations(currentLang);
     renderHints();
 
     if (lessonEyebrow) {
-      const index = allLessons.findIndex((l: any) => l.id === lesson.id);
-      const questNumber = index >= 0 ? index + 1 : lesson.id;
-      lessonEyebrow.textContent = `${labels.quest} ${questNumber}`;
+      if (lesson.id === 9999) {
+        lessonEyebrow.textContent = "CUSTOM LAB";
+      } else {
+        const index = allLessons.findIndex((l: any) => l.id === lesson.id);
+        const questNumber = index >= 0 ? index + 1 : lesson.id;
+        lessonEyebrow.textContent = `${labels.quest} ${questNumber}`;
+      }
     }
     if (lessonTitle) {
       lessonTitle.textContent = /[.?!]$/.test(lesson.title)
@@ -414,7 +433,7 @@ const t = useTranslations(currentLang);
     }
     if (lessonXpReward) lessonXpReward.textContent = `+${lesson.xp} XP`;
     if (lessonDesc) {
-      let formattedText = lesson.description
+      let formattedText = escapeHtml(lesson.description)
         .replace(/\n/g, "<br>")
         .replace(
           /\*\*([^*]+)\*\*/g,
@@ -427,7 +446,7 @@ const t = useTranslations(currentLang);
 
       formattedText += `
         <div class="mt-4 p-3 bg-link-bg-soft/20 border border-link/20 rounded text-xs text-link-deep font-sans">
-          <strong>${labels.objective}</strong> ${lesson.instructions}
+          <strong>${labels.objective}</strong> ${escapeHtml(lesson.instructions)}
         </div>
       `;
       lessonDesc.innerHTML = formattedText;
@@ -442,8 +461,8 @@ const t = useTranslations(currentLang);
           .map(
             (item: any) => `
           <div class="p-3 flex items-start gap-4">
-            <span class="text-gray-900 dark:text-white font-bold shrink-0">${item.cmd}</span>
-            <span class="text-gray-700 dark:text-gray-300 text-[11px]">${item.desc}</span>
+            <span class="text-gray-900 dark:text-white font-bold shrink-0">${escapeHtml(item.cmd)}</span>
+            <span class="text-gray-700 dark:text-gray-300 text-[11px]">${escapeHtml(item.desc)}</span>
           </div>
         `,
           )
@@ -487,7 +506,7 @@ const t = useTranslations(currentLang);
         return `
         <div class="flex items-center gap-3 p-2 bg-canvas-soft border border-hairline rounded-sm">
           ${checkIcon}
-          <span class="${textColorClass} text-xs font-mono">${obj.text}</span>
+          <span class="${textColorClass} text-xs font-mono">${escapeHtml(obj.text)}</span>
         </div>
       `;
       })
@@ -550,14 +569,14 @@ const t = useTranslations(currentLang);
           return `
           <div class="p-3 bg-violet-50 border border-violet-200 dark:bg-violet-950/20 dark:border-violet-800/40 rounded-sm text-xs leading-relaxed text-violet-800 dark:text-violet-300 font-sans flex items-start gap-2.5 animate-in fade-in duration-200">
             <span class="font-mono font-bold text-violet-600 dark:text-violet-400 shrink-0">${labels.directAnswer}</span>
-            <span class="flex-1 font-semibold">${hint.text}</span>
+            <span class="flex-1 font-semibold">${escapeHtml(hint.text)}</span>
           </div>
         `;
         } else {
           return `
           <div class="p-3 bg-amber-50 border border-amber-200 dark:bg-amber-950/20 dark:border-amber-900/40 rounded-sm text-xs leading-relaxed text-amber-800 dark:text-amber-300 font-sans flex items-start gap-2.5 animate-in fade-in duration-200">
             <span class="font-mono font-bold text-amber-600 dark:text-amber-500 shrink-0">${labels.hint} ${hint.index}:</span>
-            <span class="flex-1">${hint.text}</span>
+            <span class="flex-1">${escapeHtml(hint.text)}</span>
             <button class="btn-dismiss-hint text-amber-400 hover:text-amber-600 dark:text-amber-600 dark:hover:text-amber-400 transition-colors ml-1 cursor-pointer bg-transparent border-none p-0 focus:outline-none" data-hint-idx="${idx}" title="Dismiss hint">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>

@@ -89,7 +89,7 @@
     }
   }
 
-  function buildTreeHtml(node: any, prefix: string = "") {
+  function buildTreeHtml(node: any, prefix: string = "", parentPath: string = "/") {
     let html = "";
     const globalWindow = window as any;
 
@@ -108,14 +108,11 @@
         const childPrefix = isLast ? "    " : "│   ";
 
         const icon =
-          child.type === "dir" ? "📁" : child.type === "link" ? "🔗" : "📄";
+          child.type === "dir" ? "📁" : (child.type === "link" || child.type === "symlink") ? "🔗" : "📄";
 
         // Highlight active directory
         let activeBgClass = "";
-        const childAbsPath = globalWindow.appState.fs.resolvePathStr(
-          prefix ? "" : "/",
-          (prefix ? prefix.replace(/[│├─└\s]/g, "") : "") + "/" + child.name,
-        );
+        const childAbsPath = parentPath === "/" ? "/" + child.name : parentPath + "/" + child.name;
         const isActive =
           globalWindow.appState &&
           globalWindow.appState.session &&
@@ -142,7 +139,7 @@
         `;
 
         if (child.type === "dir") {
-          html += buildTreeHtml(child, prefix + childPrefix);
+          html += buildTreeHtml(child, prefix + childPrefix, childAbsPath);
         }
       });
     }

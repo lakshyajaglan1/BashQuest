@@ -1,9 +1,30 @@
 import { FileSystem, ShellSession } from "../lib/linuxEngine";
 import { lessons } from "../lib/lessons";
 
+function decodeCustomQuest(param: string): any {
+  try {
+    let raw = param;
+    try {
+      raw = decodeURIComponent(raw);
+    } catch (_) {}
+    const unb64 = atob(raw);
+    let jsonStr: string;
+    try {
+      jsonStr = decodeURIComponent(escape(unb64));
+    } catch (_) {
+      jsonStr = unb64;
+    }
+    return JSON.parse(jsonStr);
+  } catch (err) {
+    console.error("Failed to decode custom quest parameter:", err);
+    return null;
+  }
+}
+
 export class AppStateManager {
   state: any;
   bossRushInterval: any = null;
+  customQuest: any = null;
   constructor() {
 
     this.state = {
@@ -181,13 +202,171 @@ export class AppStateManager {
     this.init();
   }
 
+  registerCustomLesson(custom: any) {
+    const rawRules = Array.isArray(custom.rules) ? custom.rules : [];
+    const validRules = rawRules.filter((r: any) => r && r.type);
+
+    const objectives =
+      validRules.length > 0
+        ? validRules.map((rule: any, idx: number) => {
+            let text = `Rule ${idx + 1}`;
+            if (rule.type === "command_contains") {
+              const target = rule.target || rule.value || rule.command || "";
+              text = `Terminal command history includes "${target}"`;
+            } else if (rule.type === "file_exists") {
+              const p = rule.target || rule.path || "";
+              text = `File or directory exists at "${p}"`;
+            } else if (rule.type === "file_contains") {
+              const p = rule.target || rule.path || "";
+              const val =
+                rule.value !== undefined
+                  ? rule.value
+                  : rule.content !== undefined
+                    ? rule.content
+                    : "";
+              text = `File at "${p}" contains "${val}"`;
+            } else if (rule.type === "file_perms") {
+              const p = rule.target || rule.path || "";
+              const perms =
+                rule.value || rule.perms || rule.permissions || "";
+              text = `File at "${p}" has octal permissions ${perms}`;
+            }
+            return {
+              id: `custom_obj_${idx + 1}`,
+              text: rule.description || text,
+              rule,
+            };
+          })
+        : [
+            {
+              id: "custom_obj_1",
+              text: "Complete custom lab task instructions",
+              rule: { type: "generic" },
+            },
+          ];
+
+    const dynamicLesson = {
+      id: 9999,
+      moduleId: "custom",
+      title: custom.title || "Custom Quest",
+      description:
+        custom.description ||
+        "Custom scenario created via Custom Quest Builder.",
+      instructions:
+        custom.instructions ||
+        "Complete the objectives specified in this custom lab.",
+      xp: 500,
+      badge: "Custom Challenger",
+      commandHelp: custom.commandHelp || [],
+      hints: custom.hints || [
+        "Review the Verification Checklist to understand the required criteria.",
+        "Check permissions, file paths, and command syntax carefully.",
+        "Verify your output once you have completed the required steps.",
+      ],
+      objectives: objectives.map((o: any) => ({ id: o.id, text: o.text })),
+      verify: (fs: any, _session: any, history: any) => {
+        if (validRules.length === 0) {
+          return {
+            success: true,
+            checks: [{ id: "custom_obj_1", passed: true }],
+          };
+        }
+
+        const checks = objectives.map((obj: any) => {
+          const r = obj.rule;
+          let passed = false;
+          if (r.type === "command_contains") {
+            const searchStr = String(
+              r.target || r.value || r.command || r.string || "",
+            ).trim();
+            if (searchStr && Array.isArray(history)) {
+              passed = history.some(
+                (cmd: string) =>
+                  typeof cmd === "string" && cmd.includes(searchStr),
+              );
+            }
+          } else if (r.type === "file_exists") {
+            const p = String(r.target || r.path || "").trim();
+            if (p && fs) {
+              const node = fs.getNodeByPath("/", p);
+              passed = Boolean(node);
+            }
+          } else if (r.type === "file_contains") {
+            const p = String(r.target || r.path || "").trim();
+            const expected =
+              r.value !== undefined
+                ? String(r.value)
+                : r.content !== undefined
+                  ? String(r.content)
+                  : r.string !== undefined
+                    ? String(r.string)
+                    : "";
+            if (p && fs) {
+              const node = fs.getNodeByPath("/", p);
+              passed = Boolean(
+                node &&
+                  node.type === "file" &&
+                  typeof node.content === "string" &&
+                  node.content.includes(expected),
+              );
+            }
+          } else if (r.type === "file_perms") {
+            const p = String(r.target || r.path || "").trim();
+            const expected = String(
+              r.value || r.perms || r.permissions || "",
+            ).trim();
+            if (p && expected && fs) {
+              const node = fs.getNodeByPath("/", p);
+              if (node) {
+                const actual = String(node.permissions || "").trim();
+                const normActual = actual.replace(/^0+/, "") || "0";
+                const normExpected = expected.replace(/^0+/, "") || "0";
+                passed = normActual === normExpected || actual === expected;
+              }
+            }
+          }
+          return { id: obj.id, passed };
+        });
+
+        const success = checks.length > 0 && checks.every((c: any) => c.passed);
+        return { success, checks };
+      },
+    };
+
+    const existingIdx = lessons.findIndex((l: any) => l.id === 9999);
+    if (existingIdx >= 0) {
+      lessons[existingIdx] = dynamicLesson;
+    } else {
+      lessons.push(dynamicLesson);
+    }
+
+    return dynamicLesson;
+  }
+
   init() {
     this.loadFromStorage();
 
+    if (this.state.customQuest && !this.customQuest) {
+      this.customQuest = this.state.customQuest;
+      this.registerCustomLesson(this.customQuest);
+    }
+
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
+      const customParam = urlParams.get("custom");
+      if (customParam) {
+        const custom = decodeCustomQuest(customParam);
+        if (custom && typeof custom === "object") {
+          this.customQuest = custom;
+          this.state.customQuest = custom;
+          this.registerCustomLesson(custom);
+          this.state.activeLessonId = 9999;
+          this.state.activeView = "sandbox";
+        }
+      }
+
       const questParam = urlParams.get("quest");
-      if (questParam) {
+      if (questParam && !customParam) {
         const questId = Number(questParam);
         if (lessons.some((l) => l.id === questId)) {
           this.state.activeLessonId = questId;
@@ -202,7 +381,7 @@ export class AppStateManager {
         this.state.activeView = "tools";
       } else if (path.includes("/about")) {
         this.state.activeView = "about";
-      } else {
+      } else if (!customParam) {
         const viewParam = urlParams.get("view");
         if (
           viewParam === "dashboard" ||
@@ -525,7 +704,7 @@ export class AppStateManager {
         fs.createNode("/home/learner", "links", "dir");
       }
       if (!fs.getNodeByPath("/home/learner/links", "current_log")) {
-        fs.createNode("/home/learner/links", "current_log", "symlink", {
+        fs.createNode("/home/learner/links", "current_log", "link", {
           target: "/tmp/old_syslog",
         });
       }
@@ -672,6 +851,34 @@ export class AppStateManager {
     const etcPasswd: any = fs.getNodeByPath("/etc", "passwd");
     if (etcPasswd && !etcPasswd.content.includes("deployer")) {
       etcPasswd.content += "deployer:x:1002:1002::/home/deployer:/bin/sh\n";
+    }
+
+    const custom = this.customQuest || this.state.customQuest;
+    if (custom) {
+      const startFile = custom.startingFile || {};
+      const targetPath = startFile.path || custom.filePath;
+      if (targetPath) {
+        const content =
+          startFile.content !== undefined
+            ? startFile.content
+            : custom.fileContent !== undefined
+              ? custom.fileContent
+              : "";
+        const permissions =
+          startFile.permissions || custom.filePerms || "644";
+
+        const existing: any = fs.getNodeByPath("/", targetPath);
+        if (existing && existing.type === "file") {
+          existing.content = content;
+          existing.permissions = permissions;
+        } else {
+          fs.createNode("/", targetPath, "file", {
+            content,
+            permissions,
+            createParents: true,
+          });
+        }
+      }
     }
 
     this.state.fsTree = fs.tree;

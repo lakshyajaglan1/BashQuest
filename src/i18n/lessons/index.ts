@@ -82,14 +82,9 @@ export function getLocalizedLesson(id: number, lang: SupportedLanguage = "en") {
       : baseLesson.commandHelp,
     objectives: baseLesson.objectives
       ? baseLesson.objectives.map((baseObj: any, idx: number) => {
-          let transObj = translation.objectives?.find((o: any) => o.id === baseObj.id);
-          if (!transObj && translation.objectives && translation.objectives.length === baseLesson.objectives.length) {
-            transObj = translation.objectives[idx];
-          }
-          return {
-            id: baseObj.id,
-            text: transObj?.text || baseObj.text,
-          };
+          const byId = translation.objectives?.find((o: any) => o.id === baseObj.id);
+          const byIdx = translation.objectives?.length === baseLesson.objectives.length ? translation.objectives?.[idx] : null;
+          return { id: baseObj.id, text: byId?.text || byIdx?.text || baseObj.text };
         })
       : baseLesson.objectives,
     hints: translation.hints && translation.hints.length > 0

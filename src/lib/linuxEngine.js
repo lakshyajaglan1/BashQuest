@@ -843,7 +843,8 @@ export class ShellSession {
 
     this.history.push(trimmed);
 
-    // Check for command chaining (&& and ||) outside quotes
+    // Check for command chaining (&&, ||, and ;) outside quotes
+    const isControlBlock = /^(while|for|if|case)\b/.test(trimmed);
     const chainOps = [];
     let curCmd = '';
     let inQ = false;
@@ -866,6 +867,17 @@ export class ShellSession {
         chainOps.push({ cmd: curCmd.trim(), nextOp: '||' });
         curCmd = '';
         i++;
+      } else if (
+        !inQ &&
+        !isControlBlock &&
+        ch === ';' &&
+        (i === 0 || trimmed[i - 1] !== '\\') &&
+        trimmed[i + 1] !== ';' &&
+        (i === 0 || trimmed[i - 1] !== ';')
+      ) {
+        hasChaining = true;
+        chainOps.push({ cmd: curCmd.trim(), nextOp: ';' });
+        curCmd = '';
       } else {
         curCmd += ch;
       }
@@ -879,10 +891,12 @@ export class ShellSession {
       let lastExit = 0;
       for (let i = 0; i < chainOps.length; i++) {
         const step = chainOps[i];
+        if (!step.cmd) continue;
         if (i > 0) {
           const prevOp = chainOps[i - 1].nextOp;
           if (prevOp === '&&' && lastExit !== 0) continue;
           if (prevOp === '||' && lastExit === 0) continue;
+          // prevOp === ';' executes unconditionally
         }
         const res = this.execute(step.cmd, initialStdin);
         if (res.stdout) combinedStdout += (combinedStdout ? '\n' : '') + res.stdout;
@@ -962,7 +976,7 @@ export class ShellSession {
         }
       }
       const doMatch = substituted.match(/do\s+(.+?)\s+done/);
-      const loopBody = doMatch ? doMatch[1] : 'echo $line';
+      const loopBody = doMatch ? doMatch[1].replace(/;\s*$/, '').trim() : 'echo $line';
       const loopOutputs = [];
       for (const line of linesToRead) {
         this.env.line = line;
@@ -980,10 +994,10 @@ export class ShellSession {
       return { stdout: '[case statement matched branch: execution completed]', stderr: '', currentPath: this.currentPath };
     }
 
-    // Substitute environment variables (except inside single quotes if possible)
-    const varRegex = /\$(\w+)/g;
-    substituted = substituted.replace(varRegex, (match, varName) => {
-      if (/^\d+$/.test(varName)) return match;
+    // Substitute environment variables (not inside single quotes and skipping $NF / $NR / positional params)
+    substituted = substituted.replace(/'[^']*'|\$(\w+)/g, (match, varName) => {
+      if (match.startsWith("'")) return match;
+      if (/^\d+$/.test(varName) || varName === 'NF' || varName === 'NR') return match;
       return this.env[varName] !== undefined ? this.env[varName] : '';
     });
 
@@ -1119,18 +1133,24 @@ export class ShellSession {
 
       // Perform brace expansion on unquoted arguments
       const braceExpandedArgs = [];
+      const braceExpandedQuoted = [];
       for (let i = 0; i < args.length; i++) {
         if (!argsQuoted[i] && args[i].includes('{') && args[i].includes('}')) {
-          braceExpandedArgs.push(...expandBraces(args[i]));
+          const expanded = expandBraces(args[i]);
+          braceExpandedArgs.push(...expanded);
+          for (let k = 0; k < expanded.length; k++) {
+            braceExpandedQuoted.push(false);
+          }
         } else {
           braceExpandedArgs.push(args[i]);
+          braceExpandedQuoted.push(argsQuoted[i]);
         }
       }
 
       // Perform wildcard (glob) expansion on unquoted arguments containing * or ?
       const expandedArgs = [];
       for (let i = 0; i < braceExpandedArgs.length; i++) {
-        if (braceExpandedArgs[i].includes('*') || braceExpandedArgs[i].includes('?')) {
+        if (!braceExpandedQuoted[i] && (braceExpandedArgs[i].includes('*') || braceExpandedArgs[i].includes('?'))) {
           expandedArgs.push(...this.expandWildcard(braceExpandedArgs[i]));
         } else {
           expandedArgs.push(braceExpandedArgs[i]);
@@ -3353,9 +3373,26 @@ export class ShellSession {
 
   // ECHO: Print arguments
   runEcho(args) {
-    // E.g. echo hello world -> "hello world"
+    let enableEscapes = false;
+    let idx = 0;
+
+    while (idx < args.length && args[idx].startsWith('-') && args[idx].length > 1) {
+      const flag = args[idx];
+      if (/^-[enE]+$/.test(flag)) {
+        if (flag.includes('e')) enableEscapes = true;
+        idx++;
+      } else {
+        break;
+      }
+    }
+
+    let text = args.slice(idx).join(' ');
+    if (enableEscapes) {
+      text = text.replace(/\\n/g, '\n').replace(/\\t/g, '\t');
+    }
+
     return {
-      stdout: args.join(' '),
+      stdout: text,
       stderr: '',
       currentPath: this.currentPath
     };
@@ -3865,10 +3902,12 @@ export class ShellSession {
         lines.pop();
       }
 
-      const outLines = lines.map(line => {
+      const outLines = lines.map((line, lineIdx) => {
         const fields = line.split(separator);
         return printTokens.map(token => {
           if (token === '$0') return line;
+          if (token === '$NF') return fields[fields.length - 1] || '';
+          if (token === '$NR' || token === 'NR') return String(lineIdx + 1);
           if (token.startsWith('$')) {
             const idx = parseInt(token.substring(1));
             return fields[idx - 1] || '';
