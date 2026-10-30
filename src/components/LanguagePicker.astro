@@ -14,21 +14,19 @@ const translatePath = useTranslatedPath(lang);
 const currentLangData = languages[lang] || languages.en;
 ---
 
-<div class="relative inline-block text-left select-none language-picker-root">
+<details class="group relative inline-block text-left select-none language-picker-root">
   <!-- Trigger Button -->
-  <button
-    type="button"
-    class={`language-picker-btn flex items-center gap-1.5 rounded-sm border border-hairline transition-all duration-150 cursor-pointer ${
+  <summary
+    class={`language-picker-btn flex list-none items-center gap-1.5 rounded-sm border border-hairline transition-colors duration-150 cursor-pointer [&::-webkit-details-marker]:hidden ${
       variant === "nav"
         ? "h-8 px-2.5 bg-canvas text-ink text-xs font-medium hover:bg-canvas-soft-2"
         : "h-7 px-2 bg-canvas-soft text-body text-xs hover:text-ink hover:bg-canvas-soft-2"
     }`}
-    aria-expanded="false"
-    aria-haspopup="true"
     aria-label="Select Language"
   >
     <!-- Globe / Translation Icon -->
     <svg
+      aria-hidden="true"
       class="w-3.5 h-3.5 text-mute shrink-0"
       fill="none"
       stroke="currentColor"
@@ -49,7 +47,8 @@ const currentLangData = languages[lang] || languages.en;
 
     <!-- Down Chevron -->
     <svg
-      class="w-3 h-3 text-mute transition-transform duration-200 arrow-icon shrink-0"
+      aria-hidden="true"
+      class="w-3 h-3 text-mute transition-transform duration-200 motion-reduce:transition-none group-open:rotate-180 arrow-icon shrink-0"
       fill="none"
       stroke="currentColor"
       stroke-width="2"
@@ -58,15 +57,13 @@ const currentLangData = languages[lang] || languages.en;
       <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"
       ></path>
     </svg>
-  </button>
+  </summary>
 
   <!-- Dropdown Menu -->
   <div
-    class={`language-picker-menu hidden absolute ${
+    class={`language-picker-menu absolute ${
       variant === "footer" ? "bottom-full mb-2" : "top-full mt-2"
     } right-0 z-[100] w-48 max-w-[calc(100vw-32px)] rounded-lg border border-hairline bg-canvas dark:bg-[#141414] p-1.5 shadow-2xl animate-in fade-in zoom-in-95 duration-150`}
-    role="menu"
-    aria-orientation="vertical"
   >
     <div class="py-0.5 space-y-0.5">
 
@@ -84,11 +81,13 @@ const currentLangData = languages[lang] || languages.en;
                   ? "bg-primary text-on-primary font-semibold"
                   : "text-body hover:text-ink hover:bg-canvas-soft-2"
               }`}
-              role="menuitem"
+              data-language-path={targetUrl}
+              aria-current={isCurrent ? "true" : undefined}
               hreflang={locale}
+              lang={locale}
             >
               <div class="flex items-center gap-2">
-                <span class="uppercase font-mono text-[10px] font-semibold px-1.5 py-0.5 rounded bg-canvas-soft dark:bg-canvas-soft-2 border border-hairline opacity-85">
+                <span class="uppercase font-mono text-[10px] font-semibold px-1.5 py-0.5 rounded bg-canvas-soft dark:bg-canvas-soft-2 text-ink border border-hairline opacity-85">
                   {locale}
                 </span>
                 <span class="text-mute opacity-50 select-none">·</span>
@@ -96,6 +95,7 @@ const currentLangData = languages[lang] || languages.en;
               </div>
               {isCurrent && (
                 <svg
+                  aria-hidden="true"
                   class="w-3.5 h-3.5"
                   fill="none"
                   stroke="currentColor"
@@ -115,71 +115,56 @@ const currentLangData = languages[lang] || languages.en;
       }
     </div>
   </div>
-</div>
+</details>
 
 <script>
-  function setupLanguagePickers() {
-    const pickers = document.querySelectorAll(".language-picker-root");
+  import { getLanguageHref } from "../lib/languageNavigation.js";
 
-    pickers.forEach((picker) => {
-      const btn = picker.querySelector(".language-picker-btn");
-      const menu = picker.querySelector(".language-picker-menu");
-      const arrow = picker.querySelector(".arrow-icon");
-
-      if (!btn || !menu) return;
-
-      const toggleMenu = (open?: boolean) => {
-        const isCurrentlyHidden = menu.classList.contains("hidden");
-        const shouldOpen = open !== undefined ? open : isCurrentlyHidden;
-
-        if (shouldOpen) {
-          // Close all other language menus first
-          document.querySelectorAll(".language-picker-menu").forEach((m) => {
-            m.classList.add("hidden");
-          });
-          document.querySelectorAll(".arrow-icon").forEach((a) => {
-            a.classList.remove("rotate-180");
-          });
-
-          menu.classList.remove("hidden");
-          arrow?.classList.add("rotate-180");
-          btn.setAttribute("aria-expanded", "true");
-        } else {
-          menu.classList.add("hidden");
-          arrow?.classList.remove("rotate-180");
-          btn.setAttribute("aria-expanded", "false");
-        }
-      };
-
-      btn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        toggleMenu();
-      });
-    });
-
-    // Close when clicking outside or pressing Escape
-    document.addEventListener("click", () => {
-      document.querySelectorAll(".language-picker-menu").forEach((menu) => {
-        menu.classList.add("hidden");
-      });
-      document.querySelectorAll(".arrow-icon").forEach((arrow) => {
-        arrow.classList.remove("rotate-180");
-      });
-    });
-
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        document.querySelectorAll(".language-picker-menu").forEach((menu) => {
-          menu.classList.add("hidden");
-        });
-        document.querySelectorAll(".arrow-icon").forEach((arrow) => {
-          arrow.classList.remove("rotate-180");
-        });
-      }
+  function updateLanguageLinks() {
+    // Read browser state because static HTML cannot contain the current query/hash,
+    // and switching workspace tabs does not change the address bar.
+    const state = (window as any).appState;
+    document.querySelectorAll<HTMLAnchorElement>("[data-language-path]").forEach((link) => {
+      link.href = getLanguageHref(window.location.href, link.dataset.languagePath!, state);
     });
   }
 
-  // Setup on page load and on Astro page transitions
-  setupLanguagePickers();
-  document.addEventListener("astro:page-load", setupLanguagePickers);
+  function closeLanguagePickers(except?: Element) {
+    document.querySelectorAll<HTMLDetailsElement>(".language-picker-root[open]").forEach((picker) => {
+      if (picker !== except) picker.open = false;
+    });
+  }
+
+  // Native details/summary works before JavaScript loads and supports Enter/Space.
+  // Delegate once so page-load events never attach duplicate click handlers.
+  document.addEventListener("toggle", (event) => {
+    const picker = event.target;
+    if (picker instanceof HTMLDetailsElement && picker.matches(".language-picker-root") && picker.open) {
+      closeLanguagePickers(picker);
+      updateLanguageLinks();
+    }
+  }, true);
+
+  document.addEventListener("click", (event) => {
+    const target = event.target;
+    if (target instanceof Element && !target.closest(".language-picker-root")) {
+      closeLanguagePickers();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    const picker = document.activeElement?.closest<HTMLDetailsElement>(".language-picker-root[open]");
+    closeLanguagePickers();
+    picker?.querySelector("summary")?.focus();
+  });
+
+  document.addEventListener("focusin", (event) => {
+    const target = event.target;
+    closeLanguagePickers(target instanceof Element ? target.closest(".language-picker-root") ?? undefined : undefined);
+  });
+
+  updateLanguageLinks();
+  document.addEventListener("astro:page-load", updateLanguageLinks);
+  window.addEventListener("app:state-updated", updateLanguageLinks);
 </script>
