@@ -16,7 +16,7 @@ else if (pathname.endsWith("/tools")) detectedPage = "tools";
 else if (pathname.endsWith("/about")) detectedPage = "about";
 
 const { activePage = detectedPage } = Astro.props;
-const isDashboard = activePage === "home" || activePage === "dashboard";
+const isDashboard = !pathname.startsWith("/learn") && (activePage === "home" || activePage === "dashboard");
 const isTerminal = activePage === "terminal";
 const isTools = activePage === "tools";
 const isAbout = activePage === "about";
@@ -73,6 +73,8 @@ const homePath = translatePath("/");
       {t("nav.about")}
     </a>
   </nav>
+
+  <a class="learning-nav-link" href="/learn/" aria-current={pathname.startsWith("/learn") ? "page" : undefined}>Learn<span class="sr-only"> Linux handbook (English)</span></a>
 
   <!-- Profile & Stats Cluster -->
   <div class="flex items-center gap-1.5 sm:gap-3 md:gap-4 shrink-0">

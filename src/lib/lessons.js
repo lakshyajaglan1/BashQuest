@@ -1,3 +1,4 @@
+import { splitCommands } from "./shellSyntax.js";
 // BashQuest Progressive Linux Lessons & Verifications
 
 export const modules = [
@@ -28,7 +29,7 @@ export const modules = [
 export function parseCommandLine(cmdStr) {
   if (!cmdStr || typeof cmdStr !== 'string') return [];
   const segments = [];
-  const pipeParts = cmdStr.split(/(?<!['"])\|(?!['"])/);
+  const pipeParts = splitCommands(cmdStr);
   for (const part of pipeParts) {
     const trimmed = part.trim();
     if (!trimmed) continue;
@@ -121,14 +122,8 @@ const baseLessons = [
       "Try running: whoami, and then pwd"
     ],
     verify: (_fs, _session, history) => {
-      const ranWhoami = history.some(cmd => {
-        const parts = cmd.trim().split(/\s+/);
-        return parts.includes('whoami');
-      });
-      const ranPwd = history.some(cmd => {
-        const parts = cmd.trim().split(/\s+/);
-        return parts.includes('pwd');
-      });
+      const ranWhoami = hasCommandInHistory(history, c => c.command === 'whoami');
+      const ranPwd = hasCommandInHistory(history, c => c.command === 'pwd');
       return {
         success: ranWhoami && ranPwd,
         checks: [
@@ -3996,7 +3991,7 @@ const baseLessons = [
     verify: (fs, _session, history) => {
       const node = fs.getNodeByPath('/home/learner', 'logs.tar.gz');
       const archiveExists = Boolean(node && node.type === 'file');
-      const usedTarC = Boolean(archiveExists || hasCommandInHistory(history, seg => seg.command === 'tar' && (seg.hasAnyFlag('c', 'create') || seg.flags.has('c'))));
+      const usedTarC = Boolean(hasCommandInHistory(history, seg => seg.command === 'tar' && seg.hasAnyFlag('c', 'create') && seg.hasAnyFlag('z', 'gzip') && seg.hasAnyFlag('f', 'file')));
 
       return {
         success: Boolean(usedTarC && archiveExists),
@@ -4286,12 +4281,12 @@ const baseLessons = [
       const ranUnalias = hasCommandInHistory(history, seg => seg.command === 'unalias' && (seg.hasArg('la') || seg.hasAnyFlag('a')));
       const varUnset = !session.env || !session.env['SECRET_KEY'];
       const aliasUnset = !session.aliases || !session.aliases['la'];
-      const success = (ranUnset || varUnset) && (ranUnalias || aliasUnset);
+      const success = (ranUnset && varUnset) && (ranUnalias && aliasUnset);
       return {
         success: Boolean(success),
         checks: [
-          { id: 'unset_var', passed: Boolean(ranUnset || varUnset) },
-          { id: 'unalias_run', passed: Boolean(ranUnalias || aliasUnset) }
+          { id: 'unset_var', passed: Boolean(ranUnset && varUnset) },
+          { id: 'unalias_run', passed: Boolean(ranUnalias && aliasUnset) }
         ]
       };
     }
@@ -4680,7 +4675,7 @@ const baseLessons = [
     verify: (fs, _session, history) => {
       const groupNode = fs.getNodeByPath('/etc', 'group');
       const groupMissing = Boolean(!groupNode || !groupNode.content.includes('developers:'));
-      const ranGroupdel = Boolean(groupMissing || hasCommandInHistory(history, seg => seg.command === 'groupdel' && seg.hasArg('developers')));
+      const ranGroupdel = Boolean(hasCommandInHistory(history, seg => seg.command === 'groupdel' && seg.hasArg('developers')));
       return {
         success: Boolean(ranGroupdel && groupMissing),
         checks: [
@@ -5205,9 +5200,10 @@ export const bossLessons = [
       const node = fs.getNodeByPath('/home/learner', 'banned_ips.txt');
       const hasNode = !!(node && node.type === 'file');
       const content = hasNode ? node.content.trim() : '';
-      const hasIps = content.includes('203.0.113.19') && content.includes('198.51.100.42');
+      const expectedIps = new Set(['203.0.113.19', '198.51.100.42']);
       const lines = content.split('\n').map(l => l.trim()).filter(Boolean);
-      const isUnique = new Set(lines).size === lines.length && lines.length >= 2;
+      const hasIps = lines.length === expectedIps.size && lines.every(line => expectedIps.has(line));
+      const isUnique = new Set(lines).size === lines.length;
       return {
         success: hasNode && hasIps && isUnique,
         checks: [
@@ -5240,7 +5236,7 @@ export const bossLessons = [
     ],
     verify: (fs) => {
       const node = fs.getNodeByPath('/etc', 'vault.conf');
-      const ownerOk = !!(node && (node.owner === 'root' || node.owner === undefined));
+      const ownerOk = !!(node && node.owner === 'root' && node.group === 'root');
       const permsOk = !!(node && (node.permissions === '600' || node.permissions === '0600'));
       return {
         success: ownerOk && permsOk,
@@ -5409,7 +5405,8 @@ export const bossLessons = [
     ],
     verify: (fs) => {
       const node = fs.getNodeByPath('/home/learner/backups', 'db_backup_secure.tar.gz');
-      const ok = !!(node && node.type === 'file');
+      const source = fs.getNodeByPath('/var/backups/lost', 'db_backup_secure.tar.gz');
+      const ok = !!(node && node.type === 'file' && source && node.content === source.content);
       return {
         success: ok,
         checks: [
@@ -5509,8 +5506,8 @@ export const bossLessons = [
     ],
     verify: (fs) => {
       const node = fs.getNodeByPath('/home/learner', 'healthcheck.sh');
-      const contentOk = !!(node && node.type === 'file' && node.content.includes('#!/bin/bash') && node.content.includes('SYSTEM_OK'));
-      const execOk = !!(node && (node.permissions === '755' || node.permissions === '0755' || (node.permissions && node.permissions.endsWith('5'))));
+      const contentOk = !!(node && node.type === 'file' && node.content.startsWith('#!/bin/bash\n') && /^echo\s+['"]?SYSTEM_OK['"]?\s*$/m.test(node.content));
+      const execOk = !!(node && (node.permissions === '755' || node.permissions === '0755'));
       return {
         success: contentOk && execOk,
         checks: [
@@ -5545,9 +5542,13 @@ export const bossLessons = [
       const node = fs.getNodeByPath('/home/learner', 'clean_users.csv');
       const hasNode = !!(node && node.type === 'file');
       const content = hasNode ? node.content.trim() : '';
-      const valid = hasNode &&
-        (content.includes('alice,engineering') || (content.includes('alice') && content.includes('engineering'))) &&
-        !content.includes(';');
+      const source = fs.getNodeByPath('/home/learner', 'messy_data.csv');
+      const expected = (source?.content || '').trim().split('\n').filter(Boolean).map(line => {
+        const fields = line.replace(/;/g, '').split(':');
+        return `${fields[0]},${fields[2]}`;
+      }).sort();
+      const actual = content.split('\n').filter(Boolean).sort();
+      const valid = hasNode && expected.length > 0 && JSON.stringify(actual) === JSON.stringify(expected);
       return {
         success: valid,
         checks: [

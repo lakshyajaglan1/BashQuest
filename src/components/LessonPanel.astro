@@ -117,10 +117,16 @@ const t = useTranslations(currentLang);
   </div>
 
   <!-- Action CTAs -->
+  <aside class="learning-bridge" lang="en">
+    <p class="learning-eyebrow">Browser simulation</p>
+    <p>Selected Linux commands are modeled here. Network, services, and packages use practice data.</p>
+    <a id="lesson-handbook" href="/learn/">Read this module’s handbook →</a>
+  </aside>
   <div class="pt-4 border-t border-hairline/80 space-y-3">
     <!-- Success Banner -->
     <div
       id="success-banner"
+      role="status"
       class="hidden p-3.5 bg-emerald-50/70 border border-emerald-300 dark:bg-emerald-950/20 dark:border-emerald-800/40 rounded-sm flex items-center gap-3 animate-in zoom-in-95 fade-in slide-in-from-bottom-2 duration-300 ease-out shadow-[0_0_20px_rgba(16,185,129,0.15)]"
     >
       <div
@@ -144,6 +150,7 @@ const t = useTranslations(currentLang);
     <!-- Error Banner -->
     <div
       id="error-banner"
+      role="status"
       class="hidden p-3.5 bg-error-soft border border-red-200 dark:bg-red-950/20 dark:border-red-900/30 rounded-sm flex items-center gap-3 text-error dark:text-red-400 font-sans text-xs transition-opacity duration-300 ease-out"
     >
       <span
@@ -382,7 +389,7 @@ const t = useTranslations(currentLang);
 
   const successBanner = document.getElementById("success-banner");
   const successBadge = document.getElementById("success-badge-award");
-  const btnVerify = document.getElementById("btn-verify-lesson");
+  const btnVerify = document.getElementById("btn-verify-lesson") as HTMLButtonElement | null;
   const btnNext = document.getElementById("btn-next-lesson");
   const btnRestore = document.getElementById("btn-restore-lesson");
 
@@ -405,6 +412,8 @@ const t = useTranslations(currentLang);
     }
     if (!lesson) return;
 
+    const handbook = document.getElementById("lesson-handbook") as HTMLAnchorElement | null;
+    if (handbook) handbook.href = `/learn/${lesson.moduleId === "custom" ? "" : lesson.moduleId + "/"}`;
     activeLesson = lesson;
     globalWindow.appState.activeLesson = lesson;
 
@@ -623,9 +632,11 @@ const t = useTranslations(currentLang);
 
   // Verification process
   btnVerify?.addEventListener("click", () => {
-    if (!activeLesson) return;
+    if (!activeLesson || btnVerify?.disabled) return;
     const globalWindow = window as any;
     if (!globalWindow.appState) return;
+    const verifyingLesson = activeLesson;
+    if (btnVerify) btnVerify.disabled = true;
 
     const currentLang = getCurrentLang();
     const labels = lessonPanelLabels[currentLang] || lessonPanelLabels.en;
@@ -640,6 +651,8 @@ const t = useTranslations(currentLang);
     `;
 
     setTimeout(() => {
+      if (btnVerify) btnVerify.disabled = false;
+      if (activeLesson !== verifyingLesson) return;
       const fs = globalWindow.appState.fs;
       const session = globalWindow.appState.session;
       const history = (
@@ -649,7 +662,9 @@ const t = useTranslations(currentLang);
         : (session ? session.history : []) || [];
 
       // Run check hook
-      const checkRes = activeLesson.verify(fs, session, history);
+      let checkRes;
+      try { checkRes = activeLesson.verify(fs, session, history); }
+      catch (error) { console.error("Quest verification failed", error); checkRes = { success: false, checks: [] }; }
       validationResult = checkRes || { success: false, checks: [] };
 
       renderObjectives();

@@ -1,4 +1,5 @@
 import type { APIRoute } from "astro";
+import { chapters } from "../lib/learning.js";
 import { lessons } from "../lib/lessons.js";
 import { getQuestSlug } from "../lib/questSlug";
 import { languages, defaultLang, type SupportedLanguage } from "../i18n/languages";
@@ -51,6 +52,9 @@ export const GET: APIRoute = async ({ site }) => {
     }
   }
 
+  for (const route of ["learn", ...chapters.map(c => `learn/${c.id}`)]) {
+    xml += `  <url><loc>${baseUrl}/${route}/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>\n`;
+  }
   xml += `</urlset>`;
 
   return new Response(xml, {

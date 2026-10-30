@@ -1,0 +1,72 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Navigation from '../../components/Navigation.astro';
+import Footer from '../../components/Footer.astro';
+import { chapters, realLabs } from '../../lib/learning.js';
+import { lessons } from '../../lib/lessons.js';
+import { getQuestSlug } from '../../lib/questSlug';
+---
+<Layout title="Linux learning library — BashQuest" description="Learn Linux concepts, practice 150 quests, check your understanding, and apply your skills in real Linux labs.">
+  <Navigation />
+  <main id="main-content" class="learning-page">
+    <header class="learning-hero">
+      <p class="learning-eyebrow">The BashQuest learning library · English</p>
+      <h1>Understand Linux.<br />Then make it work.</h1>
+      <p>Build the mental model, practice in the terminal, and prove your skills on a real system. A connected path from your first command to everyday Linux operations.</p>
+      <div class="learning-actions"><a class="learning-button" href="/learn/basics/">Start with the fundamentals →</a><a href="#real-labs">Set up your real Linux lab</a></div>
+      <div class="learning-stats"><span><strong>{chapters.length}</strong> handbook chapters</span><span><strong>{lessons.length}</strong> interactive quests</span><span><strong>{realLabs.length}</strong> real-system labs</span></div>
+    </header>
+    <section class="learning-bridge" aria-labelledby="route-title">
+      <h2 id="route-title">A path you can follow.</h2>
+      <p><strong>New to Linux?</strong> Start with chapters 1–4, complete their quests, then set up a disposable machine. <strong>Already use the terminal?</strong> Use each chapter’s knowledge check to find gaps, then tackle its Boss Challenge. <strong>Preparing for operations work?</strong> Complete the real-system labs and keep your verification notes.</p>
+      <p>Read → predict the result → run the command → explain the result without hints. Revisit a completed module after a day and again after a week.</p>
+    </section>
+    <section aria-labelledby="library-title">
+      <div class="learning-section-heading"><div><p class="learning-eyebrow">01 / Build understanding</p><h2 id="library-title">Your Linux handbook.</h2></div><span id="library-count" role="status" aria-live="polite">{chapters.length} chapters</span></div>
+      <label class="learning-search-label" for="library-search">Find a topic or command</label>
+      <input id="library-search" class="learning-search" type="search" placeholder="Try permissions, SSH, backups…" autocomplete="off" />
+      <div class="learning-grid">
+        {chapters.map((chapter, index) => <article class="learning-card" data-chapter data-search={`${chapter.title} ${chapter.summary} ${chapter.concepts.join(' ')} ${lessons.filter(l=>l.moduleId===chapter.id).map(l=>l.title).join(' ')}`.toLowerCase()}>
+          <p class="learning-eyebrow">{String(index+1).padStart(2,'0')} / {chapter.stage}</p>
+          <h3><a href={`/learn/${chapter.id}/`}>{chapter.title}</a></h3>
+          <p>{chapter.summary}</p>
+          <div class="learning-card-meta"><span>{lessons.filter(l=>l.moduleId===chapter.id).length} quests</span><span>Concepts + knowledge check ↗</span></div>
+        </article>)}
+      </div>
+      <p id="library-empty" hidden>No matching topics. Try a broader term such as files, shell, or network.</p>
+    </section>
+    <section aria-labelledby="reference-title">
+      <p class="learning-eyebrow">02 / Find your next exercise</p><h2 id="reference-title">Quest & command reference.</h2>
+      <p>Search all {lessons.length} quests by title, command, or objective. Each reference includes an explanation and a direct terminal launch.</p>
+      <label class="learning-search-label" for="quest-search">Search the quest reference</label>
+      <input id="quest-search" class="learning-search" type="search" placeholder="Try grep, chmod, or systemctl…" autocomplete="off" />
+      <p id="quest-count" role="status" aria-live="polite">{lessons.length} quests</p>
+      <div class="learning-reference">
+        {lessons.map((lesson,index)=><a data-reference data-search={`${lesson.title} ${lesson.commandHelp?.map((c: any)=>`${c.cmd} ${c.desc}`).join(' ')} ${lesson.objectives.map((o: any)=>o.text).join(' ')}`.toLowerCase()} href={`/quests/${getQuestSlug(lesson,index)}/`}><span>{String(index+1).padStart(2,'0')}</span><strong>{lesson.title}</strong><span>Read & practice →</span></a>)}
+      </div>
+    </section>
+    <section id="real-labs" aria-labelledby="labs-title">
+      <p class="learning-eyebrow">03 / Transfer your skills</p><h2 id="labs-title">From the browser to a real machine.</h2>
+      <p>The browser terminal is a JavaScript simulator. It models selected commands; it does not run a Linux kernel, contact remote hosts, install real packages, or provide complete Bash semantics. These labs run in your own disposable Linux environment. They are self-assessed and do not award quest XP.</p>
+      {realLabs.map(lab=><details class="learning-lab" id={lab.id}><summary><span>{lab.title}</span><span>{lab.level}</span></summary><div class="learning-lab-body"><p>{lab.goal}</p><ol>{lab.steps.map(step=><li>{step}</li>)}</ol><pre><code>{lab.commands}</code></pre><h3>What to demonstrate</h3><p>{lab.evidence}</p><h3>Recovery</h3><p>{lab.recovery}</p></div></details>)}
+    </section>
+    <section class="learning-bridge"><h2>What comes after this path?</h2><p>You should be able to navigate, manipulate data, diagnose common failures, write small scripts, and verify routine changes. Linux is a broad field: kernel development, advanced storage, SELinux/AppArmor policy authoring, high availability, and production architecture require further specialist practice. Keep using the manuals installed on your own system to check its exact behavior.</p><a href="/">Return to your quest dashboard →</a></section>
+  </main>
+  <Footer />
+</Layout>
+<script>
+  function setupSearch(inputId: string, selector: string, countId: string, noun: string) {
+    const input = document.getElementById(inputId) as HTMLInputElement;
+    const items = Array.from(document.querySelectorAll<HTMLElement>(selector));
+    input?.addEventListener('input', () => {
+      const terms = input.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+      let count = 0;
+      items.forEach(item => { item.hidden = !terms.every(term => item.dataset.search?.includes(term)); if (!item.hidden) count++; });
+      const status = document.getElementById(countId);
+      if (status) status.textContent = `${count} ${noun}${count === 0 ? ' — try another search term' : ''}`;
+      if (inputId === 'library-search') { const empty = document.getElementById('library-empty'); if (empty) empty.hidden = count !== 0; }
+    });
+  }
+  setupSearch('library-search', '[data-chapter]', 'library-count', 'chapters');
+  setupSearch('quest-search', '[data-reference]', 'quest-count', 'quests');
+</script>

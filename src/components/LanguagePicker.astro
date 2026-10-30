@@ -74,7 +74,7 @@ const currentLangData = languages[lang] || languages.en;
         (Object.keys(languages) as SupportedLanguage[]).map((locale) => {
           const item = languages[locale];
           const isCurrent = locale === lang;
-          const targetUrl = translatePath(currentRoute, locale);
+          const targetUrl = translatePath(currentRoute.startsWith("/learn") || /^\/(404|500)\/?$/.test(currentRoute) ? "/" : currentRoute, locale);
 
           return (
             <a

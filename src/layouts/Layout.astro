@@ -26,7 +26,7 @@ const {
 const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://bashquest.com");
 const ogImageURL = new URL("/og-image.png", Astro.site || "https://bashquest.com");
 
-const alternateLinks = getAlternateLinks(Astro.url, Astro.site ? Astro.site.toString() : "https://bashquest.com");
+const alternateLinks = (Astro.url.pathname.startsWith("/learn") || /\/(404|500)\/?$/.test(Astro.url.pathname)) ? [] : getAlternateLinks(Astro.url, Astro.site ? Astro.site.toString() : "https://bashquest.com");
 
 const structuredDataList = structuredData
 	? Array.isArray(structuredData)
@@ -38,7 +38,7 @@ const structuredDataList = structuredData
 <!doctype html>
 <html
 	lang={currentLang}
-	class="h-full bg-canvas-soft text-ink select-none scroll-smooth"
+	class="h-full bg-canvas-soft text-ink scroll-smooth"
 >
 	<head>
 		<!-- Google tag (gtag.js) - Tracks visitor counts -->
@@ -61,12 +61,13 @@ const structuredDataList = structuredData
 		<!-- Theme initialization script to prevent flash -->
 		<script is:inline>
 			const theme = (() => {
-				if (
+				try { if (
 					typeof localStorage !== "undefined" &&
 					localStorage.getItem("theme")
 				) {
 					return localStorage.getItem("theme");
 				}
+				} catch { /* Storage can be unavailable in private or restricted contexts. */ }
 				if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
 					return "dark";
 				}
@@ -162,6 +163,8 @@ const structuredDataList = structuredData
 		}
 	</head>
 	<body class="h-full font-sans antialiased text-body">
+		<a class="skip-link" href="#main-content">Skip to main content</a>
+		<div id="storage-notice" class="learning-bridge" role="status" hidden>Progress cannot be saved in this browser. Keep this tab open and use Export Save on the dashboard before leaving.</div>
 		<slot />
 	</body>
 </html>

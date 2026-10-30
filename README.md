@@ -2,15 +2,15 @@
 
 > **Master the Linux Terminal through Gamified, Interactive In-Browser Quests.**
 
-**BashQuest** is a free, modern, browser-based interactive Linux terminal learning platform built with Astro. Learn Linux and bash commands hands-on through structured, gamified quests featuring 60+ interactive lessons across 16 progressive curriculum modules — completely **100% client-side** with zero installation, container overhead, or backend server required.
+**BashQuest** is a free, modern, browser-based interactive Linux terminal learning platform built with Astro. Learn Linux and bash commands hands-on through structured, gamified quests featuring 150 interactive quests across 17 curriculum modules, plus an English handbook and real-system labs — completely **100% client-side** with zero installation, container overhead, or backend server required.
 
 ---
 
 ## ✨ Key Features
 
 - 💻 **Real-Time Interactive Terminal Simulator**: Run bash commands in a responsive web terminal emulating standard GNU/Linux coreutils, pipelines (`|`), stream redirection (`>`, `>>`, `<`), environment variables, permissions, and command history.
-- 🎯 **60+ Interactive Quests & Lessons**: Step-by-step interactive learning objectives that inspect your shell state, command history, and virtual filesystem in real time to verify task completion.
-- 📚 **16 Comprehensive Curriculum Modules**:
+- 🎯 **150 Interactive Quests & Lessons**: Step-by-step interactive learning objectives that inspect your shell state, command history, and virtual filesystem in real time to verify task completion.
+- 📚 **17 Curriculum Modules**:
   1. **Filesystem Basics** (`whoami`, `pwd`, `ls`, `cd`)
   2. **File Manipulation** (`touch`, `mkdir`, `cp`, `mv`, `rm`)
   3. **Pipes & Filtering** (`grep`, `wc`, `sort`, `uniq`, `head`, `tail`)
@@ -25,12 +25,13 @@
   12. **Shell Scripting & Automation** (Variables, loops, bash script execution)
   13. **Advanced Text Processing** (`sed`, `awk`, regex parsing)
   14. **Environment & Users** (`export`, `env`, user configuration)
-  15. **Advanced Filesystem** (Inodes, symlinks, hardlinks)
+  15. **Archives & Backups** (`tar`, compression, restore verification)
   16. **Remote Access & User Admin** (`ssh`, user accounts, groups)
+  17. **Git & Containers** (Repository workflows, logs, container lifecycle)
 - 📝 **In-Browser GNU Nano Editor**: Open, edit, and save virtual files in a fully keyboard-navigable recreation of GNU Nano within the terminal window.
 - 🌲 **Live Filesystem Visualizer**: An interactive tree visualizer dynamically updating as you create, delete, move, or modify files and directories.
 - 🏆 **Gamified Progression**: Earn XP points, unlock milestone achievement badges, check off multi-step objectives, and access 3-tier progressive hints when stuck.
-- 🌐 **Full Multi-Language Support (8 Languages)**:
+- 🌐 **Quest Interface in 8 Languages (new handbook currently English)**:
   - English (`en`)
   - Spanish / Español (`es`)
   - Japanese / 日本語 (`ja`)
@@ -74,7 +75,7 @@ npm install
 Start the Astro development server:
 
 ```bash
-npm run dev
+npm run astro -- dev --background
 ```
 
 The application will be available at `http://localhost:4321`.
@@ -122,3 +123,20 @@ BashQuest/
 ## 📄 License
 
 This project is open-source and available under the [MIT License](LICENSE).
+
+## Learning library and validation
+
+Visit `/learn/` for 17 concept chapters with examples and knowledge checks, a searchable reference for all 150 quests, and five real-system labs. Chapters link directly to their practice quests. Completion certificates are no longer part of the product.
+
+The terminal is a JavaScript teaching simulator, not a Linux kernel or a complete Bash interpreter. Services, networking, packages, Git, and containers use simulated state. Use the real-system labs in a disposable VM or other suitable isolated environment to practise actual system behavior. Advanced specialist study and real operational experience remain necessary.
+
+```bash
+npm test
+npm run check
+npm run build
+npm run check:links
+```
+
+The regression suite checks all quest starting states, scripted solutions for all 17 boss challenges, selected filesystem and shell semantics, progress validation, duplicate XP prevention, and unavailable storage. The link audit checks generated local page and asset targets across every locale; it does not test external URLs or every supported command combination.
+
+Manage the development server with `npm run astro -- dev status`, `npm run astro -- dev logs`, and `npm run astro -- dev stop`.

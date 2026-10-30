@@ -1,3 +1,4 @@
+import { validateProgress, safeStorage } from "../lib/progress";
 import { FileSystem, ShellSession } from "../lib/linuxEngine";
 import { lessons } from "../lib/lessons";
 
@@ -572,13 +573,9 @@ export class AppStateManager {
       }
     }
 
-    if (!completed.includes(86)) {
-      if (!fs.getNodeByPath("/home/learner", "access.log")) {
-        fs.createNode("/home/learner", "access.log", "file", {
-          content:
-            '203.0.113.19 - - [03/Jul/2026:10:00:00] "POST /login" 401\n198.51.100.42 - - [03/Jul/2026:10:00:01] "GET /admin" 403\n203.0.113.19 - - [03/Jul/2026:10:00:02] "POST /login" 401\n198.51.100.42 - - [03/Jul/2026:10:00:04] "GET /admin" 403\n',
-        });
-      }
+    if (this.state.activeLessonId === 86 && !completed.includes(86)) {
+      const accessLog: any = fs.getNodeByPath("/home/learner", "access.log");
+      if (accessLog) accessLog.content = '203.0.113.19 - - "POST /login" 401\n198.51.100.42 - - "GET /admin" 403\n203.0.113.19 - - "POST /login" 401\n198.51.100.42 - - "GET /admin" 403\n';
     }
 
     if (!completed.includes(87)) {
@@ -837,6 +834,8 @@ export class AppStateManager {
 
     if (!fs.getNodeByPath("/var", "backups")) {
       fs.createNode("/var", "backups", "dir");
+    }
+    if (!fs.getNodeByPath("/var/backups", "data_backup.tar.gz")) {
       fs.createNode("/var/backups", "data_backup.tar.gz", "file", {
         content: "Archive data payload version 1.0.0\nDatabase dump valid\n"
       });
@@ -904,6 +903,16 @@ export class AppStateManager {
     }
     if (activeId === 93 && !completed.includes(93)) {
       session.services.apache2 = "inactive";
+    }
+
+    if (activeId === 140 && !completed.includes(140)) {
+      (session.env as Record<string, string>).SECRET_KEY = "practice-only-value";
+      session.execute('alias la="ls -a"');
+      session.history = [];
+    }
+    if (activeId === 72 && !completed.includes(72)) {
+      const groups: any = fs.getNodeByPath("/etc", "group");
+      if (groups && !groups.content.includes("developers:")) groups.content += "developers:x:2000:\n";
     }
 
     const currentLesson =
@@ -1068,15 +1077,11 @@ export class AppStateManager {
     });
 
     window.addEventListener("app:complete-lesson", (e: any) => {
-      const { lessonId, xp } = e.detail;
-
-      if (!this.state.completedLessons.includes(lessonId)) {
-        this.state.completedLessons.push(lessonId);
-        this.state.xp += xp;
-      } else {
-        const practiceXp = Math.max(5, Math.floor(xp * 0.1));
-        this.state.xp += practiceXp;
-      }
+      const { lessonId } = e.detail;
+      const lesson = lessons.find(l => l.id === lessonId);
+      if (!lesson || this.state.completedLessons.includes(lessonId)) return;
+      this.state.completedLessons.push(lessonId);
+      this.state.xp += lesson.xp;
 
       // Check Boss Rush Completion (all 17 Boss Challenges completed)
       const bossLessons = lessons.filter((l) => l.title.includes("Boss Challenge"));
@@ -1087,7 +1092,7 @@ export class AppStateManager {
       if ((this.state.bossRushMode || this.state.bossRushStartTime) && allBossesDone) {
         const startTime = this.state.bossRushStartTime || Date.now();
         const elapsedMs = Math.max(0, Date.now() - startTime);
-        const prevFastest = localStorage.getItem("bashquest_fastest_boss_rush");
+        const prevFastest = safeStorage.getItem("bashquest_fastest_boss_rush");
         const prevFastestMs = prevFastest ? parseInt(prevFastest, 10) : Infinity;
 
         const totalSec = Math.floor(elapsedMs / 1000);
@@ -1098,8 +1103,8 @@ export class AppStateManager {
         let isNewBest = false;
         if (elapsedMs < prevFastestMs) {
           isNewBest = true;
-          localStorage.setItem("bashquest_fastest_boss_rush", elapsedMs.toString());
-          localStorage.setItem("bashquest_fastest_boss_rush_str", formatted);
+          safeStorage.setItem("bashquest_fastest_boss_rush", elapsedMs.toString());
+          safeStorage.setItem("bashquest_fastest_boss_rush_str", formatted);
           this.state.fastestBossRushTime = elapsedMs;
           this.state.fastestBossRushStr = formatted;
         }
@@ -1131,16 +1136,16 @@ export class AppStateManager {
         if (!this.state.bossRushStartTime) {
           this.state.bossRushStartTime = Date.now();
         }
-        localStorage.setItem("bashquest_boss_rush_mode", "true");
-        localStorage.setItem(
+        safeStorage.setItem("bashquest_boss_rush_mode", "true");
+        safeStorage.setItem(
           "bashquest_boss_rush_start",
           this.state.bossRushStartTime.toString(),
         );
         this.startBossRushTimer();
       } else {
         this.state.bossRushStartTime = null;
-        localStorage.removeItem("bashquest_boss_rush_mode");
-        localStorage.removeItem("bashquest_boss_rush_start");
+        safeStorage.removeItem("bashquest_boss_rush_mode");
+        safeStorage.removeItem("bashquest_boss_rush_start");
         this.stopBossRushTimer();
       }
 
@@ -1149,7 +1154,7 @@ export class AppStateManager {
     });
 
     window.addEventListener("app:reset-state", () => {
-      localStorage.removeItem("bashquest_state");
+      safeStorage.removeItem("bashquest_state");
       this.state = {
         xp: 0,
         completedLessons: [],
@@ -1321,10 +1326,10 @@ export class AppStateManager {
         fastestBossRushTime: null,
         fastestBossRushStr: null,
       };
-      localStorage.removeItem("bashquest_boss_rush_mode");
-      localStorage.removeItem("bashquest_boss_rush_start");
-      localStorage.removeItem("bashquest_fastest_boss_rush");
-      localStorage.removeItem("bashquest_fastest_boss_rush_str");
+      safeStorage.removeItem("bashquest_boss_rush_mode");
+      safeStorage.removeItem("bashquest_boss_rush_start");
+      safeStorage.removeItem("bashquest_fastest_boss_rush");
+      safeStorage.removeItem("bashquest_fastest_boss_rush_str");
       this.stopBossRushTimer();
       this.resetFilesystem();
       this.applyViewVisibility();
@@ -1371,18 +1376,7 @@ export class AppStateManager {
         const decoded = decodeURIComponent(atob(saveCode));
         const parsedState = JSON.parse(decoded);
 
-        if (
-          !parsedState ||
-          typeof parsedState !== "object" ||
-          typeof parsedState.xp !== "number"
-        ) {
-          throw new Error("Malformed save code schema");
-        }
-
-        this.state = {
-          ...this.state,
-          ...parsedState,
-        };
+        this.state = { ...this.state, ...validateProgress(parsedState) };
 
         this.saveToStorage();
         window.dispatchEvent(new CustomEvent("app:import-success"));
@@ -1584,29 +1578,29 @@ export class AppStateManager {
   }
 
   saveToStorage() {
-    localStorage.setItem("bashquest_state", JSON.stringify(this.state));
+    safeStorage.setItem("bashquest_state", JSON.stringify(this.state));
   }
 
   loadFromStorage() {
-    const saved = localStorage.getItem("bashquest_state");
+    const saved = safeStorage.getItem("bashquest_state");
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        this.state = { ...this.state, ...parsed };
+        this.state = { ...this.state, ...validateProgress(parsed) };
       } catch (e) {
         console.error("Failed to parse storage, using defaults", e);
       }
     }
 
-    const fastestMs = localStorage.getItem("bashquest_fastest_boss_rush");
+    const fastestMs = safeStorage.getItem("bashquest_fastest_boss_rush");
     if (fastestMs) {
       this.state.fastestBossRushTime = parseInt(fastestMs, 10);
       this.state.fastestBossRushStr =
-        localStorage.getItem("bashquest_fastest_boss_rush_str") || "";
+        safeStorage.getItem("bashquest_fastest_boss_rush_str") || "";
     }
 
-    const bossMode = localStorage.getItem("bashquest_boss_rush_mode");
-    const bossStart = localStorage.getItem("bashquest_boss_rush_start");
+    const bossMode = safeStorage.getItem("bashquest_boss_rush_mode");
+    const bossStart = safeStorage.getItem("bashquest_boss_rush_start");
     if (bossMode === "true" && bossStart) {
       this.state.bossRushMode = true;
       this.state.bossRushStartTime = parseInt(bossStart, 10);
@@ -1617,6 +1611,11 @@ export class AppStateManager {
 
 export function initApp() {
   new AppStateManager();
+
+  window.addEventListener("app:storage-unavailable", () => {
+    const notice = document.getElementById("storage-notice");
+    if (notice) notice.hidden = false;
+  });
 
   // Feedback popup handler
   const btnFeedback = document.getElementById("btn-feedback");

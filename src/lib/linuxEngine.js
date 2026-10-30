@@ -1,3 +1,4 @@
+import { findRedirection } from "./shellSyntax.js";
 // Browser-based Linux Filesystem and Shell Emulator
 
 export class FileSystem {
@@ -486,10 +487,13 @@ export class FileSystem {
   }
 }
 
-export function expandBraces(pattern) {
+export function expandBraces(pattern, budget = { count: 0 }) {
   if (typeof pattern !== 'string') return [pattern];
   const match = pattern.match(/\{([^{}]+)\}/);
-  if (!match) return [pattern];
+  if (!match) {
+    if (++budget.count > 4096) throw new Error('Brace expansion exceeds the simulator limit of 4096 results');
+    return [pattern];
+  }
 
   const prefix = pattern.slice(0, match.index);
   const suffix = pattern.slice(match.index + match[0].length);
@@ -504,6 +508,7 @@ export function expandBraces(pattern) {
     if (isNum) {
       const s = parseInt(start, 10);
       const e = parseInt(end, 10);
+      if (!Number.isSafeInteger(s) || !Number.isSafeInteger(e) || Math.abs(e - s) > 4095) throw new Error('Brace range exceeds the simulator limit');
       const step = s <= e ? 1 : -1;
       for (let i = s; s <= e ? i <= e : i >= e; i += step) {
         expansions.push(String(i));
@@ -526,7 +531,7 @@ export function expandBraces(pattern) {
 
   const results = [];
   for (const exp of expansions) {
-    results.push(...expandBraces(prefix + exp + suffix));
+    results.push(...expandBraces(prefix + exp + suffix, budget));
   }
   return results;
 }
@@ -817,6 +822,21 @@ export class ShellSession {
   }
 
   execute(commandLine, initialStdin = '') {
+    this.executionDepth = (this.executionDepth || 0) + 1;
+    try {
+      if (this.executionDepth > 32) throw new Error('Nested execution exceeds the simulator limit');
+      if (typeof commandLine !== 'string' || commandLine.length > 32768) throw new Error('Command exceeds the simulator limit');
+      const result = this.executeInternal(commandLine, initialStdin);
+      result.exitCode ??= result.stderr ? 1 : 0;
+      this.lastExitCode = result.exitCode;
+      return result;
+    } catch (error) {
+      this.lastExitCode = 2;
+      return { stdout: '', stderr: `Simulator: ${error.message}`, currentPath: this.currentPath, exitCode: 2 };
+    } finally { this.executionDepth--; }
+  }
+
+  executeInternal(commandLine, initialStdin = '') {
     const trimmed = commandLine.trim();
     if (!trimmed && !this.hereDocState && !this.vimState) {
       return { stdout: '', stderr: '', currentPath: this.currentPath };
@@ -901,10 +921,10 @@ export class ShellSession {
         const res = this.execute(step.cmd, initialStdin);
         if (res.stdout) combinedStdout += (combinedStdout ? '\n' : '') + res.stdout;
         if (res.stderr) combinedStderr += (combinedStderr ? '\n' : '') + res.stderr;
-        lastExit = res.stderr ? 1 : 0;
+        lastExit = res.exitCode ?? (res.stderr ? 1 : 0);
         this.lastExitCode = lastExit;
       }
-      return { stdout: combinedStdout, stderr: combinedStderr, currentPath: this.currentPath };
+      return { stdout: combinedStdout, stderr: combinedStderr, currentPath: this.currentPath, exitCode: lastExit };
     }
 
     // Check if input is a complete multi-line heredoc string
@@ -942,14 +962,15 @@ export class ShellSession {
     // Evaluate $(...) command substitutions
     let substituted = trimmed;
     if (substituted.includes('$(')) {
-      substituted = substituted.replace(/\$\(([^)]+)\)/g, (_, innerCmd) => {
+      substituted = substituted.replace(/'[^']*'|\$\(([^)]+)\)/g, (match, innerCmd) => {
+        if (match.startsWith("'")) return match;
         const innerRes = this.execute(innerCmd);
         return innerRes.stdout.trim();
       });
     }
 
     // Evaluate $? exit code
-    substituted = substituted.replace(/\$\?/g, () => String(this.lastExitCode !== undefined ? this.lastExitCode : 0));
+    substituted = substituted.replace(/'[^']*'|\$\?/g, match => match.startsWith("'") ? match : String(this.lastExitCode ?? 0));
 
     // Variable assignment: e.g. TODAY=$(date +%F) or APP_ENV=production
     const assignMatch = substituted.match(/^([A-Za-z_][A-Za-z0-9_]*)=(.*)$/);
@@ -1046,41 +1067,22 @@ export class ShellSession {
 
       if (s === pipelineSegments.length - 1) {
         let cleanSegment = segment;
-        if (cleanSegment.includes('2>&1')) {
-          combineStreams = true;
-          cleanSegment = cleanSegment.replace(/2>&1/g, '').trim();
-        }
-        const andAppendMatch = cleanSegment.match(/&>>\s*(\S+)/);
-        if (andAppendMatch) {
-          stdoutRedir = { file: andAppendMatch[1], type: 'append' };
-          stderrRedir = { file: andAppendMatch[1], type: 'append' };
-          cleanSegment = cleanSegment.replace(andAppendMatch[0], '').trim();
-        }
-        const andWriteMatch = cleanSegment.match(/&>\s*(\S+)/);
-        if (andWriteMatch) {
-          stdoutRedir = { file: andWriteMatch[1], type: 'write' };
-          stderrRedir = { file: andWriteMatch[1], type: 'write' };
-          cleanSegment = cleanSegment.replace(andWriteMatch[0], '').trim();
-        }
-        const errAppendMatch = cleanSegment.match(/2>>\s*(\S+)/);
-        if (errAppendMatch) {
-          stderrRedir = { file: errAppendMatch[1], type: 'append' };
-          cleanSegment = cleanSegment.replace(errAppendMatch[0], '').trim();
-        }
-        const errWriteMatch = cleanSegment.match(/2>\s*(\S+)/);
-        if (errWriteMatch) {
-          stderrRedir = { file: errWriteMatch[1], type: 'write' };
-          cleanSegment = cleanSegment.replace(errWriteMatch[0], '').trim();
-        }
-        const outAppendMatch = cleanSegment.match(/>>\s*(\S+)/);
-        if (outAppendMatch) {
-          stdoutRedir = { file: outAppendMatch[1], type: 'append' };
-          cleanSegment = cleanSegment.replace(outAppendMatch[0], '').trim();
-        }
-        const outWriteMatch = cleanSegment.match(/>\s*(\S+)/);
-        if (outWriteMatch) {
-          stdoutRedir = { file: outWriteMatch[1], type: 'write' };
-          cleanSegment = cleanSegment.replace(outWriteMatch[0], '').trim();
+        const removeRedirect = (match) => {
+          cleanSegment = cleanSegment.slice(0, match.index) + cleanSegment.slice(match.index + match.raw.length);
+        };
+        const combinedMatch = findRedirection(cleanSegment, '2>&1');
+        if (combinedMatch) { combineStreams = true; removeRedirect(combinedMatch); }
+        for (const [operator, stream, type] of [
+          ['&>>', 'both', 'append'], ['&>', 'both', 'write'],
+          ['2>>', 'stderr', 'append'], ['2>', 'stderr', 'write'],
+          ['>>', 'stdout', 'append'], ['>', 'stdout', 'write']
+        ]) {
+          const match = findRedirection(cleanSegment, operator);
+          if (!match) continue;
+          const redirect = { file: match.file, type };
+          if (stream !== 'stderr') stdoutRedir = redirect;
+          if (stream !== 'stdout') stderrRedir = redirect;
+          removeRedirect(match);
         }
         if (combineStreams && stdoutRedir) {
           stderrRedir = { file: stdoutRedir.file, type: stdoutRedir.type };
@@ -1105,9 +1107,11 @@ export class ShellSession {
             argInQuotes = true;
             argQuoteChar = char;
             wasQuoted = true;
+          } else {
+            currentArg += char;
           }
-        } else if (char === ' ' && !argInQuotes) {
-          if (currentArg !== '') {
+        } else if (/\s/.test(char) && !argInQuotes) {
+          if (currentArg !== '' || wasQuoted) {
             args.push(currentArg);
             argsQuoted.push(wasQuoted);
             currentArg = '';
@@ -1121,7 +1125,7 @@ export class ShellSession {
           currentArg += char;
         }
       }
-      if (currentArg !== '') {
+      if (currentArg !== '' || wasQuoted) {
         args.push(currentArg);
         argsQuoted.push(wasQuoted);
       }
@@ -2074,6 +2078,9 @@ export class ShellSession {
           result.stderr = `bash: ${command}: command not found`;
       }
 
+      // Preserve command status even when its error stream is redirected.
+      result.exitCode ??= result.stderr ? 1 : 0;
+
       // Process stderr redirection
       if (stderrRedir) {
         if (stderrRedir.file === '/dev/null') {
@@ -2124,7 +2131,8 @@ export class ShellSession {
       lastResult = result;
     }
 
-    this.lastExitCode = lastResult.stderr ? 1 : 0;
+    this.lastExitCode = lastResult.stderr ? (lastResult.exitCode || 1) : (lastResult.exitCode ?? 0);
+    lastResult.exitCode = this.lastExitCode;
     return lastResult;
   }
 
@@ -3555,6 +3563,15 @@ export class ShellSession {
       return { stdout: '', stderr: `mv: '${srcPath}' and '${destPath}' are the same file`, currentPath: this.currentPath };
     }
 
+    if (parentNode.children.find(child => child.name === newName) === srcNode) {
+      return { stdout: '', stderr: 'mv: source and destination are the same file', currentPath: this.currentPath };
+    }
+    const sourceAbsolute = this.fs.resolvePathStr(this.currentPath, srcPath);
+    const destinationAbsolute = this.fs.resolvePathStr(this.currentPath, destPath);
+    if (srcNode.type === 'dir' && destinationAbsolute.startsWith(sourceAbsolute + '/')) {
+      return { stdout: '', stderr: 'mv: cannot move a directory into itself', currentPath: this.currentPath };
+    }
+
     // Delete from old parent
     const srcParentSegs = srcSegments.slice(0, -1);
     const srcParentNode = this.fs.getNodeByPathSegments(srcParentSegs);
@@ -3709,7 +3726,7 @@ export class ShellSession {
         }
       };
       traverse(startNode, startPath);
-      return { stdout: results.join('\n'), stderr: '', currentPath: this.currentPath };
+      return { stdout: results.join('\n'), stderr: '', currentPath: this.currentPath, exitCode: results.length ? 0 : 1 };
     }
 
     let content = '';
@@ -3740,6 +3757,7 @@ export class ShellSession {
 
     return {
       stdout: matched.join('\n'),
+      exitCode: matched.length ? 0 : 1,
       stderr: '',
       currentPath: this.currentPath
     };
@@ -3834,6 +3852,18 @@ export class ShellSession {
           return { stdout: '', stderr: `sed: invalid regular expression: ${pattern}`, currentPath: this.currentPath };
         }
       }
+    }
+
+    const deletion = script.match(/^\/(.*)\/d$/);
+    if (deletion) {
+      try {
+        const pattern = new RegExp(deletion[1]);
+        content = content.split('\n').filter(line => !pattern.test(line)).join('\n');
+      } catch {
+        return { stdout: '', stderr: 'sed: invalid regular expression', currentPath: this.currentPath };
+      }
+    } else if (!script.startsWith('s/')) {
+      return { stdout: '', stderr: 'sed: expression not supported by this simulator', currentPath: this.currentPath };
     }
 
     if (inPlace && fileNode) {
@@ -6473,7 +6503,7 @@ export class ShellSession {
       if (failCount > 0) {
         out += `\nsha256sum: WARNING: ${failCount} computed checksum did NOT match`;
         this.lastExitCode = 1;
-        return { stdout: out, stderr: '', currentPath: this.currentPath };
+        return { stdout: out, stderr: '', currentPath: this.currentPath, exitCode: 1 };
       }
       return { stdout: out, stderr: '', currentPath: this.currentPath };
     }
@@ -6558,7 +6588,7 @@ export class ShellSession {
       if (failCount > 0) {
         out += `\nmd5sum: WARNING: ${failCount} computed checksum did NOT match`;
         this.lastExitCode = 1;
-        return { stdout: out, stderr: '', currentPath: this.currentPath };
+        return { stdout: out, stderr: '', currentPath: this.currentPath, exitCode: 1 };
       }
       return { stdout: out, stderr: '', currentPath: this.currentPath };
     }

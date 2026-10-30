@@ -1,0 +1,34 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Navigation from '../../components/Navigation.astro';
+import Footer from '../../components/Footer.astro';
+import { chapters } from '../../lib/learning.js';
+import { lessons } from '../../lib/lessons.js';
+import { getQuestSlug } from '../../lib/questSlug';
+export function getStaticPaths() { return chapters.map((chapter,index)=>({params:{slug:chapter.id},props:{chapter,index}})); }
+const {chapter,index} = Astro.props;
+const practice = lessons.filter(l=>l.moduleId===chapter.id);
+const next = chapters[index+1];
+---
+<Layout title={`${chapter.title} — Linux handbook | BashQuest`} description={chapter.summary}>
+  <Navigation />
+  <main id="main-content" class="learning-page learning-article">
+    <nav aria-label="Breadcrumb"><a href="/learn/">Learning library</a><span aria-hidden="true"> / </span><span>{chapter.stage}</span></nav>
+    <header><p class="learning-eyebrow">Chapter {String(index+1).padStart(2,'0')} of {chapters.length} · English</p><h1>{chapter.title}.</h1><p class="learning-lead">{chapter.summary}</p></header>
+    <section aria-labelledby="concepts-title"><h2 id="concepts-title">The mental model.</h2>{chapter.concepts.map(concept=><p>{concept}</p>)}</section>
+    <section aria-labelledby="example-title"><h2 id="example-title">Read it. Predict it. Try it.</h2><p>Before running these commands, predict what each line will change or print. Launch a quest below to open the simulated terminal.</p><pre><code>{chapter.example}</code></pre><p>{chapter.explain}</p><aside class="learning-bridge"><h3>A mistake to avoid</h3><p>{chapter.pitfall}</p></aside></section>
+    <section class="learning-quiz" aria-labelledby="quiz-title"><p class="learning-eyebrow">Check your understanding</p><h2 id="quiz-title">Explain the why.</h2><form id="knowledge-check" data-answer={chapter.answer} data-rationale={chapter.rationale}><fieldset><legend>{chapter.question}</legend>{chapter.options.map((option,i)=><label><input type="radio" name="answer" value={i} required /> <span>{option}</span></label>)}</fieldset><button class="learning-button" type="submit">Check answer</button><p id="quiz-feedback" role="status" aria-live="polite"></p></form></section>
+    <section aria-labelledby="practice-title"><h2 id="practice-title">Put it into practice.</h2><p>Complete the exercises, then try the Boss Challenge without hints. Each quest checks its own objectives. You can revisit this chapter at any time.</p><div class="learning-reference">{practice.map(lesson=><a href={`/?view=sandbox&quest=${lesson.id}`}><strong>{lesson.title}</strong><span>Practice →</span></a>)}</div><details class="learning-lab"><summary>Prefer to read first?</summary><div class="learning-lab-body">{practice.map(lesson=><p><a href={`/quests/${getQuestSlug(lesson,lessons.indexOf(lesson))}/`}>{lesson.title}</a></p>)}</div></details></section>
+    <section class="learning-bridge"><h2>Make the learning stick.</h2><p>Close the explanation and describe the main idea in your own words. Change a filename or input and predict the outcome. Tomorrow, repeat a quest without the hint. Then apply it in a disposable real Linux environment.</p><a href="/learn/#real-labs">Open the real-system labs →</a></section>
+    <nav class="learning-actions" aria-label="Chapter navigation"><a href="/learn/">← All chapters</a>{next && <a class="learning-button" href={`/learn/${next.id}/`}>Next: {next.title} →</a>}</nav>
+  </main><Footer />
+</Layout>
+<script>
+  const form = document.getElementById('knowledge-check') as HTMLFormElement;
+  form?.addEventListener('submit', event => {
+    event.preventDefault();
+    const selected = new FormData(form).get('answer');
+    const feedback = document.getElementById('quiz-feedback');
+    if (feedback) feedback.textContent = `${selected === form.dataset.answer ? 'Correct.' : 'Not quite. Try again.'} ${form.dataset.rationale}`;
+  });
+</script>

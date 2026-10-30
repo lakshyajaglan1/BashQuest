@@ -1,4 +1,5 @@
 ---
+import LearningBridge from "../../../components/LearningBridge.astro";
 import Layout from "../../../layouts/Layout.astro";
 import Navigation from "../../../components/Navigation.astro";
 import Footer from "../../../components/Footer.astro";
@@ -189,7 +190,7 @@ const structuredData = {
   <div class="flex flex-col min-h-screen bg-canvas-soft text-ink">
     <Navigation activePage="dashboard" lang={lang as SupportedLanguage} />
 
-    <main class="flex-1 w-full mesh-gradient py-8 sm:py-12 px-4 sm:px-6 lg:px-8 select-text">
+    <main id="main-content" class="flex-1 w-full mesh-gradient py-8 sm:py-12 px-4 sm:px-6 lg:px-8 select-text">
       <div class="max-w-4xl mx-auto space-y-8">
         
         <!-- Breadcrumbs & Meta Top -->
@@ -240,6 +241,8 @@ const structuredData = {
             <span class="text-xs text-mute font-mono">{labels.sub}</span>
           </div>
         </header>
+
+        <LearningBridge moduleId={lesson.moduleId} />
 
         <!-- Quest Explanation Section -->
         <section class="card-marketing border border-hairline bg-canvas p-6 sm:p-8 rounded-xl shadow-level-2 space-y-6">

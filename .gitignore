@@ -23,3 +23,7 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 .vercel
+
+# Local source-available Tailwind documentation snapshot
+.agents/skills/tailwind-4-docs/references/docs/
+.agents/skills/tailwind-4-docs/references/docs-index.tsx

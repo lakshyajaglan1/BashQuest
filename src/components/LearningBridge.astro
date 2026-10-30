@@ -1,0 +1,11 @@
+---
+import { chapters } from '../lib/learning.js';
+const { moduleId } = Astro.props;
+const chapter = chapters.find(c => c.id === moduleId);
+---
+{chapter && <aside class="learning-bridge" lang="en">
+  <p class="learning-eyebrow">Understand → practice → apply</p>
+  <h2>{chapter.title}</h2>
+  <p>{chapter.summary}</p>
+  <a href={`/learn/${chapter.id}/`}>Read the handbook and check your understanding →</a>
+</aside>}
