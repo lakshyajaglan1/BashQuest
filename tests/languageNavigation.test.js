@@ -30,5 +30,5 @@ test('static quest and information pages ignore application view state', () => {
   const state = { activeView: 'sandbox', activeLessonId: 2 };
   assert.equal(getLanguageHref('https://bashquest.com/es/quests/1-who-am-i?ref=learn#objectives', '/ja/quests/1-who-am-i', state), '/ja/quests/1-who-am-i?ref=learn#objectives');
   assert.equal(getLanguageHref('https://bashquest.com/about', '/de/about', state), '/de/about');
-  assert.equal(getLanguageHref('https://bashquest.com/learn/basics/', '/it', state), '/it');
+  assert.equal(getLanguageHref('https://bashquest.com/es/learn/basics/?ref=quest#practice-title', '/it/learn/basics', state), '/it/learn/basics?ref=quest#practice-title');
 });

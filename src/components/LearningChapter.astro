@@ -1,0 +1,41 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navigation from './Navigation.astro';
+import Footer from './Footer.astro';
+import { chapters as baseChapters } from '../lib/learning.js';
+import { getLearningContent } from '../i18n/learning/index.js';
+import { getLearningLesson } from '../i18n/learning/lessons';
+import { lessons } from '../lib/lessons.js';
+import { getQuestSlug } from '../lib/questSlug';
+import { getLangFromUrl, useTranslatedPath } from '../i18n/utils';
+const lang = getLangFromUrl(Astro.url);
+const { ui, chapters } = getLearningContent(lang);
+const translatePath = useTranslatedPath(lang);
+interface Props { chapter: (typeof baseChapters)[number]; index: number; }
+const {index} = Astro.props;
+const chapter = chapters.find(chapter => chapter.id === Astro.props.chapter.id)!;
+const practice = lessons.filter(l=>l.moduleId===chapter.id);
+const next = chapters[index+1];
+---
+<Layout lang={lang} title={`${chapter.title} — ${ui.handbook} | BashQuest`} description={chapter.summary}>
+  <Navigation lang={lang} />
+  <main lang={lang} id="main-content" class="learning-page learning-article">
+    <nav aria-label={ui.breadcrumb}><a href={translatePath("/learn/")}>{ui.library}</a><span aria-hidden="true"> / </span><span>{chapter.stage}</span></nav>
+    <header><p class="learning-eyebrow">{ui.chapter.replace('{number}', String(index+1).padStart(2,'0')).replace('{total}', String(chapters.length))}</p><h1>{chapter.title}</h1><p class="learning-lead">{chapter.summary}</p></header>
+    <section aria-labelledby="concepts-title"><h2 id="concepts-title">{ui.mental}</h2>{chapter.concepts.map(concept=><p>{concept}</p>)}</section>
+    <section aria-labelledby="example-title"><h2 id="example-title">{ui.example}</h2><p>{ui.predict}</p><pre translate="no"><code>{chapter.example}</code></pre><p>{chapter.explain}</p><aside class="learning-bridge"><h3>{ui.mistake}</h3><p>{chapter.pitfall}</p></aside></section>
+    <section class="learning-quiz" aria-labelledby="quiz-title"><p class="learning-eyebrow">{ui.checkUnderstanding}</p><h2 id="quiz-title">{ui.explainWhy}</h2><form id="knowledge-check" data-correct={ui.correct} data-incorrect={ui.incorrect} data-answer={chapter.answer} data-rationale={chapter.rationale}><fieldset><legend>{chapter.question}</legend>{chapter.options.map((option,i)=><label><input type="radio" name="answer" value={i} required /> <span>{option}</span></label>)}</fieldset><button class="learning-button" type="submit">{ui.checkAnswer}</button><p id="quiz-feedback" role="status" aria-live="polite"></p></form></section>
+    <section aria-labelledby="practice-title"><h2 id="practice-title">{ui.practiceTitle}</h2><p>{ui.practiceIntro}</p><div class="learning-reference">{practice.map(lesson=><a href={`${translatePath("/")}?view=sandbox&quest=${lesson.id}`}><strong>{getLearningLesson(lesson.id, lang)?.title}</strong><span>{ui.practice}</span></a>)}</div><details class="learning-lab"><summary>{ui.readFirst}</summary><div class="learning-lab-body">{practice.map(lesson=><p><a href={translatePath(`/quests/${getQuestSlug(lesson,lessons.indexOf(lesson))}/`)}>{getLearningLesson(lesson.id, lang)?.title}</a></p>)}</div></details></section>
+    <section class="learning-bridge"><h2>{ui.stickTitle}</h2><p>{ui.stick}</p><a href={`${translatePath("/learn/")}#real-labs`}>{ui.openLabs}</a></section>
+    <nav class="learning-actions" aria-label={ui.chapterNav}><a href={translatePath("/learn/")}>{ui.allChapters}</a>{next && <a class="learning-button" href={translatePath(`/learn/${next.id}/`)}>{ui.next} {next.title} →</a>}</nav>
+  </main><Footer lang={lang} />
+</Layout>
+<script>
+  const form = document.getElementById('knowledge-check') as HTMLFormElement;
+  form?.addEventListener('submit', event => {
+    event.preventDefault();
+    const selected = new FormData(form).get('answer');
+    const feedback = document.getElementById('quiz-feedback');
+    if (feedback) feedback.textContent = `${selected === form.dataset.answer ? form.dataset.correct : form.dataset.incorrect} ${form.dataset.rationale}`;
+  });
+</script>

@@ -1,0 +1,11 @@
+---
+import LearningChapter from "../../../components/LearningChapter.astro";
+import { chapters } from "../../../lib/learning.js";
+import { nonDefaultLangs } from "../../../i18n/languages";
+export function getStaticPaths() {
+  return nonDefaultLangs.flatMap(lang => chapters.map((chapter, index) => ({
+    params: { lang, slug: chapter.id }, props: { chapter, index },
+  })));
+}
+---
+<LearningChapter {...Astro.props} />

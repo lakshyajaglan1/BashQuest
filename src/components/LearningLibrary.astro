@@ -1,0 +1,77 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navigation from './Navigation.astro';
+import Footer from './Footer.astro';
+import { getLearningContent } from '../i18n/learning/index.js';
+import { getLearningLesson } from '../i18n/learning/lessons';
+import { lessons } from '../lib/lessons.js';
+import { getQuestSlug } from '../lib/questSlug';
+import { getLangFromUrl, useTranslatedPath } from '../i18n/utils';
+const lang = getLangFromUrl(Astro.url);
+const { ui, chapters, realLabs } = getLearningContent(lang);
+const translatePath = useTranslatedPath(lang);
+---
+<Layout lang={lang} title={ui.metaTitle} description={ui.metaDescription}>
+  <Navigation lang={lang} />
+  <main lang={lang} id="main-content" class="learning-page">
+    <header class="learning-hero">
+      <p class="learning-eyebrow">{ui.eyebrow}</p>
+      <h1>{ui.hero}<br />{ui.heroEnd}</h1>
+      <p>{ui.intro}</p>
+      <div class="learning-actions"><a class="learning-button" href={translatePath("/learn/basics/")}>{ui.start}</a><a href="#real-labs">{ui.labLink}</a></div>
+      <div class="learning-stats"><span><strong>{chapters.length}</strong> {ui.chapters}</span><span><strong>{lessons.length}</strong> {ui.quests}</span><span><strong>{realLabs.length}</strong> {ui.labs}</span></div>
+    </header>
+    <section class="learning-bridge" aria-labelledby="route-title">
+      <h2 id="route-title">{ui.pathTitle}</h2>
+      <p>{ui.path}</p>
+      <p>{ui.method}</p>
+    </section>
+    <section aria-labelledby="library-title">
+      <div class="learning-section-heading"><div><p class="learning-eyebrow">{ui.build}</p><h2 id="library-title">{ui.yourHandbook}</h2></div><span id="library-count" data-noun={ui.chapters} data-retry={ui.retrySearch} role="status" aria-live="polite">{chapters.length} {ui.chapters}</span></div>
+      <label class="learning-search-label" for="library-search">{ui.search}</label>
+      <input id="library-search" class="learning-search" type="search" placeholder={ui.searchPlaceholder} autocomplete="off" />
+      <div class="learning-grid">
+        {chapters.map((chapter, index) => <article class="learning-card" data-chapter data-search={`${chapter.title} ${chapter.summary} ${chapter.concepts.join(' ')} ${lessons.filter(l=>l.moduleId===chapter.id).map(l=>getLearningLesson(l.id, lang)?.title).join(' ')}`.toLowerCase()}>
+          <p class="learning-eyebrow">{String(index+1).padStart(2,'0')} / {chapter.stage}</p>
+          <h3><a href={translatePath(`/learn/${chapter.id}/`)}>{chapter.title}</a></h3>
+          <p>{chapter.summary}</p>
+          <div class="learning-card-meta"><span>{lessons.filter(l=>l.moduleId===chapter.id).length} {ui.quests}</span><span>{ui.conceptsCheck}</span></div>
+        </article>)}
+      </div>
+      <p id="library-empty" hidden>{ui.empty}</p>
+    </section>
+    <section aria-labelledby="reference-title">
+      <p class="learning-eyebrow">{ui.exercise}</p><h2 id="reference-title">{ui.reference}</h2>
+      <p>{ui.referenceIntro}</p>
+      <label class="learning-search-label" for="quest-search">{ui.questSearch}</label>
+      <input id="quest-search" class="learning-search" type="search" placeholder={ui.questPlaceholder} autocomplete="off" />
+      <p id="quest-count" data-noun={ui.quests} data-retry={ui.retrySearch} role="status" aria-live="polite">{lessons.length} {ui.quests}</p>
+      <div class="learning-reference">
+        {lessons.map((lesson,index)=> { const localized = getLearningLesson(lesson.id, lang)!; return <a data-reference data-search={`${localized.title} ${localized.commandHelp?.map((c: any)=>`${c.cmd} ${c.desc}`).join(' ')} ${localized.objectives.map((o: any)=>o.text).join(' ')}`.toLowerCase()} href={translatePath(`/quests/${getQuestSlug(lesson,index)}/`)}><span>{String(index+1).padStart(2,'0')}</span><strong>{localized.title}</strong><span>{ui.readPractice}</span></a>; })}
+      </div>
+    </section>
+    <section id="real-labs" aria-labelledby="labs-title">
+      <p class="learning-eyebrow">{ui.transfer}</p><h2 id="labs-title">{ui.realMachine}</h2>
+      <p>{ui.simulator}</p>
+      {realLabs.map(lab=><details class="learning-lab" id={lab.id}><summary><span>{lab.title}</span><span>{lab.level}</span></summary><div class="learning-lab-body"><p>{lab.goal}</p><ol>{lab.steps.map(step=><li>{step}</li>)}</ol><pre translate="no"><code>{lab.commands}</code></pre><h3>{ui.demonstrate}</h3><p>{lab.evidence}</p><h3>{ui.recovery}</h3><p>{lab.recovery}</p></div></details>)}
+    </section>
+    <section class="learning-bridge"><h2>{ui.afterTitle}</h2><p>{ui.after}</p><a href={translatePath("/")}>{ui.backDashboard}</a></section>
+  </main>
+  <Footer lang={lang} />
+</Layout>
+<script>
+  function setupSearch(inputId: string, selector: string, countId: string) {
+    const input = document.getElementById(inputId) as HTMLInputElement;
+    const items = Array.from(document.querySelectorAll<HTMLElement>(selector));
+    input?.addEventListener('input', () => {
+      const terms = input.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+      let count = 0;
+      items.forEach(item => { item.hidden = !terms.every(term => item.dataset.search?.includes(term)); if (!item.hidden) count++; });
+      const status = document.getElementById(countId);
+      if (status) status.textContent = `${count} ${status.dataset.noun}${count === 0 ? ` — ${status.dataset.retry}` : ''}`;
+      if (inputId === 'library-search') { const empty = document.getElementById('library-empty'); if (empty) empty.hidden = count !== 0; }
+    });
+  }
+  setupSearch('library-search', '[data-chapter]', 'library-count');
+  setupSearch('quest-search', '[data-reference]', 'quest-count');
+</script>

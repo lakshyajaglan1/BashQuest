@@ -1,4 +1,5 @@
 ---
+import { getLearningContent } from "../i18n/learning/index.js";
 import { getLocalizedModules, getLocalizedLessons, getLevelName, getLocalizedBadge } from "../i18n/lessons/index";
 import { type SupportedLanguage } from "../i18n/languages";
 import { getLangFromUrl, useTranslations, useTranslatedPath } from "../i18n/utils";
@@ -11,6 +12,7 @@ interface Props {
 
 const currentLang = Astro.props.lang || getLangFromUrl(Astro.url);
 const t = useTranslations(currentLang);
+const { ui: learningUi } = getLearningContent(currentLang);
 const translatePath = useTranslatedPath(currentLang);
 const localizedModules = getLocalizedModules(currentLang);
 const localizedLessons = getLocalizedLessons(currentLang);
@@ -121,11 +123,11 @@ const localizedLessons = getLocalizedLessons(currentLang);
         </div>
       </div>
 
-      <aside class="learning-bridge" lang="en">
-        <p class="learning-eyebrow">Learn beyond the command</p>
-        <h2>Your Linux handbook.</h2>
-        <p>17 concept chapters, knowledge checks, a searchable quest reference, and real-system labs.</p>
-        <a href="/learn/">Open the learning library →</a>
+      <aside class="learning-bridge" lang={currentLang}>
+        <p class="learning-eyebrow">{learningUi.beyond}</p>
+        <h2>{learningUi.yourHandbook}</h2>
+        <p>{learningUi.bridgeSummary}</p>
+        <a href={translatePath("/learn/")}>{learningUi.openLibrary}</a>
       </aside>
 
       <!-- Badges Card -->

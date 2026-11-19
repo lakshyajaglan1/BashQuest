@@ -11,7 +11,8 @@ export const GET: APIRoute = async ({ site }) => {
 
   const coreRoutes = ["", "about", "faq", "contact", "privacy", "terms"];
   const questRoutes = lessons.map((l: any, i: number) => `quests/${getQuestSlug(l, i)}`);
-  const allRoutes = [...coreRoutes, ...questRoutes];
+  const learnRoutes = ["learn", ...chapters.map(chapter => `learn/${chapter.id}`)];
+  const allRoutes = [...coreRoutes, ...questRoutes, ...learnRoutes];
 
   // Helper to build full localized URL
   function buildUrl(route: string, lang: SupportedLanguage): string {
@@ -52,9 +53,6 @@ export const GET: APIRoute = async ({ site }) => {
     }
   }
 
-  for (const route of ["learn", ...chapters.map(c => `learn/${c.id}`)]) {
-    xml += `  <url><loc>${baseUrl}/${route}/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>\n`;
-  }
   xml += `</urlset>`;
 
   return new Response(xml, {

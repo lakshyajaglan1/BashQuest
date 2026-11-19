@@ -1,7 +1,8 @@
 ---
+import { getLearningContent } from "../i18n/learning/index.js";
 import LanguagePicker from "./LanguagePicker.astro";
 import { defaultLang, type SupportedLanguage } from "../i18n/languages";
-import { getLangFromUrl, useTranslations, useTranslatedPath } from "../i18n/utils";
+import { getLangFromUrl, getRouteFromUrl, useTranslations, useTranslatedPath } from "../i18n/utils";
 
 interface Props {
   activePage?: "home" | "dashboard" | "terminal" | "tools" | "about" | "privacy" | "terms" | "faq" | "contact";
@@ -9,7 +10,7 @@ interface Props {
 }
 
 const currentLang = Astro.props.lang || getLangFromUrl(Astro.url);
-const pathname = Astro.url.pathname.replace(/\/$/, "");
+const pathname = getRouteFromUrl(Astro.url).replace(/\/$/, "");
 let detectedPage = "home";
 if (pathname.endsWith("/terminal")) detectedPage = "terminal";
 else if (pathname.endsWith("/tools")) detectedPage = "tools";
@@ -22,6 +23,7 @@ const isTools = activePage === "tools";
 const isAbout = activePage === "about";
 
 const t = useTranslations(currentLang);
+const { ui: learningUi } = getLearningContent(currentLang);
 const translatePath = useTranslatedPath(currentLang);
 const homePath = translatePath("/");
 ---
@@ -74,7 +76,7 @@ const homePath = translatePath("/");
     </a>
   </nav>
 
-  <a class="learning-nav-link" href="/learn/" aria-current={pathname.startsWith("/learn") ? "page" : undefined}>Learn<span class="sr-only"> Linux handbook (English)</span></a>
+  <a class="learning-nav-link" href={translatePath("/learn/")} aria-current={pathname.startsWith("/learn") ? "page" : undefined}>{learningUi.nav}<span class="sr-only"> {learningUi.handbook}</span></a>
 
   <!-- Profile & Stats Cluster -->
   <div class="flex items-center gap-1.5 sm:gap-3 md:gap-4 shrink-0">

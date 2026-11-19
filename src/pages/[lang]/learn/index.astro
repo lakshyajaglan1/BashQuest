@@ -1,0 +1,8 @@
+---
+import LearningLibrary from "../../../components/LearningLibrary.astro";
+import { nonDefaultLangs } from "../../../i18n/languages";
+export function getStaticPaths() {
+  return nonDefaultLangs.map(lang => ({ params: { lang } }));
+}
+---
+<LearningLibrary />
